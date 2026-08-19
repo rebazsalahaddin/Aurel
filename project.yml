@@ -1,0 +1,86 @@
+name: Aurel
+options:
+  bundleIdPrefix: com.aurel
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: ""
+    SWIFT_STRICT_CONCURRENCY: complete
+  configs:
+    Debug:
+      ENABLE_TESTABILITY: YES
+targets:
+  Aurel:
+    type: application
+    platform: iOS
+    sources:
+      - path: Aurel
+    settings:
+      base:
+        PRODUCT_NAME: $(TARGET_NAME)
+        PRODUCT_BUNDLE_IDENTIFIER: com.aurel.app
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS: YES
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+        SWIFT_EMIT_LOC_STRINGS: NO
+    info:
+      path: Aurel/Support/Info.plist
+      properties:
+        CFBundleDisplayName: Aurel
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UIAppFonts:
+          - Caprasimo-Regular.ttf
+          - Figtree-Regular.ttf
+          - Figtree-Medium.ttf
+          - Figtree-SemiBold.ttf
+          - Figtree-Bold.ttf
+          - Figtree-ExtraBold.ttf
+        NSMicrophoneUsageDescription: >-
+          Aurel uses the microphone only when you choose to speak in a practice.
+          Your voice is processed on your device, is never uploaded, and can be
+          deleted at any time. Speaking is always optional — the tap-the-word
+          path is always available.
+        NSSpeechRecognitionUsageDescription: >-
+          Aurel checks your spoken practice on your device so you can see how
+          close you were. Recognition never leaves the phone and is never
+          stored. Speaking is optional — the tap path is always available.
+        ITSAppUsesNonExemptEncryption: false
+  AurelTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: AurelTests
+    dependencies:
+      - target: Aurel
+    settings:
+      base:
+        PRODUCT_NAME: $(TARGET_NAME)
+        PRODUCT_BUNDLE_IDENTIFIER: com.aurel.tests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/Aurel.app/Aurel
+        BUNDLE_LOADER: $(TEST_HOST)
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Aurel:
+    build:
+      targets:
+        Aurel: all
+        AurelTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: false
+      targets:
+        - AurelTests

@@ -1,0 +1,625 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0671D263F76C2ECA7563CF8E2B539257 /* CoursePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5188F775D9AAF0CF93A5AA72A6E9C /* CoursePlayerView.swift */; };
+		0C0B14A4DA7875DFCC1C3E0768261C91 /* QuickPracticeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B1AA8A58DCBE19036DC417E440EE56 /* QuickPracticeViews.swift */; };
+		0FA2390B04864C4C2918086E1CF523A3 /* Figtree-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80593EE278AE9B371F189029707F27D5 /* Figtree-ExtraBold.ttf */; };
+		11E5D01CF1E3197682C1C198F66286A4 /* StreakBoardViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF95420D3B441BE457F1AB3F8B60498 /* StreakBoardViews.swift */; };
+		13DD3A3229F39A0D594640A470A9B5FF /* Figtree-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB469EA1BC00FA466E615A86C6F9A05F /* Figtree-Regular.ttf */; };
+		17A6185C8E3FC44AEEB2FEEB0A5E4401 /* Caprasimo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7A543CC6DED563E5EC66885E39EF424E /* Caprasimo-Regular.ttf */; };
+		1DA362A698EFEBDB20F3AC4993CC4329 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB020B48DFB0E9B4211D154C58A6EC56 /* Assets.xcassets */; };
+		206E601D70BC3CFD0A1C2F6A52CD403E /* QuickBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FDD07A459AF14E6B0ABB52ADA48194 /* QuickBank.swift */; };
+		2437097DABD6D8BFA4BBFEFEE11E20D6 /* AssemblyScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9C297E535AF94479E90F3D74EADE50 /* AssemblyScreens.swift */; };
+		2D3783DD8576188F909AD924B1C2F052 /* CourseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538833CE0D0B6C831413A67F774503B4 /* CourseModels.swift */; };
+		367A581AF83E4D6A5EA37E80390F8355 /* ProgressProfileSettingsPaywall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C1D92E0778B74765199C549BE52C10 /* ProgressProfileSettingsPaywall.swift */; };
+		3A52C34D9979DCF61EEC5DDC5C0E511B /* AUIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307FBEBFB78F4741282B48E9FEE8DE2E /* AUIcon.swift */; };
+		4121B64C1C89C26F791987A1CE4F1E46 /* CoreScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0639F37AD456BFA682934CC46D8882EA /* CoreScreens.swift */; };
+		4209B168FC50A5E94045FB4D79A98A8B /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B367F3146D919ABA3DA2BA467EA4DDFF /* PlayerModel.swift */; };
+		4226AC2B2F73C48A69052D8A273FBD60 /* OFL-Caprasimo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D22511BEADDAF97BFC6F325273B442C /* OFL-Caprasimo.txt */; };
+		4931EB1EB9492B252C4C7000FE55DAFE /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC4E4637D4BA30372F04F2E96752E7E /* Typography.swift */; };
+		4A516BA3D5BEFFA109A902241E74F8CC /* AssessScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D9287CCF080A81E2D67F3149CA4688 /* AssessScreens.swift */; };
+		5268A4DA5F9EB8E8B5195077C4D21927 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A938B1FCD011D2DAF01629688533D2 /* HomeView.swift */; };
+		54F3EC3E8DEB16917290BEA31D142085 /* Router+Chapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2AC33A3E966247C31E45975E4A2BA6 /* Router+Chapters.swift */; };
+		5BA477ADE6A74DAD08D7D36F503D434C /* CourseDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */; };
+		63D9B6DE759E1D2240EDFBD4B4A90E01 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D72008BB451DE64C4F92ED4776869E6 /* Shared.swift */; };
+		651CF039F5AEBA33E4CBD5CE71BE41E2 /* a1-course.json in Resources */ = {isa = PBXBuildFile; fileRef = AD5F6F16628FDE7E581608E1744F8314 /* a1-course.json */; };
+		7242BD8322619D646B6321BB72728278 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86DA4CDC85C8791C5428BC7CD78C608 /* LoginView.swift */; };
+		7499843242BAD7212ED22B548B2457B6 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */; };
+		8110C63B45A232CF95916A8A4D420662 /* Figtree-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A63521FA91725A3E594DFAACBA24F070 /* Figtree-SemiBold.ttf */; };
+		8265BAFB6C0E6FDD6FEEC5531156AA5F /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */; };
+		827F3FF10004A9CDE36281E20D67BB28 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C84AC96FE52062FD9F3DB7755DD98B9 /* DesignTokens.swift */; };
+		8711075CBD3FAAF3CF852451D41F22C7 /* ScreenPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990748216B0670DE075A105AB65E9BC /* ScreenPayloads.swift */; };
+		87AA29122BE05705D6106275A86DE488 /* PracticeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45A4D2ADF1967DC22A134C384FDCB41 /* PracticeScreen.swift */; };
+		9A062E887526B4DDCBA27174B2CE7A2A /* OFL-Figtree.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44E530909B70A6BEC1FE9CFEF2F0944C /* OFL-Figtree.txt */; };
+		9B021470EF8DF98935C30762DB620E08 /* Figtree-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E48D8C37FDA9F391136E44C2FB52A962 /* Figtree-Medium.ttf */; };
+		9F2A60D18FC61D93D3191B4596A1135C /* ServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */; };
+		A3E620859D4AD2E803C22363F7691B34 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399402AEBA1EB7F8C70D7408542B0153 /* Components.swift */; };
+		A514AE3AD41455F42415430BB02456EA /* LangScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0298E8BEF7B11B1D77167B71F06E6E /* LangScreens.swift */; };
+		AEC4769328EA445CF604332FBD71529B /* AppDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4001F90497175302D4CCD9F83BC039 /* AppDatabase.swift */; };
+		B4F144AF219C59605143A02BF2AE7381 /* OnboardingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9357AD1BBE4AD1A8C29AC165F9F42A02 /* OnboardingViews.swift */; };
+		BDB2A6C44FEABAA2D25AEE24F5F7A380 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1464E8E27216353A9088DB87E46E8BA /* AppRouter.swift */; };
+		BE9D33B122D239C6A7A736DC173FC152 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7090FF21D36942AF6126F47E92E1D47 /* Services.swift */; };
+		DB768EA5A74BF27CAA58921464F1481B /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE2378615BA4DD6CD955D35998F15B5 /* WelcomeView.swift */; };
+		DDEC2218CBC8B88A1067B5E39E273827 /* AurelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC0044C3C61184624946A128732103A /* AurelApp.swift */; };
+		E306BF8CB3CDD77FD9429951C0D2409D /* ArcSkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAB7BAEA689D85557BAC25BB91ED072 /* ArcSkyView.swift */; };
+		E77BF59C986E4F00C5DF1A275B9AAFBD /* CourseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA9EC2CCC2CF2D55CD8F514C767117 /* CourseStore.swift */; };
+		F3C727EB27483A1E8916A3CA70275ECA /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F31C765332124A3C3CD359AF52D52A /* Models.swift */; };
+		F469E7D60FDA52D49AB0B786103A594B /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3689B428CA08AF8EE1A1050CF5F7407 /* AppEnvironment.swift */; };
+		F6C93F5E4EC2173DD4EEF83C4311F7A6 /* Figtree-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E25DFA36A0830D2D54B75F4D3FFB5B70 /* Figtree-Bold.ttf */; };
+		FC53BE7B0A428A4F631BBF883A6AC34D /* PracticeHubViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC1CB3101B4E131273BA12DBFA029B5 /* PracticeHubViews.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DAF18554C8CC00B522F449F47E1F03BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 037088A85A43347346C10AE6BA312594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D8A1A1C4524740FE0C24B795CCEFA29F;
+			remoteInfo = Aurel;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0639F37AD456BFA682934CC46D8882EA /* CoreScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreScreens.swift; sourceTree = "<group>"; };
+		0990748216B0670DE075A105AB65E9BC /* ScreenPayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenPayloads.swift; sourceTree = "<group>"; };
+		0CC0044C3C61184624946A128732103A /* AurelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AurelApp.swift; sourceTree = "<group>"; };
+		0CC1CB3101B4E131273BA12DBFA029B5 /* PracticeHubViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeHubViews.swift; sourceTree = "<group>"; };
+		0D72008BB451DE64C4F92ED4776869E6 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
+		0D9C297E535AF94479E90F3D74EADE50 /* AssemblyScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssemblyScreens.swift; sourceTree = "<group>"; };
+		1FFBFD0B6D28D25C6341550D5EF71A72 /* AurelTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AurelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		23D9287CCF080A81E2D67F3149CA4688 /* AssessScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssessScreens.swift; sourceTree = "<group>"; };
+		23F31C765332124A3C3CD359AF52D52A /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		2FF95420D3B441BE457F1AB3F8B60498 /* StreakBoardViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakBoardViews.swift; sourceTree = "<group>"; };
+		307FBEBFB78F4741282B48E9FEE8DE2E /* AUIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AUIcon.swift; sourceTree = "<group>"; };
+		399402AEBA1EB7F8C70D7408542B0153 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		44E530909B70A6BEC1FE9CFEF2F0944C /* OFL-Figtree.txt */ = {isa = PBXFileReference; path = "OFL-Figtree.txt"; sourceTree = "<group>"; };
+		45FDD07A459AF14E6B0ABB52ADA48194 /* QuickBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickBank.swift; sourceTree = "<group>"; };
+		4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		522AF703E3799709C030C8026496D609 /* Aurel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Aurel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		538833CE0D0B6C831413A67F774503B4 /* CourseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseModels.swift; sourceTree = "<group>"; };
+		5DE2378615BA4DD6CD955D35998F15B5 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		69C1D92E0778B74765199C549BE52C10 /* ProgressProfileSettingsPaywall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressProfileSettingsPaywall.swift; sourceTree = "<group>"; };
+		6C84AC96FE52062FD9F3DB7755DD98B9 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
+		6D22511BEADDAF97BFC6F325273B442C /* OFL-Caprasimo.txt */ = {isa = PBXFileReference; path = "OFL-Caprasimo.txt"; sourceTree = "<group>"; };
+		77B1AA8A58DCBE19036DC417E440EE56 /* QuickPracticeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPracticeViews.swift; sourceTree = "<group>"; };
+		7A543CC6DED563E5EC66885E39EF424E /* Caprasimo-Regular.ttf */ = {isa = PBXFileReference; path = "Caprasimo-Regular.ttf"; sourceTree = "<group>"; };
+		7D0298E8BEF7B11B1D77167B71F06E6E /* LangScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangScreens.swift; sourceTree = "<group>"; };
+		80593EE278AE9B371F189029707F27D5 /* Figtree-ExtraBold.ttf */ = {isa = PBXFileReference; path = "Figtree-ExtraBold.ttf"; sourceTree = "<group>"; };
+		86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
+		8BEA9EC2CCC2CF2D55CD8F514C767117 /* CourseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseStore.swift; sourceTree = "<group>"; };
+		9357AD1BBE4AD1A8C29AC165F9F42A02 /* OnboardingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViews.swift; sourceTree = "<group>"; };
+		A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDecodingTests.swift; sourceTree = "<group>"; };
+		A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesTests.swift; sourceTree = "<group>"; };
+		A63521FA91725A3E594DFAACBA24F070 /* Figtree-SemiBold.ttf */ = {isa = PBXFileReference; path = "Figtree-SemiBold.ttf"; sourceTree = "<group>"; };
+		A86DA4CDC85C8791C5428BC7CD78C608 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		AD5F6F16628FDE7E581608E1744F8314 /* a1-course.json */ = {isa = PBXFileReference; path = "a1-course.json"; sourceTree = "<group>"; };
+		B367F3146D919ABA3DA2BA467EA4DDFF /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
+		BB469EA1BC00FA466E615A86C6F9A05F /* Figtree-Regular.ttf */ = {isa = PBXFileReference; path = "Figtree-Regular.ttf"; sourceTree = "<group>"; };
+		BF2AC33A3E966247C31E45975E4A2BA6 /* Router+Chapters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Router+Chapters.swift"; sourceTree = "<group>"; };
+		C1464E8E27216353A9088DB87E46E8BA /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		C45A4D2ADF1967DC22A134C384FDCB41 /* PracticeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeScreen.swift; sourceTree = "<group>"; };
+		CA371BA46F2F6A752704CF712B78CB1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CF4001F90497175302D4CCD9F83BC039 /* AppDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDatabase.swift; sourceTree = "<group>"; };
+		D7B5188F775D9AAF0CF93A5AA72A6E9C /* CoursePlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursePlayerView.swift; sourceTree = "<group>"; };
+		DB020B48DFB0E9B4211D154C58A6EC56 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DFAB7BAEA689D85557BAC25BB91ED072 /* ArcSkyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcSkyView.swift; sourceTree = "<group>"; };
+		DFC4E4637D4BA30372F04F2E96752E7E /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
+		E25DFA36A0830D2D54B75F4D3FFB5B70 /* Figtree-Bold.ttf */ = {isa = PBXFileReference; path = "Figtree-Bold.ttf"; sourceTree = "<group>"; };
+		E3689B428CA08AF8EE1A1050CF5F7407 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		E48D8C37FDA9F391136E44C2FB52A962 /* Figtree-Medium.ttf */ = {isa = PBXFileReference; path = "Figtree-Medium.ttf"; sourceTree = "<group>"; };
+		F7090FF21D36942AF6126F47E92E1D47 /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
+		F9A938B1FCD011D2DAF01629688533D2 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		003ED1150619B4C5CCE912A9AA5BF152 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				307FBEBFB78F4741282B48E9FEE8DE2E /* AUIcon.swift */,
+				399402AEBA1EB7F8C70D7408542B0153 /* Components.swift */,
+				0D72008BB451DE64C4F92ED4776869E6 /* Shared.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		02698E928067A4F61E97A312F8BCA9E2 /* QuickPractice */ = {
+			isa = PBXGroup;
+			children = (
+				77B1AA8A58DCBE19036DC417E440EE56 /* QuickPracticeViews.swift */,
+			);
+			path = QuickPractice;
+			sourceTree = "<group>";
+		};
+		029CD5EE2085A04F562F384CC0369A5F /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				F9A938B1FCD011D2DAF01629688533D2 /* HomeView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		28DCB7F257204318F5455479891FA171 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				CF4001F90497175302D4CCD9F83BC039 /* AppDatabase.swift */,
+				23F31C765332124A3C3CD359AF52D52A /* Models.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		33950E1DDEC0D320F00032C2E7DE7057 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				A86DA4CDC85C8791C5428BC7CD78C608 /* LoginView.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		3A79A028DB2E6833F5D7E4F91174329F = {
+			isa = PBXGroup;
+			children = (
+				B4AF3A70E3397ED3DCC2337374A4BF58 /* Aurel */,
+				47DB46E71B0AC591475F6F11B3F74CF1 /* AurelTests */,
+				8A596D19B253AE6141A3644EA2FEFAA3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		46E1145E33A740F370B7A75F6297B4D8 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				F7090FF21D36942AF6126F47E92E1D47 /* Services.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		47DB46E71B0AC591475F6F11B3F74CF1 /* AurelTests */ = {
+			isa = PBXGroup;
+			children = (
+				A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */,
+				A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */,
+				86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */,
+			);
+			path = AurelTests;
+			sourceTree = "<group>";
+		};
+		4A3EB2EB40C3CFD6DBEFC3409B1247D8 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				003ED1150619B4C5CCE912A9AA5BF152 /* Components */,
+				52CDEE00BFFF8382D0B00976A7765251 /* Fonts */,
+				DFAB7BAEA689D85557BAC25BB91ED072 /* ArcSkyView.swift */,
+				6C84AC96FE52062FD9F3DB7755DD98B9 /* DesignTokens.swift */,
+				DFC4E4637D4BA30372F04F2E96752E7E /* Typography.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		522FDB23C95E1C1E2FCE123ED83212CB /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				0D9C297E535AF94479E90F3D74EADE50 /* AssemblyScreens.swift */,
+				23D9287CCF080A81E2D67F3149CA4688 /* AssessScreens.swift */,
+				0639F37AD456BFA682934CC46D8882EA /* CoreScreens.swift */,
+				7D0298E8BEF7B11B1D77167B71F06E6E /* LangScreens.swift */,
+				C45A4D2ADF1967DC22A134C384FDCB41 /* PracticeScreen.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		52CDEE00BFFF8382D0B00976A7765251 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				7A543CC6DED563E5EC66885E39EF424E /* Caprasimo-Regular.ttf */,
+				E25DFA36A0830D2D54B75F4D3FFB5B70 /* Figtree-Bold.ttf */,
+				80593EE278AE9B371F189029707F27D5 /* Figtree-ExtraBold.ttf */,
+				E48D8C37FDA9F391136E44C2FB52A962 /* Figtree-Medium.ttf */,
+				BB469EA1BC00FA466E615A86C6F9A05F /* Figtree-Regular.ttf */,
+				A63521FA91725A3E594DFAACBA24F070 /* Figtree-SemiBold.ttf */,
+				6D22511BEADDAF97BFC6F325273B442C /* OFL-Caprasimo.txt */,
+				44E530909B70A6BEC1FE9CFEF2F0944C /* OFL-Figtree.txt */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		593ACFEBC58BEDE3C53AD77151D2A246 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				E3689B428CA08AF8EE1A1050CF5F7407 /* AppEnvironment.swift */,
+				C1464E8E27216353A9088DB87E46E8BA /* AppRouter.swift */,
+				0CC0044C3C61184624946A128732103A /* AurelApp.swift */,
+				4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */,
+				BF2AC33A3E966247C31E45975E4A2BA6 /* Router+Chapters.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		5CF1F8875BA596A53B98C2051E2B2B97 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				029CD5EE2085A04F562F384CC0369A5F /* Home */,
+				33950E1DDEC0D320F00032C2E7DE7057 /* Login */,
+				CB80BC209FCC4E2D00E5AB49C8A4A5EC /* Onboarding */,
+				E2EBE9498D49F2A2DAFB78F6F963D9AD /* PracticeHub */,
+				ADF3D60352238685450F19D558FC7B82 /* Progress */,
+				02698E928067A4F61E97A312F8BCA9E2 /* QuickPractice */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		8A596D19B253AE6141A3644EA2FEFAA3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				522AF703E3799709C030C8026496D609 /* Aurel.app */,
+				1FFBFD0B6D28D25C6341550D5EF71A72 /* AurelTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		987E5E3248EA78D84A9FFF11E64E4B0D /* Course */ = {
+			isa = PBXGroup;
+			children = (
+				AD5F6F16628FDE7E581608E1744F8314 /* a1-course.json */,
+			);
+			path = Course;
+			sourceTree = "<group>";
+		};
+		ADF3D60352238685450F19D558FC7B82 /* Progress */ = {
+			isa = PBXGroup;
+			children = (
+				69C1D92E0778B74765199C549BE52C10 /* ProgressProfileSettingsPaywall.swift */,
+			);
+			path = Progress;
+			sourceTree = "<group>";
+		};
+		B2B535682626FB64C20FB534BBF3B49E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				538833CE0D0B6C831413A67F774503B4 /* CourseModels.swift */,
+				0990748216B0670DE075A105AB65E9BC /* ScreenPayloads.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B4AF3A70E3397ED3DCC2337374A4BF58 /* Aurel */ = {
+			isa = PBXGroup;
+			children = (
+				593ACFEBC58BEDE3C53AD77151D2A246 /* App */,
+				FFCA58F33123658B4A204C3AD008E3D5 /* Course */,
+				4A3EB2EB40C3CFD6DBEFC3409B1247D8 /* DesignSystem */,
+				5CF1F8875BA596A53B98C2051E2B2B97 /* Features */,
+				28DCB7F257204318F5455479891FA171 /* Persistence */,
+				E9275F5D98758DAC93065A596EF586DC /* Resources */,
+				46E1145E33A740F370B7A75F6297B4D8 /* Services */,
+				E4688B978FDFB5F5896C8996293A33F5 /* Support */,
+			);
+			path = Aurel;
+			sourceTree = "<group>";
+		};
+		B53A72553091F566F46A7A936068EE1B /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				522FDB23C95E1C1E2FCE123ED83212CB /* Screens */,
+				D7B5188F775D9AAF0CF93A5AA72A6E9C /* CoursePlayerView.swift */,
+				B367F3146D919ABA3DA2BA467EA4DDFF /* PlayerModel.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		CB80BC209FCC4E2D00E5AB49C8A4A5EC /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				9357AD1BBE4AD1A8C29AC165F9F42A02 /* OnboardingViews.swift */,
+				5DE2378615BA4DD6CD955D35998F15B5 /* WelcomeView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		E2EBE9498D49F2A2DAFB78F6F963D9AD /* PracticeHub */ = {
+			isa = PBXGroup;
+			children = (
+				0CC1CB3101B4E131273BA12DBFA029B5 /* PracticeHubViews.swift */,
+				2FF95420D3B441BE457F1AB3F8B60498 /* StreakBoardViews.swift */,
+			);
+			path = PracticeHub;
+			sourceTree = "<group>";
+		};
+		E4688B978FDFB5F5896C8996293A33F5 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				DB020B48DFB0E9B4211D154C58A6EC56 /* Assets.xcassets */,
+				CA371BA46F2F6A752704CF712B78CB1F /* Info.plist */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		E9275F5D98758DAC93065A596EF586DC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				987E5E3248EA78D84A9FFF11E64E4B0D /* Course */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		FFCA58F33123658B4A204C3AD008E3D5 /* Course */ = {
+			isa = PBXGroup;
+			children = (
+				B2B535682626FB64C20FB534BBF3B49E /* Models */,
+				B53A72553091F566F46A7A936068EE1B /* Player */,
+				8BEA9EC2CCC2CF2D55CD8F514C767117 /* CourseStore.swift */,
+				45FDD07A459AF14E6B0ABB52ADA48194 /* QuickBank.swift */,
+			);
+			path = Course;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		00EAB76AA43B6158573741E311D53B21 /* AurelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5D7E409FE99B6C3982152811D4E846EC /* Build configuration list for PBXNativeTarget "AurelTests" */;
+			buildPhases = (
+				7B71C8F3D10198563B7CF6A179741CF1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				41E5A9A0E1383EAFDB30AA21845FB5F2 /* PBXTargetDependency */,
+			);
+			name = AurelTests;
+			productName = AurelTests;
+			productReference = 1FFBFD0B6D28D25C6341550D5EF71A72 /* AurelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D8A1A1C4524740FE0C24B795CCEFA29F /* Aurel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DEC39AC9C86AF52A6A6E5E0DC3975FD0 /* Build configuration list for PBXNativeTarget "Aurel" */;
+			buildPhases = (
+				67A1133CD570B1B9AC50AFAF3CA722DF /* Sources */,
+				9C68437A57EF0B5E5FA2B101F5A81612 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Aurel;
+			productName = Aurel;
+			productReference = 522AF703E3799709C030C8026496D609 /* Aurel.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		037088A85A43347346C10AE6BA312594 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1000;
+				TargetAttributes = {
+					00EAB76AA43B6158573741E311D53B21 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = D8A1A1C4524740FE0C24B795CCEFA29F;
+					};
+					D8A1A1C4524740FE0C24B795CCEFA29F = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = FE6B2E1614B569CBDF3C00D3A1E87C66 /* Build configuration list for PBXProject "Aurel" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 3A79A028DB2E6833F5D7E4F91174329F;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D8A1A1C4524740FE0C24B795CCEFA29F /* Aurel */,
+				00EAB76AA43B6158573741E311D53B21 /* AurelTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9C68437A57EF0B5E5FA2B101F5A81612 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DA362A698EFEBDB20F3AC4993CC4329 /* Assets.xcassets in Resources */,
+				17A6185C8E3FC44AEEB2FEEB0A5E4401 /* Caprasimo-Regular.ttf in Resources */,
+				F6C93F5E4EC2173DD4EEF83C4311F7A6 /* Figtree-Bold.ttf in Resources */,
+				0FA2390B04864C4C2918086E1CF523A3 /* Figtree-ExtraBold.ttf in Resources */,
+				9B021470EF8DF98935C30762DB620E08 /* Figtree-Medium.ttf in Resources */,
+				13DD3A3229F39A0D594640A470A9B5FF /* Figtree-Regular.ttf in Resources */,
+				8110C63B45A232CF95916A8A4D420662 /* Figtree-SemiBold.ttf in Resources */,
+				4226AC2B2F73C48A69052D8A273FBD60 /* OFL-Caprasimo.txt in Resources */,
+				9A062E887526B4DDCBA27174B2CE7A2A /* OFL-Figtree.txt in Resources */,
+				651CF039F5AEBA33E4CBD5CE71BE41E2 /* a1-course.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		67A1133CD570B1B9AC50AFAF3CA722DF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A52C34D9979DCF61EEC5DDC5C0E511B /* AUIcon.swift in Sources */,
+				AEC4769328EA445CF604332FBD71529B /* AppDatabase.swift in Sources */,
+				F469E7D60FDA52D49AB0B786103A594B /* AppEnvironment.swift in Sources */,
+				BDB2A6C44FEABAA2D25AEE24F5F7A380 /* AppRouter.swift in Sources */,
+				E306BF8CB3CDD77FD9429951C0D2409D /* ArcSkyView.swift in Sources */,
+				2437097DABD6D8BFA4BBFEFEE11E20D6 /* AssemblyScreens.swift in Sources */,
+				4A516BA3D5BEFFA109A902241E74F8CC /* AssessScreens.swift in Sources */,
+				DDEC2218CBC8B88A1067B5E39E273827 /* AurelApp.swift in Sources */,
+				A3E620859D4AD2E803C22363F7691B34 /* Components.swift in Sources */,
+				4121B64C1C89C26F791987A1CE4F1E46 /* CoreScreens.swift in Sources */,
+				2D3783DD8576188F909AD924B1C2F052 /* CourseModels.swift in Sources */,
+				0671D263F76C2ECA7563CF8E2B539257 /* CoursePlayerView.swift in Sources */,
+				E77BF59C986E4F00C5DF1A275B9AAFBD /* CourseStore.swift in Sources */,
+				827F3FF10004A9CDE36281E20D67BB28 /* DesignTokens.swift in Sources */,
+				5268A4DA5F9EB8E8B5195077C4D21927 /* HomeView.swift in Sources */,
+				A514AE3AD41455F42415430BB02456EA /* LangScreens.swift in Sources */,
+				7242BD8322619D646B6321BB72728278 /* LoginView.swift in Sources */,
+				F3C727EB27483A1E8916A3CA70275ECA /* Models.swift in Sources */,
+				B4F144AF219C59605143A02BF2AE7381 /* OnboardingViews.swift in Sources */,
+				4209B168FC50A5E94045FB4D79A98A8B /* PlayerModel.swift in Sources */,
+				FC53BE7B0A428A4F631BBF883A6AC34D /* PracticeHubViews.swift in Sources */,
+				87AA29122BE05705D6106275A86DE488 /* PracticeScreen.swift in Sources */,
+				367A581AF83E4D6A5EA37E80390F8355 /* ProgressProfileSettingsPaywall.swift in Sources */,
+				206E601D70BC3CFD0A1C2F6A52CD403E /* QuickBank.swift in Sources */,
+				0C0B14A4DA7875DFCC1C3E0768261C91 /* QuickPracticeViews.swift in Sources */,
+				7499843242BAD7212ED22B548B2457B6 /* RootView.swift in Sources */,
+				54F3EC3E8DEB16917290BEA31D142085 /* Router+Chapters.swift in Sources */,
+				8711075CBD3FAAF3CF852451D41F22C7 /* ScreenPayloads.swift in Sources */,
+				BE9D33B122D239C6A7A736DC173FC152 /* Services.swift in Sources */,
+				63D9B6DE759E1D2240EDFBD4B4A90E01 /* Shared.swift in Sources */,
+				11E5D01CF1E3197682C1C198F66286A4 /* StreakBoardViews.swift in Sources */,
+				4931EB1EB9492B252C4C7000FE55DAFE /* Typography.swift in Sources */,
+				DB768EA5A74BF27CAA58921464F1481B /* WelcomeView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7B71C8F3D10198563B7CF6A179741CF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BA477ADE6A74DAD08D7D36F503D434C /* CourseDecodingTests.swift in Sources */,
+				9F2A60D18FC61D93D3191B4596A1135C /* ServicesTests.swift in Sources */,
+				8265BAFB6C0E6FDD6FEEC5531156AA5F /* SmokeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		41E5A9A0E1383EAFDB30AA21845FB5F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D8A1A1C4524740FE0C24B795CCEFA29F /* Aurel */;
+			targetProxy = DAF18554C8CC00B522F449F47E1F03BA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		321D75AA49EC57813DA80629B3939E15 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		829AFF1F141FE541C186B81D74417AC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				INFOPLIST_FILE = Aurel/Support/Info.plist;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aurel.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+			};
+			name = Release;
+		};
+		BAA6BA612446DCEB8ADECFCC80EC8CCF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aurel.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Aurel.app/Aurel";
+				TEST_TARGET_NAME = Aurel;
+			};
+			name = Release;
+		};
+		D7FA251F8D9AEF35214C7F9896765CE5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aurel.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Aurel.app/Aurel";
+				TEST_TARGET_NAME = Aurel;
+			};
+			name = Debug;
+		};
+		DB817F03D8F6B7582656AF5D45409592 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTABILITY = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		E251A9D6091568076270F2A927014702 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				INFOPLIST_FILE = Aurel/Support/Info.plist;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aurel.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5D7E409FE99B6C3982152811D4E846EC /* Build configuration list for PBXNativeTarget "AurelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D7FA251F8D9AEF35214C7F9896765CE5 /* Debug */,
+				BAA6BA612446DCEB8ADECFCC80EC8CCF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "";
+		};
+		DEC39AC9C86AF52A6A6E5E0DC3975FD0 /* Build configuration list for PBXNativeTarget "Aurel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E251A9D6091568076270F2A927014702 /* Debug */,
+				829AFF1F141FE541C186B81D74417AC9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "";
+		};
+		FE6B2E1614B569CBDF3C00D3A1E87C66 /* Build configuration list for PBXProject "Aurel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DB817F03D8F6B7582656AF5D45409592 /* Debug */,
+				321D75AA49EC57813DA80629B3939E15 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 037088A85A43347346C10AE6BA312594 /* Project object */;
+}

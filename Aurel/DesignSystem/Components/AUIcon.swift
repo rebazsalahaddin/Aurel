@@ -1,0 +1,278 @@
+import SwiftUI
+
+// MARK: - SVG path mini-parser
+//
+// Renders the authored icon geometry verbatim: the `d` strings below are copied
+// exactly from the design files' <symbol> definitions, so stroke weights and
+// curves match the prototype. Supports M L H V C S Q T A Z (and lowercase),
+// implicit command repetition, and the arc endpoint parameterization.
+
+struct SVGPathShape: Shape {
+    let d: String
+
+    private enum Token {
+        case command(Character)
+        case number(CGFloat)
+    }
+
+    private static let tokenPattern = try! NSRegularExpression(pattern: "([MLHVCSQTAZmlhvcsqtaz])|(-?\\d*\\.?\\d+(?:[eE][-+]?\\d+)?)")
+
+    private static func lex(_ d: String) -> [Token] {
+        var tokens: [Token] = []
+        let range = NSRange(d.startIndex..., in: d)
+        for m in tokenPattern.matches(in: d, range: range) {
+            if let r = Range(m.range(at: 1), in: d), let c = String(d[r]).first {
+                tokens.append(.command(c))
+            } else if let r = Range(m.range(at: 2), in: d), let v = Double(d[r]) {
+                tokens.append(.number(CGFloat(v)))
+            }
+        }
+        return tokens
+    }
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        var x: CGFloat = 0, y: CGFloat = 0
+        var startX: CGFloat = 0, startY: CGFloat = 0
+        let tokens = Self.lex(d)
+        var i = 0
+        var lastCmd: Character?
+
+        func num() -> CGFloat {
+            defer { i += 1 }
+            guard i < tokens.count, case .number(let n) = tokens[i] else { return 0 }
+            return n
+        }
+
+        while i < tokens.count {
+            let cmd: Character
+            if case .command(let c) = tokens[i] {
+                cmd = c
+                i += 1
+            } else if let l = lastCmd {
+                cmd = l
+            } else {
+                i += 1
+                continue
+            }
+            lastCmd = cmd
+            switch cmd {
+            case "M": x = num(); y = num(); startX = x; startY = y; path.move(to: CGPoint(x: x, y: y))
+            case "m": x += num(); y += num(); startX = x; startY = y; path.move(to: CGPoint(x: x, y: y))
+            case "L": x = num(); y = num(); path.addLine(to: CGPoint(x: x, y: y))
+            case "l": x += num(); y += num(); path.addLine(to: CGPoint(x: x, y: y))
+            case "H": x = num(); path.addLine(to: CGPoint(x: x, y: y))
+            case "h": x += num(); path.addLine(to: CGPoint(x: x, y: y))
+            case "V": y = num(); path.addLine(to: CGPoint(x: x, y: y))
+            case "v": y += num(); path.addLine(to: CGPoint(x: x, y: y))
+            case "C":
+                let c1 = CGPoint(x: num(), y: num()); let c2 = CGPoint(x: num(), y: num())
+                x = num(); y = num(); path.addCurve(to: CGPoint(x: x, y: y), control1: c1, control2: c2)
+            case "c":
+                let c1 = CGPoint(x: x + num(), y: y + num()); let c2 = CGPoint(x: x + num(), y: y + num())
+                x += num(); y += num(); path.addCurve(to: CGPoint(x: x, y: y), control1: c1, control2: c2)
+            case "S":
+                let c2 = CGPoint(x: num(), y: num()); x = num(); y = num()
+                path.addCurve(to: CGPoint(x: x, y: y), control1: path.currentPoint ?? .zero, control2: c2)
+            case "Q":
+                let c = CGPoint(x: num(), y: num()); x = num(); y = num()
+                path.addQuadCurve(to: CGPoint(x: x, y: y), control: c)
+            case "q":
+                let c = CGPoint(x: x + num(), y: y + num()); x += num(); y += num()
+                path.addQuadCurve(to: CGPoint(x: x, y: y), control: c)
+            case "T":
+                x = num(); y = num(); path.addLine(to: CGPoint(x: x, y: y))
+            case "A":
+                let rx = num(); _ = num(); _ = num(); _ = num()
+                let sweep = num()
+                let x2 = num(); let y2 = num()
+                addArc(to: &path, from: CGPoint(x: x, y: y), to: CGPoint(x: x2, y: y2), radius: rx, sweep: sweep > 0)
+                x = x2; y = y2
+            case "a":
+                let rx = num(); _ = num(); _ = num(); _ = num()
+                let sweep = num()
+                let dx = num(); let dy = num()
+                addArc(to: &path, from: CGPoint(x: x, y: y), to: CGPoint(x: x + dx, y: y + dy), radius: rx, sweep: sweep > 0)
+                x += dx; y += dy
+            case "Z", "z":
+                path.addLine(to: CGPoint(x: startX, y: startY)); path.closeSubpath()
+            default:
+                break
+            }
+        }
+        // Icons are authored in a 24×24 viewBox; scale into the destination.
+        let scaleX = rect.width / 24, scaleY = rect.height / 24
+        return path.applying(CGAffineTransform(scaleX: scaleX, y: scaleY))
+    }
+
+    /// SVG elliptical arc (endpoint parameterization) → center parameterization.
+    /// Only circular arcs appear in the icon set, which keeps this simple.
+    private func addArc(to path: inout Path, from p1: CGPoint, to p2: CGPoint, radius r: CGFloat, sweep: Bool) {
+        let mid = CGPoint(x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2)
+        let dx = p2.x - p1.x, dy = p2.y - p1.y
+        let dist = max((dx * dx + dy * dy).squareRoot(), 0.001)
+        let r = max(r, dist / 2)
+        let h = max((r * r - (dist / 2) * (dist / 2)).squareRoot(), 0)
+        // Perpendicular offset direction: sign flips with the sweep flag.
+        let sign: CGFloat = sweep ? 1 : -1
+        let off = CGPoint(x: -dy / dist * h * sign, y: dx / dist * h * sign)
+        let center = CGPoint(x: mid.x + off.x, y: mid.y + off.y)
+        let startAngle = atan2(p1.y - center.y, p1.x - center.x)
+        let endAngle = atan2(p2.y - center.y, p2.x - center.x)
+        path.addArc(center: center, radius: r, startAngle: Angle(radians: Double(startAngle)), endAngle: Angle(radians: Double(endAngle)), clockwise: !sweep)
+    }
+}
+
+// MARK: - The icon set
+
+struct AUIcon: View {
+    enum Kind {
+        case ear, eye, tap, choose, match, mouth, loop
+        case check, arrow, close, back
+        case play, mic, link, lock
+        case gear, offline, sparkle, flame, trophy
+    }
+
+    /// One authored sub-path: the `d` string plus whether it fills or strokes.
+    fileprivate struct Sub {
+        let d: String
+        let fill: Bool
+        let strokeWidth: CGFloat
+    }
+
+    let kind: Kind
+    var size: CGFloat = 16
+    var color: Color = .auText
+
+    var body: some View {
+        ZStack {
+            ForEach(Array(Self.subpaths(kind).enumerated()), id: \.offset) { _, sub in
+                if sub.fill {
+                    SVGPathShape(d: sub.d).fill(color)
+                } else {
+                    SVGPathShape(d: sub.d)
+                        .stroke(color, style: StrokeStyle(lineWidth: sub.strokeWidth, lineCap: .round, lineJoin: .round))
+                }
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
+    }
+
+    // d strings are copied verbatim from the design files' <symbol> defs
+    // (CourseScreen.dc.html lines 63–79, Aurel.dc.html lines 455/471/129).
+    fileprivate static func subpaths(_ kind: Kind) -> [Sub] {
+        switch kind {
+        case .ear: return [
+            Sub(d: "M6.5 9a5.5 5.5 0 0 1 11 0c0 2.2-1.4 3.2-2.4 4.3-.9 1-1.1 1.9-1.1 3a2.5 2.5 0 0 1-5 0", fill: false, strokeWidth: 1.9),
+            Sub(d: "M9.8 9.2a2.3 2.3 0 0 1 4.4.6", fill: false, strokeWidth: 1.9),
+        ]
+        case .eye: return [
+            Sub(d: "M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z", fill: false, strokeWidth: 1.9),
+            Sub(d: circle(cx: 12, cy: 12, r: 2.9), fill: false, strokeWidth: 1.9),
+        ]
+        case .tap: return [
+            Sub(d: "M9 11V5.5a1.8 1.8 0 0 1 3.6 0V13", fill: false, strokeWidth: 1.9),
+            Sub(d: "M12.6 10.4a1.7 1.7 0 0 1 3.4 0v1.4", fill: false, strokeWidth: 1.9),
+            Sub(d: "M16 11.4a1.7 1.7 0 0 1 3.4 0v3.4c0 3-2.2 5.4-5.4 5.4h-1.3c-2 0-3.2-.8-4.2-2.3L6 14.4a1.7 1.7 0 0 1 2.7-2l1.3 1.6", fill: false, strokeWidth: 1.9),
+        ]
+        case .choose: return [
+            Sub(d: rrect(x: 3, y: 4.5, w: 7, h: 7, r: 2), fill: false, strokeWidth: 1.9),
+            Sub(d: rrect(x: 14, y: 4.5, w: 7, h: 7, r: 2), fill: false, strokeWidth: 1.9),
+            Sub(d: "M6.5 15v4.5", fill: false, strokeWidth: 1.9),
+            Sub(d: "M17.5 14.4l1.9 1.9-1.9 1.9-1.9-1.9Z", fill: false, strokeWidth: 1.9),
+        ]
+        case .match: return [
+            Sub(d: "M10 13.5a3.6 3.6 0 0 0 5.2.3l2.6-2.6a3.6 3.6 0 1 0-5.1-5.1L11.4 7.4", fill: false, strokeWidth: 1.9),
+            Sub(d: "M14 10.5a3.6 3.6 0 0 0-5.2-.3l-2.6 2.6a3.6 3.6 0 1 0 5.1 5.1l1.3-1.3", fill: false, strokeWidth: 1.9),
+        ]
+        case .mouth: return [
+            Sub(d: "M4 12c2.6-3.2 5.3-4.8 8-4.8s5.4 1.6 8 4.8c-2.6 3.2-5.3 4.8-8 4.8S6.6 15.2 4 12Z", fill: false, strokeWidth: 1.9),
+            Sub(d: "M7.5 12h9", fill: false, strokeWidth: 1.9),
+        ]
+        case .loop: return [
+            Sub(d: "M3.6 12a8.4 8.4 0 0 1 14.3-6", fill: false, strokeWidth: 1.9),
+            Sub(d: "M20.4 12a8.4 8.4 0 0 1-14.3 6", fill: false, strokeWidth: 1.9),
+            Sub(d: "M18.3 2.6V6h-3.4", fill: false, strokeWidth: 1.9),
+            Sub(d: "M5.7 21.4V18h3.4", fill: false, strokeWidth: 1.9),
+        ]
+        case .check: return [
+            Sub(d: "M4.5 12.5l5 5 10-11", fill: false, strokeWidth: 2.7),
+        ]
+        case .arrow: return [
+            Sub(d: "M4 12h15", fill: false, strokeWidth: 2.5),
+            Sub(d: "M13 6l6 6-6 6", fill: false, strokeWidth: 2.5),
+        ]
+        case .close: return [
+            Sub(d: "M6 6l12 12M18 6 6 18", fill: false, strokeWidth: 2.5),
+        ]
+        case .back: return [
+            Sub(d: "M15 5l-7 7 7 7", fill: false, strokeWidth: 2.5),
+        ]
+        case .play: return [
+            Sub(d: "M8 5.4v13.2l10.5-6.6Z", fill: true, strokeWidth: 0),
+        ]
+        case .mic: return [
+            Sub(d: rrect(x: 9, y: 2.6, w: 6, h: 11, r: 3), fill: false, strokeWidth: 1.9),
+            Sub(d: "M5.5 11.5a6.5 6.5 0 0 0 13 0", fill: false, strokeWidth: 1.9),
+            Sub(d: "M12 18v3.4", fill: false, strokeWidth: 1.9),
+        ]
+        case .link: return [
+            Sub(d: "M9 12h6", fill: false, strokeWidth: 1.9),
+            Sub(d: "M10 8H7.5a4 4 0 0 0 0 8H10", fill: false, strokeWidth: 1.9),
+            Sub(d: "M14 8h2.5a4 4 0 0 1 0 8H14", fill: false, strokeWidth: 1.9),
+        ]
+        case .lock: return [
+            Sub(d: rrect(x: 4.5, y: 10.5, w: 15, h: 10, r: 2.6), fill: false, strokeWidth: 1.9),
+            Sub(d: "M8 10.5V7.6a4 4 0 0 1 8 0v2.9", fill: false, strokeWidth: 1.9),
+        ]
+        case .gear: return [
+            Sub(d: circle(cx: 12, cy: 12, r: 3.2), fill: false, strokeWidth: 2.4),
+            Sub(d: "M12 3v2.4M12 18.6V21M4.2 7.5l2 1.2M17.8 15.3l2 1.2M4.2 16.5l2-1.2M17.8 8.7l2-1.2", fill: false, strokeWidth: 2.4),
+        ]
+        case .offline: return [
+            Sub(d: "M5 12.5a9 9 0 0 1 14 0", fill: false, strokeWidth: 2.6),
+            Sub(d: "M8.5 16a5 5 0 0 1 7 0", fill: false, strokeWidth: 2.6),
+            Sub(d: circle(cx: 12, cy: 19.4, r: 0.7), fill: true, strokeWidth: 0),
+            Sub(d: "M3 3l18 18", fill: false, strokeWidth: 2.6),
+        ]
+        case .sparkle: return [
+            Sub(d: "M7 0 C7.6 5.1 8.9 6.4 14 7 C8.9 7.6 7.6 8.9 7 14 C6.4 8.9 5.1 7.6 0 7 C5.1 6.4 6.4 5.1 7 0 Z", fill: true, strokeWidth: 0),
+        ]
+        case .flame: return [
+            Sub(d: "M12 2.5C9 6 6.5 8.2 6.5 12.5a5.5 5.5 0 0 0 11 0c0-2.2-1.1-3.4-2.2-4.6-.5 1-1.2 1.7-2.1 2.1.3-2.7-.5-5.4-1.2-7.5Z", fill: true, strokeWidth: 0),
+        ]
+        case .trophy: return [
+            Sub(d: rrect(x: 7, y: 4, w: 10, h: 8.5, r: 2), fill: false, strokeWidth: 1.9),
+            Sub(d: "M7 5.5H4.5a3 3 0 0 0 3 3M17 5.5h2.5a3 3 0 0 1-3 3", fill: false, strokeWidth: 1.9),
+            Sub(d: "M12 12.5v3M8.5 19.5h7M10 15.5h4l.8 4h-5.6Z", fill: false, strokeWidth: 1.9),
+        ]
+        }
+    }
+
+    /// Circle as two arcs — the way the authored symbols encode them.
+    static func circle(cx: CGFloat, cy: CGFloat, r: CGFloat) -> String {
+        "M\(cx) \(cy)m\(-r) 0a\(r) \(r) 0 1 0 \(2 * r) 0a\(r) \(r) 0 1 0 \(-2 * r) 0Z"
+    }
+
+    /// Rounded rect via arcs (rect rx, as authored).
+    static func rrect(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat, r: CGFloat) -> String {
+        "M\(x + r) \(y)H\(x + w - r)A\(r) \(r) 0 0 1 \(x + w) \(y + r)V\(y + h - r)A\(r) \(r) 0 0 1 \(x + w - r) \(y + h)H\(x + r)A\(r) \(r) 0 0 1 \(x) \(y + h - r)V\(y + r)A\(r) \(r) 0 0 1 \(x + r) \(y)Z"
+    }
+}
+
+extension AUIcon.Kind {
+    /// Maps the authored `icon` strings on practice items.
+    init?(rawIcon: String) {
+        switch rawIcon {
+        case "ear": self = .ear
+        case "eye": self = .eye
+        case "choose": self = .choose
+        case "tap", "hand": self = .tap
+        case "match": self = .match
+        case "mouth", "speak": self = .mouth
+        case "loop", "replay": self = .loop
+        default: return nil
+        }
+    }
+}
