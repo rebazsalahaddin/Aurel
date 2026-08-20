@@ -30,6 +30,13 @@ Statuses: `open → verified → fixing → fixed → retested-closed | deferred
 | S3-002 | `nextLine` player type handled but unused by any bank (dead branch) | S3 | architecture | CourseScreen.dc.html:1202 | backlog |
 | S3-003 | CourseScreen dark-token subset (10 `--au-*` names + shadow overrides missing vs shell) — player dark-modes on a smaller surface | S3 | design-fidelity | CourseScreen.dc.html:20 | backlog (owner ruling: intentional-looking asymmetry) |
 | S3-004 | WCAG: primary-button label `#fff8f0` on `--color-accent-600` = 4.26:1 — passes the 3:1 large-text threshold (16.5 pt semibold) but not 4.5:1 body-text | S3 | accessibility | qa/evidence/token-contrast.json | backlog (authored palette — owner register) |
+| S1-005 | C2-L02 and C3-L03 lesson titles drift from authored H1s: ships "Numbers, Contacts, and Are You…?" vs "Big Numbers and Contact Details"; "Profile Cards and Your Dot" vs "Profiles, Your Introduction, the Chapter Quiz" | S1 | content-fidelity (manifest harness) | A1_C02_L02_LESSON.md:1, A1_C03_L03_LESSON.md:1 | open — fix in export pipeline, design/ untouched |
+| S1-006 | C2 Set C cards V010–V018 carry shifted illustration ids vs authored records AND briefs (V010 phone → ILL016 seven-cups with phone alt attached; ILL018–022/024 misassigned) | S1 | content-fidelity (manifest harness) | design/course-c2.js:50–58 vs english_course records | open — fix in export pipeline |
+| S2-007 | Four C3 practice items reorder options vs authored order (keys remapped, answer text preserved): PR-RD003, PR-RD005, PR-LS012, PR-CV016 | S2 | content-fidelity (manifest harness) | A1_C03 LESSON records | open |
+| S2-008 | Feedback copy drift: PR-V014 ok drops " 🙂"; QZ-WR001 no "(? )"→"(?)" | S2 | content-fidelity (manifest harness) | C1 records | open |
+| S2-009 | C2 V009 `w` drops trailing period ("Please speak slowly.") | S2 | content-fidelity (manifest harness) | C2 records | open |
+| S2-010 | Card alts paraphrase record alt_text — 21 further instances beyond S2-004 (C1 ×7, C2 ×14 incl. V003–V018, C3 V032) | S2 | content-fidelity (manifest harness) | vocab records | open — app export pipeline |
+| S3-005 | 58 ILL ids carry >1 distinct alt within a chapter (english_course authors per-use alts — record alt_text ≠ ILL-brief alt; surface pinned, not asserted one-alt) | S3 | content-fidelity | ILL briefs vs records | backlog |
 
 ## Owner decisions register
 
