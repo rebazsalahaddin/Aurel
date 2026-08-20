@@ -819,6 +819,7 @@ struct PracticeScreenView: View {
                 let picked = m.sel == o.id
                 let isKey = item.isKey(o)
                 optionRow(o, picked: picked, isKey: isKey, item: item)
+                    .accessibilityIdentifier("au.player.option.\(o.id)")
             }
         }
         .padding(.bottom, 14)

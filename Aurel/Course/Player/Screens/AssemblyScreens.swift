@@ -88,6 +88,7 @@ struct OrderScreenView: View {
                     .foregroundStyle(at != nil ? Color.auTintText : Color.auText)
                 }
                 .buttonStyle(.auTap)
+                .accessibilityIdentifier("au.player.tile.\(k)")
             }
         }
 

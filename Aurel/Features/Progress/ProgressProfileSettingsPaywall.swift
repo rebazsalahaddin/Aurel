@@ -750,6 +750,7 @@ struct SettingsView: View {
                                             ? Color.auBackground : Color.auText.opacity(0.5))
                             }
                             .buttonStyle(.auTap)
+                            .accessibilityIdentifier("au.settings.type.\(step)")
                         }
                     }
                     Text("Pleased to meet you.")

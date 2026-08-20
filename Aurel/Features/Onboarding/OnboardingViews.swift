@@ -51,7 +51,7 @@ struct GoalView: View {
                 VStack(spacing: 11) {
                     ForEach(Array(Self.goals.enumerated()), id: \.element.id) { i, goal in
                         let on = env.router.goals.contains(goal.id)
-                        SelectableRow(selected: on) {
+                        SelectableRow(selected: on, aid: "au.goal.\(goal.id)") {
                             SVGPathShape(d: goal.d)
                                 .stroke(
                                     on ? Color.auBackground : Color.auAccent,
@@ -127,7 +127,10 @@ struct PlacementView: View {
                     ForEach(Array(Self.levels.enumerated()), id: \.element.id) { i, level in
                         Group {
                             if level.ready {
-                                SelectableRow(selected: env.router.level == level.id) {
+                                SelectableRow(
+                                    selected: env.router.level == level.id,
+                                    aid: "au.level.\(level.id)"
+                                ) {
                                     Text(level.band)
                                         .font(.caprasimo(size: 22))
                                         .frame(width: 46)
@@ -218,7 +221,7 @@ struct CommitView: View {
                 VStack(spacing: 11) {
                     ForEach(Array(Self.commitOpts.enumerated()), id: \.element.n) { i, opt in
                         let on = env.router.commit == opt.n
-                        SelectableRow(selected: on) {
+                        SelectableRow(selected: on, aid: "au.commit.\(opt.n)") {
                             Text("\(opt.n)")
                                 .font(.figtree(.bold, size: 15))
                                 .monospacedDigit()
@@ -285,6 +288,9 @@ struct CommitView: View {
                         }
                         .buttonStyle(.auTap)
                         .accessibilityAddTraits(on ? .isSelected : [])
+                        .accessibilityIdentifier(
+                            "au.remind.\(opt.t.replacingOccurrences(of: ":", with: ""))"
+                        )
                         .auStagger(i)
                     }
                 }

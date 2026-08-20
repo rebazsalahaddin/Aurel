@@ -71,12 +71,26 @@ targets:
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/Aurel.app/Aurel
         BUNDLE_LOADER: $(TEST_HOST)
         GENERATE_INFOPLIST_FILE: YES
+  AurelUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: AurelUITests
+    dependencies:
+      - target: Aurel
+    settings:
+      base:
+        PRODUCT_NAME: $(TARGET_NAME)
+        PRODUCT_BUNDLE_IDENTIFIER: com.aurel.uitests
+        TEST_TARGET_NAME: Aurel
+        GENERATE_INFOPLIST_FILE: YES
 schemes:
   Aurel:
     build:
       targets:
         Aurel: all
         AurelTests: [test]
+        AurelUITests: [test]
     run:
       config: Debug
     test:
@@ -84,3 +98,4 @@ schemes:
       gatherCoverageData: false
       targets:
         - AurelTests
+        - AurelUITests

@@ -58,6 +58,36 @@ final class AppRouter {
             default: nil
             }
         }
+
+        /// The authored screen name (UI-test root marker `au.screen.<rawName>`).
+        var rawName: String {
+            switch self {
+            case .welcome: "welcome"
+            case .goal: "goal"
+            case .placement: "placement"
+            case .commit: "commit"
+            case .plan: "plan"
+            case .assess: "assess"
+            case .assessReview: "assessReview"
+            case .login: "login"
+            case .home: "home"
+            case .course: "course"
+            case .lesson: "lesson"
+            case .result: "result"
+            case .streak: "streak"
+            case .leaderboard: "leaderboard"
+            case .stories: "stories"
+            case .reader: "reader"
+            case .hunt: "hunt"
+            case .scene: "scene"
+            case .speak: "speak"
+            case .review: "review"
+            case .progress: "progress"
+            case .profile: "profile"
+            case .settings: "settings"
+            case .paywall: "paywall"
+            }
+        }
     }
 
     // MARK: Ephemeral state (seedFor base, lines 1732–1746)
@@ -172,6 +202,14 @@ final class AppRouter {
         {
             screen = s
             persist()
+        }
+        // UI-test fast path: launch with ["-AUREL_TEST_START", "home"] — routes
+        // like the env hook but never writes the store.
+        let args = ProcessInfo.processInfo.arguments
+        if let i = args.firstIndex(of: "-AUREL_TEST_START"), i + 1 < args.count,
+            let s = Screen.named(args[i + 1])
+        {
+            screen = s
         }
     }
 

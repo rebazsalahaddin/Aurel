@@ -663,7 +663,7 @@ struct SpeakView: View {
                     AUField(label: "Type the sentence instead") {
                         AUTextField(
                             text: Binding(get: { r.typed }, set: { r.typed = $0 }),
-                            placeholder: "Hello, I’m Maya…")
+                            placeholder: "Hello, I’m Maya…", aid: "au.speak.typed")
                     }
                     .padding(.bottom, 12)
                     APillButton(title: "Check what I typed") {

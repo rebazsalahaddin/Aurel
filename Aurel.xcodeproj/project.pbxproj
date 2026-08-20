@@ -22,6 +22,7 @@
 		4121B64C1C89C26F791987A1CE4F1E46 /* CoreScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0639F37AD456BFA682934CC46D8882EA /* CoreScreens.swift */; };
 		4209B168FC50A5E94045FB4D79A98A8B /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B367F3146D919ABA3DA2BA467EA4DDFF /* PlayerModel.swift */; };
 		4226AC2B2F73C48A69052D8A273FBD60 /* OFL-Caprasimo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D22511BEADDAF97BFC6F325273B442C /* OFL-Caprasimo.txt */; };
+		42A8A242208F454B5A30C7A7B4190160 /* DesignTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E730F518B882EBBFEA897E38649ED2D3 /* DesignTokenTests.swift */; };
 		4931EB1EB9492B252C4C7000FE55DAFE /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFC4E4637D4BA30372F04F2E96752E7E /* Typography.swift */; };
 		4A516BA3D5BEFFA109A902241E74F8CC /* AssessScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23D9287CCF080A81E2D67F3149CA4688 /* AssessScreens.swift */; };
 		5268A4DA5F9EB8E8B5195077C4D21927 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A938B1FCD011D2DAF01629688533D2 /* HomeView.swift */; };
@@ -31,11 +32,13 @@
 		651CF039F5AEBA33E4CBD5CE71BE41E2 /* a1-course.json in Resources */ = {isa = PBXBuildFile; fileRef = AD5F6F16628FDE7E581608E1744F8314 /* a1-course.json */; };
 		7242BD8322619D646B6321BB72728278 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86DA4CDC85C8791C5428BC7CD78C608 /* LoginView.swift */; };
 		7499843242BAD7212ED22B548B2457B6 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */; };
+		7E949D87DCCF235BB508404ACF21D287 /* design-tokens.json in Resources */ = {isa = PBXBuildFile; fileRef = AA63B953F616151E262C391E0E332F41 /* design-tokens.json */; };
 		8110C63B45A232CF95916A8A4D420662 /* Figtree-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A63521FA91725A3E594DFAACBA24F070 /* Figtree-SemiBold.ttf */; };
 		8265BAFB6C0E6FDD6FEEC5531156AA5F /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */; };
 		827F3FF10004A9CDE36281E20D67BB28 /* DesignTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C84AC96FE52062FD9F3DB7755DD98B9 /* DesignTokens.swift */; };
 		8711075CBD3FAAF3CF852451D41F22C7 /* ScreenPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990748216B0670DE075A105AB65E9BC /* ScreenPayloads.swift */; };
 		87AA29122BE05705D6106275A86DE488 /* PracticeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45A4D2ADF1967DC22A134C384FDCB41 /* PracticeScreen.swift */; };
+		8D004542D5F93D98F0D2A8328D0267C0 /* SmokeSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACCB67CB4C4337C9EB2A9A66254C86DE /* SmokeSuite.swift */; };
 		9A062E887526B4DDCBA27174B2CE7A2A /* OFL-Figtree.txt in Resources */ = {isa = PBXBuildFile; fileRef = 44E530909B70A6BEC1FE9CFEF2F0944C /* OFL-Figtree.txt */; };
 		9B021470EF8DF98935C30762DB620E08 /* Figtree-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E48D8C37FDA9F391136E44C2FB52A962 /* Figtree-Medium.ttf */; };
 		9F2A60D18FC61D93D3191B4596A1135C /* ServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */; };
@@ -45,6 +48,7 @@
 		B4F144AF219C59605143A02BF2AE7381 /* OnboardingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9357AD1BBE4AD1A8C29AC165F9F42A02 /* OnboardingViews.swift */; };
 		BDB2A6C44FEABAA2D25AEE24F5F7A380 /* AppRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1464E8E27216353A9088DB87E46E8BA /* AppRouter.swift */; };
 		BE9D33B122D239C6A7A736DC173FC152 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7090FF21D36942AF6126F47E92E1D47 /* Services.swift */; };
+		D9C81F9F553C744F1023ED6BC34B6575 /* TokenRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD928AB3D3C368C7501755B60A2472A /* TokenRegistry.swift */; };
 		DB768EA5A74BF27CAA58921464F1481B /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE2378615BA4DD6CD955D35998F15B5 /* WelcomeView.swift */; };
 		DDEC2218CBC8B88A1067B5E39E273827 /* AurelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CC0044C3C61184624946A128732103A /* AurelApp.swift */; };
 		E306BF8CB3CDD77FD9429951C0D2409D /* ArcSkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAB7BAEA689D85557BAC25BB91ED072 /* ArcSkyView.swift */; };
@@ -57,6 +61,13 @@
 
 /* Begin PBXContainerItemProxy section */
 		DAF18554C8CC00B522F449F47E1F03BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 037088A85A43347346C10AE6BA312594 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D8A1A1C4524740FE0C24B795CCEFA29F;
+			remoteInfo = Aurel;
+		};
+		E2DDDDFE15B6925446564BCB24438D29 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 037088A85A43347346C10AE6BA312594 /* Project object */;
 			proxyType = 1;
@@ -94,10 +105,14 @@
 		86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		8BEA9EC2CCC2CF2D55CD8F514C767117 /* CourseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseStore.swift; sourceTree = "<group>"; };
 		9357AD1BBE4AD1A8C29AC165F9F42A02 /* OnboardingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViews.swift; sourceTree = "<group>"; };
+		9CD928AB3D3C368C7501755B60A2472A /* TokenRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenRegistry.swift; sourceTree = "<group>"; };
 		A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDecodingTests.swift; sourceTree = "<group>"; };
 		A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesTests.swift; sourceTree = "<group>"; };
+		A3DA7FBFF5A05EFC98FB0F14562956D1 /* AurelUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AurelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A63521FA91725A3E594DFAACBA24F070 /* Figtree-SemiBold.ttf */ = {isa = PBXFileReference; path = "Figtree-SemiBold.ttf"; sourceTree = "<group>"; };
 		A86DA4CDC85C8791C5428BC7CD78C608 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		AA63B953F616151E262C391E0E332F41 /* design-tokens.json */ = {isa = PBXFileReference; path = "design-tokens.json"; sourceTree = "<group>"; };
+		ACCB67CB4C4337C9EB2A9A66254C86DE /* SmokeSuite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeSuite.swift; sourceTree = "<group>"; };
 		AD5F6F16628FDE7E581608E1744F8314 /* a1-course.json */ = {isa = PBXFileReference; path = "a1-course.json"; sourceTree = "<group>"; };
 		B367F3146D919ABA3DA2BA467EA4DDFF /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
 		BB469EA1BC00FA466E615A86C6F9A05F /* Figtree-Regular.ttf */ = {isa = PBXFileReference; path = "Figtree-Regular.ttf"; sourceTree = "<group>"; };
@@ -113,6 +128,7 @@
 		E25DFA36A0830D2D54B75F4D3FFB5B70 /* Figtree-Bold.ttf */ = {isa = PBXFileReference; path = "Figtree-Bold.ttf"; sourceTree = "<group>"; };
 		E3689B428CA08AF8EE1A1050CF5F7407 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		E48D8C37FDA9F391136E44C2FB52A962 /* Figtree-Medium.ttf */ = {isa = PBXFileReference; path = "Figtree-Medium.ttf"; sourceTree = "<group>"; };
+		E730F518B882EBBFEA897E38649ED2D3 /* DesignTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokenTests.swift; sourceTree = "<group>"; };
 		F7090FF21D36942AF6126F47E92E1D47 /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
 		F9A938B1FCD011D2DAF01629688533D2 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -166,8 +182,17 @@
 			children = (
 				B4AF3A70E3397ED3DCC2337374A4BF58 /* Aurel */,
 				47DB46E71B0AC591475F6F11B3F74CF1 /* AurelTests */,
+				42E2A4688B3CFB5949104CB3AF9AF21F /* AurelUITests */,
 				8A596D19B253AE6141A3644EA2FEFAA3 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		42E2A4688B3CFB5949104CB3AF9AF21F /* AurelUITests */ = {
+			isa = PBXGroup;
+			children = (
+				ACCB67CB4C4337C9EB2A9A66254C86DE /* SmokeSuite.swift */,
+			);
+			path = AurelUITests;
 			sourceTree = "<group>";
 		};
 		46E1145E33A740F370B7A75F6297B4D8 /* Services */ = {
@@ -182,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */,
+				E730F518B882EBBFEA897E38649ED2D3 /* DesignTokenTests.swift */,
 				A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */,
 				86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */,
 			);
@@ -195,6 +221,7 @@
 				52CDEE00BFFF8382D0B00976A7765251 /* Fonts */,
 				DFAB7BAEA689D85557BAC25BB91ED072 /* ArcSkyView.swift */,
 				6C84AC96FE52062FD9F3DB7755DD98B9 /* DesignTokens.swift */,
+				9CD928AB3D3C368C7501755B60A2472A /* TokenRegistry.swift */,
 				DFC4E4637D4BA30372F04F2E96752E7E /* Typography.swift */,
 			);
 			path = DesignSystem;
@@ -257,6 +284,7 @@
 			children = (
 				522AF703E3799709C030C8026496D609 /* Aurel.app */,
 				1FFBFD0B6D28D25C6341550D5EF71A72 /* AurelTests.xctest */,
+				A3DA7FBFF5A05EFC98FB0F14562956D1 /* AurelUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -320,6 +348,14 @@
 			path = Onboarding;
 			sourceTree = "<group>";
 		};
+		D494FA4F12BFCE4FBAF2FC0EC2B7C8CA /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				AA63B953F616151E262C391E0E332F41 /* design-tokens.json */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
 		E2EBE9498D49F2A2DAFB78F6F963D9AD /* PracticeHub */ = {
 			isa = PBXGroup;
 			children = (
@@ -342,6 +378,7 @@
 			isa = PBXGroup;
 			children = (
 				987E5E3248EA78D84A9FFF11E64E4B0D /* Course */,
+				D494FA4F12BFCE4FBAF2FC0EC2B7C8CA /* Design */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -376,6 +413,22 @@
 			productReference = 1FFBFD0B6D28D25C6341550D5EF71A72 /* AurelTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		B5EFF1B7DCD8D7BB727DFB3ACFE8F00B /* AurelUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4AE808694BD53947EDEA51159D851296 /* Build configuration list for PBXNativeTarget "AurelUITests" */;
+			buildPhases = (
+				9BBB7D6A48CDE41898229968E175D48D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E4E9C80C3394968D36C1F95BBB8F1E96 /* PBXTargetDependency */,
+			);
+			name = AurelUITests;
+			productName = AurelUITests;
+			productReference = A3DA7FBFF5A05EFC98FB0F14562956D1 /* AurelUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		D8A1A1C4524740FE0C24B795CCEFA29F /* Aurel */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DEC39AC9C86AF52A6A6E5E0DC3975FD0 /* Build configuration list for PBXNativeTarget "Aurel" */;
@@ -405,6 +458,11 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = D8A1A1C4524740FE0C24B795CCEFA29F;
 					};
+					B5EFF1B7DCD8D7BB727DFB3ACFE8F00B = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = D8A1A1C4524740FE0C24B795CCEFA29F;
+					};
 					D8A1A1C4524740FE0C24B795CCEFA29F = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
@@ -424,6 +482,7 @@
 			targets = (
 				D8A1A1C4524740FE0C24B795CCEFA29F /* Aurel */,
 				00EAB76AA43B6158573741E311D53B21 /* AurelTests */,
+				B5EFF1B7DCD8D7BB727DFB3ACFE8F00B /* AurelUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -443,6 +502,7 @@
 				4226AC2B2F73C48A69052D8A273FBD60 /* OFL-Caprasimo.txt in Resources */,
 				9A062E887526B4DDCBA27174B2CE7A2A /* OFL-Figtree.txt in Resources */,
 				651CF039F5AEBA33E4CBD5CE71BE41E2 /* a1-course.json in Resources */,
+				7E949D87DCCF235BB508404ACF21D287 /* design-tokens.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,6 +544,7 @@
 				BE9D33B122D239C6A7A736DC173FC152 /* Services.swift in Sources */,
 				63D9B6DE759E1D2240EDFBD4B4A90E01 /* Shared.swift in Sources */,
 				11E5D01CF1E3197682C1C198F66286A4 /* StreakBoardViews.swift in Sources */,
+				D9C81F9F553C744F1023ED6BC34B6575 /* TokenRegistry.swift in Sources */,
 				4931EB1EB9492B252C4C7000FE55DAFE /* Typography.swift in Sources */,
 				DB768EA5A74BF27CAA58921464F1481B /* WelcomeView.swift in Sources */,
 			);
@@ -494,8 +555,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BA477ADE6A74DAD08D7D36F503D434C /* CourseDecodingTests.swift in Sources */,
+				42A8A242208F454B5A30C7A7B4190160 /* DesignTokenTests.swift in Sources */,
 				9F2A60D18FC61D93D3191B4596A1135C /* ServicesTests.swift in Sources */,
 				8265BAFB6C0E6FDD6FEEC5531156AA5F /* SmokeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9BBB7D6A48CDE41898229968E175D48D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D004542D5F93D98F0D2A8328D0267C0 /* SmokeSuite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,9 +577,24 @@
 			target = D8A1A1C4524740FE0C24B795CCEFA29F /* Aurel */;
 			targetProxy = DAF18554C8CC00B522F449F47E1F03BA /* PBXContainerItemProxy */;
 		};
+		E4E9C80C3394968D36C1F95BBB8F1E96 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D8A1A1C4524740FE0C24B795CCEFA29F /* Aurel */;
+			targetProxy = E2DDDDFE15B6925446564BCB24438D29 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		21A25EC7A0C959BE62F88FB59E384A54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aurel.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Aurel;
+			};
+			name = Release;
+		};
 		321D75AA49EC57813DA80629B3939E15 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -522,6 +607,16 @@
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
+		};
+		4E9E7F2BC9E055E49AB5C13657C4A42B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aurel.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = Aurel;
+			};
+			name = Debug;
 		};
 		829AFF1F141FE541C186B81D74417AC9 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -592,6 +687,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4AE808694BD53947EDEA51159D851296 /* Build configuration list for PBXNativeTarget "AurelUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4E9E7F2BC9E055E49AB5C13657C4A42B /* Debug */,
+				21A25EC7A0C959BE62F88FB59E384A54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "";
+		};
 		5D7E409FE99B6C3982152811D4E846EC /* Build configuration list for PBXNativeTarget "AurelTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

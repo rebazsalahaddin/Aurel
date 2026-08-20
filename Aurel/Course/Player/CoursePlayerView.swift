@@ -56,6 +56,7 @@ private struct PlayerChrome: View {
                     }
                     .buttonStyle(.auTap)
                     .accessibilityLabel(bound ? "Close the lesson" : "Previous screen")
+                    .accessibilityIdentifier(bound ? "au.player.close" : "au.player.back")
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Ch \(cur.chapter.n) · L\(cur.lesson.n) \(cur.lesson.title)")
@@ -165,9 +166,10 @@ struct ScreenColumn<Content: View>: View {
 /// "Go on" primary with the arrow, the standard screen CTA.
 struct GoOnButton: View {
     let label: String
+    var aid: String = "au.player.go-on"
     let action: () -> Void
 
     var body: some View {
-        APillButton(title: label, icon: .arrow, action: action)
+        APillButton(title: label, icon: .arrow, aid: aid, action: action)
     }
 }

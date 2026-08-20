@@ -37,6 +37,8 @@ struct APillButton: View {
     var icon: AUIcon.Kind? = nil
     var compact: Bool = false  // 13/16 padding + 14.5 pt font (inline card buttons)
     var disabled: Bool = false
+    /// UI-test identifier; defaults to a slug of the title (`au.btn.begin-the-path`).
+    var aid: String? = nil
     let action: () -> Void
 
     @Environment(\.colorScheme) private var scheme
@@ -67,6 +69,7 @@ struct APillButton: View {
         .buttonStyle(.auTap)
         .disabled(disabled)
         .opacity(disabled ? 0.45 : 1)
+        .accessibilityIdentifier(aid ?? "au.btn.\(title.auSlug)")
     }
 
     @ViewBuilder
@@ -141,6 +144,8 @@ struct APillButton: View {
 /// `.au-link` — accent text with the growing underline.
 struct ALinkButton: View {
     let title: String
+    /// UI-test identifier; defaults to a slug of the title (`au.link.sign-in`).
+    var aid: String? = nil
     let action: () -> Void
     @State private var hovered = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -163,6 +168,18 @@ struct ALinkButton: View {
         }
         .buttonStyle(.auTap)
         .onHover { hovered = $0 }
+        .accessibilityIdentifier(aid ?? "au.link.\(title.auSlug)")
+    }
+}
+
+extension String {
+    /// "Begin the path" → "begin-the-path" (for derived UI-test identifiers).
+    var auSlug: String {
+        lowercased()
+            .replacingOccurrences(of: "&", with: " and ")
+            .replacingOccurrences(of: "'", with: "")
+            .filter { $0.isLetter || $0.isNumber || $0 == " " || $0 == "-" }
+            .replacingOccurrences(of: " ", with: "-")
     }
 }
 

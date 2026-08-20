@@ -34,6 +34,20 @@
                ReferencedContainer = "container:Aurel.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B5EFF1B7DCD8D7BB727DFB3ACFE8F00B"
+               BuildableName = "AurelUITests.xctest"
+               BlueprintName = "AurelUITests"
+               ReferencedContainer = "container:Aurel.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -49,6 +63,16 @@
                BlueprintIdentifier = "00EAB76AA43B6158573741E311D53B21"
                BuildableName = "AurelTests.xctest"
                BlueprintName = "AurelTests"
+               ReferencedContainer = "container:Aurel.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B5EFF1B7DCD8D7BB727DFB3ACFE8F00B"
+               BuildableName = "AurelUITests.xctest"
+               BlueprintName = "AurelUITests"
                ReferencedContainer = "container:Aurel.xcodeproj">
             </BuildableReference>
          </TestableReference>

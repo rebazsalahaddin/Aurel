@@ -140,7 +140,7 @@ struct HomeView: View {
                         .lineSpacing(12.5 * 0.45)
                         .foregroundStyle(Color.auText.opacity(0.52))
                     HStack(spacing: 9) {
-                        APillButton(title: "Resume", compact: true) {
+                        APillButton(title: "Resume", compact: true, aid: "au.home.resume") {
                             env.router.resumePending()
                         }
                         Button {
@@ -157,12 +157,14 @@ struct HomeView: View {
                                 .foregroundStyle(Color.auText.opacity(0.58))
                         }
                         .buttonStyle(.auTap)
+                        .accessibilityIdentifier("au.home.start-over")
                     }
                     .padding(.top, 14)
                 }
             }
             .padding(.horizontal, 24)
             .padding(.top, 14)
+            .accessibilityIdentifier("au.home.pending")
         }
     }
 
@@ -216,7 +218,7 @@ struct HomeView: View {
                     .padding(.bottom, 13)
 
                     if arc.arcT < 1 {
-                        APillButton(title: arcLabel) {
+                        APillButton(title: arcLabel, aid: "au.home.today") {
                             if !r.dayLesson {
                                 r.goCourse(min(pathAt, 3))
                             } else {
@@ -259,6 +261,7 @@ struct HomeView: View {
                                 .foregroundStyle(Color.auText.opacity(0.62))
                         }
                         .buttonStyle(.auTap)
+                        .accessibilityIdentifier("au.home.one-more")
                         .padding(.top, 10)
                     }
                 }
@@ -374,6 +377,7 @@ struct HomeView: View {
                 .auLift()
             }
             .buttonStyle(.auTap)
+            .accessibilityIdentifier("au.home.next-chapter")
             .frame(width: 402 * pathScale - 48)
             .position(x: 402 * pathScale / 2, y: 570 * pathScale + 28)
         }

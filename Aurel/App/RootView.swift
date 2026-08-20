@@ -40,6 +40,12 @@ private struct ScreenHost: View {
 
     @ViewBuilder
     var body: some View {
+        screenBody
+            .accessibilityIdentifier("au.screen.\(env.router.screen.rawName)")
+    }
+
+    @ViewBuilder
+    private var screenBody: some View {
         switch env.router.screen {
         case .welcome: WelcomeView()
         case .goal: GoalView()

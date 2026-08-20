@@ -323,6 +323,7 @@ struct LessonPathNode: View {
         .buttonStyle(.auTap)
         .accessibilityLabel("Lesson \(index + 1), \(label)")
         .accessibilityHint(meta)
+        .accessibilityIdentifier("au.home.node.\(index)")
     }
 
     /// auPulse halo on the open node.

@@ -551,6 +551,7 @@ struct AUTabBar: View {
         .buttonStyle(.auTap)
         .accessibilityLabel(label)
         .accessibilityAddTraits(on ? .isSelected : [])
+        .accessibilityIdentifier("au.tab.\(screen.rawName)")
     }
 
     @ViewBuilder
@@ -606,6 +607,8 @@ struct OfflineBanner: View {
 /// A card row that tints when selected (goals, levels, commit options).
 struct SelectableRow<Leading: View, Content: View>: View {
     var selected: Bool
+    /// UI-test identifier (e.g. `au.goal.work`).
+    var aid: String? = nil
     @ViewBuilder var leading: () -> Leading
     @ViewBuilder var content: () -> Content
     var action: () -> Void
@@ -623,6 +626,7 @@ struct SelectableRow<Leading: View, Content: View>: View {
         }
         .buttonStyle(.auTap)
         .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityIdentifier(aid ?? "au.row")
     }
 
     @ViewBuilder

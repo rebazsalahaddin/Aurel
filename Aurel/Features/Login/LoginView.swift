@@ -42,14 +42,15 @@ struct LoginView: View {
                         text: Binding(
                             get: { env.router.email },
                             set: { env.router.setEmail($0) }
-                        ), placeholder: "you@example.com", keyboard: .emailAddress)
+                        ), placeholder: "you@example.com", keyboard: .emailAddress,
+                        aid: "au.login.email")
                 }
                 AUField(label: "Password") {
                     AUTextField(
                         text: Binding(
                             get: { env.router.pass },
                             set: { env.router.setPass($0) }
-                        ), placeholder: "••••••••", secure: true)
+                        ), placeholder: "••••••••", secure: true, aid: "au.login.pass")
                 }
             }
             .padding(.bottom, 10)
@@ -146,6 +147,8 @@ struct AUTextField: View {
     var placeholder: String = ""
     var secure = false
     var keyboard: UIKeyboardType = .default
+    /// UI-test identifier applied to the field itself.
+    var aid: String? = nil
 
     var body: some View {
         Group {
@@ -160,6 +163,7 @@ struct AUTextField: View {
             }
         }
         .keyboardType(keyboard)
+        .accessibilityIdentifier(aid ?? "au.field")
         .textInputAutocapitalization(.never)
         .font(.figtree(.regular, size: 15))
         .foregroundStyle(Color.auText)

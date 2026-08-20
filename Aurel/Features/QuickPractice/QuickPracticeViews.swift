@@ -454,6 +454,7 @@ struct LessonRunnerView: View {
         }
         .buttonStyle(.auTap)
         .disabled(r.checked)
+        .accessibilityIdentifier("au.lesson.option.\(String.letter(i))")
     }
 
     // MARK: verdict + primary (lines 818–837)

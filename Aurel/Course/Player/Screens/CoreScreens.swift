@@ -64,6 +64,7 @@ struct PromiseScreenView: View {
                         .padding(.vertical, 10)
                     }
                     .buttonStyle(.auTap)
+                    .accessibilityIdentifier("au.player.go-on")
                 }
             }
         }
@@ -143,6 +144,7 @@ struct HookScreenView: View {
                     }
                     .buttonStyle(.auTap)
                     .accessibilityLabel("Play again")
+                    .accessibilityIdentifier("au.player.replay")
                 }
                 .padding(.bottom, 18)
 
