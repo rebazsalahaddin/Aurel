@@ -1,0 +1,2176 @@
+{
+  "colors": {
+    "--au-accent-press": {
+      "dark": {
+        "a": 1,
+        "b": 0.4196,
+        "g": 0.6275,
+        "r": 0.9647
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 20,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 21,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.102,
+        "g": 0.2863,
+        "r": 0.549
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 20,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-accent-text": {
+      "dark": {
+        "a": 1,
+        "b": 0.6471,
+        "g": 0.7765,
+        "r": 1
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 20,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 21,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.102,
+        "g": 0.2863,
+        "r": 0.549
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 20,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-dune": {
+      "dark": {
+        "a": 1,
+        "b": 0.0902,
+        "g": 0.1137,
+        "r": 0.1647
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.4784,
+        "g": 0.651,
+        "r": 0.8039
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-dune-2": {
+      "dark": {
+        "a": 1,
+        "b": 0.0627,
+        "g": 0.0706,
+        "r": 0.102
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.3647,
+        "g": 0.549,
+        "r": 0.7255
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-dune-text": {
+      "dark": {
+        "a": 1,
+        "b": 0.8039,
+        "g": 0.8863,
+        "r": 0.9412
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.1255,
+        "g": 0.1961,
+        "r": 0.2902
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-edge": {
+      "dark": {
+        "a": 0.08,
+        "b": 1,
+        "g": 1,
+        "r": 1
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 0.08,
+        "b": 0.1137,
+        "g": 0.1176,
+        "r": 0.1255
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true,
+      "variants": {
+        "player": {
+          "dark": {
+            "a": 0.09,
+            "b": 1,
+            "g": 1,
+            "r": 1
+          },
+          "light": {
+            "a": 0.09,
+            "b": 0.1137,
+            "g": 0.1176,
+            "r": 0.1255
+          }
+        }
+      }
+    },
+    "--au-err": {
+      "dark": {
+        "a": 1,
+        "b": 0.4039,
+        "g": 0.4784,
+        "r": 0.851
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.2353,
+        "g": 0.2902,
+        "r": 0.6392
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-err-bg": {
+      "dark": {
+        "a": 0.17,
+        "b": 0.4039,
+        "g": 0.4784,
+        "r": 0.851
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.8902,
+        "g": 0.9098,
+        "r": 0.9765
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-err-text": {
+      "dark": {
+        "a": 1,
+        "b": 0.7961,
+        "g": 0.8392,
+        "r": 1
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.1176,
+        "g": 0.149,
+        "r": 0.3725
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-fill": {
+      "dark": {
+        "a": 1,
+        "b": 0.1736,
+        "g": 0.181,
+        "r": 0.1995
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.9102,
+        "g": 0.9554,
+        "r": 0.9827
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-flat-bg": {
+      "dark": {
+        "a": 0.1,
+        "b": 0.8667,
+        "g": 0.9216,
+        "r": 0.9569
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.8588,
+        "g": 0.9059,
+        "r": 0.9333
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-flat-text": {
+      "dark": {
+        "a": 0.72,
+        "b": 0.8667,
+        "g": 0.9216,
+        "r": 0.9569
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.2196,
+        "g": 0.2588,
+        "r": 0.2784
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-glow": {
+      "dark": {
+        "a": 0.24,
+        "b": 0.3412,
+        "g": 0.5451,
+        "r": 0.8627
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "a": 0.85,
+        "b": 0.2235,
+        "g": 0.4431,
+        "r": 0.7765
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-glow-2": {
+      "dark": {
+        "a": 0.24,
+        "b": 0.5137,
+        "g": 0.702,
+        "r": 0.6392
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "a": 0.85,
+        "b": 0.3686,
+        "g": 0.5412,
+        "r": 0.4784
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-hi": {
+      "dark": {
+        "a": 0.1,
+        "b": 1,
+        "g": 1,
+        "r": 1
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "a": 0.66,
+        "b": 1,
+        "g": 1,
+        "r": 1
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-ok-bg": {
+      "dark": {
+        "a": 0.16,
+        "b": 0.5137,
+        "g": 0.702,
+        "r": 0.6392
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.8824,
+        "g": 0.9804,
+        "r": 0.9412
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-ok-quiet": {
+      "dark": {
+        "a": 1,
+        "b": 0.6431,
+        "g": 0.8275,
+        "r": 0.7647
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.1686,
+        "g": 0.2784,
+        "r": 0.2392
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-ok-text": {
+      "dark": {
+        "a": 1,
+        "b": 0.7412,
+        "g": 0.8863,
+        "r": 0.8392
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.1059,
+        "g": 0.1804,
+        "r": 0.1529
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-sage-text": {
+      "dark": {
+        "a": 1,
+        "b": 0.698,
+        "g": 0.8588,
+        "r": 0.8
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 20,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 21,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.2471,
+        "g": 0.3882,
+        "r": 0.3373
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 20,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-tint-bg": {
+      "dark": {
+        "a": 0.15,
+        "b": 0.3412,
+        "g": 0.5451,
+        "r": 0.8627
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.9216,
+        "g": 0.949,
+        "r": 1
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-tint-text": {
+      "dark": {
+        "a": 1,
+        "b": 0.6471,
+        "g": 0.7765,
+        "r": 1
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.0706,
+        "g": 0.2,
+        "r": 0.3922
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--color-accent": {
+      "dark": {
+        "a": 1,
+        "b": 0.3412,
+        "g": 0.5451,
+        "r": 0.8627
+      },
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 8,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 20,
+          "scope": "base-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.2235,
+        "g": 0.4431,
+        "r": 0.7765
+      },
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 8,
+        "scope": "base"
+      },
+      "themeDependent": true
+    },
+    "--color-accent-100": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 24,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 24,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.9216,
+        "g": 0.949,
+        "r": 1
+      }
+    },
+    "--color-accent-2": {
+      "dark": {
+        "a": 1,
+        "b": 0.5137,
+        "g": 0.702,
+        "r": 0.6392
+      },
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 9,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 20,
+          "scope": "base-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.3686,
+        "g": 0.5412,
+        "r": 0.4784
+      },
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 9,
+        "scope": "base"
+      },
+      "themeDependent": true
+    },
+    "--color-accent-2-100": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 34,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 34,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.8824,
+        "g": 0.9804,
+        "r": 0.9412
+      }
+    },
+    "--color-accent-2-200": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 35,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 35,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.8,
+        "g": 0.9333,
+        "r": 0.8824
+      }
+    },
+    "--color-accent-2-300": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 36,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 36,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.698,
+        "g": 0.8588,
+        "r": 0.8
+      }
+    },
+    "--color-accent-2-400": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 37,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 37,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.5725,
+        "g": 0.749,
+        "r": 0.6824
+      }
+    },
+    "--color-accent-2-500": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 38,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 38,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.451,
+        "g": 0.6275,
+        "r": 0.5608
+      }
+    },
+    "--color-accent-2-600": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 39,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 39,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.3412,
+        "g": 0.5059,
+        "r": 0.4471
+      }
+    },
+    "--color-accent-2-700": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 40,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 40,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.2471,
+        "g": 0.3882,
+        "r": 0.3373
+      }
+    },
+    "--color-accent-2-800": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 41,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 41,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.1686,
+        "g": 0.2784,
+        "r": 0.2392
+      }
+    },
+    "--color-accent-2-900": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 42,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 42,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.1059,
+        "g": 0.1804,
+        "r": 0.1529
+      }
+    },
+    "--color-accent-200": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 25,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 25,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.8157,
+        "g": 0.8824,
+        "r": 1
+      }
+    },
+    "--color-accent-300": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 26,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 26,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.6471,
+        "g": 0.7765,
+        "r": 1
+      }
+    },
+    "--color-accent-400": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 27,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 27,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.4196,
+        "g": 0.6275,
+        "r": 0.9647
+      }
+    },
+    "--color-accent-500": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 28,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 28,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.2824,
+        "g": 0.498,
+        "r": 0.8392
+      }
+    },
+    "--color-accent-600": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 29,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 29,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.1765,
+        "g": 0.3843,
+        "r": 0.698
+      }
+    },
+    "--color-accent-700": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 30,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 30,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.102,
+        "g": 0.2863,
+        "r": 0.549
+      }
+    },
+    "--color-accent-800": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 31,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 31,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.0706,
+        "g": 0.2,
+        "r": 0.3922
+      }
+    },
+    "--color-accent-900": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 32,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 32,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.0627,
+        "g": 0.1373,
+        "r": 0.251
+      }
+    },
+    "--color-bg": {
+      "dark": {
+        "a": 1,
+        "b": 0.0902,
+        "g": 0.098,
+        "r": 0.1098
+      },
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 5,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 20,
+          "scope": "base-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.8471,
+        "g": 0.9176,
+        "r": 0.9608
+      },
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 5,
+        "scope": "base"
+      },
+      "themeDependent": true
+    },
+    "--color-divider": {
+      "dark": {
+        "a": 0.16,
+        "b": 0.8667,
+        "g": 0.9216,
+        "r": 0.9569
+      },
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 10,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 20,
+          "scope": "base-dark"
+        }
+      ],
+      "light": {
+        "a": 0.16,
+        "b": 0.1137,
+        "g": 0.1176,
+        "r": 0.1255
+      },
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 10,
+        "scope": "base"
+      },
+      "themeDependent": true
+    },
+    "--color-neutral-100": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 14,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 14,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.9294,
+        "g": 0.9569,
+        "r": 0.9765
+      }
+    },
+    "--color-neutral-200": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 15,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 15,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.8588,
+        "g": 0.9059,
+        "r": 0.9333
+      }
+    },
+    "--color-neutral-300": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 16,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 16,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.7686,
+        "g": 0.8275,
+        "r": 0.8627
+      }
+    },
+    "--color-neutral-400": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 17,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 17,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.6471,
+        "g": 0.7137,
+        "r": 0.7529
+      }
+    },
+    "--color-neutral-500": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 18,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 18,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.5255,
+        "g": 0.5922,
+        "r": 0.6314
+      }
+    },
+    "--color-neutral-600": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 19,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 19,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.4157,
+        "g": 0.4745,
+        "r": 0.5098
+      }
+    },
+    "--color-neutral-700": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 20,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 20,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.3137,
+        "g": 0.3608,
+        "r": 0.3922
+      }
+    },
+    "--color-neutral-800": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 21,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 21,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.2196,
+        "g": 0.2588,
+        "r": 0.2784
+      }
+    },
+    "--color-neutral-900": {
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 22,
+          "scope": "base"
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 22,
+        "scope": "base"
+      },
+      "themeDependent": false,
+      "value": {
+        "a": 1,
+        "b": 0.1451,
+        "g": 0.1686,
+        "r": 0.1804
+      }
+    },
+    "--color-surface": {
+      "dark": {
+        "a": 1,
+        "b": 0.1255,
+        "g": 0.1333,
+        "r": 0.1529
+      },
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 6,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 20,
+          "scope": "base-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.7725,
+        "g": 0.8667,
+        "r": 0.9216
+      },
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 6,
+        "scope": "base"
+      },
+      "themeDependent": true
+    },
+    "--color-text": {
+      "dark": {
+        "a": 1,
+        "b": 0.8667,
+        "g": 0.9216,
+        "r": 0.9569
+      },
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 7,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 20,
+          "scope": "base-dark"
+        }
+      ],
+      "light": {
+        "a": 1,
+        "b": 0.1137,
+        "g": 0.1176,
+        "r": 0.1255
+      },
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 7,
+        "scope": "base"
+      },
+      "themeDependent": true
+    }
+  },
+  "gradients": {
+    "--au-glass": {
+      "dark": {
+        "angle": 158,
+        "stops": [
+          {
+            "color": {
+              "a": 0.075,
+              "b": 1,
+              "g": 1,
+              "r": 1
+            },
+            "position": null
+          },
+          {
+            "color": {
+              "a": 0.028,
+              "b": 1,
+              "g": 1,
+              "r": 1
+            },
+            "position": null
+          }
+        ]
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "angle": 158,
+        "stops": [
+          {
+            "color": {
+              "a": 0.94,
+              "b": 0.7725,
+              "g": 0.8667,
+              "r": 0.9216
+            },
+            "position": null
+          },
+          {
+            "color": {
+              "a": 0.68,
+              "b": 0.7725,
+              "g": 0.8667,
+              "r": 0.9216
+            },
+            "position": null
+          }
+        ]
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-sky": {
+      "dark": {
+        "angle": 180,
+        "stops": [
+          {
+            "color": {
+              "a": 1,
+              "b": 0.1255,
+              "g": 0.0745,
+              "r": 0.0863
+            },
+            "position": 0
+          },
+          {
+            "color": {
+              "a": 1,
+              "b": 0.149,
+              "g": 0.1059,
+              "r": 0.1373
+            },
+            "position": 0.48
+          },
+          {
+            "color": {
+              "a": 1,
+              "b": 0.1255,
+              "g": 0.149,
+              "r": 0.2353
+            },
+            "position": 1
+          }
+        ]
+      },
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        }
+      ],
+      "light": {
+        "angle": 180,
+        "stops": [
+          {
+            "color": {
+              "a": 1,
+              "b": 0.8784,
+              "g": 0.949,
+              "r": 0.9922
+            },
+            "position": 0
+          },
+          {
+            "color": {
+              "a": 1,
+              "b": 0.7608,
+              "g": 0.8902,
+              "r": 0.9725
+            },
+            "position": 0.54
+          },
+          {
+            "color": {
+              "a": 1,
+              "b": 0.6588,
+              "g": 0.8235,
+              "r": 0.9451
+            },
+            "position": 1
+          }
+        ]
+      },
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    }
+  },
+  "radius": {
+    "lg": 28,
+    "md": 16,
+    "sm": 8
+  },
+  "shadows": {
+    "--au-lift": {
+      "dark": [
+        {
+          "blur": 5,
+          "color": {
+            "a": 0.4,
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "spread": 0,
+          "x": 0,
+          "y": 2
+        },
+        {
+          "blur": 30,
+          "color": {
+            "a": 0.7,
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "spread": -18,
+          "x": 0,
+          "y": 14
+        }
+      ],
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": [
+        {
+          "blur": 2,
+          "color": {
+            "a": 0.05,
+            "b": 0.102,
+            "g": 0.1882,
+            "r": 0.2902
+          },
+          "spread": 0,
+          "x": 0,
+          "y": 1
+        },
+        {
+          "blur": 22,
+          "color": {
+            "a": 0.4,
+            "b": 0.102,
+            "g": 0.1882,
+            "r": 0.2902
+          },
+          "spread": -16,
+          "x": 0,
+          "y": 10
+        }
+      ],
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--au-soft": {
+      "dark": [
+        {
+          "blur": 32,
+          "color": {
+            "a": 0.8,
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "spread": -16,
+          "x": 0,
+          "y": 14
+        }
+      ],
+      "declarations": [
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 51,
+          "scope": "shell"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 52,
+          "scope": "shell-dark"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 21,
+          "scope": "player"
+        },
+        {
+          "file": "design/CourseScreen.dc.html",
+          "line": 22,
+          "scope": "player-dark"
+        }
+      ],
+      "light": [
+        {
+          "blur": 26,
+          "color": {
+            "a": 0.5,
+            "b": 0.102,
+            "g": 0.1882,
+            "r": 0.2902
+          },
+          "spread": -16,
+          "x": 0,
+          "y": 10
+        }
+      ],
+      "source": {
+        "file": "design/Aurel.dc.html",
+        "line": 51,
+        "scope": "shell"
+      },
+      "themeDependent": true
+    },
+    "--shadow-lg": {
+      "dark": [
+        {
+          "blur": 40,
+          "color": {
+            "a": 0.55,
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "spread": 0,
+          "x": 0,
+          "y": 16
+        }
+      ],
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 63,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        }
+      ],
+      "light": [
+        {
+          "blur": 32,
+          "color": {
+            "a": 0.22,
+            "b": 0.1451,
+            "g": 0.1686,
+            "r": 0.1804
+          },
+          "spread": 0,
+          "x": 0,
+          "y": 12
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 63,
+        "scope": "base"
+      },
+      "themeDependent": true,
+      "variants": {
+        "player": {
+          "dark": [
+            {
+              "blur": 32,
+              "color": {
+                "a": 0.22,
+                "b": 0.1451,
+                "g": 0.1686,
+                "r": 0.1804
+              },
+              "spread": 0,
+              "x": 0,
+              "y": 12
+            }
+          ],
+          "light": [
+            {
+              "blur": 32,
+              "color": {
+                "a": 0.22,
+                "b": 0.1451,
+                "g": 0.1686,
+                "r": 0.1804
+              },
+              "spread": 0,
+              "x": 0,
+              "y": 12
+            }
+          ]
+        }
+      }
+    },
+    "--shadow-md": {
+      "dark": [
+        {
+          "blur": 14,
+          "color": {
+            "a": 0.45,
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "spread": 0,
+          "x": 0,
+          "y": 4
+        }
+      ],
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 62,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        }
+      ],
+      "light": [
+        {
+          "blur": 10,
+          "color": {
+            "a": 0.16,
+            "b": 0.1451,
+            "g": 0.1686,
+            "r": 0.1804
+          },
+          "spread": 0,
+          "x": 0,
+          "y": 3
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 62,
+        "scope": "base"
+      },
+      "themeDependent": true,
+      "variants": {
+        "player": {
+          "dark": [
+            {
+              "blur": 10,
+              "color": {
+                "a": 0.16,
+                "b": 0.1451,
+                "g": 0.1686,
+                "r": 0.1804
+              },
+              "spread": 0,
+              "x": 0,
+              "y": 3
+            }
+          ],
+          "light": [
+            {
+              "blur": 10,
+              "color": {
+                "a": 0.16,
+                "b": 0.1451,
+                "g": 0.1686,
+                "r": 0.1804
+              },
+              "spread": 0,
+              "x": 0,
+              "y": 3
+            }
+          ]
+        }
+      }
+    },
+    "--shadow-sm": {
+      "dark": [
+        {
+          "blur": 2,
+          "color": {
+            "a": 0.5,
+            "b": 0,
+            "g": 0,
+            "r": 0
+          },
+          "spread": 0,
+          "x": 0,
+          "y": 1
+        }
+      ],
+      "declarations": [
+        {
+          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "line": 61,
+          "scope": "base"
+        },
+        {
+          "file": "design/Aurel.dc.html",
+          "line": 18,
+          "scope": "base-dark"
+        }
+      ],
+      "light": [
+        {
+          "blur": 2,
+          "color": {
+            "a": 0.14,
+            "b": 0.1451,
+            "g": 0.1686,
+            "r": 0.1804
+          },
+          "spread": 0,
+          "x": 0,
+          "y": 1
+        }
+      ],
+      "source": {
+        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "line": 61,
+        "scope": "base"
+      },
+      "themeDependent": true,
+      "variants": {
+        "player": {
+          "dark": [
+            {
+              "blur": 2,
+              "color": {
+                "a": 0.14,
+                "b": 0.1451,
+                "g": 0.1686,
+                "r": 0.1804
+              },
+              "spread": 0,
+              "x": 0,
+              "y": 1
+            }
+          ],
+          "light": [
+            {
+              "blur": 2,
+              "color": {
+                "a": 0.14,
+                "b": 0.1451,
+                "g": 0.1686,
+                "r": 0.1804
+              },
+              "spread": 0,
+              "x": 0,
+              "y": 1
+            }
+          ]
+        }
+      }
+    }
+  },
+  "space": {
+    "1": 4.4,
+    "2": 8.8,
+    "3": 13.2,
+    "4": 17.6,
+    "6": 26.4,
+    "8": 35.2
+  },
+  "typeZoom": [
+    0.88,
+    0.94,
+    1,
+    1.18,
+    1.4
+  ],
+  "typography": {
+    "body": 15,
+    "fontBody": "Figtree",
+    "fontHeading": "Caprasimo",
+    "h1": 42,
+    "h2": 32,
+    "h3": 25,
+    "h4": 20,
+    "h5": 16,
+    "h6": 13
+  }
+}

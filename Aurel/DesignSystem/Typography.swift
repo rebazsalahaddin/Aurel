@@ -139,9 +139,11 @@ enum AUTypeScale {
         case ..<16: .footnote
         case ..<18: .body
         case ..<21: .callout
-        case ..<25: .title3
+        // Inclusive at the design-scale boundaries: h3 (25px) is a .title3 and
+        // h1 (42px) a .title1, not one style up.
+        case ..<26: .title3
         case ..<33: .title2
-        case ..<42: .title1
+        case ..<43: .title1
         default: .largeTitle
         }
     }

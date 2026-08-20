@@ -6,10 +6,15 @@ import UIKit
 // Ported 1:1 from:
 //   design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css  (base + ramps)
 //   design/Aurel.dc.html <style> lines 18–52                             (`.aurel-dark` + `--au-*` layer)
+//   design/CourseScreen.dc.html <style> lines 20–22                      (player subset)
 //
 // Light/dark resolution uses UIColor dynamic providers so the tokens follow the
 // system trait, and the in-app theme override (Settings → Appearance) maps onto
 // the same trait via .preferredColorScheme at the root.
+//
+// `tools/export-design-tokens.mjs` evaluates those CSS layers into
+// Aurel/Resources/Design/design-tokens.json, and AurelTests/DesignTokenTests
+// gates the values here against it (exact names, resolved RGBA per theme).
 
 // MARK: Hex helper
 
@@ -76,7 +81,9 @@ enum AURadius {
 
 // MARK: Base palette (adaptive) — styles.css :root + .aurel-dark
 
-private enum Palette {
+/// Internal (not private) so `AUColorRegistry` and the token conformance tests
+/// can reach the exact resolved values.
+enum Palette {
     // Constant ramps (identical in light and dark — .aurel-dark does not override them)
     static let neutralRamp: [Int: UInt32] = [
         100: 0xf9f4ed, 200: 0xeee7db, 300: 0xdcd3c4, 400: 0xc0b6a5, 500: 0xa19786,
@@ -91,16 +98,95 @@ private enum Palette {
         600: 0x728157, 700: 0x56633f, 800: 0x3d472b, 900: 0x272e1b,
     ]
 
+    // Pinned per-theme bases. CSS resolves `var(--color-*)` per theme, and
+    // mixes/alphas must never bake in the ambient trait at definition time,
+    // so both halves of every adaptive pair are explicit.
+    static let bgLight = UIColor(hex: 0xf5ead8)
+    static let bgDark = UIColor(hex: 0x1c1917)
+    static let surfaceLight = UIColor(hex: 0xebddc5)
+    static let surfaceDark = UIColor(hex: 0x272220)
+    static let textLight = UIColor(hex: 0x201e1d)
+    static let textDark = UIColor(hex: 0xf4ebdd)
+    static let accentLight = UIColor(hex: 0xc67139)
+    static let accentDark = UIColor(hex: 0xdc8b57)
+    static let accent2Light = UIColor(hex: 0x7a8a5e)
+    static let accent2Dark = UIColor(hex: 0xa3b383)
+
     // Adaptive base roles
-    static let bg = UIColor.adaptive(light: .init(hex: 0xf5ead8), dark: .init(hex: 0x1c1917))
-    static let surface = UIColor.adaptive(light: .init(hex: 0xebddc5), dark: .init(hex: 0x272220))
-    static let text = UIColor.adaptive(light: .init(hex: 0x201e1d), dark: .init(hex: 0xf4ebdd))
-    static let accent = UIColor.adaptive(light: .init(hex: 0xc67139), dark: .init(hex: 0xdc8b57))
-    static let accent2 = UIColor.adaptive(light: .init(hex: 0x7a8a5e), dark: .init(hex: 0xa3b383))
-    static let divider = UIColor.adaptive(
-        light: UIColor(hex: 0x201e1d).alpha(0.16),
-        dark: UIColor(red: 244 / 255, green: 235 / 255, blue: 221 / 255, alpha: 0.16)
-    )
+    static let bg = UIColor.adaptive(light: bgLight, dark: bgDark)
+    static let surface = UIColor.adaptive(light: surfaceLight, dark: surfaceDark)
+    static let text = UIColor.adaptive(light: textLight, dark: textDark)
+    static let accent = UIColor.adaptive(light: accentLight, dark: accentDark)
+    static let accent2 = UIColor.adaptive(light: accent2Light, dark: accent2Dark)
+    static let divider = UIColor.adaptive(light: textLight.alpha(0.16), dark: textDark.alpha(0.16))
+}
+
+// MARK: `--au-*` layer — UIColor tokens (Aurel.dc.html lines 20–21 and 51–52)
+//
+// Single source of truth: the SwiftUI `Color` tokens below and `AUColorRegistry`
+// both derive from these, so the conformance tests exercise exactly the values
+// views render. Alpha-bearing colors match CSS Color 5's premultiplied
+// interpolation of `color-mix(in srgb, X p%, transparent)` — hue is kept and
+// only alpha scales.
+
+enum AUColorTokens {
+    // .au-stage / .au-stage.aurel-dark — Aurel.dc.html lines 20–21
+    static let accentText = UIColor.adaptive(
+        light: .init(hex: Palette.accentRamp[700]!),
+        dark: .init(hex: Palette.accentRamp[300]!))
+    static let sageText = UIColor.adaptive(
+        light: .init(hex: Palette.accent2Ramp[700]!),
+        dark: .init(hex: Palette.accent2Ramp[300]!))
+    static let accentPress = UIColor.adaptive(
+        light: .init(hex: Palette.accentRamp[700]!),
+        dark: .init(hex: Palette.accentRamp[400]!))
+
+    // .au-stage / .au-stage.aurel-dark — Aurel.dc.html lines 51–52
+    // `--au-glow` / `--au-glow-2` (ambient radial washes).
+    static let glow = UIColor.adaptive(
+        light: Palette.accentLight.alpha(0.85),
+        dark: Palette.accentDark.alpha(0.24))
+    static let glow2 = UIColor.adaptive(
+        light: Palette.accent2Light.alpha(0.85),
+        dark: Palette.accent2Dark.alpha(0.24))
+    static let hi = UIColor.adaptive(light: .white.alpha(0.66), dark: .white.alpha(0.10))
+    static let edge = UIColor.adaptive(
+        light: Palette.textLight.alpha(0.08),
+        dark: .white.alpha(0.08))
+    static let fill = UIColor.adaptive(
+        // color-mix(in srgb, #fffaf2 78%, var(--color-surface))
+        light: Palette.surfaceLight.mixed(with: 0.78, of: UIColor(hex: 0xfffaf2)),
+        // color-mix(in srgb, #fff 5.5%, var(--color-surface))
+        dark: Palette.surfaceDark.mixed(with: 0.055, of: .white))
+    static let err = UIColor.adaptive(light: .init(hex: 0xa34a3c), dark: .init(hex: 0xd97a67))
+    static let errBg = UIColor.adaptive(
+        light: .init(hex: 0xf9e8e3),
+        dark: UIColor(hex: 0xd97a67).alpha(0.17))
+    static let errText = UIColor.adaptive(
+        light: .init(hex: 0x5f261e), dark: .init(hex: 0xffd6cb))
+    static let okBg = UIColor.adaptive(
+        light: .init(hex: Palette.accent2Ramp[100]!),
+        dark: Palette.accent2Dark.alpha(0.16))
+    static let okText = UIColor.adaptive(
+        light: .init(hex: Palette.accent2Ramp[900]!), dark: .init(hex: 0xd6e2bd))
+    static let okQuiet = UIColor.adaptive(
+        light: .init(hex: Palette.accent2Ramp[800]!), dark: .init(hex: 0xc3d3a4))
+    static let tintBg = UIColor.adaptive(
+        light: .init(hex: Palette.accentRamp[100]!),
+        dark: Palette.accentDark.alpha(0.15))
+    static let tintText = UIColor.adaptive(
+        light: .init(hex: Palette.accentRamp[800]!),
+        dark: .init(hex: Palette.accentRamp[300]!))
+    static let flatBg = UIColor.adaptive(
+        light: .init(hex: Palette.neutralRamp[200]!),
+        dark: Palette.textDark.alpha(0.10))
+    static let flatText = UIColor.adaptive(
+        light: .init(hex: Palette.neutralRamp[800]!),
+        dark: Palette.textDark.alpha(0.72))
+    static let dune = UIColor.adaptive(light: .init(hex: 0xcda67a), dark: .init(hex: 0x2a1d17))
+    static let dune2 = UIColor.adaptive(light: .init(hex: 0xb98c5d), dark: .init(hex: 0x1a1210))
+    static let duneText = UIColor.adaptive(
+        light: .init(hex: 0x4a3220), dark: .init(hex: 0xf0e2cd))
 }
 
 // MARK: Color tokens
@@ -118,134 +204,40 @@ extension Color {
     static func auNeutral(_ step: Int) -> Color {
         Color(UIColor(hex: Palette.neutralRamp[step] ?? 0))
     }
+
     static func auAccentRamp(_ step: Int) -> Color {
         Color(UIColor(hex: Palette.accentRamp[step] ?? 0))
     }
+
     static func auAccent2Ramp(_ step: Int) -> Color {
         Color(UIColor(hex: Palette.accent2Ramp[step] ?? 0))
     }
 
-    // `--au-accent-text / --au-sage-text / --au-accent-press` (Aurel.dc.html lines 20–21)
-    static var auAccentText: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.accentRamp[700]!),
-                dark: .init(hex: Palette.accentRamp[300]!)))
-    }
-    static var auSageText: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.accent2Ramp[700]!),
-                dark: .init(hex: Palette.accent2Ramp[300]!)))
-    }
-    static var auAccentPress: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.accentRamp[700]!),
-                dark: .init(hex: Palette.accentRamp[400]!)))
-    }
-
-    // `--au-*` feedback surfaces (Aurel.dc.html lines 51–52)
-    private static var errUIColor: UIColor {
-        .adaptive(light: .init(hex: 0xa34a3c), dark: .init(hex: 0xd97a67))
-    }
-
-    static var auErr: Color { Color(errUIColor) }
-    static var auErrBg: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: 0xf9e8e3),
-                dark: UIColor(hex: 0xd97a67).alpha(0.17)
-            ))
-    }
-    static var auErrText: Color {
-        Color(UIColor.adaptive(light: .init(hex: 0x5f261e), dark: .init(hex: 0xffd6cb)))
-    }
-    static var auOkBg: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.accent2Ramp[100]!),
-                dark: Palette.accent2UIColor.alpha(0.16)
-            ))
-    }
-    static var auOkText: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.accent2Ramp[900]!), dark: .init(hex: 0xd6e2bd)))
-    }
-    static var auOkQuiet: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.accent2Ramp[800]!), dark: .init(hex: 0xc3d3a4)))
-    }
-    static var auTintBg: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.accentRamp[100]!),
-                dark: Palette.accentUIColor.alpha(0.15)
-            ))
-    }
-    static var auTintText: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.accentRamp[800]!),
-                dark: .init(hex: Palette.accentRamp[300]!)))
-    }
-    static var auFlatBg: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.neutralRamp[200]!),
-                dark: Palette.text.alpha(0.10)
-            ))
-    }
-    static var auFlatText: Color {
-        Color(
-            UIColor.adaptive(
-                light: .init(hex: Palette.neutralRamp[800]!),
-                dark: Palette.text.alpha(0.72)
-            ))
-    }
-
-    // Glass / edges / highlights
-    static var auHi: Color {
-        Color(UIColor.adaptive(light: .white.alpha(0.66), dark: .white.alpha(0.10)))
-    }
-    static var auEdge: Color {
-        Color(
-            UIColor.adaptive(
-                light: UIColor(hex: 0x201e1d).alpha(0.08),
-                dark: .white.alpha(0.08)
-            ))
-    }
-    static var auFill: Color {
-        Color(
-            UIColor.adaptive(
-                // #fffaf2 78% + surface
-                light: UIColor(hex: 0xfffaf2).mixed(with: 0.78, of: Palette.surface),
-                // #fff 5.5% + surface
-                dark: .white.mixed(with: 0.055, of: Palette.surface)
-            ))
-    }
-
-    // Dune scene
-    static var auDune: Color {
-        Color(UIColor.adaptive(light: .init(hex: 0xcda67a), dark: .init(hex: 0x2a1d17)))
-    }
-    static var auDune2: Color {
-        Color(UIColor.adaptive(light: .init(hex: 0xb98c5d), dark: .init(hex: 0x1a1210)))
-    }
-    static var auDuneText: Color {
-        Color(UIColor.adaptive(light: .init(hex: 0x4a3220), dark: .init(hex: 0xf0e2cd)))
-    }
+    // `--au-*` layer — thin wrappers over `AUColorTokens` (the single source of truth)
+    static var auAccentText: Color { Color(AUColorTokens.accentText) }
+    static var auSageText: Color { Color(AUColorTokens.sageText) }
+    static var auAccentPress: Color { Color(AUColorTokens.accentPress) }
+    static var auGlow: Color { Color(AUColorTokens.glow) }
+    static var auGlow2: Color { Color(AUColorTokens.glow2) }
+    static var auHi: Color { Color(AUColorTokens.hi) }
+    static var auEdge: Color { Color(AUColorTokens.edge) }
+    static var auFill: Color { Color(AUColorTokens.fill) }
+    static var auErr: Color { Color(AUColorTokens.err) }
+    static var auErrBg: Color { Color(AUColorTokens.errBg) }
+    static var auErrText: Color { Color(AUColorTokens.errText) }
+    static var auOkBg: Color { Color(AUColorTokens.okBg) }
+    static var auOkText: Color { Color(AUColorTokens.okText) }
+    static var auOkQuiet: Color { Color(AUColorTokens.okQuiet) }
+    static var auTintBg: Color { Color(AUColorTokens.tintBg) }
+    static var auTintText: Color { Color(AUColorTokens.tintText) }
+    static var auFlatBg: Color { Color(AUColorTokens.flatBg) }
+    static var auFlatText: Color { Color(AUColorTokens.flatText) }
+    static var auDune: Color { Color(AUColorTokens.dune) }
+    static var auDune2: Color { Color(AUColorTokens.dune2) }
+    static var auDuneText: Color { Color(AUColorTokens.duneText) }
 
     /// Text color used on primary buttons (CSS `color:#fff8f0`).
     static let auPrimaryButtonText = Color(red: 1, green: 0.972, blue: 0.941)  // #fff8f0
-}
-
-extension Palette {
-    /// UIColor (not adaptive) for the raw ramp bases used in alpha mixes.
-    fileprivate static var accent2UIColor: UIColor { UIColor(hex: 0x7a8a5e) }
-    fileprivate static var accentUIColor: UIColor { UIColor(hex: 0xc67139) }
 }
 
 // MARK: Gradients
@@ -274,8 +266,10 @@ enum AUGradients {
 
     /// `--au-glass` — 158° frosted surface.
     static func glass() -> LinearGradient {
-        let top = UIColor.adaptive(light: Palette.surface.alpha(0.94), dark: .white.alpha(0.075))
-        let bottom = UIColor.adaptive(light: Palette.surface.alpha(0.68), dark: .white.alpha(0.028))
+        let top = UIColor.adaptive(
+            light: Palette.surfaceLight.alpha(0.94), dark: .white.alpha(0.075))
+        let bottom = UIColor.adaptive(
+            light: Palette.surfaceLight.alpha(0.68), dark: .white.alpha(0.028))
         return LinearGradient(
             colors: [Color(top), Color(bottom)],
             startPoint: UnitPoint(x: 0.1, y: 0),  // ~158° top-right-ish
