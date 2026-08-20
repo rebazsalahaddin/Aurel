@@ -18238,7 +18238,6 @@
     "title": "Profile Cards and Your Dot",
     "time": "≈20 min · quiz and mission self-paced after",
     "src": "A1_C03_L03_LESSON.md",
-    "partial": "The source lesson is delivered through S28 and ends at the \"A1-C03-L03-CONTINUES-2\" marker. Screens S29–S32 are placeholders until the chapter closer is authored.",
     "screens": [
      {
       "id": "S23",
@@ -19231,65 +19230,951 @@
      },
      {
       "id": "S29",
-      "type": "pending",
-      "label": "Chapter quiz — Form A",
-      "step": "STEP 16 · awaiting content",
-      "awaiting": "The chapter quiz is specified but not yet authored. The source stops at the \"A1-C03-L03-CONTINUES-2\" marker after the mission.",
-      "planned": [
-       "Form A: 32 items — sections L5 · N5 · V5 · G6 · LS5 · RD4 · CN2",
-       "Cumulative share: 8 of 32 (25% — the band ceiling, flagged in the manifest) retrieving Chapter 1 and Chapter 2 targets with A1-C01-* / A1-C02-* prerequisite citations",
-       "Tap-first delivery, one item per screen-swap, interleaved, quiet progress bar",
-       "Transcripts released only after the whole quiz"
+      "type": "quizIntro",
+      "label": "Quiz intro",
+      "step": "STEP 16",
+      "head": "Chapter quiz, Form A",
+      "meta": [
+       "32 items",
+       "L5 · N5 · V5 · G6 · LS5 · RD4 · CN2",
+       "no timer"
       ],
-      "source": "A1_C03_MANIFEST.md — \"Chapter quiz Form A: 30–36 items\" · A1_C03_L03_LESSON.md artifacts_manifest quiz_form_A: 32",
-      "tip": "This screen intentionally shows no items. Inventing quiz content would break the single-source rule — the design waits for the authored bank.",
+      "promise": "Cumulative: 8/32 = 25.0% — every flagged item cites its prerequisite. Pass = 80% overall + ≥70% per core section; unlimited retries; clinics follow.",
+      "tip": "Same honest framing as C1-S32/C2-S34: the item count and the section mix up front, no timer, no streak or loss language.",
       "assets": []
      },
      {
-      "id": "S30",
-      "type": "pending",
-      "label": "Results + gate",
-      "step": "STEP 16b · awaiting content",
-      "awaiting": "The gate rule is fixed in the manifest, but the section rings, strong/developing lines, and score copy belong to the unauthored L3 closer.",
-      "planned": [
-       "Gate: 80% overall and ≥70% per core section",
-       "Near-pass → clinic plus alternate items; below → personalised review",
-       "Unlimited parallel retries; no permanent lock",
-       "Gate can-dos mirror the five chapter can-dos"
+      "id": "S29a",
+      "type": "quiz",
+      "label": "Quiz items",
+      "step": "STEP 16b",
+      "mix": [
+       [
+        "listening",
+        5
+       ],
+       [
+        "numbers",
+        5
+       ],
+       [
+        "vocabulary",
+        5
+       ],
+       [
+        "grammar",
+        6
+       ],
+       [
+        "conversation",
+        5
+       ],
+       [
+        "reading",
+        4
+       ],
+       [
+        "culture & inclusion",
+        2
+       ]
       ],
-      "source": "A1_C03_MANIFEST.md — Quiz/gate",
-      "tip": "Retry and continue get equal weight and size when this screen is authored, matching C1-S34 and C2-S36.",
+      "bank": "Quiz Form A · 32 items · cumulative share 8 items retrieving Chapter 1 and Chapter 2 (25.0%, band 15–25%) · answer-key balance 11 A / 11 B / 10 C over the 32 choice items",
+      "note": "Cumulative items are flagged in their records and cite A1-C01-* / A1-C02-* prerequisites: N001–N005 retrieve C2 number patterns; L005 retrieves C1; V004 retrieves C2 spelling; LS003 retrieves C2 repair.",
+      "items": [
+       {
+        "id": "A1-C03-QZ-L001",
+        "instr": "Listen. Choose.",
+        "icon": "ear",
+        "aud": "AUD062",
+        "prompt": "Where is Maya from?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Egypt"
+         },
+         {
+          "id": "B",
+          "t": "Peru"
+         },
+         {
+          "id": "C",
+          "t": "Mexico"
+         }
+        ],
+        "key": "A",
+        "ok": "Egypt.",
+        "no": "Listen for 'I'm from …'."
+       },
+       {
+        "id": "A1-C03-QZ-L002",
+        "instr": "Listen. Choose.",
+        "icon": "ear",
+        "aud": "AUD063",
+        "prompt": "Kenji is a(n) ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "cook"
+         },
+         {
+          "id": "B",
+          "t": "engineer"
+         },
+         {
+          "id": "C",
+          "t": "driver"
+         }
+        ],
+        "key": "B",
+        "ok": "An engineer.",
+        "no": "The job word comes after 'I'm an …'."
+       },
+       {
+        "id": "A1-C03-QZ-L003",
+        "instr": "Listen. Choose.",
+        "icon": "ear",
+        "aud": "AUD064",
+        "prompt": "Kenji is from ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Canada"
+         },
+         {
+          "id": "B",
+          "t": "Kenya"
+         },
+         {
+          "id": "C",
+          "t": "Japan"
+         }
+        ],
+        "key": "C",
+        "ok": "Japan.",
+        "no": "Name first, country second."
+       },
+       {
+        "id": "A1-C03-QZ-L004",
+        "instr": "Listen. Choose.",
+        "icon": "ear",
+        "aud": "AUD065",
+        "prompt": "Sam speaks ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Arabic and English"
+         },
+         {
+          "id": "B",
+          "t": "English and French"
+         },
+         {
+          "id": "C",
+          "t": "Spanish and English"
+         }
+        ],
+        "key": "C",
+        "ok": "Spanish and English.",
+        "no": "Catch the two language words."
+       },
+       {
+        "id": "A1-C03-QZ-L005",
+        "instr": "Listen. Choose.",
+        "icon": "ear",
+        "aud": "AUD066",
+        "cumulative": true,
+        "prompt": "Choose the reply.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Goodbye."
+         },
+         {
+          "id": "B",
+          "t": "Good morning."
+         },
+         {
+          "id": "C",
+          "t": "See you."
+         }
+        ],
+        "key": "B",
+        "ok": "Greeting meets greeting.",
+        "no": "Morning greeting → morning greeting.",
+        "note": "retrieves A1-C01-L01-V003 good morning"
+       },
+       {
+        "id": "A1-C03-QZ-N001",
+        "instr": "Look. Choose.",
+        "icon": "eye",
+        "cumulative": true,
+        "prompt": "THE CARD: phone 5-5-5, 2-0-9 (text, from C2's message card) · Whose card is this?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Nina"
+         },
+         {
+          "id": "B",
+          "t": "Maya"
+         },
+         {
+          "id": "C",
+          "t": "Sam"
+         }
+        ],
+        "key": "A",
+        "ok": "Nina's card — two zero nine.",
+        "no": "Compare the last three digits: 2-0-9.",
+        "note": "retrieves A1-C02-L02-PAT002–005 + C2 contact canon (Nina's card)"
+       },
+       {
+        "id": "A1-C03-QZ-N002",
+        "instr": "Look. Choose.",
+        "icon": "eye",
+        "cumulative": true,
+        "prompt": "6-2-0, 1-5-4 · Whose phone number?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Maya"
+         },
+         {
+          "id": "B",
+          "t": "Leo"
+         },
+         {
+          "id": "C",
+          "t": "Alex"
+         }
+        ],
+        "key": "B",
+        "ok": "Leo — from the Chapter 2 check-in!",
+        "no": "Leo's number ends 1-5-4.",
+        "note": "retrieves C2 numbers + Leo's canon phone"
+       },
+       {
+        "id": "A1-C03-QZ-N003",
+        "instr": "Look. Tap.",
+        "icon": "eye",
+        "cumulative": true,
+        "prompt": "tap the number you see: 13",
+        "opts": [
+         {
+          "id": "A",
+          "t": "3"
+         },
+         {
+          "id": "B",
+          "t": "13"
+         },
+         {
+          "id": "C",
+          "t": "12"
+         }
+        ],
+        "big": true,
+        "key": "B",
+        "ok": "13 — thirteen.",
+        "no": "Thirteen: 1-3.",
+        "note": "retrieves A1-C02-L02-PAT004 (11–15) + PAT005 (16–20)"
+       },
+       {
+        "id": "A1-C03-QZ-N004",
+        "instr": "Look. Tap.",
+        "icon": "eye",
+        "cumulative": true,
+        "prompt": "the word: seventeen · Tap the digits.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "7"
+         },
+         {
+          "id": "B",
+          "t": "11"
+         },
+         {
+          "id": "C",
+          "t": "17"
+         }
+        ],
+        "big": true,
+        "key": "C",
+        "ok": "17 — seventeen.",
+        "no": "Seventeen has the -teen: 17.",
+        "note": "retrieves C2 numbers (confusable pair seven/seventeen)"
+       },
+       {
+        "id": "A1-C03-QZ-N005",
+        "instr": "Look. Tap.",
+        "icon": "eye",
+        "cumulative": true,
+        "prompt": "tap the number you see: 12",
+        "opts": [
+         {
+          "id": "A",
+          "t": "2"
+         },
+         {
+          "id": "B",
+          "t": "10"
+         },
+         {
+          "id": "C",
+          "t": "12"
+         }
+        ],
+        "big": true,
+        "key": "C",
+        "ok": "12 — twelve.",
+        "no": "Twelve: 1-2.",
+        "note": "retrieves C2 numbers (confusable pair two/twelve/twenty-range)"
+       },
+       {
+        "id": "A1-C03-QZ-V001",
+        "instr": "Look. Choose.",
+        "icon": "eye",
+        "ill": {
+         "id": "A1-C03-ILL008",
+         "alt": "Simplified world map with Brazil's region filled in warm orange"
+        },
+        "prompt": "Which country?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Spain"
+         },
+         {
+          "id": "B",
+          "t": "Brazil"
+         },
+         {
+          "id": "C",
+          "t": "India"
+         }
+        ],
+        "key": "B",
+        "ok": "Brazil!",
+        "no": "Look at the highlighted region's shape and place."
+       },
+       {
+        "id": "A1-C03-QZ-V002",
+        "instr": "Look. Choose.",
+        "icon": "eye",
+        "ill": {
+         "id": "A1-C03-ILL020",
+         "alt": "Leo, tall with curly auburn hair and beard, blue apron over striped shirt, at a café kitchen counter"
+        },
+        "prompt": "Leo is a ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "cook"
+         },
+         {
+          "id": "B",
+          "t": "driver"
+         },
+         {
+          "id": "C",
+          "t": "doctor"
+         }
+        ],
+        "key": "A",
+        "ok": "A cook!",
+        "no": "The café kitchen says cook."
+       },
+       {
+        "id": "A1-C03-QZ-V003",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "One person. Ten ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "people"
+         },
+         {
+          "id": "B",
+          "t": "person"
+         },
+         {
+          "id": "C",
+          "t": "friends"
+         }
+        ],
+        "key": "A",
+        "ok": "Ten people!",
+        "no": "Many persons = people."
+       },
+       {
+        "id": "A1-C03-QZ-V004",
+        "instr": "Look. Choose.",
+        "icon": "eye",
+        "cumulative": true,
+        "prompt": "How do you spell that? — the country: PERU",
+        "opts": [
+         {
+          "id": "A",
+          "t": "P-R-E-U"
+         },
+         {
+          "id": "B",
+          "t": "P-E-R-O"
+         },
+         {
+          "id": "C",
+          "t": "P-E-R-U"
+         }
+        ],
+        "big": true,
+        "key": "C",
+        "ok": "P-E-R-U.",
+        "no": "Say it slowly: Pe-ru.",
+        "note": "retrieves A1-C02-L01-V001 spell + PAT001 alphabet, on a C3 word"
+       },
+       {
+        "id": "A1-C03-QZ-V005",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "MAYA: \"Nice to meet you.\"",
+        "opts": [
+         {
+          "id": "A",
+          "t": "See you."
+         },
+         {
+          "id": "B",
+          "t": "Nice to meet you too."
+         },
+         {
+          "id": "C",
+          "t": "I'm good."
+         }
+        ],
+        "key": "B",
+        "ok": "Nice to meet you too!",
+        "no": "Return the meeting line — with too."
+       },
+       {
+        "id": "A1-C03-QZ-G001",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "Alex is my friend. ____ a designer.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "He's"
+         },
+         {
+          "id": "B",
+          "t": "They're"
+         },
+         {
+          "id": "C",
+          "t": "She's"
+         }
+        ],
+        "key": "B",
+        "ok": "They're a designer.",
+        "no": "Alex → they → they're."
+       },
+       {
+        "id": "A1-C03-QZ-G002",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "Where ____ Maya from?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "am"
+         },
+         {
+          "id": "B",
+          "t": "are"
+         },
+         {
+          "id": "C",
+          "t": "is"
+         }
+        ],
+        "key": "C",
+        "ok": "Where is Maya from? — Egypt.",
+        "no": "One person → is."
+       },
+       {
+        "id": "A1-C03-QZ-G003",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "Are Maya and Sam from Mexico?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Yes, they are."
+         },
+         {
+          "id": "B",
+          "t": "No, she isn't."
+         },
+         {
+          "id": "C",
+          "t": "No, they aren't."
+         }
+        ],
+        "key": "C",
+        "ok": "No, they aren't. Sam is — Maya isn't!",
+        "no": "Two people → they; and check Maya's country."
+       },
+       {
+        "id": "A1-C03-QZ-G004",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "LEO photo + phone icon: ____ phone is 6-2-0, 1-5-4.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "His"
+         },
+         {
+          "id": "B",
+          "t": "Her"
+         },
+         {
+          "id": "C",
+          "t": "Our"
+         }
+        ],
+        "key": "A",
+        "ok": "His phone.",
+        "no": "Leo → he → his."
+       },
+       {
+        "id": "A1-C03-QZ-G005",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "Maya is ____ nurse.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "a"
+         },
+         {
+          "id": "B",
+          "t": "an"
+         }
+        ],
+        "key": "A",
+        "ok": "A nurse — the sound decides.",
+        "no": "NURSE starts /n/ → a."
+       },
+       {
+        "id": "A1-C03-QZ-G006",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "Is Nina a teacher?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Yes, she is."
+         },
+         {
+          "id": "B",
+          "t": "Yes, she are."
+         },
+         {
+          "id": "C",
+          "t": "Yes, he is."
+         }
+        ],
+        "key": "A",
+        "ok": "Yes, she is!",
+        "no": "Copy the question's person: she."
+       },
+       {
+        "id": "A1-C03-QZ-LS001",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "SAM: \"What do you do?\"",
+        "opts": [
+         {
+          "id": "A",
+          "t": "I'm from Peru."
+         },
+         {
+          "id": "B",
+          "t": "I'm an engineer."
+         },
+         {
+          "id": "C",
+          "t": "My name is Peru."
+         }
+        ],
+        "key": "B",
+        "ok": "I'm an engineer.",
+        "no": "Job question → job frame."
+       },
+       {
+        "id": "A1-C03-QZ-LS002",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "YOU: \"This is my friend Kenji.\"",
+        "opts": [
+         {
+          "id": "A",
+          "t": "See you!"
+         },
+         {
+          "id": "B",
+          "t": "I'm good."
+         },
+         {
+          "id": "C",
+          "t": "Nice to meet you!"
+         }
+        ],
+        "key": "C",
+        "ok": "Nice to meet you!",
+        "no": "A new person arrives — the meeting reply."
+       },
+       {
+        "id": "A1-C03-QZ-LS003",
+        "instr": "Listen. Choose.",
+        "icon": "ear",
+        "aud": "AUD067",
+        "cumulative": true,
+        "prompt": "Too fast! What do you say?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Can you repeat that, please?"
+         },
+         {
+          "id": "B",
+          "t": "How do you spell that?"
+         },
+         {
+          "id": "C",
+          "t": "Nice to meet you too."
+         }
+        ],
+        "key": "A",
+        "ok": "Can you repeat that, please? — the C2 repair lives!",
+        "no": "Numbers need a REPEAT, not a spelling.",
+        "note": "retrieves A1-C02-L01-V008 Can you repeat that, please?"
+       },
+       {
+        "id": "A1-C03-QZ-LS004",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "ALEX: \"Where is Nina from?\"",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Nina's job"
+         },
+         {
+          "id": "B",
+          "t": "Nina's country"
+         },
+         {
+          "id": "C",
+          "t": "Nina's name"
+         }
+        ],
+        "key": "B",
+        "ok": "Her country — Where + from.",
+        "no": "WHERE asks a place."
+       },
+       {
+        "id": "A1-C03-QZ-LS005",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "YOU are from Brazil. Kenji asks… KENJI: \"Are you from Japan?\"",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Yes, I am."
+         },
+         {
+          "id": "B",
+          "t": "No, she isn't."
+         },
+         {
+          "id": "C",
+          "t": "No, I'm not. I'm from Brazil."
+         }
+        ],
+        "key": "C",
+        "ok": "No, I'm not. I'm from Brazil — your facts, your answer.",
+        "no": "Check WHO is asked and WHERE you are from."
+       },
+       {
+        "id": "A1-C03-QZ-RD001",
+        "instr": "Read. Choose.",
+        "icon": "eye",
+        "prompt": "MAYA profile card · Maya is a ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "nurse"
+         },
+         {
+          "id": "B",
+          "t": "teacher"
+         },
+         {
+          "id": "C",
+          "t": "doctor"
+         }
+        ],
+        "key": "A",
+        "ok": "A nurse.",
+        "no": "Read the Job line."
+       },
+       {
+        "id": "A1-C03-QZ-RD002",
+        "instr": "Read. Choose.",
+        "icon": "eye",
+        "prompt": "KENJI profile card · Kenji is from ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Japan"
+         },
+         {
+          "id": "B",
+          "t": "Kenya"
+         },
+         {
+          "id": "C",
+          "t": "Canada"
+         }
+        ],
+        "key": "A",
+        "ok": "Japan.",
+        "no": "Read the Country line."
+       },
+       {
+        "id": "A1-C03-QZ-RD003",
+        "instr": "Read. Choose.",
+        "icon": "eye",
+        "prompt": "class roll · Who is the cook?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Leo"
+         },
+         {
+          "id": "B",
+          "t": "Kenji"
+         },
+         {
+          "id": "C",
+          "t": "Sam"
+         }
+        ],
+        "key": "A",
+        "ok": "Leo — Australia, cook.",
+        "no": "Scan the job column."
+       },
+       {
+        "id": "A1-C03-QZ-RD004",
+        "instr": "Read. Choose.",
+        "icon": "eye",
+        "prompt": "ALEX profile card · Alex speaks English and ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Arabic"
+         },
+         {
+          "id": "B",
+          "t": "French"
+         },
+         {
+          "id": "C",
+          "t": "Japanese"
+         }
+        ],
+        "key": "B",
+        "ok": "English and French.",
+        "no": "Read the Languages line."
+       },
+       {
+        "id": "A1-C03-QZ-CN001",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "Canada's two official languages:",
+        "opts": [
+         {
+          "id": "A",
+          "t": "English only"
+         },
+         {
+          "id": "B",
+          "t": "English and French"
+         },
+         {
+          "id": "C",
+          "t": "French only"
+         }
+        ],
+        "key": "B",
+        "ok": "English and French — two official languages, one country.",
+        "no": "Canada has TWO official languages."
+       },
+       {
+        "id": "A1-C03-QZ-CN002",
+        "instr": "Choose.",
+        "icon": "choose",
+        "prompt": "Kenji is from Japan. Kenji speaks ____.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Arabic"
+         },
+         {
+          "id": "B",
+          "t": "French"
+         },
+         {
+          "id": "C",
+          "t": "Japanese"
+         }
+        ],
+        "key": "C",
+        "ok": "Japanese — in Japan, they speak Japanese.",
+        "no": "Japan's language is Japanese."
+       }
+      ],
+      "tip": "Section headers with progress; the L-section audio auto-plays once and replay is allowed; no timer. Same delivery rules as C1-S33/C2-S35: one item per screen-swap, quiet progress bar, transcripts only after the whole quiz.",
+      "assets": [
+       "A1-C03-AUD062–067",
+       "A1-C03-ILL035",
+       "A1-C03-ILL036"
+      ]
+     },
+     {
+      "id": "S30",
+      "type": "results",
+      "label": "Results",
+      "step": "STEP 17",
+      "rings": [
+       "listening",
+       "numbers",
+       "vocabulary",
+       "grammar",
+       "conversation",
+       "reading",
+       "culture & inclusion"
+      ],
+      "score": "Pass is ≥26 / 32",
+      "gate": "Pass = 80% overall + ≥70% per core section; unlimited retries; clinics follow.",
+      "tip": "Per-section bars (pass ≥70%); identical layout family to C1-S34/C2-S36 — retry and continue get equal weight and size. Clinic cards only appear for missed patterns.",
+      "assets": []
+     },
+     {
+      "id": "S30a",
+      "type": "remediation",
+      "label": "Remediation pick",
+      "step": "STEP 17b",
+      "head": "Practice picks",
+      "sub": "Take one, take all, or skip. The schedule adapts either way.",
+      "clinics": [
+       {
+        "id": "C3-CLIN-A",
+        "name": "they is / they are",
+        "benefit": "pronoun↔be mapping with cast cards — exit: 8/10 correct on a fresh sort",
+        "n": 10,
+        "trigger": "G007 sort + G001/G005 misses"
+       },
+       {
+        "id": "C3-CLIN-B",
+        "name": "his or her?",
+        "benefit": "sound-first his/her drill + canon cards — exit: 8/10 on a fresh possessive set",
+        "n": 10,
+        "trigger": "G015–G021 pattern of misses"
+       },
+       {
+        "id": "C3-CLIN-C",
+        "name": "a or an?",
+        "benefit": "ear-first trays (say the job, choose the tray) — exit: 9/10 on the nine jobs",
+        "n": 10,
+        "trigger": "G023–G030 + QZ-G005 misses"
+       },
+       {
+        "id": "C3-CLIN-D",
+        "name": "I'm from vs I'm a",
+        "benefit": "question→frame routing drill — exit: 8/10 on mixed frames",
+        "n": 10,
+        "trigger": "frame collisions (V010/V033/LS001 type)"
+       }
+      ],
+      "pending": "Clinic seeds author on request — the seeds above reuse chapter art (the C3 ILL block is complete at 36/36).",
+      "tip": "Clinic cards use the warm palette, never red. Same family as C1-S35/C2-S37.",
       "assets": []
      },
      {
       "id": "S31",
-      "type": "pending",
-      "label": "Remediation — clinic seeds",
-      "step": "STEP 16c · awaiting content",
-      "awaiting": "Four clinic seeds (C3-CLIN-A…D) are promised in the L3 artifacts manifest; their names, benefits, and item counts are not yet written.",
-      "planned": [
-       "4 clinic seeds, C3-CLIN-A through C3-CLIN-D",
-       "Remediation map tied to the quiz sections",
-       "Clinic cards use the warm palette, never red"
+      "type": "reviewPlan",
+      "label": "Review plan",
+      "step": "STEP 17c",
+      "head": "Spaced-review export",
+      "sub": "1/3/7/14/30 plan",
+      "exports": [
+       [
+        "all 36 L1 records",
+        "Ch4 (checkpoint 1): welcome-day mission + checkpoint quiz · later returns: jobs V017–025 → Ch7 routines; V035/V036 → Ch7"
+       ],
+       [
+        "G007–G009",
+        "Ch4 (checkpoint 1): checkpoint grammar sweep · later returns: G008 → Ch5 G010 contrast; G009 → every job use"
+       ],
+       [
+        "C2 patterns (0–20)",
+        "Ch4 (checkpoint 1): rolling (N sections) · later returns: C5 extends 21–100"
+       ],
+       [
+        "C1 chunks",
+        "Ch4 (checkpoint 1): greeting beats of the mission · later returns: Ch4 mission framing"
+       ]
       ],
-      "source": "A1_C03_L03_LESSON.md artifacts_manifest — clinic_seeds: 4",
-      "tip": "Take one, take all, or skip — the schedule adapts either way. Copy arrives with the authored closer.",
+      "tip": "Calendar-style return map; the Ch4 checkpoint is flagged. Same calm family as C1-S36/C2-S38.",
       "assets": []
      },
      {
       "id": "S32",
-      "type": "pending",
-      "label": "Review plan + chapter map",
-      "step": "Wrap-up · awaiting content",
-      "awaiting": "The spaced-review export and the chapter gate card (with the compact tip required at every chapter end) are part of the unauthored closer.",
-      "planned": [
-       "1 spaced-review export: which C3 targets return, and when",
-       "Chapter map: Ch1 and Ch2 done, Ch3 complete, Ch4 Checkpoint Review 1 next",
-       "Chapter gate + the compact tip (master prompt §1.5/§1.7)",
-       "Audio AUD060 and AUD062–067, and illustrations ILL035–036, are also still to be written"
+      "type": "chapterMap",
+      "label": "Chapter map / next",
+      "step": "Wrap-up",
+      "head": "Chapter 3 complete!",
+      "body": "ask and answer origin · state language(s) · state role/job · introduce another person · understand short identity profiles",
+      "next": "Chapter 4 — Checkpoint Review 1: Welcome-Day Mission",
+      "arc": "Meet and connect",
+      "chapters": [
+       {
+        "n": 1,
+        "t": "Hello! My Name Is Alex",
+        "s": "done"
+       },
+       {
+        "n": 2,
+        "t": "Spell It and Share Your Details",
+        "s": "done"
+       },
+       {
+        "n": 3,
+        "t": "Where Are You From?",
+        "s": "done"
+       },
+       {
+        "n": 4,
+        "t": "Checkpoint Review 1",
+        "s": "next"
+       }
       ],
-      "source": "A1_C03_L03_LESSON.md artifacts_manifest — spaced_review_export: 1 · audio_scripts: 11 (AUD057–067) · illustration_briefs: 6 (ILL031–036)",
-      "tip": "Ends the chapter on the same calm week-strip and one-glance map as C1-S36/S37 and C2-S38/S39.",
+      "tip": "Chapter complete: three lesson stars (the chapter rows fill), can-do self-tap checklist (the body line), Ch4 preview card. Same ritual as C1-S37/C2-S39.",
       "assets": []
      }
     ]
