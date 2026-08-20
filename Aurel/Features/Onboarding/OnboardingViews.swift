@@ -11,63 +11,84 @@ struct GoalView: View {
     @Environment(AppEnvironment.self) private var env
 
     private static let goals: [(id: String, d: String, title: String, sub: String)] = [
-        ("work", "M2.5 7.5h19v12.5h-19zM8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5M2.5 12.5h19", "Work and interviews", "Meetings, email, negotiation"),
-        ("travel", AUIcon.circle(cx: 12, cy: 12, r: 9) + "M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18", "Travel and living abroad", "Getting by, getting around"),
-        ("exam", "M12 4 2.5 9 12 14l9.5-5zM6.2 11.3V16c0 1.7 2.6 3 5.8 3s5.8-1.3 5.8-3v-4.7", "An exam", "IELTS, TOEFL, Cambridge"),
-        ("self", "M3 5.5h5a3 3 0 0 1 3 3V19a2.5 2.5 0 0 0-2.5-2.5H3zM21 5.5h-5a3 3 0 0 0-3 3V19a2.5 2.5 0 0 1 2.5-2.5H21", "Myself", "Books, film, conversation"),
+        (
+            "work", "M2.5 7.5h19v12.5h-19zM8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5M2.5 12.5h19",
+            "Work and interviews", "Meetings, email, negotiation"
+        ),
+        (
+            "travel",
+            AUIcon.circle(cx: 12, cy: 12, r: 9) + "M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18",
+            "Travel and living abroad", "Getting by, getting around"
+        ),
+        (
+            "exam", "M12 4 2.5 9 12 14l9.5-5zM6.2 11.3V16c0 1.7 2.6 3 5.8 3s5.8-1.3 5.8-3v-4.7",
+            "An exam", "IELTS, TOEFL, Cambridge"
+        ),
+        (
+            "self",
+            "M3 5.5h5a3 3 0 0 1 3 3V19a2.5 2.5 0 0 0-2.5-2.5H3zM21 5.5h-5a3 3 0 0 0-3 3V19a2.5 2.5 0 0 1 2.5-2.5H21",
+            "Myself", "Books, film, conversation"
+        ),
     ]
 
     var body: some View {
-        OnboardingScaffold(step: 1, back: { env.router.nav(.welcome) }) {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Why English?")
-                    .font(.caprasimo(size: 31))
-                    .tracking(-0.62)
-                    .auStagger(0)
-                Text("Pick up to two — it changes what we put in front of you first.")
-                    .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.55)
-                    .foregroundStyle(Color.auText.opacity(0.55))
-                    .auStagger(0)
-            }
-            .padding(.bottom, 26)
-
-            VStack(spacing: 11) {
-                ForEach(Array(Self.goals.enumerated()), id: \.element.id) { i, goal in
-                    let on = env.router.goals.contains(goal.id)
-                    SelectableRow(selected: on) {
-                        SVGPathShape(d: goal.d)
-                            .stroke(on ? Color.auBackground : Color.auAccent, style: StrokeStyle(lineWidth: 2.75, lineCap: .round, lineJoin: .round))
-                            .frame(width: 20, height: 20)
-                            .frame(width: 42, height: 42)
-                            .background(Circle().fill(on ? Color.auAccent : Color.auText.opacity(0.09)))
-                    } content: {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(goal.title)
-                                .font(.caprasimo(size: 17))
-                            Text(goal.sub)
-                                .font(.figtree(.regular, size: 12.5))
-                                .foregroundStyle(Color.auText.opacity(0.52))
-                        }
-                    } action: {
-                        env.router.toggleGoal(goal.id)
-                    }
-                    .auStagger(i + 1)
+        OnboardingScaffold(
+            step: 1, back: { env.router.nav(.welcome) },
+            content: {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Why English?")
+                        .font(.caprasimo(size: 31))
+                        .tracking(-0.62)
+                        .auStagger(0)
+                    Text("Pick up to two — it changes what we put in front of you first.")
+                        .font(.figtree(.regular, size: 14))
+                        .lineSpacing(14 * 0.55)
+                        .foregroundStyle(Color.auText.opacity(0.55))
+                        .auStagger(0)
                 }
-            }
+                .padding(.bottom, 26)
 
-            Spacer(minLength: 24)
+                VStack(spacing: 11) {
+                    ForEach(Array(Self.goals.enumerated()), id: \.element.id) { i, goal in
+                        let on = env.router.goals.contains(goal.id)
+                        SelectableRow(selected: on) {
+                            SVGPathShape(d: goal.d)
+                                .stroke(
+                                    on ? Color.auBackground : Color.auAccent,
+                                    style: StrokeStyle(
+                                        lineWidth: 2.75, lineCap: .round, lineJoin: .round)
+                                )
+                                .frame(width: 20, height: 20)
+                                .frame(width: 42, height: 42)
+                                .background(
+                                    Circle().fill(on ? Color.auAccent : Color.auText.opacity(0.09)))
+                        } content: {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(goal.title)
+                                    .font(.caprasimo(size: 17))
+                                Text(goal.sub)
+                                    .font(.figtree(.regular, size: 12.5))
+                                    .foregroundStyle(Color.auText.opacity(0.52))
+                            }
+                        } action: {
+                            env.router.toggleGoal(goal.id)
+                        }
+                        .auStagger(i + 1)
+                    }
+                }
 
-            Text(env.router.goalHint)
-                .font(.figtree(.regular, size: 12.5))
-                .foregroundStyle(Color.auText.opacity(0.50))
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, 10)
+                Spacer(minLength: 24)
 
-            APillButton(title: "Continue", disabled: env.router.goals.isEmpty) {
-                env.router.nav(.placement)
-            }
-        }
+                Text(env.router.goalHint)
+                    .font(.figtree(.regular, size: 12.5))
+                    .foregroundStyle(Color.auText.opacity(0.50))
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 10)
+
+                APillButton(title: "Continue", disabled: env.router.goals.isEmpty) {
+                    env.router.nav(.placement)
+                }
+            })
     }
 }
 
@@ -85,73 +106,81 @@ struct PlacementView: View {
     ]
 
     var body: some View {
-        OnboardingScaffold(step: 2, back: { env.router.nav(.goal) }) {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Where do you\nstand today?")
-                    .font(.caprasimo(size: 31))
-                    .tracking(-0.62)
-                    .lineSpacing(31 * 0.08)
-                Text("A1 is the level that exists today — 12 chapters, 42 lessons. The higher bands arrive with the adaptation guide.")
+        OnboardingScaffold(
+            step: 2, back: { env.router.nav(.goal) },
+            content: {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Where do you\nstand today?")
+                        .font(.caprasimo(size: 31))
+                        .tracking(-0.62)
+                        .lineSpacing(31 * 0.08)
+                    Text(
+                        "A1 is the level that exists today — 12 chapters, 42 lessons. The higher bands arrive with the adaptation guide."
+                    )
                     .font(.figtree(.regular, size: 14))
                     .lineSpacing(14 * 0.55)
                     .foregroundStyle(Color.auText.opacity(0.55))
-            }
-            .padding(.bottom, 26)
-
-            VStack(spacing: 9) {
-                ForEach(Array(Self.levels.enumerated()), id: \.element.id) { i, level in
-                    Group {
-                        if level.ready {
-                            SelectableRow(selected: env.router.level == level.id) {
-                                Text(level.band)
-                                    .font(.caprasimo(size: 22))
-                                    .frame(width: 46)
-                                    .foregroundStyle(env.router.level == level.id ? Color.auAccent : Color.auText.opacity(0.52))
-                            } content: {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(level.title)
-                                        .font(.figtree(.semibold, size: 15))
-                                    Text(level.sub)
-                                        .font(.figtree(.regular, size: 12.5))
-                                        .foregroundStyle(Color.auText.opacity(0.52))
-                                }
-                            } action: {
-                                env.router.setLevel(level.id)
-                            }
-                        } else {
-                            // Shown, never selectable — dashed, muted.
-                            HStack(spacing: 14) {
-                                Text(level.band)
-                                    .font(.caprasimo(size: 22))
-                                    .frame(width: 46)
-                                    .foregroundStyle(Color.auText.opacity(0.52))
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(level.title)
-                                        .font(.figtree(.semibold, size: 15))
-                                    Text(level.sub)
-                                        .font(.figtree(.regular, size: 12.5))
-                                        .foregroundStyle(Color.auText.opacity(0.52))
-                                }
-                            }
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 15)
-                            .opacity(0.42)
-                            .background(
-                                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                    .strokeBorder(Color.auText.opacity(0.2), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                            )
-                        }
-                    }
-                    .auStagger(i)
                 }
-            }
+                .padding(.bottom, 26)
 
-            Spacer(minLength: 24)
+                VStack(spacing: 9) {
+                    ForEach(Array(Self.levels.enumerated()), id: \.element.id) { i, level in
+                        Group {
+                            if level.ready {
+                                SelectableRow(selected: env.router.level == level.id) {
+                                    Text(level.band)
+                                        .font(.caprasimo(size: 22))
+                                        .frame(width: 46)
+                                        .foregroundStyle(
+                                            env.router.level == level.id
+                                                ? Color.auAccent : Color.auText.opacity(0.52))
+                                } content: {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(level.title)
+                                            .font(.figtree(.semibold, size: 15))
+                                        Text(level.sub)
+                                            .font(.figtree(.regular, size: 12.5))
+                                            .foregroundStyle(Color.auText.opacity(0.52))
+                                    }
+                                } action: {
+                                    env.router.setLevel(level.id)
+                                }
+                            } else {
+                                // Shown, never selectable — dashed, muted.
+                                HStack(spacing: 14) {
+                                    Text(level.band)
+                                        .font(.caprasimo(size: 22))
+                                        .frame(width: 46)
+                                        .foregroundStyle(Color.auText.opacity(0.52))
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(level.title)
+                                            .font(.figtree(.semibold, size: 15))
+                                        Text(level.sub)
+                                            .font(.figtree(.regular, size: 12.5))
+                                            .foregroundStyle(Color.auText.opacity(0.52))
+                                    }
+                                }
+                                .padding(.horizontal, 18)
+                                .padding(.vertical, 15)
+                                .opacity(0.42)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                        .strokeBorder(
+                                            Color.auText.opacity(0.2),
+                                            style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                )
+                            }
+                        }
+                        .auStagger(i)
+                    }
+                }
 
-            APillButton(title: "Continue") {
-                env.router.nav(.commit)
-            }
-        }
+                Spacer(minLength: 24)
+
+                APillButton(title: "Continue") {
+                    env.router.nav(.commit)
+                }
+            })
     }
 }
 
@@ -171,102 +200,107 @@ struct CommitView: View {
     ]
 
     var body: some View {
-        OnboardingScaffold(step: 3, back: { env.router.nav(.placement) }) {
-            VStack(alignment: .leading, spacing: 10) {
-                Text("How much of a\nmorning can you spare?")
-                    .font(.caprasimo(size: 31))
-                    .tracking(-0.62)
-                    .lineSpacing(31 * 0.08)
-                Text("The day gets built around this. Change it whenever you like.")
-                    .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.55)
-                    .foregroundStyle(Color.auText.opacity(0.55))
-            }
-            .padding(.bottom, 26)
-
-            VStack(spacing: 11) {
-                ForEach(Array(Self.commitOpts.enumerated()), id: \.element.n) { i, opt in
-                    let on = env.router.commit == opt.n
-                    SelectableRow(selected: on) {
-                        Text("\(opt.n)")
-                            .font(.figtree(.bold, size: 15))
-                            .monospacedDigit()
-                            .frame(width: 42, height: 42)
-                            .background(Circle().fill(on ? Color.auAccent : Color.auText.opacity(0.09)))
-                            .foregroundStyle(on ? Color.auBackground : Color.auAccentText)
-                    } content: {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text(opt.title)
-                                .font(.caprasimo(size: 17))
-                            Text(opt.sub)
-                                .font(.figtree(.regular, size: 12.5))
-                                .foregroundStyle(Color.auText.opacity(0.52))
-                        }
-                    } action: {
-                        env.router.setCommitMinutes(opt.n)
-                    }
-                    .accessibilityLabel("\(opt.title) a day — \(opt.sub)")
-                    .auStagger(i)
+        OnboardingScaffold(
+            step: 3, back: { env.router.nav(.placement) },
+            content: {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("How much of a\nmorning can you spare?")
+                        .font(.caprasimo(size: 31))
+                        .tracking(-0.62)
+                        .lineSpacing(31 * 0.08)
+                    Text("The day gets built around this. Change it whenever you like.")
+                        .font(.figtree(.regular, size: 14))
+                        .lineSpacing(14 * 0.55)
+                        .foregroundStyle(Color.auText.opacity(0.55))
                 }
-            }
-            .padding(.bottom, 26)
+                .padding(.bottom, 26)
 
-            Text("One reminder, at")
-                .font(.figtree(.bold, size: 10.5))
-                .tracking(1.47)
-                .textCase(.uppercase)
-                .foregroundStyle(Color.auText.opacity(0.50))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 12)
-
-            HStack(spacing: 9) {
-                ForEach(Array(Self.remindOpts.enumerated()), id: \.element.t) { i, opt in
-                    let on = env.router.remindAt == opt.t
-                    Button {
-                        env.router.setRemindAt(opt.t)
-                    } label: {
-                        VStack(spacing: 2) {
-                            Text(opt.t)
+                VStack(spacing: 11) {
+                    ForEach(Array(Self.commitOpts.enumerated()), id: \.element.n) { i, opt in
+                        let on = env.router.commit == opt.n
+                        SelectableRow(selected: on) {
+                            Text("\(opt.n)")
                                 .font(.figtree(.bold, size: 15))
                                 .monospacedDigit()
-                            Text(opt.l)
-                                .font(.figtree(.regular, size: 11.5))
-                                .opacity(0.62)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                    .fill(Color.auFill)
-                                if on {
-                                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                        .strokeBorder(Color.auAccent.opacity(0.58), lineWidth: 1)
-                                } else {
-                                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                        .strokeBorder(Color.auEdge, lineWidth: 1)
-                                }
+                                .frame(width: 42, height: 42)
+                                .background(
+                                    Circle().fill(on ? Color.auAccent : Color.auText.opacity(0.09))
+                                )
+                                .foregroundStyle(on ? Color.auBackground : Color.auAccentText)
+                        } content: {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(opt.title)
+                                    .font(.caprasimo(size: 17))
+                                Text(opt.sub)
+                                    .font(.figtree(.regular, size: 12.5))
+                                    .foregroundStyle(Color.auText.opacity(0.52))
                             }
-                        )
+                        } action: {
+                            env.router.setCommitMinutes(opt.n)
+                        }
+                        .accessibilityLabel("\(opt.title) a day — \(opt.sub)")
+                        .auStagger(i)
                     }
-                    .buttonStyle(.auTap)
-                    .accessibilityAddTraits(on ? .isSelected : [])
-                    .auStagger(i)
                 }
-            }
+                .padding(.bottom, 26)
 
-            Spacer(minLength: 24)
+                Text("One reminder, at")
+                    .font(.figtree(.bold, size: 10.5))
+                    .tracking(1.47)
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.auText.opacity(0.50))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 12)
 
-            APillButton(title: "Continue") {
-                env.router.skipPlacement()
-                env.router.persist()
-            }
-            .padding(.bottom, 8)
+                HStack(spacing: 9) {
+                    ForEach(Array(Self.remindOpts.enumerated()), id: \.element.t) { i, opt in
+                        let on = env.router.remindAt == opt.t
+                        Button {
+                            env.router.setRemindAt(opt.t)
+                        } label: {
+                            VStack(spacing: 2) {
+                                Text(opt.t)
+                                    .font(.figtree(.bold, size: 15))
+                                    .monospacedDigit()
+                                Text(opt.l)
+                                    .font(.figtree(.regular, size: 11.5))
+                                    .opacity(0.62)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                        .fill(Color.auFill)
+                                    if on {
+                                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                            .strokeBorder(
+                                                Color.auAccent.opacity(0.58), lineWidth: 1)
+                                    } else {
+                                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                            .strokeBorder(Color.auEdge, lineWidth: 1)
+                                    }
+                                }
+                            )
+                        }
+                        .buttonStyle(.auTap)
+                        .accessibilityAddTraits(on ? .isSelected : [])
+                        .auStagger(i)
+                    }
+                }
 
-            ALinkButton(title: "About the placement test") {
-                env.router.nav(.assess)
-            }
-        }
+                Spacer(minLength: 24)
+
+                APillButton(title: "Continue") {
+                    env.router.skipPlacement()
+                    env.router.persist()
+                }
+                .padding(.bottom, 8)
+
+                ALinkButton(title: "About the placement test") {
+                    env.router.nav(.assess)
+                }
+            })
     }
 }
 
@@ -313,7 +347,9 @@ struct AssessStubView: View {
 
             // The screen placeholder card
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .strokeBorder(Color.auText.opacity(0.2), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+                .strokeBorder(
+                    Color.auText.opacity(0.2), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])
+                )
                 .background(
                     RoundedRectangle(cornerRadius: 24, style: .continuous)
                         .fill(Color.auText.opacity(0.005))
@@ -333,13 +369,15 @@ struct AssessStubView: View {
                 .tracking(-0.4)
                 .padding(.bottom, 10)
 
-            Text("The adaptive placement test is a deferred premium in the course plan — stubs only until session F2 writes it. Until then everyone starts where the course starts: A1, Chapter One.")
-                .font(.figtree(.regular, size: 14))
-                .lineSpacing(14 * 0.6)
-                .foregroundStyle(Color.auText.opacity(0.58))
-                .frame(maxWidth: 290)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 14)
+            Text(
+                "The adaptive placement test is a deferred premium in the course plan — stubs only until session F2 writes it. Until then everyone starts where the course starts: A1, Chapter One."
+            )
+            .font(.figtree(.regular, size: 14))
+            .lineSpacing(14 * 0.6)
+            .foregroundStyle(Color.auText.opacity(0.58))
+            .frame(maxWidth: 290)
+            .multilineTextAlignment(.center)
+            .padding(.bottom, 14)
 
             Text("Source: 00_governance/DECISIONS.md · 03_A1_foundation/STATE.md")
                 .font(.figtree(.regular, size: 11))
@@ -388,12 +426,14 @@ struct PlanView: View {
                     .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
                     .padding(.bottom, 12)
 
-                Text("Arc one first — meet and connect. Greetings, then spelling and contact details, then where people are from. The A1 order is fixed by the course dependency graph, so nothing gets moved; your reason for learning shapes which examples and review items come back first.")
-                    .font(.figtree(.regular, size: 14.5))
-                    .lineSpacing(14.5 * 0.6)
-                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.78))
-                    .frame(maxWidth: 300, alignment: .leading)
-                    .padding(.bottom, 30)
+                Text(
+                    "Arc one first — meet and connect. Greetings, then spelling and contact details, then where people are from. The A1 order is fixed by the course dependency graph, so nothing gets moved; your reason for learning shapes which examples and review items come back first."
+                )
+                .font(.figtree(.regular, size: 14.5))
+                .lineSpacing(14.5 * 0.6)
+                .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.78))
+                .frame(maxWidth: 300, alignment: .leading)
+                .padding(.bottom, 30)
 
                 VStack(spacing: 10) {
                     ForEach(Array(planRows.enumerated()), id: \.offset) { i, row in
@@ -402,7 +442,9 @@ struct PlanView: View {
                                 .font(.figtree(.bold, size: 10))
                                 .tracking(1.4)
                                 .textCase(.uppercase)
-                                .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.6))
+                                .foregroundStyle(
+                                    Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.6)
+                                )
                                 .frame(width: 74, alignment: .leading)
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(row.what)
@@ -410,7 +452,8 @@ struct PlanView: View {
                                     .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
                                 Text(row.meta)
                                     .font(.figtree(.regular, size: 12))
-                                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.62))
+                                    .foregroundStyle(
+                                        Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.62))
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -422,7 +465,9 @@ struct PlanView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .strokeBorder(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.16), lineWidth: 1)
+                                .strokeBorder(
+                                    Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.16),
+                                    lineWidth: 1)
                         )
                         .auStagger(i)
                     }
@@ -455,7 +500,10 @@ struct PlanView: View {
         let ch = env.router.chapterHeader
         return [
             ("Today", ch.lessons.first ?? "", ch.metas.first ?? ""),
-            ("This week", "\(env.router.commit) minutes a day", "One lesson a session — the course production rule"),
+            (
+                "This week", "\(env.router.commit) minutes a day",
+                "One lesson a session — the course production rule"
+            ),
             (ch.no, ch.name, "\(ch.count) lessons · \(ch.level)"),
         ]
     }

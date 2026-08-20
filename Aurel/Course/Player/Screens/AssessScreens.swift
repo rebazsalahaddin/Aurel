@@ -164,7 +164,10 @@ struct QuizIntroScreenView: View {
                             .lineSpacing(13.5 * 0.55)
                             .padding(.horizontal, 18)
                             .padding(.vertical, 15)
-                            .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.auOkBg))
+                            .background(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous).fill(
+                                    Color.auOkBg)
+                            )
                             .foregroundStyle(Color.auOkText)
                             .padding(.bottom, 28)
                     }
@@ -194,9 +197,14 @@ struct ResultsScreenView: View {
                         let on = k < 4
                         VStack(spacing: 7) {
                             Circle()
-                                .strokeBorder(on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.2), lineWidth: 2.5)
+                                .strokeBorder(
+                                    on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.2),
+                                    lineWidth: 2.5
+                                )
                                 .background(Circle().fill(on ? Color.auOkBg : .clear))
-                                .overlay { if on { AUIcon(kind: .check, size: 16, color: .auOkText) } }
+                                .overlay {
+                                    if on { AUIcon(kind: .check, size: 16, color: .auOkText) }
+                                }
                                 .frame(width: 38, height: 38)
                             Text(t)
                                 .font(.figtree(.semibold, size: 9.5))
@@ -221,7 +229,9 @@ struct ResultsScreenView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auOkBg))
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auOkBg)
+                )
                 .padding(.bottom, 11)
 
                 ACard(radius: 20) {
@@ -331,8 +341,13 @@ struct RemediationScreenView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 15)
-                        .background(RoundedRectangle(cornerRadius: 19, style: .continuous).fill(Color.auFill))
-                        .overlay(RoundedRectangle(cornerRadius: 19).strokeBorder(Color.auEdge, lineWidth: 1))
+                        .background(
+                            RoundedRectangle(cornerRadius: 19, style: .continuous).fill(
+                                Color.auFill)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 19).strokeBorder(
+                                Color.auEdge, lineWidth: 1))
                     }
                 }
 
@@ -388,7 +403,9 @@ struct ReviewPlanScreenView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                .strokeBorder(d.on ? Color.auAccent.opacity(0.30) : Color.auEdge, lineWidth: 1)
+                                .strokeBorder(
+                                    d.on ? Color.auAccent.opacity(0.30) : Color.auEdge, lineWidth: 1
+                                )
                         )
                         .foregroundStyle(d.on ? Color.auTintText : Color.auText.opacity(0.38))
                     }
@@ -442,7 +459,8 @@ struct ReviewPlanScreenView: View {
                 }
                 .padding(.horizontal, 15)
                 .padding(.vertical, 13)
-                .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Color.auDivider, lineWidth: 1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16).strokeBorder(Color.auDivider, lineWidth: 1))
 
                 GoOnButton(label: "Go on") { m.goto(m.p + 1) }
                     .padding(.top, 14)
@@ -491,7 +509,12 @@ struct ChapterMapScreenView: View {
                         let locked = k > (m.cur?.chapterIdx ?? 0)
                         HStack(spacing: 12) {
                             Circle()
-                                .strokeBorder(done ? Color.auOkText : (locked ? Color.auText.opacity(0.38) : Color.auAccent), lineWidth: 1.5)
+                                .strokeBorder(
+                                    done
+                                        ? Color.auOkText
+                                        : (locked ? Color.auText.opacity(0.38) : Color.auAccent),
+                                    lineWidth: 1.5
+                                )
                                 .frame(width: 26, height: 26)
                                 .overlay {
                                     if done {
@@ -535,7 +558,9 @@ struct ChapterMapScreenView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .strokeBorder(Color.auAccent.opacity(0.34), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                            .strokeBorder(
+                                Color.auAccent.opacity(0.34),
+                                style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                     )
                     .padding(.top, 20)
 

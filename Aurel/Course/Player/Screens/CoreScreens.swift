@@ -93,14 +93,18 @@ struct HookScreenView: View {
                     }
                     .padding(.horizontal, 15)
                     .padding(.vertical, 13)
-                    .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auTintBg))
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auTintBg)
+                    )
                     .foregroundStyle(Color.auTintText)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 14)
                 }
 
-                IllustrationPlaceholder(ill: h.ill ?? IllustrationRef(id: "", alt: ""), height: 196, captionSize: 12)
-                    .padding(.bottom, 18)
+                IllustrationPlaceholder(
+                    ill: h.ill ?? IllustrationRef(id: "", alt: ""), height: 196, captionSize: 12
+                )
+                .padding(.bottom, 18)
 
                 HStack(spacing: 14) {
                     Button {
@@ -113,7 +117,8 @@ struct HookScreenView: View {
                             .overlay {
                                 if m.plays == 0 { PingRingStroke().frame(width: 66, height: 66) }
                             }
-                            .shadow(color: Color(UIColor(hex: 0x643312)).opacity(0.6), radius: 8, y: -2)
+                            .shadow(
+                                color: Color(UIColor(hex: 0x643312)).opacity(0.6), radius: 8, y: -2)
                     }
                     .buttonStyle(.auTap)
                     .accessibilityLabel("Listen")
@@ -160,7 +165,8 @@ struct HookScreenView: View {
                                     .tracking(1)
                                     .frame(width: 42, alignment: .leading)
                                     .padding(.top, 3)
-                                    .foregroundStyle(learner ? Color.auTintText : Color.auAccentText)
+                                    .foregroundStyle(
+                                        learner ? Color.auTintText : Color.auAccentText)
                                 Text(l.t)
                                     .font(.figtree(.regular, size: 15))
                                     .lineSpacing(15 * 0.4)
@@ -174,7 +180,9 @@ struct HookScreenView: View {
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                    .strokeBorder(learner ? Color.auAccent.opacity(0.30) : Color.auEdge, lineWidth: 1)
+                                    .strokeBorder(
+                                        learner ? Color.auAccent.opacity(0.30) : Color.auEdge,
+                                        lineWidth: 1)
                             )
                             .auStagger(i)
                         }
@@ -200,14 +208,16 @@ struct HookScreenView: View {
 
                 Spacer(minLength: 12)
 
-                Text(m.plays > 0
-                     ? "Auto-advance 1.5 s after playback. Replay is free — the hook is never scored."
-                     : "Captions are off until one full playback.")
-                    .font(.figtree(.regular, size: 11.5))
-                    .lineSpacing(11.5 * 0.5)
-                    .foregroundStyle(Color.auText.opacity(0.40))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 20)
+                Text(
+                    m.plays > 0
+                        ? "Auto-advance 1.5 s after playback. Replay is free — the hook is never scored."
+                        : "Captions are off until one full playback."
+                )
+                .font(.figtree(.regular, size: 11.5))
+                .lineSpacing(11.5 * 0.5)
+                .foregroundStyle(Color.auText.opacity(0.40))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 20)
 
                 GoOnButton(label: "Go on") { m.goto(m.p + 1) }
                     .padding(.top, 14)
@@ -225,7 +235,9 @@ struct OrientationScreenView: View {
         ScreenColumn(topPad: 24) {
             if case .orientation(let o) = m.cur?.screen.payload {
                 let demos = o.demos ?? []
-                let demo = demos.indices.contains(m.demo) ? demos[m.demo] : DemoEntry(icon: "tap", word: "", demo: "")
+                let demo =
+                    demos.indices.contains(m.demo)
+                    ? demos[m.demo] : DemoEntry(icon: "tap", word: "", demo: "")
 
                 HStack(spacing: 6) {
                     ForEach(0..<max(1, demos.count), id: \.self) { k in
@@ -238,11 +250,14 @@ struct OrientationScreenView: View {
 
                 ACard(radius: 26) {
                     VStack(spacing: 0) {
-                        AUIcon(kind: AUIcon.Kind(rawIcon: demo.icon) ?? .tap, size: 46, color: .auTintText)
-                            .frame(width: 98, height: 98)
-                            .background(Circle().fill(Color.auTintBg))
-                            .overlay(PingRingStroke().frame(width: 98, height: 98))
-                            .padding(.bottom, 22)
+                        AUIcon(
+                            kind: AUIcon.Kind(rawIcon: demo.icon) ?? .tap, size: 46,
+                            color: .auTintText
+                        )
+                        .frame(width: 98, height: 98)
+                        .background(Circle().fill(Color.auTintBg))
+                        .overlay(PingRingStroke().frame(width: 98, height: 98))
+                        .padding(.bottom, 22)
 
                         Text(demo.word)
                             .font(.caprasimo(size: 34))
@@ -270,7 +285,9 @@ struct OrientationScreenView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .strokeBorder(Color.auAccent.opacity(0.4), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+                                .strokeBorder(
+                                    Color.auAccent.opacity(0.4),
+                                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
                         )
                         .foregroundStyle(Color.auTintText)
                 }
@@ -307,13 +324,20 @@ struct PauseScreenView: View {
     var body: some View {
         ScreenColumn(topPad: 0, bottomPad: 30, hPad: 0) {
             if case .pause(let p) = m.cur?.screen.payload {
-                IllustrationPlaceholder(ill: p.ill ?? IllustrationRef(id: "", alt: ""), height: 300, captionSize: 12, fullBleed: true)
+                IllustrationPlaceholder(
+                    ill: p.ill ?? IllustrationRef(id: "", alt: ""), height: 300, captionSize: 12,
+                    fullBleed: true)
 
                 ScreenColumn(topPad: 28) {
                     HStack(spacing: 9) {
-                        ForEach(m.rings(p.rings ?? 3, p.ringsFilled ?? 0).enumerated(), id: \.offset) { _, r in
+                        ForEach(
+                            m.rings(p.rings ?? 3, p.ringsFilled ?? 0).enumerated(), id: \.offset
+                        ) { _, r in
                             Circle()
-                                .strokeBorder(r.on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.2), lineWidth: 2)
+                                .strokeBorder(
+                                    r.on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.2),
+                                    lineWidth: 2
+                                )
                                 .background(Circle().fill(r.on ? Color.auOkBg : .clear))
                                 .overlay {
                                     if r.on { AUIcon(kind: .check, size: 11, color: .auOkText) }
@@ -406,8 +430,14 @@ struct CardsScreenView: View {
                             .font(.figtree(.semibold, size: 11))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 7)
-                            .background(RoundedRectangle(cornerRadius: 11).fill(on ? Color.auTintBg : .clear))
-                            .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(on ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1))
+                            .background(
+                                RoundedRectangle(cornerRadius: 11).fill(
+                                    on ? Color.auTintBg : .clear)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 11).strokeBorder(
+                                    on ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1)
+                            )
                             .foregroundStyle(on ? Color.auTintText : Color.auText.opacity(0.45))
                     }
                 }
@@ -420,8 +450,14 @@ struct CardsScreenView: View {
                             .font(.figtree(.semibold, size: 11))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 7)
-                            .background(RoundedRectangle(cornerRadius: 11).fill(on ? Color.auTintBg : .clear))
-                            .overlay(RoundedRectangle(cornerRadius: 11).strokeBorder(on ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1))
+                            .background(
+                                RoundedRectangle(cornerRadius: 11).fill(
+                                    on ? Color.auTintBg : .clear)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 11).strokeBorder(
+                                    on ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1)
+                            )
                             .foregroundStyle(on ? Color.auTintText : Color.auText.opacity(0.45))
                     }
                 }
@@ -499,7 +535,10 @@ struct CardsScreenView: View {
                     .font(.figtree(.semibold, size: 14.5))
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: 62)
-                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auAccentRamp(600)))
+                    .background(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous).fill(
+                            Color.auAccentRamp(600))
+                    )
                     .foregroundStyle(Color.auPrimaryButtonText)
                 }
                 .buttonStyle(.auTap)
@@ -509,7 +548,9 @@ struct CardsScreenView: View {
                 } label: {
                     HStack(spacing: 9) {
                         AUIcon(kind: .mouth, size: 22)
-                        Text(m.rec == 0 ? "Say it" : (m.rec == 1 ? "Listening…" : "Recorded — play both"))
+                        Text(
+                            m.rec == 0
+                                ? "Say it" : (m.rec == 1 ? "Listening…" : "Recorded — play both"))
                     }
                     .font(.figtree(.semibold, size: 14.5))
                     .frame(maxWidth: .infinity)
@@ -551,7 +592,8 @@ struct CardsScreenView: View {
                 HStack(spacing: 8) {
                     ForEach(Array(flow.enumerated()), id: \.offset) { k, t in
                         HStack(spacing: 8) {
-                            Circle().fill(k <= m.c ? Color.auAccent : Color.auText.opacity(0.15)).frame(width: 11, height: 11)
+                            Circle().fill(k <= m.c ? Color.auAccent : Color.auText.opacity(0.15))
+                                .frame(width: 11, height: 11)
                             Text(t)
                                 .font(.figtree(.semibold, size: 11))
                                 .foregroundStyle(Color.auText.opacity(0.52))
@@ -568,7 +610,12 @@ struct CardsScreenView: View {
             HStack(spacing: 5) {
                 ForEach(cards.indices, id: \.self) { k in
                     Capsule()
-                        .fill(k == m.c ? Color.auAccent : (k < m.c ? Color.auAccent.opacity(0.4) : Color.auText.opacity(0.13)))
+                        .fill(
+                            k == m.c
+                                ? Color.auAccent
+                                : (k < m.c
+                                    ? Color.auAccent.opacity(0.4) : Color.auText.opacity(0.13))
+                        )
                         .frame(width: k == m.c ? 18 : 5, height: 5)
                         .animation(.easeOut(duration: 0.3), value: m.c)
                 }
@@ -584,7 +631,9 @@ struct CardsScreenView: View {
                     Text("Back")
                         .font(.figtree(.semibold, size: 16.5))
                         .frame(width: 84, height: 54)
-                        .background(RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous).strokeBorder(Color.auDivider, lineWidth: 1))
+                        .background(
+                            RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
+                                .strokeBorder(Color.auDivider, lineWidth: 1))
                 }
                 .buttonStyle(.auTap)
                 .disabled(m.c == 0)
@@ -624,7 +673,10 @@ struct AlphabetScreenView: View {
 
                 // the 26-cell chart, 5 wide
                 let names = a.letterNames ?? [:]
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 7), count: 5), spacing: 7) {
+                LazyVGrid(
+                    columns: Array(repeating: GridItem(.flexible(), spacing: 7), count: 5),
+                    spacing: 7
+                ) {
                     ForEach(names.keys.sorted(), id: \.self) { letter in
                         let flipped = m.flip[letter] ?? false
                         Button {
@@ -639,8 +691,14 @@ struct AlphabetScreenView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .aspectRatio(1, contentMode: .fit)
-                            .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(flipped ? Color.auTintBg : Color.auFill))
-                            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.auEdge, lineWidth: 1))
+                            .background(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous).fill(
+                                    flipped ? Color.auTintBg : Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(
+                                    Color.auEdge, lineWidth: 1)
+                            )
                             .foregroundStyle(flipped ? Color.auTintText : Color.auText)
                         }
                         .buttonStyle(.auTap)

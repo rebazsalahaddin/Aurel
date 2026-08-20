@@ -23,7 +23,8 @@ struct StoriesView: View {
                         .padding(.bottom, 24)
 
                     hubRow(
-                        icon: .match, tint: Color.auAccent2Ramp(600), iconFg: Color(red: 0.984, green: 0.980, blue: 0.961),
+                        icon: .match, tint: Color.auAccent2Ramp(600),
+                        iconFg: Color(red: 0.984, green: 0.980, blue: 0.961),
                         title: "Scenes",
                         sub: r.sceneTurn > 0 ? "In progress — \(env.scene.title)" : env.scene.title,
                         radius: 28, filled: true
@@ -31,7 +32,8 @@ struct StoriesView: View {
                     .padding(.bottom, 12)
 
                     hubRow(
-                        icon: .mic, tint: Color.auAccentRamp(600), iconFg: Color(red: 1, green: 0.969, blue: 0.933),
+                        icon: .mic, tint: Color.auAccentRamp(600),
+                        iconFg: Color(red: 1, green: 0.969, blue: 0.933),
                         title: "Say it aloud",
                         sub: "Hear it, say it, compare — no score",
                         radius: 28, filled: true
@@ -41,7 +43,8 @@ struct StoriesView: View {
                     hubRow(
                         icon: .loop, tint: .clear, iconFg: .auAccent,
                         title: "Review mistakes",
-                        sub: r.mistakes.isEmpty ? "Empty — nothing has slipped yet" : "\(r.mistakes.count) waiting",
+                        sub: r.mistakes.isEmpty
+                            ? "Empty — nothing has slipped yet" : "\(r.mistakes.count) waiting",
                         radius: 26, filled: false
                     ) { r.nav(.review) }
                     .padding(.bottom, 26)
@@ -75,7 +78,9 @@ struct StoriesView: View {
                         .padding(.vertical, 18)
                         .overlay(
                             RoundedRectangle(cornerRadius: 26, style: .continuous)
-                                .strokeBorder(Color.auText.opacity(0.20), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                .strokeBorder(
+                                    Color.auText.opacity(0.20),
+                                    style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                         )
                     }
                     .buttonStyle(.auTap)
@@ -101,11 +106,13 @@ struct StoriesView: View {
                         .padding(.bottom, 12)
                     }
 
-                    Text("Reading opens where the chapter authored it. A separate graded-reader bank is still to be written.")
-                        .font(.figtree(.regular, size: 12))
-                        .lineSpacing(12 * 0.5)
-                        .foregroundStyle(Color.auText.opacity(0.45))
-                        .padding(.bottom, 44)
+                    Text(
+                        "Reading opens where the chapter authored it. A separate graded-reader bank is still to be written."
+                    )
+                    .font(.figtree(.regular, size: 12))
+                    .lineSpacing(12 * 0.5)
+                    .foregroundStyle(Color.auText.opacity(0.45))
+                    .padding(.bottom, 44)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 70)
@@ -133,7 +140,8 @@ struct StoriesView: View {
         func openReading(_ chIdx: Int, _ lesIdx: Int) -> (() -> Void)? {
             let course = env.course
             guard course.chapters.indices.contains(chIdx),
-                  course.chapters[chIdx].lessons.indices.contains(lesIdx) else { return nil }
+                course.chapters[chIdx].lessons.indices.contains(lesIdx)
+            else { return nil }
             let lesson = course.chapters[chIdx].lessons[lesIdx]
             let at = lesson.screens.firstIndex { $0.kind == .reading } ?? 0
             let pos = course.coursePos(chapterIdx: chIdx, lessonIdx: lesIdx) + at
@@ -147,10 +155,20 @@ struct StoriesView: View {
             }
         }
         return [
-            StoryRow(title: "Name badges and the welcome card", meta: "Chapter 1 · Lesson 3 · S27–S28", band: "A1", mark: "I", locked: false, open: openReading(0, 2)),
-            StoryRow(title: "The register form and a message card", meta: "Chapter 2 · Lesson 3 · S28–S29", band: "A1", mark: "II", locked: false, open: openReading(1, 2)),
-            StoryRow(title: "Three profile cards and the class roll", meta: "Chapter 3 · Lesson 3 · S23", band: "A1", mark: "III", locked: false, open: openReading(2, 2)),
-            StoryRow(title: "Graded readers", meta: "Awaiting content — ≥9 genres planned across 12 chapters", band: "soon", mark: "·", locked: true, open: nil),
+            StoryRow(
+                title: "Name badges and the welcome card", meta: "Chapter 1 · Lesson 3 · S27–S28",
+                band: "A1", mark: "I", locked: false, open: openReading(0, 2)),
+            StoryRow(
+                title: "The register form and a message card",
+                meta: "Chapter 2 · Lesson 3 · S28–S29", band: "A1", mark: "II", locked: false,
+                open: openReading(1, 2)),
+            StoryRow(
+                title: "Three profile cards and the class roll", meta: "Chapter 3 · Lesson 3 · S23",
+                band: "A1", mark: "III", locked: false, open: openReading(2, 2)),
+            StoryRow(
+                title: "Graded readers",
+                meta: "Awaiting content — ≥9 genres planned across 12 chapters", band: "soon",
+                mark: "·", locked: true, open: nil),
         ]
     }
 
@@ -164,7 +182,8 @@ struct StoriesView: View {
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
                             .fill(st.band == "A1" ? Color.auAccentRamp(200) : Color.auNeutral(300))
                     )
-                    .foregroundStyle(st.band == "A1" ? Color.auAccentRamp(800) : Color.auNeutral(800))
+                    .foregroundStyle(
+                        st.band == "A1" ? Color.auAccentRamp(800) : Color.auNeutral(800))
                 VStack(alignment: .leading, spacing: 4) {
                     Text(st.title)
                         .font(.caprasimo(size: 17))
@@ -195,7 +214,10 @@ struct StoriesView: View {
         .buttonStyle(.auTap)
     }
 
-    private func hubRow(icon: AUIcon.Kind, tint: Color, iconFg: Color, title: String, sub: String, radius: CGFloat, filled: Bool, action: @escaping () -> Void) -> some View {
+    private func hubRow(
+        icon: AUIcon.Kind, tint: Color, iconFg: Color, title: String, sub: String, radius: CGFloat,
+        filled: Bool, action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             HStack(spacing: 16) {
                 AUIcon(kind: icon, size: 21, color: iconFg)
@@ -213,8 +235,12 @@ struct StoriesView: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 19)
-            .background(RoundedRectangle(cornerRadius: radius, style: .continuous).fill(Color.auFill))
-            .overlay(RoundedRectangle(cornerRadius: radius).strokeBorder(Color.auEdge, lineWidth: 1))
+            .background(
+                RoundedRectangle(cornerRadius: radius, style: .continuous).fill(Color.auFill)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: radius).strokeBorder(Color.auEdge, lineWidth: 1)
+            )
             .auLift()
         }
         .buttonStyle(.auTap)
@@ -252,11 +278,15 @@ struct SceneView: View {
                     Text(sc.title)
                         .font(.caprasimo(size: 19))
                         .lineSpacing(19 * 0.2)
-                    Text(r.sceneRoleB ? "Two of you, one script. You take the learner turns; they read the partner." : sc.role)
-                        .font(.figtree(.regular, size: 12.5))
-                        .lineSpacing(12.5 * 0.45)
-                        .foregroundStyle(Color.auText.opacity(0.52))
-                        .padding(.top, 4)
+                    Text(
+                        r.sceneRoleB
+                            ? "Two of you, one script. You take the learner turns; they read the partner."
+                            : sc.role
+                    )
+                    .font(.figtree(.regular, size: 12.5))
+                    .lineSpacing(12.5 * 0.45)
+                    .foregroundStyle(Color.auText.opacity(0.52))
+                    .padding(.top, 4)
                     HStack(spacing: 6) {
                         modeChip("On your own", on: !r.sceneRoleB) { r.setSolo() }
                         modeChip("Two phones", on: r.sceneRoleB) { r.setDuo() }
@@ -291,15 +321,22 @@ struct SceneView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(
                                     UnevenCorners(bottomTrailing: 7)
-                                        .fill(r.sceneRoleB ? Color.auTintBg.opacity(0.5) : Color.auFill)
+                                        .fill(
+                                            r.sceneRoleB
+                                                ? Color.auTintBg.opacity(0.5) : Color.auFill)
                                 )
                                 .overlay(
                                     UnevenCorners(bottomTrailing: 7)
-                                        .stroke(r.sceneRoleB ? Color.auAccent.opacity(0.4) : Color.auEdge, lineWidth: r.sceneRoleB ? 1.5 : 1)
+                                        .stroke(
+                                            r.sceneRoleB
+                                                ? Color.auAccent.opacity(0.4) : Color.auEdge,
+                                            lineWidth: r.sceneRoleB ? 1.5 : 1)
                                 )
 
-                            if let pickIdx = r.scenePicks.indices.contains(i) ? r.scenePicks[i] : nil,
-                               turn.replies.indices.contains(pickIdx) {
+                            if let pickIdx = r.scenePicks.indices.contains(i)
+                                ? r.scenePicks[i] : nil,
+                                turn.replies.indices.contains(pickIdx)
+                            {
                                 let reply = turn.replies[pickIdx]
                                 VStack(alignment: .trailing, spacing: 7) {
                                     Text(reply.t)
@@ -308,7 +345,8 @@ struct SceneView: View {
                                         .padding(.horizontal, 17)
                                         .padding(.vertical, 14)
                                         .background(
-                                            UnevenCorners(bottomTrailing: 22).fill(Color.auAccentRamp(600))
+                                            UnevenCorners(bottomTrailing: 22).fill(
+                                                Color.auAccentRamp(600))
                                         )
                                         .foregroundStyle(Color(red: 1, green: 0.969, blue: 0.933))
                                     if !reply.reg.isEmpty {
@@ -317,7 +355,11 @@ struct SceneView: View {
                                             .lineSpacing(12.5 * 0.5)
                                             .padding(.horizontal, 14)
                                             .padding(.vertical, 11)
-                                            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auOkBg))
+                                            .background(
+                                                RoundedRectangle(
+                                                    cornerRadius: 16, style: .continuous
+                                                ).fill(Color.auOkBg)
+                                            )
                                             .foregroundStyle(Color.auOkText)
                                     }
                                 }
@@ -352,7 +394,8 @@ struct SceneView: View {
                     .padding(.bottom, 11)
 
                     VStack(spacing: 9) {
-                        ForEach(Array((sc.turns[r.sceneTurn].replies).enumerated()), id: \.offset) { i, reply in
+                        ForEach(Array((sc.turns[r.sceneTurn].replies).enumerated()), id: \.offset) {
+                            i, reply in
                             Button {
                                 r.pickSceneReply(i, turnCount: sc.turns.count)
                             } label: {
@@ -362,8 +405,13 @@ struct SceneView: View {
                                     .padding(.horizontal, 17)
                                     .padding(.vertical, 15)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auFill))
-                                    .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Color.auEdge, lineWidth: 1))
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 20, style: .continuous).fill(
+                                            Color.auFill)
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 20).strokeBorder(
+                                            Color.auEdge, lineWidth: 1))
                             }
                             .buttonStyle(.auTap)
                         }
@@ -378,7 +426,9 @@ struct SceneView: View {
                     }
                     .padding(.horizontal, 17)
                     .padding(.vertical, 15)
-                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auOkBg))
+                    .background(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auOkBg)
+                    )
                     .foregroundStyle(Color.auOkText)
                     .padding(.bottom, 12)
 
@@ -419,9 +469,15 @@ struct SpeakView: View {
         for f in env.course.flat.reversed() {
             if case .cards(let c) = f.screen.payload {
                 for card in c.cards ?? [] {
-                    if (card.chunk ?? false), let frame = card.frame, frame.contains(where: { ".!?".contains($0) }) {
-                        let line = frame.components(separatedBy: " · ").first?.components(separatedBy: " / ").first ?? frame
-                        let ctx = "\(card.fn ?? "") — \(f.chapter.id)-\(f.lesson.id)-\(card.id). Model audio \(f.chapter.id)-\(card.aud ?? "") is a script; no recording exists yet."
+                    if card.chunk ?? false, let frame = card.frame,
+                        frame.contains(where: { ".!?".contains($0) })
+                    {
+                        let line =
+                            frame.components(separatedBy: " · ").first?.components(
+                                separatedBy: " / "
+                            ).first ?? frame
+                        let ctx =
+                            "\(card.fn ?? "") — \(f.chapter.id)-\(f.lesson.id)-\(card.id). Model audio \(f.chapter.id)-\(card.aud ?? "") is a script; no recording exists yet."
                         return (line, ctx)
                     }
                 }
@@ -471,8 +527,14 @@ struct SpeakView: View {
                                 .font(.figtree(.bold, size: 11))
                                 .monospacedDigit()
                                 .frame(width: 22, height: 22)
-                                .background(Circle().fill(n <= r.speakTake ? Color.auAccent : Color.auText.opacity(0.08)))
-                                .foregroundStyle(n <= r.speakTake ? Color.auBackground : Color.auText.opacity(0.40))
+                                .background(
+                                    Circle().fill(
+                                        n <= r.speakTake
+                                            ? Color.auAccent : Color.auText.opacity(0.08))
+                                )
+                                .foregroundStyle(
+                                    n <= r.speakTake
+                                        ? Color.auBackground : Color.auText.opacity(0.40))
                         }
                     }
                 }
@@ -510,8 +572,10 @@ struct SpeakView: View {
                             }
                             .buttonStyle(.auTap)
                             .accessibilityLabel("Hear the native line")
-                            WaveForm(heights: nativeWaveHeights, color: Color.auAccent.opacity(0.55))
-                                .frame(height: 34)
+                            WaveForm(
+                                heights: nativeWaveHeights, color: Color.auAccent.opacity(0.55)
+                            )
+                            .frame(height: 34)
                         }
                         Text("Native")
                             .font(.figtree(.bold, size: 9.5))
@@ -527,30 +591,48 @@ struct SpeakView: View {
                 ACard(radius: 24) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(spacing: 14) {
-                            AUIcon(kind: .play, size: 18, color: r.speakTake == 0 ? .auText.opacity(0.32) : Color(red: 0.984, green: 0.980, blue: 0.961))
-                                .frame(width: 44, height: 44)
-                                .background(Circle().fill(r.speakTake == 0 ? Color.auText.opacity(0.08) : Color.auAccent2Ramp(600)))
+                            AUIcon(
+                                kind: .play, size: 18,
+                                color: r.speakTake == 0
+                                    ? .auText.opacity(0.32)
+                                    : Color(red: 0.984, green: 0.980, blue: 0.961)
+                            )
+                            .frame(width: 44, height: 44)
+                            .background(
+                                Circle().fill(
+                                    r.speakTake == 0
+                                        ? Color.auText.opacity(0.08) : Color.auAccent2Ramp(600)))
                             WaveForm(
                                 heights: speakWaveHeights,
-                                color: Color.auAccent2.opacity(r.speaking ? 0.85 : (r.speakTake > 0 ? 0.6 : 0.22))
+                                color: Color.auAccent2.opacity(
+                                    r.speaking ? 0.85 : (r.speakTake > 0 ? 0.6 : 0.22))
                             )
                             .frame(height: 34)
                         }
-                        Text(r.speakTake == 0 ? "You — nothing recorded yet" : "You — take \(r.speakTake)")
-                            .font(.figtree(.bold, size: 9.5))
-                            .tracking(1.4)
-                            .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.45))
-                            .padding(.top, 11)
+                        Text(
+                            r.speakTake == 0
+                                ? "You — nothing recorded yet" : "You — take \(r.speakTake)"
+                        )
+                        .font(.figtree(.bold, size: 9.5))
+                        .tracking(1.4)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .padding(.top, 11)
                     }
                 }
                 .padding(.bottom, 14)
 
                 if r.speakScored {
                     HStack(alignment: .top, spacing: 12) {
-                        AUIcon(kind: (r.speakVerdict == "clear" || r.speakVerdict == "typed") ? .check : .close, size: 15, color: .white)
-                            .frame(width: 26, height: 26)
-                            .background(Circle().fill((r.speakVerdict == "clear" || r.speakVerdict == "typed") ? Color.auAccent2 : Color.auErr))
+                        AUIcon(
+                            kind: (r.speakVerdict == "clear" || r.speakVerdict == "typed")
+                                ? .check : .close, size: 15, color: .white
+                        )
+                        .frame(width: 26, height: 26)
+                        .background(
+                            Circle().fill(
+                                (r.speakVerdict == "clear" || r.speakVerdict == "typed")
+                                    ? Color.auAccent2 : Color.auErr))
                         VStack(alignment: .leading, spacing: 3) {
                             Text(speakVerdictTitle)
                                 .font(.figtree(.bold, size: 14.5))
@@ -564,9 +646,14 @@ struct SpeakView: View {
                     .padding(.trailing, 2)
                     .background(
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill((r.speakVerdict == "clear" || r.speakVerdict == "typed") ? Color.auOkBg : Color.auErrBg)
+                            .fill(
+                                (r.speakVerdict == "clear" || r.speakVerdict == "typed")
+                                    ? Color.auOkBg : Color.auErrBg)
                     )
-                    .foregroundStyle((r.speakVerdict == "clear" || r.speakVerdict == "typed") ? Color.auOkText : Color.auErrText)
+                    .foregroundStyle(
+                        (r.speakVerdict == "clear" || r.speakVerdict == "typed")
+                            ? Color.auOkText : Color.auErrText
+                    )
                     .padding(.bottom, 14)
                 }
 
@@ -574,7 +661,9 @@ struct SpeakView: View {
 
                 if r.typing {
                     AUField(label: "Type the sentence instead") {
-                        AUTextField(text: Binding(get: { r.typed }, set: { r.typed = $0 }), placeholder: "Hello, I’m Maya…")
+                        AUTextField(
+                            text: Binding(get: { r.typed }, set: { r.typed = $0 }),
+                            placeholder: "Hello, I’m Maya…")
                     }
                     .padding(.bottom, 12)
                     APillButton(title: "Check what I typed") {
@@ -605,9 +694,13 @@ struct SpeakView: View {
                         .buttonStyle(.auTap)
                         .accessibilityLabel(r.speaking ? "Stop recording" : "Record your attempt")
 
-                        Text(r.speaking ? "Listening — tap when you're done" : (r.speakTake == 0 ? "Tap, then say it once" : "Tap to try again"))
-                            .font(.figtree(.regular, size: 12.5))
-                            .foregroundStyle(Color.auText.opacity(0.50))
+                        Text(
+                            r.speaking
+                                ? "Listening — tap when you're done"
+                                : (r.speakTake == 0 ? "Tap, then say it once" : "Tap to try again")
+                        )
+                        .font(.figtree(.regular, size: 12.5))
+                        .foregroundStyle(Color.auText.opacity(0.50))
 
                         HStack(spacing: 20) {
                             ALinkButton(title: "Type it instead") { r.typing = true }
@@ -645,8 +738,10 @@ struct SpeakView: View {
     private var speakVerdictBody: String {
         switch env.router.speakVerdict {
         case "clear": "Rhythm and stress both landed. Nothing to fix — this is how it sounds."
-        case "near": "“studio” came out with the stress on the second syllable. It sits on the first: STU-dio."
-        case "low": "Somewhere quieter, or a little closer to the microphone — no score has been recorded."
+        case "near":
+            "“studio” came out with the stress on the second syllable. It sits on the first: STU-dio."
+        case "low":
+            "Somewhere quieter, or a little closer to the microphone — no score has been recorded."
         case "typed": "The sentence is right. Speaking stays optional; nothing here depends on it."
         default: ""
         }
@@ -680,11 +775,13 @@ struct ReviewView: View {
                     .tracking(-0.58)
                     .padding(.bottom, 8)
 
-                Text("Held back and re-shown on a widening interval. They leave this list once they stick.")
-                    .font(.figtree(.regular, size: 13.5))
-                    .lineSpacing(13.5 * 0.55)
-                    .foregroundStyle(Color.auText.opacity(0.55))
-                    .padding(.bottom, 26)
+                Text(
+                    "Held back and re-shown on a widening interval. They leave this list once they stick."
+                )
+                .font(.figtree(.regular, size: 13.5))
+                .lineSpacing(13.5 * 0.55)
+                .foregroundStyle(Color.auText.opacity(0.55))
+                .padding(.bottom, 26)
 
                 VStack(spacing: 12) {
                     ForEach(Array(r.mistakes.enumerated()), id: \.offset) { k, mi in
@@ -707,14 +804,18 @@ struct ReviewView: View {
                     .frame(maxWidth: .infinity)
                     .overlay(
                         RoundedRectangle(cornerRadius: 28, style: .continuous)
-                            .strokeBorder(Color.auDivider, style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                            .strokeBorder(
+                                Color.auDivider, style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                     )
                 }
 
                 Spacer(minLength: 20)
 
                 if !r.mistakes.isEmpty {
-                    APillButton(title: "Practise \(r.mistakes.count)\(r.mistakes.count == 1 ? " item" : " items")") {
+                    APillButton(
+                        title:
+                            "Practise \(r.mistakes.count)\(r.mistakes.count == 1 ? " item" : " items")"
+                    ) {
                         r.reviewRun()
                     }
                 } else {
@@ -742,10 +843,21 @@ struct ReviewView: View {
             case .pattern: return "Grammar"
             }
         }()
-        let label = item.map { it in
-            !it.front.isEmpty ? it.front : (!it.stem.isEmpty ? it.stem : (!it.audio.isEmpty ? it.audio : (it.options.indices.contains(it.answer) ? it.options[it.answer] : "")))
-        } ?? "One item from the bank"
-        let note = item.map { !$0.hint.isEmpty ? $0.hint : (!$0.why.isEmpty ? $0.why : "Held back for another look.") } ?? "Held back for another look."
+        let label =
+            item.map { it in
+                !it.front.isEmpty
+                    ? it.front
+                    : (!it.stem.isEmpty
+                        ? it.stem
+                        : (!it.audio.isEmpty
+                            ? it.audio
+                            : (it.options.indices.contains(it.answer) ? it.options[it.answer] : "")))
+            } ?? "One item from the bank"
+        let note =
+            item.map {
+                !$0.hint.isEmpty
+                    ? $0.hint : (!$0.why.isEmpty ? $0.why : "Held back for another look.")
+            } ?? "Held back for another look."
         let src = item?.src ?? ""
         let due = k == 0 ? "Due tomorrow" : (k == 1 ? "Due in 2 days" : "Due in 4 days")
 
@@ -880,7 +992,8 @@ struct HuntStubView: View {
     var body: some View {
         AwaitingContentView(
             title: "Find three words — awaiting content",
-            awaiting: "A camera word-hunt is not part of the A1 course plan. Nothing in english_course specifies its word lists, so no words are invented for it here.",
+            awaiting:
+                "A camera word-hunt is not part of the A1 course plan. Nothing in english_course specifies its word lists, so no words are invented for it here.",
             plannedTitle: "What it needs first",
             planned: [
                 "Needs a lexical source: the ledger row set for a chapter (LEXICAL_LEDGER.csv)",
@@ -896,7 +1009,8 @@ struct ReaderStubView: View {
     var body: some View {
         AwaitingContentView(
             title: "Graded readers — awaiting content",
-            awaiting: "No graded-reader text exists in the course source. The reading that IS authored sits in the chapter player: name badges and the welcome card (C1-L3), the register form and message card (C2-L3), the three profile cards and the class roll (C3-L3).",
+            awaiting:
+                "No graded-reader text exists in the course source. The reading that IS authored sits in the chapter player: name badges and the welcome card (C1-L3), the register form and message card (C2-L3), the three profile cards and the class roll (C3-L3).",
             plannedTitle: "What it needs first",
             planned: [
                 "≥9 reading genres across the 12 chapters (A1_COURSE_OVERVIEW.md, production ranges)",

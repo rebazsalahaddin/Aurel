@@ -1,5 +1,5 @@
-import SwiftUI
 import Observation
+import SwiftUI
 
 // MARK: - Course player model
 //
@@ -12,8 +12,8 @@ import Observation
 final class PlayerModel {
     // position + sub-state (state = {...}, line 1144)
     var p: Int
-    var i = 0                 // item index within screen
-    var c = 0                 // card index
+    var i = 0  // item index within screen
+    var c = 0  // card index
     var sel: String? = nil
     var wrong = 0
     var done = false
@@ -23,14 +23,14 @@ final class PlayerModel {
     var tried = false
     var notice = 0
     var revealed = false
-    var order: [Int] = []     // tile order (indexes into tiles)
+    var order: [Int] = []  // tile order (indexes into tiles)
     var picked: [String: String] = [:]
-    var tk = 0                // task index (tiles/order screens)
+    var tk = 0  // task index (tiles/order screens)
     var teachShut = false
     var rec = 0
     var showScore = false
     var flip: [String: Bool] = [:]
-    var turn = 1              // conversation/roleplay turn
+    var turn = 1  // conversation/roleplay turn
 
     let course: CourseStore
     let bound: Bool
@@ -57,10 +57,12 @@ final class PlayerModel {
         return item.word ?? item.prompt ?? nil
     }
 
-    init(course: CourseStore, start: Int, bound: Bool = true,
-         onScreen: @escaping (Int) -> Void = { _ in },
-         onExit: @escaping () -> Void = {},
-         onFinish: @escaping () -> Void = {}) {
+    init(
+        course: CourseStore, start: Int, bound: Bool = true,
+        onScreen: @escaping (Int) -> Void = { _ in },
+        onExit: @escaping () -> Void = {},
+        onFinish: @escaping () -> Void = {}
+    ) {
         self.course = course
         self.bound = bound
         self.onScreen = onScreen
@@ -92,14 +94,36 @@ final class PlayerModel {
         let f = course.flat
         guard !f.isEmpty else { return }
         let b = bounds
-        if newP > b.max { onFinish(); return }
-        if newP < b.min { onExit(); return }
+        if newP > b.max {
+            onFinish()
+            return
+        }
+        if newP < b.min {
+            onExit()
+            return
+        }
         let n = max(b.min, min(b.max, newP))
         onScreen(n)
         p = n
-        i = 0; c = 0; sel = nil; wrong = 0; done = false; plays = 0; caps = false
-        demo = 0; tried = false; notice = 0; revealed = false; order = []
-        picked = [:]; rec = 0; showScore = false; flip = [:]; turn = 1; tk = 0; teachShut = false
+        i = 0
+        c = 0
+        sel = nil
+        wrong = 0
+        done = false
+        plays = 0
+        caps = false
+        demo = 0
+        tried = false
+        notice = 0
+        revealed = false
+        order = []
+        picked = [:]
+        rec = 0
+        showScore = false
+        flip = [:]
+        turn = 1
+        tk = 0
+        teachShut = false
     }
 
     var cur: CourseStore.FlatScreen? {
@@ -158,18 +182,21 @@ final class PlayerModel {
             for (j, t) in f.opts.enumerated() {
                 opts.append(PracticeOption(id: String.letter(j), text: t, ill: nil))
             }
-            out.append(PlayerItem(
-                id: "frame \(k + 1)",
-                instr: f.q,
-                icon: f.icon ?? "ear",
-                aud: f.aud,
-                opts: opts,
-                key: .single(f.key),
-                ok: "Yes — \(f.key)",
-                no: "Try again.",
-                hints: ["Listen or look once more.", "Two options belong to a different moment."],
-                unscored: true
-            ))
+            out.append(
+                PlayerItem(
+                    id: "frame \(k + 1)",
+                    instr: f.q,
+                    icon: f.icon ?? "ear",
+                    aud: f.aud,
+                    opts: opts,
+                    key: .single(f.key),
+                    ok: "Yes — \(f.key)",
+                    no: "Try again.",
+                    hints: [
+                        "Listen or look once more.", "Two options belong to a different moment.",
+                    ],
+                    unscored: true
+                ))
         }
         return out
     }
@@ -230,7 +257,12 @@ final class PlayerModel {
         let list = items
         if i + 1 < list.count {
             i += 1
-            sel = nil; wrong = 0; done = false; revealed = false; plays = 0; order = []
+            sel = nil
+            wrong = 0
+            done = false
+            revealed = false
+            plays = 0
+            order = []
         } else {
             goto(p + 1)
         }
@@ -260,23 +292,28 @@ final class PlayerModel {
             var out: [PlayerCard] = []
             for f in s.families ?? [] {
                 for l in f.letters {
-                    out.append(PlayerCard(
-                        main: l + "  " + l.lowercased(),
-                        ipa: s.letterNames?[l] ?? "",
-                        sub: "Family \(f.n)",
-                        aud: f.aud,
-                        letter: true
-                    ))
+                    out.append(
+                        PlayerCard(
+                            main: l + "  " + l.lowercased(),
+                            ipa: s.letterNames?[l] ?? "",
+                            sub: "Family \(f.n)",
+                            aud: f.aud,
+                            letter: true
+                        ))
                 }
             }
             return out
         case .numbers(let s):
             return (s.nums ?? []).map { n in
-                PlayerCard(main: n.d + "  " + n.w, ipa: n.ipa ?? "", sub: "count scene", digit: n.d, number: true)
+                PlayerCard(
+                    main: n.d + "  " + n.w, ipa: n.ipa ?? "", sub: "count scene", digit: n.d,
+                    number: true)
             }
         case .cards(let s):
             return (s.cards ?? []).map { c in
-                PlayerCard(main: c.w, ipa: c.ipa ?? "", sub: c.fn ?? "", ill: c.ill, aud: c.aud, id: c.id, chunk: c.chunk ?? false, moment: c.frame ?? "")
+                PlayerCard(
+                    main: c.w, ipa: c.ipa ?? "", sub: c.fn ?? "", ill: c.ill, aud: c.aud, id: c.id,
+                    chunk: c.chunk ?? false, moment: c.frame ?? "")
             }
         default:
             return []
@@ -304,9 +341,13 @@ final class PlayerModel {
         if tight { return parts.joined() }
         var line = ""
         for t in parts {
-            if line.isEmpty { line = t }
-            else if ". , ! ? @ : ;".contains(t) && t.count == 1 { line += t }
-            else { line += " " + t }
+            if line.isEmpty {
+                line = t
+            } else if ". , ! ? @ : ;".contains(t) && t.count == 1 {
+                line += t
+            } else {
+                line += " " + t
+            }
         }
         return line
     }
@@ -322,22 +363,32 @@ final class PlayerModel {
     }
 
     var tileTask: TileTaskState {
-        guard let cur else { return TileTaskState(instr: "Put in order.", tiles: [], key: [], ok: "", no: "") }
+        guard let cur else {
+            return TileTaskState(instr: "Put in order.", tiles: [], key: [], ok: "", no: "")
+        }
         let s = cur.screen
         if let it = item, it.kind == "order" {
-            return TileTaskState(instr: it.instr, tiles: it.tiles, key: it.key?.sequence ?? [], ok: it.ok ?? "", no: it.no ?? "")
+            return TileTaskState(
+                instr: it.instr, tiles: it.tiles, key: it.key?.sequence ?? [], ok: it.ok ?? "",
+                no: it.no ?? "")
         }
         switch s.payload {
         case .tiles(let t):
             if let task = (t.tasks ?? []).indices.contains(tk) ? (t.tasks ?? [])[tk] : nil {
-                return TileTaskState(instr: task.instr, tiles: task.tiles ?? [], key: task.key?.sequence ?? [], ok: task.ok ?? "", no: task.no ?? "")
+                return TileTaskState(
+                    instr: task.instr, tiles: task.tiles ?? [], key: task.key?.sequence ?? [],
+                    ok: task.ok ?? "", no: task.no ?? "")
             }
         case .order(let o):
             if let task = (o.tasks ?? []).indices.contains(tk) ? (o.tasks ?? [])[tk] : nil {
-                return TileTaskState(instr: task.instr, tiles: task.tiles ?? [], key: task.key?.sequence ?? [], ok: task.ok ?? "", no: task.no ?? "")
+                return TileTaskState(
+                    instr: task.instr, tiles: task.tiles ?? [], key: task.key?.sequence ?? [],
+                    ok: task.ok ?? "", no: task.no ?? "")
             }
         case .emailAssembly(let e):
-            return TileTaskState(instr: e.instr ?? "Put in order.", tiles: e.tiles ?? [], key: e.key ?? [], ok: e.ok ?? "", no: e.no ?? "")
+            return TileTaskState(
+                instr: e.instr ?? "Put in order.", tiles: e.tiles ?? [], key: e.key ?? [],
+                ok: e.ok ?? "", no: e.no ?? "")
         default:
             break
         }
@@ -346,7 +397,9 @@ final class PlayerModel {
 
     var tileLine: String {
         let tiles = tileTask.tiles
-        return Self.joinTiles(order.map { tiles.indices.contains($0) ? tiles[$0] : "" }, tight: cur?.screen.kind == .emailAssembly)
+        return Self.joinTiles(
+            order.map { tiles.indices.contains($0) ? tiles[$0] : "" },
+            tight: cur?.screen.kind == .emailAssembly)
     }
 
     var tileComplete: Bool {
@@ -354,9 +407,12 @@ final class PlayerModel {
     }
 
     var tileCorrect: Bool {
-        tileComplete && order.enumerated().allSatisfy { j, k in
-            tileTask.tiles.indices.contains(k) && (tileTask.key.indices.contains(j) ? tileTask.tiles[k] == tileTask.key[j] : false)
-        }
+        tileComplete
+            && order.enumerated().allSatisfy { j, k in
+                tileTask.tiles.indices.contains(k)
+                    && (tileTask.key.indices.contains(j)
+                        ? tileTask.tiles[k] == tileTask.key[j] : false)
+            }
     }
 
     var hasTaskNav: Bool {
@@ -401,7 +457,7 @@ final class PlayerModel {
     }
 }
 
-private extension Array where Element == Character {
+extension Array where Element == Character {
     // No-op (kept for clarity).
 }
 

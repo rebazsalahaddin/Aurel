@@ -1,4 +1,5 @@
 import XCTest
+
 @testable import Aurel
 
 /// The spaced-retrieval scheduler and the non-punitive streak rules.
@@ -19,9 +20,15 @@ final class ServicesTests: XCTestCase {
 
     func testDueLabels() {
         let cal = Calendar.current
-        XCTAssertEqual(ReviewScheduler.dueLabel(for: cal.date(byAdding: .day, value: 0, to: Date())!), "Due today")
-        XCTAssertEqual(ReviewScheduler.dueLabel(for: cal.date(byAdding: .day, value: 1, to: Date())!), "Due tomorrow")
-        XCTAssertEqual(ReviewScheduler.dueLabel(for: cal.date(byAdding: .day, value: 4, to: Date())!), "Due in 4 days")
+        XCTAssertEqual(
+            ReviewScheduler.dueLabel(for: cal.date(byAdding: .day, value: 0, to: Date())!),
+            "Due today")
+        XCTAssertEqual(
+            ReviewScheduler.dueLabel(for: cal.date(byAdding: .day, value: 1, to: Date())!),
+            "Due tomorrow")
+        XCTAssertEqual(
+            ReviewScheduler.dueLabel(for: cal.date(byAdding: .day, value: 4, to: Date())!),
+            "Due in 4 days")
     }
 
     // MARK: Streak engine — a day counts only when both halves are done

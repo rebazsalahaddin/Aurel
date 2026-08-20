@@ -14,11 +14,17 @@ struct ReviewScreenView: View {
         ScreenColumn(topPad: 22, bottomPad: 26) {
             if case .review(let r) = m.cur?.screen.payload {
                 HStack(spacing: 9) {
-                    ForEach(m.rings(r.rings ?? 3, r.ringsFilled ?? 0).enumerated(), id: \.offset) { _, ring in
+                    ForEach(m.rings(r.rings ?? 3, r.ringsFilled ?? 0).enumerated(), id: \.offset) {
+                        _, ring in
                         Circle()
-                            .strokeBorder(ring.on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.2), lineWidth: 2)
+                            .strokeBorder(
+                                ring.on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.2),
+                                lineWidth: 2
+                            )
                             .background(Circle().fill(ring.on ? Color.auOkBg : .clear))
-                            .overlay { if ring.on { AUIcon(kind: .check, size: 12, color: .auOkText) } }
+                            .overlay {
+                                if ring.on { AUIcon(kind: .check, size: 12, color: .auOkText) }
+                            }
                             .frame(width: 24, height: 24)
                     }
                 }
@@ -46,7 +52,10 @@ struct ReviewScreenView: View {
                 .padding(.bottom, 18)
 
                 if let gallery = r.gallery {
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
+                    LazyVGrid(
+                        columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3),
+                        spacing: 8
+                    ) {
                         ForEach(gallery, id: \.id) { g in
                             Text(g.w)
                                 .font(.figtree(.semibold, size: 12.5))
@@ -54,8 +63,13 @@ struct ReviewScreenView: View {
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: .infinity, minHeight: 56)
                                 .padding(.horizontal, 7)
-                                .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.auFill))
-                                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(Color.auEdge, lineWidth: 1))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 14, style: .continuous).fill(
+                                        Color.auFill)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14).strokeBorder(
+                                        Color.auEdge, lineWidth: 1))
                         }
                     }
                     .padding(.bottom, 16)
@@ -82,7 +96,10 @@ struct ReviewScreenView: View {
                         .lineSpacing(13 * 0.5)
                         .padding(.horizontal, 15)
                         .padding(.vertical, 12)
-                        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auTintBg))
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
+                                Color.auTintBg)
+                        )
                         .foregroundStyle(Color.auTintText)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 14)
@@ -100,7 +117,9 @@ struct ReviewScreenView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(
                             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .strokeBorder(Color.auAccent.opacity(0.34), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                .strokeBorder(
+                                    Color.auAccent.opacity(0.34),
+                                    style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                         )
                         .padding(.bottom, 14)
                 }
@@ -180,7 +199,9 @@ struct GrammarScreenView: View {
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                    .strokeBorder(active ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1.5)
+                                    .strokeBorder(
+                                        active ? Color.auAccent.opacity(0.34) : Color.auEdge,
+                                        lineWidth: 1.5)
                             )
                         }
                         .buttonStyle(.auTap)
@@ -208,7 +229,10 @@ struct GrammarScreenView: View {
                                         .lineSpacing(15 * 0.45)
                                         .padding(.horizontal, 13)
                                         .padding(.vertical, 11)
-                                        .background(RoundedRectangle(cornerRadius: 13, style: .continuous).fill(Color.auTintBg))
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                                .fill(Color.auTintBg)
+                                        )
                                         .foregroundStyle(Color.auTintText)
                                     ForEach(r.errs, id: \.self) { e in
                                         HStack(alignment: .firstTextBaseline, spacing: 9) {
@@ -280,7 +304,9 @@ struct GrammarScreenView: View {
                         .padding(.vertical, 12)
                         .background(
                             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                .strokeBorder(Color.auAccent.opacity(0.32), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                .strokeBorder(
+                                    Color.auAccent.opacity(0.32),
+                                    style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                         )
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 10)
@@ -354,8 +380,14 @@ struct PronPerceiveScreenView: View {
                                             .font(.figtree(.semibold, size: 15))
                                             .frame(maxWidth: .infinity)
                                             .frame(minHeight: 58)
-                                            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auFill))
-                                            .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Color.auEdge, lineWidth: 1))
+                                            .background(
+                                                RoundedRectangle(
+                                                    cornerRadius: 16, style: .continuous
+                                                ).fill(Color.auFill)
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 16).strokeBorder(
+                                                    Color.auEdge, lineWidth: 1))
                                     }
                                 }
 
@@ -366,7 +398,10 @@ struct PronPerceiveScreenView: View {
                                         .foregroundStyle(Color.auFlatText)
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 10)
-                                        .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.auFlatBg))
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                                .fill(Color.auFlatBg)
+                                        )
                                         .padding(.top, 11)
                                 }
                             }
@@ -412,8 +447,10 @@ struct PronProduceScreenView: View {
                                         .tracking(1)
                                         .frame(width: 46, alignment: .leading)
                                         .foregroundStyle(Color.auText.opacity(0.42))
-                                    WaveForm(heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent)
-                                        .frame(height: 26)
+                                    WaveForm(
+                                        heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent
+                                    )
+                                    .frame(height: 26)
                                     AUIcon(kind: .play, size: 17, color: .auText.opacity(0.6))
                                 }
                                 .padding(.bottom, 9)
@@ -424,8 +461,11 @@ struct PronProduceScreenView: View {
                                         .tracking(1)
                                         .frame(width: 46, alignment: .leading)
                                         .foregroundStyle(Color.auText.opacity(0.42))
-                                    WaveForm(heights: [8, 16, 22, 11, 18, 9, 15, 20], color: Color.auText.opacity(0.24))
-                                        .frame(height: 26)
+                                    WaveForm(
+                                        heights: [8, 16, 22, 11, 18, 9, 15, 20],
+                                        color: Color.auText.opacity(0.24)
+                                    )
+                                    .frame(height: 26)
                                     AUIcon(kind: .play, size: 17, color: .auText.opacity(0.35))
                                 }
                                 .padding(.bottom, 13)
@@ -435,13 +475,20 @@ struct PronProduceScreenView: View {
                                         m.rec = m.rec >= 2 ? 0 : m.rec + 1
                                     } label: {
                                         HStack(spacing: 9) {
-                                            AUIcon(kind: .mic, size: 20, color: .auPrimaryButtonText)
-                                            Text(m.rec == 0 ? "Record" : (m.rec == 1 ? "Listening…" : "Recorded"))
+                                            AUIcon(
+                                                kind: .mic, size: 20, color: .auPrimaryButtonText)
+                                            Text(
+                                                m.rec == 0
+                                                    ? "Record"
+                                                    : (m.rec == 1 ? "Listening…" : "Recorded"))
                                         }
                                         .font(.figtree(.semibold, size: 14.5))
                                         .frame(maxWidth: .infinity)
                                         .frame(minHeight: 56)
-                                        .background(RoundedRectangle(cornerRadius: 17, style: .continuous).fill(Color.auAccentRamp(600)))
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 17, style: .continuous)
+                                                .fill(Color.auAccentRamp(600))
+                                        )
                                         .foregroundStyle(Color.auPrimaryButtonText)
                                     }
                                     .buttonStyle(.auTap)
@@ -453,8 +500,14 @@ struct PronProduceScreenView: View {
                                             .font(.figtree(.semibold, size: 14.5))
                                             .frame(maxWidth: .infinity)
                                             .frame(minHeight: 56)
-                                            .background(RoundedRectangle(cornerRadius: 17, style: .continuous).fill(Color.auFill))
-                                            .overlay(RoundedRectangle(cornerRadius: 17).strokeBorder(Color.auEdge, lineWidth: 1))
+                                            .background(
+                                                RoundedRectangle(
+                                                    cornerRadius: 17, style: .continuous
+                                                ).fill(Color.auFill)
+                                            )
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 17).strokeBorder(
+                                                    Color.auEdge, lineWidth: 1))
                                     }
                                     .buttonStyle(.auTap)
                                 }
@@ -465,7 +518,10 @@ struct PronProduceScreenView: View {
                                         .lineSpacing(12.5 * 0.45)
                                         .padding(.horizontal, 13)
                                         .padding(.vertical, 11)
-                                        .background(RoundedRectangle(cornerRadius: 13, style: .continuous).fill(Color.auTintBg))
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                                .fill(Color.auTintBg)
+                                        )
                                         .foregroundStyle(Color.auTintText)
                                         .padding(.top, 12)
                                 }
@@ -526,7 +582,9 @@ struct ConversationScreenView: View {
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 11, style: .continuous)
-                                        .strokeBorder(Color.auAccent.opacity(0.30), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                        .strokeBorder(
+                                            Color.auAccent.opacity(0.30),
+                                            style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                                 )
                                 .foregroundStyle(Color.auAccentText)
                                 .minimumScaleFactor(0.5)
@@ -599,7 +657,9 @@ struct ConversationScreenView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                .strokeBorder(k == m.turn - 1 ? Color.auAccent.opacity(0.40) : Color.auEdge, lineWidth: 1)
+                                .strokeBorder(
+                                    k == m.turn - 1 ? Color.auAccent.opacity(0.40) : Color.auEdge,
+                                    lineWidth: 1)
                         )
                         .opacity(on ? 1 : 0.32)
                         .animation(.easeInOut(duration: 0.35), value: m.turn)

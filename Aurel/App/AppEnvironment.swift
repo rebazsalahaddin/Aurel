@@ -1,5 +1,5 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 /// Dependency container injected at the root; owns the loaded course and the
 /// router. Services (audio, connectivity) attach here in the services task.

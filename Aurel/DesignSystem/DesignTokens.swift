@@ -26,8 +26,14 @@ extension UIColor {
     /// sRGB lerp — the Swift equivalent of CSS `color-mix(in srgb, a p%, b)`.
     func mixed(with fraction: CGFloat, of other: UIColor) -> UIColor {
         let f = max(0, min(1, fraction))
-        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
-        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
+        var r1: CGFloat = 0
+        var g1: CGFloat = 0
+        var b1: CGFloat = 0
+        var a1: CGFloat = 0
+        var r2: CGFloat = 0
+        var g2: CGFloat = 0
+        var b2: CGFloat = 0
+        var a2: CGFloat = 0
         getRed(&r1, green: &g1, blue: &b1, alpha: &a1)
         other.getRed(&r2, green: &g2, blue: &b2, alpha: &a2)
         return UIColor(
@@ -61,10 +67,10 @@ enum AUSpace {
 enum AURadius {
     static let sm: CGFloat = 8
     static let md: CGFloat = 16
-    static let lg: CGFloat = 28            // --radius-lg
-    static let lgPadded: CGFloat = 32.2    // calc(--radius-lg * 1.15) used by .card/.dialog
-    static let btn: CGFloat = 22           // .au-btn
-    static let key: CGFloat = 24           // .au-key
+    static let lg: CGFloat = 28  // --radius-lg
+    static let lgPadded: CGFloat = 32.2  // calc(--radius-lg * 1.15) used by .card/.dialog
+    static let btn: CGFloat = 22  // .au-btn
+    static let key: CGFloat = 24  // .au-key
     static let pill: CGFloat = 999
 }
 
@@ -109,14 +115,35 @@ extension Color {
     static let auDivider = Color(Palette.divider)
 
     // Ramps (constant across themes)
-    static func auNeutral(_ step: Int) -> Color { Color(UIColor(hex: Palette.neutralRamp[step] ?? 0)) }
-    static func auAccentRamp(_ step: Int) -> Color { Color(UIColor(hex: Palette.accentRamp[step] ?? 0)) }
-    static func auAccent2Ramp(_ step: Int) -> Color { Color(UIColor(hex: Palette.accent2Ramp[step] ?? 0)) }
+    static func auNeutral(_ step: Int) -> Color {
+        Color(UIColor(hex: Palette.neutralRamp[step] ?? 0))
+    }
+    static func auAccentRamp(_ step: Int) -> Color {
+        Color(UIColor(hex: Palette.accentRamp[step] ?? 0))
+    }
+    static func auAccent2Ramp(_ step: Int) -> Color {
+        Color(UIColor(hex: Palette.accent2Ramp[step] ?? 0))
+    }
 
     // `--au-accent-text / --au-sage-text / --au-accent-press` (Aurel.dc.html lines 20–21)
-    static var auAccentText: Color { Color(UIColor.adaptive(light: .init(hex: Palette.accentRamp[700]!), dark: .init(hex: Palette.accentRamp[300]!))) }
-    static var auSageText: Color { Color(UIColor.adaptive(light: .init(hex: Palette.accent2Ramp[700]!), dark: .init(hex: Palette.accent2Ramp[300]!))) }
-    static var auAccentPress: Color { Color(UIColor.adaptive(light: .init(hex: Palette.accentRamp[700]!), dark: .init(hex: Palette.accentRamp[400]!))) }
+    static var auAccentText: Color {
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.accentRamp[700]!),
+                dark: .init(hex: Palette.accentRamp[300]!)))
+    }
+    static var auSageText: Color {
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.accent2Ramp[700]!),
+                dark: .init(hex: Palette.accent2Ramp[300]!)))
+    }
+    static var auAccentPress: Color {
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.accentRamp[700]!),
+                dark: .init(hex: Palette.accentRamp[400]!)))
+    }
 
     // `--au-*` feedback surfaces (Aurel.dc.html lines 51–52)
     private static var errUIColor: UIColor {
@@ -125,76 +152,100 @@ extension Color {
 
     static var auErr: Color { Color(errUIColor) }
     static var auErrBg: Color {
-        Color(UIColor.adaptive(
-            light: .init(hex: 0xf9e8e3),
-            dark: UIColor(hex: 0xd97a67).alpha(0.17)
-        ))
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: 0xf9e8e3),
+                dark: UIColor(hex: 0xd97a67).alpha(0.17)
+            ))
     }
     static var auErrText: Color {
         Color(UIColor.adaptive(light: .init(hex: 0x5f261e), dark: .init(hex: 0xffd6cb)))
     }
     static var auOkBg: Color {
-        Color(UIColor.adaptive(
-            light: .init(hex: Palette.accent2Ramp[100]!),
-            dark: Palette.accent2UIColor.alpha(0.16)
-        ))
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.accent2Ramp[100]!),
+                dark: Palette.accent2UIColor.alpha(0.16)
+            ))
     }
     static var auOkText: Color {
-        Color(UIColor.adaptive(light: .init(hex: Palette.accent2Ramp[900]!), dark: .init(hex: 0xd6e2bd)))
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.accent2Ramp[900]!), dark: .init(hex: 0xd6e2bd)))
     }
     static var auOkQuiet: Color {
-        Color(UIColor.adaptive(light: .init(hex: Palette.accent2Ramp[800]!), dark: .init(hex: 0xc3d3a4)))
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.accent2Ramp[800]!), dark: .init(hex: 0xc3d3a4)))
     }
     static var auTintBg: Color {
-        Color(UIColor.adaptive(
-            light: .init(hex: Palette.accentRamp[100]!),
-            dark: Palette.accentUIColor.alpha(0.15)
-        ))
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.accentRamp[100]!),
+                dark: Palette.accentUIColor.alpha(0.15)
+            ))
     }
     static var auTintText: Color {
-        Color(UIColor.adaptive(light: .init(hex: Palette.accentRamp[800]!), dark: .init(hex: Palette.accentRamp[300]!)))
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.accentRamp[800]!),
+                dark: .init(hex: Palette.accentRamp[300]!)))
     }
     static var auFlatBg: Color {
-        Color(UIColor.adaptive(
-            light: .init(hex: Palette.neutralRamp[200]!),
-            dark: Palette.text.alpha(0.10)
-        ))
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.neutralRamp[200]!),
+                dark: Palette.text.alpha(0.10)
+            ))
     }
     static var auFlatText: Color {
-        Color(UIColor.adaptive(
-            light: .init(hex: Palette.neutralRamp[800]!),
-            dark: Palette.text.alpha(0.72)
-        ))
+        Color(
+            UIColor.adaptive(
+                light: .init(hex: Palette.neutralRamp[800]!),
+                dark: Palette.text.alpha(0.72)
+            ))
     }
 
     // Glass / edges / highlights
-    static var auHi: Color { Color(UIColor.adaptive(light: .white.alpha(0.66), dark: .white.alpha(0.10))) }
+    static var auHi: Color {
+        Color(UIColor.adaptive(light: .white.alpha(0.66), dark: .white.alpha(0.10)))
+    }
     static var auEdge: Color {
-        Color(UIColor.adaptive(
-            light: UIColor(hex: 0x201e1d).alpha(0.08),
-            dark: .white.alpha(0.08)
-        ))
+        Color(
+            UIColor.adaptive(
+                light: UIColor(hex: 0x201e1d).alpha(0.08),
+                dark: .white.alpha(0.08)
+            ))
     }
     static var auFill: Color {
-        Color(UIColor.adaptive(
-            light: UIColor(hex: 0xfffaf2).mixed(with: 0.78, of: Palette.surface),   // #fffaf2 78% + surface
-            dark: .white.mixed(with: 0.055, of: Palette.surface)                    // #fff 5.5% + surface
-        ))
+        Color(
+            UIColor.adaptive(
+                // #fffaf2 78% + surface
+                light: UIColor(hex: 0xfffaf2).mixed(with: 0.78, of: Palette.surface),
+                // #fff 5.5% + surface
+                dark: .white.mixed(with: 0.055, of: Palette.surface)
+            ))
     }
 
     // Dune scene
-    static var auDune: Color { Color(UIColor.adaptive(light: .init(hex: 0xcda67a), dark: .init(hex: 0x2a1d17))) }
-    static var auDune2: Color { Color(UIColor.adaptive(light: .init(hex: 0xb98c5d), dark: .init(hex: 0x1a1210))) }
-    static var auDuneText: Color { Color(UIColor.adaptive(light: .init(hex: 0x4a3220), dark: .init(hex: 0xf0e2cd))) }
+    static var auDune: Color {
+        Color(UIColor.adaptive(light: .init(hex: 0xcda67a), dark: .init(hex: 0x2a1d17)))
+    }
+    static var auDune2: Color {
+        Color(UIColor.adaptive(light: .init(hex: 0xb98c5d), dark: .init(hex: 0x1a1210)))
+    }
+    static var auDuneText: Color {
+        Color(UIColor.adaptive(light: .init(hex: 0x4a3220), dark: .init(hex: 0xf0e2cd)))
+    }
 
     /// Text color used on primary buttons (CSS `color:#fff8f0`).
-    static let auPrimaryButtonText = Color(red: 1, green: 0.972, blue: 0.941) // #fff8f0
+    static let auPrimaryButtonText = Color(red: 1, green: 0.972, blue: 0.941)  // #fff8f0
 }
 
-private extension Palette {
+extension Palette {
     /// UIColor (not adaptive) for the raw ramp bases used in alpha mixes.
-    static var accent2UIColor: UIColor { UIColor(hex: 0x7a8a5e) }
-    static var accentUIColor: UIColor { UIColor(hex: 0xc67139) }
+    fileprivate static var accent2UIColor: UIColor { UIColor(hex: 0x7a8a5e) }
+    fileprivate static var accentUIColor: UIColor { UIColor(hex: 0xc67139) }
 }
 
 // MARK: Gradients
@@ -204,9 +255,18 @@ enum AUGradients {
     static var sky: LinearGradient {
         LinearGradient(
             stops: [
-                .init(color: Color(UIColor.adaptive(light: .init(hex: 0xfdf2e0), dark: .init(hex: 0x161320))), location: 0),
-                .init(color: Color(UIColor.adaptive(light: .init(hex: 0xf8e3c2), dark: .init(hex: 0x231b26))), location: 0.54),
-                .init(color: Color(UIColor.adaptive(light: .init(hex: 0xf1d2a8), dark: .init(hex: 0x3c2620))), location: 1),
+                .init(
+                    color: Color(
+                        UIColor.adaptive(light: .init(hex: 0xfdf2e0), dark: .init(hex: 0x161320))),
+                    location: 0),
+                .init(
+                    color: Color(
+                        UIColor.adaptive(light: .init(hex: 0xf8e3c2), dark: .init(hex: 0x231b26))),
+                    location: 0.54),
+                .init(
+                    color: Color(
+                        UIColor.adaptive(light: .init(hex: 0xf1d2a8), dark: .init(hex: 0x3c2620))),
+                    location: 1),
             ],
             startPoint: .top, endPoint: .bottom
         )
@@ -218,7 +278,7 @@ enum AUGradients {
         let bottom = UIColor.adaptive(light: Palette.surface.alpha(0.68), dark: .white.alpha(0.028))
         return LinearGradient(
             colors: [Color(top), Color(bottom)],
-            startPoint: UnitPoint(x: 0.1, y: 0),   // ~158° top-right-ish
+            startPoint: UnitPoint(x: 0.1, y: 0),  // ~158° top-right-ish
             endPoint: UnitPoint(x: 0.9, y: 1)
         )
     }

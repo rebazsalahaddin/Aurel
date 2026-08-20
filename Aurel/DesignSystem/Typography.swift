@@ -1,6 +1,6 @@
+import CoreText
 import SwiftUI
 import UIKit
-import CoreText
 
 // MARK: - Typography
 //
@@ -67,7 +67,8 @@ enum Figtree {
         let wght = axisValue(for: weight)
         let key = Int(wght) &* 10_000 &+ Int(size * 10)
         return cache.font(forKey: key) {
-            var font = UIFont(name: familyName, size: size)
+            var font =
+                UIFont(name: familyName, size: size)
                 ?? UIFont.systemFont(ofSize: size, weight: uiWeight(for: weight))
 
             // Static-instance route — the app bundles named static weights

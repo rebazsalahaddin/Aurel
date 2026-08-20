@@ -35,7 +35,7 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
         let u = AVSpeechUtterance(string: text)
         u.rate = slow ? 0.36 : 0.42
         u.pitchMultiplier = 1.0
-        u.postUtteranceDelay = 0.35   // thought-boundary pause feel
+        u.postUtteranceDelay = 0.35  // thought-boundary pause feel
         if let voice = AVSpeechSynthesisVoice(language: "en-US") {
             u.voice = voice
         }
@@ -48,7 +48,9 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
         speaking = false
     }
 
-    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+    nonisolated func speechSynthesizer(
+        _ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance
+    ) {
         Task { @MainActor in
             self.speaking = false
         }
@@ -106,7 +108,10 @@ enum ReviewScheduler {
     /// Due date display for the review list ("Due tomorrow" / "Due in N days").
     static func dueLabel(for date: Date, now: Date = Date()) -> String {
         let cal = Calendar.current
-        let days = cal.dateComponents([.day], from: cal.startOfDay(for: now), to: cal.startOfDay(for: date)).day ?? 0
+        let days =
+            cal.dateComponents(
+                [.day], from: cal.startOfDay(for: now), to: cal.startOfDay(for: date)
+            ).day ?? 0
         if days <= 0 { return "Due today" }
         if days == 1 { return "Due tomorrow" }
         return "Due in \(days) days"

@@ -46,8 +46,8 @@ final class LearnerProfile {
     var swWeekly: Bool = false
 
     // Appearance & type
-    var themeMode: Int = 0        // 0 system · 1 light · 2 dark
-    var typeStep: Int = 2         // text-size index; 2 = standard (of 1…3)
+    var themeMode: Int = 0  // 0 system · 1 light · 2 dark
+    var typeStep: Int = 2  // text-size index; 2 = standard (of 1…3)
 
     var onboardedAt: Date?
 
@@ -62,10 +62,10 @@ final class LearnerProfile {
 
 @Model
 final class DayLog {
-    var day: Date                 // start-of-day
+    var day: Date  // start-of-day
     var lessonDone: Bool = false
     var recallDone: Bool = false
-    var caught: Int = 0           // words caught in review that day
+    var caught: Int = 0  // words caught in review that day
     var learner: LearnerProfile?
 
     init(day: Date, learner: LearnerProfile? = nil) {
@@ -79,11 +79,14 @@ final class LessonRecord {
     var finishedAt: Date = Date()
     var chapterIdx: Int = 0
     var lessonIdx: Int = 0
-    var endPos: Int = 0           // global course position reached
+    var endPos: Int = 0  // global course position reached
     var wasReview: Bool = false
     var learner: LearnerProfile?
 
-    init(chapterIdx: Int, lessonIdx: Int, endPos: Int, wasReview: Bool = false, learner: LearnerProfile? = nil) {
+    init(
+        chapterIdx: Int, lessonIdx: Int, endPos: Int, wasReview: Bool = false,
+        learner: LearnerProfile? = nil
+    ) {
         self.chapterIdx = chapterIdx
         self.lessonIdx = lessonIdx
         self.endPos = endPos
@@ -95,7 +98,7 @@ final class LessonRecord {
 /// One word scheduled back by the spaced-retrieval rule (1/3/7/14/30 days).
 @Model
 final class MistakeItem {
-    var bankIndex: Int            // index into CourseStore.allPracticeItems
+    var bankIndex: Int  // index into CourseStore.allPracticeItems
     var word: String = ""
     var addedAt: Date = Date()
     var dueAt: Date = Date()
@@ -106,7 +109,8 @@ final class MistakeItem {
         self.bankIndex = bankIndex
         self.word = word
         self.intervalDays = intervalDays
-        self.dueAt = Calendar.current.date(byAdding: .day, value: intervalDays, to: Date()) ?? Date()
+        self.dueAt =
+            Calendar.current.date(byAdding: .day, value: intervalDays, to: Date()) ?? Date()
         self.learner = learner
     }
 }

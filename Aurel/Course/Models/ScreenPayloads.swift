@@ -27,11 +27,11 @@ enum ScreenKind: String, Decodable, Hashable, CaseIterable, Sendable {
 }
 
 struct CourseScreen: Decodable, Hashable, Identifiable {
-    let id: String              // "S01"
+    let id: String  // "S01"
     let kind: ScreenKind
-    let label: String?          // "Can-do promise"
-    let step: String?           // "STEP 1 · 30 sec"
-    let tip: String?            // per-screen UI/UX implementation note (not learner-facing)
+    let label: String?  // "Can-do promise"
+    let step: String?  // "STEP 1 · 30 sec"
+    let tip: String?  // per-screen UI/UX implementation note (not learner-facing)
     let assets: [String]?
     let payload: CourseScreenPayload
 
@@ -96,7 +96,9 @@ enum CourseScreenPayload: Decodable, Hashable {
 
     private enum CodingKeys: String, CodingKey { case type }
 
-    private static func decode(from decoder: Decoder, kind: ScreenKind) throws -> CourseScreenPayload {
+    private static func decode(from decoder: Decoder, kind: ScreenKind) throws
+        -> CourseScreenPayload
+    {
         switch kind {
         case .promise: .promise(try PromiseScreen(from: decoder))
         case .hook: .hook(try HookScreen(from: decoder))
@@ -336,7 +338,8 @@ struct ReadingScreen: Decodable, Hashable {
 /// Guided email assembly.
 struct EmailAssemblyScreen: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
-        case sourceId = "id_", instr, spoken, tiles, key, written, ok, no, hints, safety
+        case sourceId = "id_"
+        case instr, spoken, tiles, key, written, ok, no, hints, safety
     }
 
     let sourceId: String?

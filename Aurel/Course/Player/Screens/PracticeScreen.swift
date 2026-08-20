@@ -15,7 +15,12 @@ struct PracticeScreenView: View {
             HStack(spacing: 5) {
                 ForEach(list.indices, id: \.self) { k in
                     Capsule()
-                        .fill(k < m.i ? Color.auAccent : (k == m.i ? Color.auAccent.opacity(0.55) : Color.auText.opacity(0.12)))
+                        .fill(
+                            k < m.i
+                                ? Color.auAccent
+                                : (k == m.i
+                                    ? Color.auAccent.opacity(0.55) : Color.auText.opacity(0.12))
+                        )
                         .frame(height: 4)
                 }
                 Text("\(m.i + 1) / \(list.count)")
@@ -45,7 +50,9 @@ struct PracticeScreenView: View {
 
             if let item = m.item {
                 let canGo = m.done || m.isQuiet
-                APillButton(title: m.i + 1 < list.count ? "Next" : "Go on", icon: .arrow, disabled: !canGo) {
+                APillButton(
+                    title: m.i + 1 < list.count ? "Next" : "Go on", icon: .arrow, disabled: !canGo
+                ) {
                     m.advance()
                 }
                 .opacity(canGo ? 1 : 0.45)
@@ -71,7 +78,9 @@ struct PracticeScreenView: View {
                 }
                 .padding(.horizontal, 13)
                 .padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.auFlatBg))
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.auFlatBg)
+                )
                 .foregroundStyle(Color.auFlatText)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 14)
@@ -107,7 +116,9 @@ struct PracticeScreenView: View {
                     .padding(.vertical, 11)
                     .background(
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .strokeBorder(Color.auAccent.opacity(0.30), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                            .strokeBorder(
+                                Color.auAccent.opacity(0.30),
+                                style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                     )
                 }
             }
@@ -144,8 +155,11 @@ struct PracticeScreenView: View {
 
                     if !m.teachShut {
                         if let ill = teach.ill {
-                            IllustrationPlaceholder(ill: ill, height: 120, cornerRadius: 16, kickerSize: 8.5, captionSize: 10.5)
-                                .padding(.bottom, 12)
+                            IllustrationPlaceholder(
+                                ill: ill, height: 120, cornerRadius: 16, kickerSize: 8.5,
+                                captionSize: 10.5
+                            )
+                            .padding(.bottom, 12)
                         }
 
                         ForEach(teach.notice ?? [], id: \.task) { n in
@@ -210,7 +224,10 @@ struct PracticeScreenView: View {
                             }
                             .padding(.horizontal, 13)
                             .padding(.vertical, 11)
-                            .background(RoundedRectangle(cornerRadius: 13, style: .continuous).fill(Color.auTintBg))
+                            .background(
+                                RoundedRectangle(cornerRadius: 13, style: .continuous).fill(
+                                    Color.auTintBg)
+                            )
                             .foregroundStyle(Color.auTintText)
                             .padding(.bottom, 9)
                         }
@@ -256,7 +273,9 @@ struct PracticeScreenView: View {
                                     )
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                            .strokeBorder(Color.auAccent.opacity(0.34), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                            .strokeBorder(
+                                                Color.auAccent.opacity(0.34),
+                                                style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                                     )
                                     .foregroundStyle(Color.auTintText)
                                     .minimumScaleFactor(0.5)
@@ -408,7 +427,10 @@ struct PracticeScreenView: View {
                 }
                 .padding(.horizontal, 17)
                 .padding(.vertical, 15)
-                .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auAccentRamp(600)))
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous).fill(
+                        Color.auAccentRamp(600))
+                )
                 .foregroundStyle(Color.auPrimaryButtonText)
             }
             .buttonStyle(.auTap)
@@ -502,7 +524,10 @@ struct PracticeScreenView: View {
             }
             .padding(.horizontal, 15)
             .padding(.vertical, 13)
-            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(ok ? Color.auOkBg : Color.auErrBg))
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
+                    ok ? Color.auOkBg : Color.auErrBg)
+            )
             .foregroundStyle(ok ? Color.auOkText : Color.auErrText)
             .padding(.bottom, 11)
         }
@@ -526,7 +551,9 @@ struct PracticeScreenView: View {
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .strokeBorder(Color.auAccent.opacity(0.38), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                    .strokeBorder(
+                        Color.auAccent.opacity(0.38),
+                        style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
             )
             .padding(.bottom, 11)
         }
@@ -567,9 +594,12 @@ struct PracticeScreenView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.auFill)
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous).fill(
+                                        Color.auFill)
                                 )
-                                .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.auEdge, lineWidth: 1))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10).strokeBorder(
+                                        Color.auEdge, lineWidth: 1))
                         }
                     }
                     .padding(.bottom, 12)
@@ -582,8 +612,13 @@ struct PracticeScreenView: View {
                                 .font(.caprasimo(size: 16))
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 8)
-                                .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.auFill))
-                                .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.auEdge, lineWidth: 1))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous).fill(
+                                        Color.auFill)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10).strokeBorder(
+                                        Color.auEdge, lineWidth: 1))
                         }
                     }
                     .padding(.bottom, 12)
@@ -634,7 +669,10 @@ struct PracticeScreenView: View {
                             .font(.figtree(.semibold, size: 13))
                             .frame(maxWidth: .infinity)
                             .frame(minHeight: 46)
-                            .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.auAccentRamp(600)))
+                            .background(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous).fill(
+                                    Color.auAccentRamp(600))
+                            )
                             .foregroundStyle(Color.auPrimaryButtonText)
                     }
                     .buttonStyle(.auTap)
@@ -690,10 +728,12 @@ struct PracticeScreenView: View {
             }
             .buttonStyle(.auTap)
 
-            Text("\(m.rec == 0 ? "Say it" : (m.rec == 1 ? "Listening…" : "Recorded — play both")) · ungraded")
-                .font(.figtree(.semibold, size: 12.5))
-                .foregroundStyle(Color.auText.opacity(0.52))
-                .padding(.top, 12)
+            Text(
+                "\(m.rec == 0 ? "Say it" : (m.rec == 1 ? "Listening…" : "Recorded — play both")) · ungraded"
+            )
+            .font(.figtree(.semibold, size: 12.5))
+            .foregroundStyle(Color.auText.opacity(0.52))
+            .padding(.top, 12)
         }
         .frame(maxWidth: .infinity)
         .padding(24)
@@ -716,7 +756,9 @@ struct PracticeScreenView: View {
                     .font(.figtree(.semibold, size: 16.5))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 17)
-                    .background(RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous).strokeBorder(Color.auDivider, lineWidth: 1))
+                    .background(
+                        RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
+                            .strokeBorder(Color.auDivider, lineWidth: 1))
             }
             .buttonStyle(.auTap)
             APillButton(title: "Go on") { m.advance() }
@@ -738,7 +780,9 @@ struct PracticeScreenView: View {
                 .padding(.vertical, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .strokeBorder(Color.auAccent.opacity(0.36), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+                        .strokeBorder(
+                            Color.auAccent.opacity(0.36),
+                            style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
                 )
                 .padding(.bottom, 14)
 
@@ -746,18 +790,23 @@ struct PracticeScreenView: View {
                 .padding(.bottom, 14)
 
             if m.tileComplete {
-                Text(m.tileCorrect ? (task.ok.isEmpty ? "Correct." : task.ok) : (task.no.isEmpty ? "Not yet — tap a tile again to take it back." : task.no))
-                    .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.45)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 15)
-                    .padding(.vertical, 13)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(m.tileCorrect ? Color.auOkBg : Color.auErrBg)
-                    )
-                    .foregroundStyle(m.tileCorrect ? Color.auOkText : Color.auErrText)
-                    .padding(.bottom, 11)
+                Text(
+                    m.tileCorrect
+                        ? (task.ok.isEmpty ? "Correct." : task.ok)
+                        : (task.no.isEmpty
+                            ? "Not yet — tap a tile again to take it back." : task.no)
+                )
+                .font(.figtree(.regular, size: 14))
+                .lineSpacing(14 * 0.45)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 15)
+                .padding(.vertical, 13)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(m.tileCorrect ? Color.auOkBg : Color.auErrBg)
+                )
+                .foregroundStyle(m.tileCorrect ? Color.auOkText : Color.auErrText)
+                .padding(.bottom, 11)
             }
         }
     }
@@ -776,7 +825,9 @@ struct PracticeScreenView: View {
     }
 
     @ViewBuilder
-    private func optionRow(_ o: PracticeOption, picked: Bool, isKey: Bool, item: PlayerModel.PlayerItem) -> some View {
+    private func optionRow(
+        _ o: PracticeOption, picked: Bool, isKey: Bool, item: PlayerModel.PlayerItem
+    ) -> some View {
         let quiet = m.isQuiet
         // state colors (optionViews, lines 1223–1240)
         let bg: Color = {
@@ -875,8 +926,14 @@ struct FlowTiles: View {
                         .padding(.horizontal, 17)
                         .padding(.vertical, 12)
                         .frame(minHeight: 52)
-                        .background(RoundedRectangle(cornerRadius: 15, style: .continuous).fill(on ? Color.auTintBg : Color.auFill))
-                        .overlay(RoundedRectangle(cornerRadius: 15, style: .continuous).strokeBorder(on ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1.5))
+                        .background(
+                            RoundedRectangle(cornerRadius: 15, style: .continuous).fill(
+                                on ? Color.auTintBg : Color.auFill)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 15, style: .continuous).strokeBorder(
+                                on ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1.5)
+                        )
                         .foregroundStyle(on ? Color.auTintText : Color.auText)
                 }
                 .buttonStyle(.auTap)
@@ -891,7 +948,9 @@ struct FlowLayout: Layout {
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let width = proposal.width ?? 360
-        var x: CGFloat = 0, y: CGFloat = 0, rowH: CGFloat = 0
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var rowH: CGFloat = 0
         for s in subviews {
             let sz = s.sizeThatFits(.unspecified)
             if x > 0 && x + sz.width > width {
@@ -905,7 +964,9 @@ struct FlowLayout: Layout {
         return CGSize(width: width, height: y + rowH)
     }
 
-    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+    func placeSubviews(
+        in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()
+    ) {
         var x = bounds.minX
         var y = bounds.minY
         var rowH: CGFloat = 0

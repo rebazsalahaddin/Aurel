@@ -1,5 +1,5 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 // MARK: - App router
 //
@@ -135,8 +135,8 @@ final class AppRouter {
     var coursePos = 0
     var notif = NotifPrefs()
     var sw = SwitchPrefs()
-    var themeMode = 0        // 0 system · 1 light · 2 dark
-    var typeStep = 2         // text-size index; 2 = standard
+    var themeMode = 0  // 0 system · 1 light · 2 dark
+    var typeStep = 2  // text-size index; 2 = standard
 
     struct NotifPrefs: Equatable {
         var dawn = true
@@ -162,11 +162,14 @@ final class AppRouter {
     init(course: CourseStore, modelContext: ModelContext? = nil) {
         self.course = course
         self.modelContext = modelContext
-        if let modelContext, let profile = try? modelContext.fetch(FetchDescriptor<LearnerProfile>()).first {
+        if let modelContext,
+            let profile = try? modelContext.fetch(FetchDescriptor<LearnerProfile>()).first
+        {
             load(from: profile)
         }
         // Verification hook: SIMCTL_CHILD_AUREL_SCREEN=home
-        if let raw = ProcessInfo.processInfo.environment["AUREL_SCREEN"], let s = Screen.named(raw) {
+        if let raw = ProcessInfo.processInfo.environment["AUREL_SCREEN"], let s = Screen.named(raw)
+        {
             screen = s
             persist()
         }
@@ -204,8 +207,11 @@ final class AppRouter {
         dayLesson = p.dayLessonDone
         dayRecall = p.dayRecallDone
         coursePos = p.coursePos
-        notif = NotifPrefs(dawn: p.notifDawn, sundown: p.notifSundown, milestone: p.notifMilestone, cohort: p.notifCohort)
-        sw = SwitchPrefs(reminder: p.swReminder, sound: p.swSound, haptics: p.swHaptics, weekly: p.swWeekly)
+        notif = NotifPrefs(
+            dawn: p.notifDawn, sundown: p.notifSundown, milestone: p.notifMilestone,
+            cohort: p.notifCohort)
+        sw = SwitchPrefs(
+            reminder: p.swReminder, sound: p.swSound, haptics: p.swHaptics, weekly: p.swWeekly)
         themeMode = p.themeMode
         typeStep = p.typeStep
         screen = p.onboardedAt == nil ? .welcome : .home
@@ -214,8 +220,13 @@ final class AppRouter {
     /// Write durable fields back to SwiftData.
     func persist() {
         guard let modelContext else { return }
-        let profile = (try? modelContext.fetch(FetchDescriptor<LearnerProfile>()).first)
-            ?? { let p = LearnerProfile(); modelContext.insert(p); return p }()
+        let profile =
+            (try? modelContext.fetch(FetchDescriptor<LearnerProfile>()).first)
+            ?? {
+                let p = LearnerProfile()
+                modelContext.insert(p)
+                return p
+            }()
         profile.goals = goals
         profile.level = level
         profile.email = email
@@ -242,7 +253,9 @@ final class AppRouter {
         profile.swWeekly = sw.weekly
         profile.themeMode = themeMode
         profile.typeStep = typeStep
-        if screen != .welcome && screen != .goal && screen != .placement && screen != .commit && screen != .plan {
+        if screen != .welcome && screen != .goal && screen != .placement && screen != .commit
+            && screen != .plan
+        {
             profile.onboardedAt = profile.onboardedAt ?? Date()
         }
         try? modelContext.save()
@@ -281,17 +294,29 @@ final class AppRouter {
         // 420 ms after a pick: advance, or open the review when all six are in.
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(0.42))
-            if assessAnswers.allSatisfy({ $0 != nil }) { screen = .assessReview }
-            else { assessStep = k + 2 }
+            if assessAnswers.allSatisfy({ $0 != nil }) {
+                screen = .assessReview
+            } else {
+                assessStep = k + 2
+            }
         }
     }
 
     func skipPlacement() { screen = .plan }
-    func assessBegin() { screen = .plan; assessStep = 0 }
+    func assessBegin() {
+        screen = .plan
+        assessStep = 0
+    }
     func assessBack() { assessStep = assessStep > 1 ? assessStep - 1 : 0 }
-    func assessLast() { screen = .assess; assessStep = 6 }
+    func assessLast() {
+        screen = .assess
+        assessStep = 6
+    }
     func assessStopEarly() { assessStep = 6 }
-    func assessConfirm() { screen = .plan; assessStep = 0 }
+    func assessConfirm() {
+        screen = .plan
+        assessStep = 0
+    }
 
     // MARK: Login (mock validation, lines 2727–2731)
 
@@ -317,7 +342,10 @@ final class AppRouter {
 
     func goCourse(_ i: Int) {
         courseLesson = min(i, 3)
-        coursePos = i >= 4 ? course.chapterEndPos(chapterIdx) : course.coursePos(chapterIdx: chapterIdx, lessonIdx: i)
+        coursePos =
+            i >= 4
+            ? course.chapterEndPos(chapterIdx)
+            : course.coursePos(chapterIdx: chapterIdx, lessonIdx: i)
         pending = nil
         screen = .course
     }
@@ -331,7 +359,7 @@ final class AppRouter {
         pending = nil
     }
 
-    var lastCoursePos = 0   // trackCourse(n)
+    var lastCoursePos = 0  // trackCourse(n)
     func trackCourse(_ n: Int) { lastCoursePos = n }
 
     func leaveCourse() {
@@ -366,9 +394,20 @@ final class AppRouter {
     // MARK: Quick practice (resetLesson / advance / check, lines 1903–1947)
 
     func resetLesson() {
-        qi = 0; sel = nil; checked = false; correctCount = 0; mistakes = []
-        flipped = false; matchSel = nil; matched = []; matchWrong = nil; built = []
-        attempt = 0; nudge = false; wrongSel = nil; retries = 0
+        qi = 0
+        sel = nil
+        checked = false
+        correctCount = 0
+        mistakes = []
+        flipped = false
+        matchSel = nil
+        matched = []
+        matchWrong = nil
+        built = []
+        attempt = 0
+        nudge = false
+        wrongSel = nil
+        retries = 0
     }
 
     func goLesson() {
@@ -380,7 +419,10 @@ final class AppRouter {
 
     func reviewRun() {
         let q = mistakes
-        guard !q.isEmpty else { screen = .review; return }
+        guard !q.isEmpty else {
+            screen = .review
+            return
+        }
         resetLesson()
         reviewMode = true
         queue = q
@@ -388,8 +430,11 @@ final class AppRouter {
     }
 
     func leaveLesson(listCount: Int) {
-        pending = (qi > 0 && !reviewMode)
-            ? PendingSpot(pos: coursePos, title: course.courseSpot(coursePos).title, at: qi + 1, of: listCount)
+        pending =
+            (qi > 0 && !reviewMode)
+            ? PendingSpot(
+                pos: coursePos, title: course.courseSpot(coursePos).title, at: qi + 1, of: listCount
+            )
             : nil
         screen = .home
         persist()
@@ -410,7 +455,8 @@ final class AppRouter {
         if qi >= list.count - 1 {
             if reviewMode {
                 // Mistakes hold display indexes; map them back to bank indexes.
-                let backIdx = mistakes
+                let backIdx =
+                    mistakes
                     .filter { queue.indices.contains($0) }
                     .map { queue[$0] }
                 caught = queue.count - backIdx.count
@@ -434,9 +480,17 @@ final class AppRouter {
             return
         }
         qi += 1
-        sel = nil; checked = false; flipped = false; selfRate = nil
-        matchSel = nil; matched = []; matchWrong = nil; built = []
-        attempt = 0; nudge = false; wrongSel = nil
+        sel = nil
+        checked = false
+        flipped = false
+        selfRate = nil
+        matchSel = nil
+        matched = []
+        matchWrong = nil
+        built = []
+        attempt = 0
+        nudge = false
+        wrongSel = nil
     }
 
     /// check() — neutral retry on first miss, reveal on second.
@@ -444,7 +498,9 @@ final class AppRouter {
         guard list.indices.contains(qi) else { return }
         let q = list[qi]
         var ok = false
-        if q.type == .choice || q.type == .listen || q.type == QuickItem.Kind.pattern { ok = sel == q.answer }
+        if q.type == .choice || q.type == .listen || q.type == QuickItem.Kind.pattern {
+            ok = sel == q.answer
+        }
         if q.type == .order { ok = built.joined(separator: " ") == q.answerString }
         if ok {
             checked = true
@@ -486,7 +542,10 @@ final class AppRouter {
 
     func setSolo() { sceneRoleB = false }
     func setDuo() { sceneRoleB = true }
-    func replayScene() { sceneTurn = 0; scenePicks = [] }
+    func replayScene() {
+        sceneTurn = 0
+        scenePicks = []
+    }
 
     func pickSceneReply(_ i: Int, turnCount: Int) {
         while scenePicks.count <= sceneTurn { scenePicks.append(nil) }
@@ -502,7 +561,10 @@ final class AppRouter {
     // MARK: Say-aloud mock (lines 1886–1896)
 
     func toggleSpeak() {
-        if speaking { stopSpeak(); return }
+        if speaking {
+            stopSpeak()
+            return
+        }
         speaking = true
         speakScored = false
         typing = false

@@ -38,16 +38,18 @@ struct LoginView: View {
 
             VStack(alignment: .leading, spacing: 14) {
                 AUField(label: "Email") {
-                    AUTextField(text: Binding(
-                        get: { env.router.email },
-                        set: { env.router.setEmail($0) }
-                    ), placeholder: "you@example.com", keyboard: .emailAddress)
+                    AUTextField(
+                        text: Binding(
+                            get: { env.router.email },
+                            set: { env.router.setEmail($0) }
+                        ), placeholder: "you@example.com", keyboard: .emailAddress)
                 }
                 AUField(label: "Password") {
-                    AUTextField(text: Binding(
-                        get: { env.router.pass },
-                        set: { env.router.setPass($0) }
-                    ), placeholder: "••••••••", secure: true)
+                    AUTextField(
+                        text: Binding(
+                            get: { env.router.pass },
+                            set: { env.router.setPass($0) }
+                        ), placeholder: "••••••••", secure: true)
                 }
             }
             .padding(.bottom, 10)
@@ -107,15 +109,13 @@ struct LoginView: View {
 
             Spacer(minLength: 20)
 
-            (
-                Text("New here? ")
-                    .foregroundStyle(Color.auText.opacity(0.50))
+            (Text("New here? ")
+                .foregroundStyle(Color.auText.opacity(0.50))
                 + Text("Create an account")
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color.auAccent)
-            )
-            .font(.figtree(.regular, size: 12.5))
-            .onTapGesture { env.router.nav(.goal) }
+                .fontWeight(.semibold)
+                .foregroundStyle(Color.auAccent))
+                .font(.figtree(.regular, size: 12.5))
+                .onTapGesture { env.router.nav(.goal) }
         }
         .padding(.horizontal, 24)
         .padding(.top, 74)
@@ -150,9 +150,13 @@ struct AUTextField: View {
     var body: some View {
         Group {
             if secure {
-                SecureField("", text: $text, prompt: Text(placeholder).foregroundStyle(Color.auText.opacity(0.35)))
+                SecureField(
+                    "", text: $text,
+                    prompt: Text(placeholder).foregroundStyle(Color.auText.opacity(0.35)))
             } else {
-                TextField("", text: $text, prompt: Text(placeholder).foregroundStyle(Color.auText.opacity(0.35)))
+                TextField(
+                    "", text: $text,
+                    prompt: Text(placeholder).foregroundStyle(Color.auText.opacity(0.35)))
             }
         }
         .keyboardType(keyboard)

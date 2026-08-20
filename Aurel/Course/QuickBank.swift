@@ -52,30 +52,35 @@ extension QuickItem {
             case .cards(let sc):
                 for c in sc.cards ?? [] {
                     guard let fn = c.fn else { continue }
-                    flash.append(QuickItem(
-                        id: "\(src)-\(c.id)",
-                        type: .flash,
-                        kicker: "Vocabulary · \(c.id)",
-                        front: c.w,
-                        back: fn,
-                        ex: c.frame ?? "",
-                        ipa: c.ipa ?? "",
-                        ill: c.ill,
-                        src: src
-                    ))
+                    flash.append(
+                        QuickItem(
+                            id: "\(src)-\(c.id)",
+                            type: .flash,
+                            kicker: "Vocabulary · \(c.id)",
+                            front: c.w,
+                            back: fn,
+                            ex: c.frame ?? "",
+                            ipa: c.ipa ?? "",
+                            ill: c.ill,
+                            src: src
+                        ))
                 }
             case .practice(let sc):
-                append(items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
-                       into: &choice, &listen, &order)
+                append(
+                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    into: &choice, &listen, &order)
             case .quiz(let sc):
-                append(items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
-                       into: &choice, &listen, &order)
+                append(
+                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    into: &choice, &listen, &order)
             case .reading(let sc):
-                append(items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
-                       into: &choice, &listen, &order)
+                append(
+                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    into: &choice, &listen, &order)
             case .testlet(let sc):
-                append(items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
-                       into: &choice, &listen, &order)
+                append(
+                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    into: &choice, &listen, &order)
             default:
                 break
             }
@@ -89,7 +94,9 @@ extension QuickItem {
 
         var out: [QuickItem] = []
         if !flash.isEmpty { out.append(flash[0]) }
-        let c = pick(choice, 2), l = pick(listen, 2), o = pick(order, 1)
+        let c = pick(choice, 2)
+        let l = pick(listen, 2)
+        let o = pick(order, 1)
         if c.indices.contains(0) { out.append(c[0]) }
         if l.indices.contains(0) { out.append(l[0]) }
         if o.indices.contains(0) { out.append(o[0]) }
@@ -110,7 +117,8 @@ extension QuickItem {
     ) {
         for it in items ?? [] {
             if it.kind == "order", let tiles = it.tiles, !tiles.isEmpty {
-                var item = QuickItem(id: "\(src)-\(it.id)", type: .order, kicker: "Word order · \(it.id)")
+                var item = QuickItem(
+                    id: "\(src)-\(it.id)", type: .order, kicker: "Word order · \(it.id)")
                 item.prompt = it.instr.isEmpty ? "Put in order." : it.instr
                 item.words = tiles
                 item.answerString = (it.key?.sequence ?? []).joined(separator: " ")
@@ -121,12 +129,16 @@ extension QuickItem {
                 continue
             }
             let opts = (it.opts ?? []).filter { !($0.text ?? "").isEmpty }
-            guard opts.count >= 2, it.kind != "image", it.kind != "pairs", it.kind != "sort", it.kind != "speak" else { continue }
-            let answer = max(0, opts.firstIndex { $0.id == it.key?.single || $0.text == it.key?.single } ?? 0)
+            guard opts.count >= 2, it.kind != "image", it.kind != "pairs", it.kind != "sort",
+                it.kind != "speak"
+            else { continue }
+            let answer = max(
+                0, opts.firstIndex { $0.id == it.key?.single || $0.text == it.key?.single } ?? 0)
             var base = QuickItem(
                 id: "\(src)-\(it.id)",
                 type: it.aud != nil ? .listen : .choice,
-                kicker: it.id.replacingOccurrences(of: "^PR-", with: "", options: .regularExpression) + " · " + src
+                kicker: it.id.replacingOccurrences(
+                    of: "^PR-", with: "", options: .regularExpression) + " · " + src
             )
             base.options = opts.compactMap(\.text)
             base.answer = answer
@@ -134,7 +146,8 @@ extension QuickItem {
             base.hint = it.no ?? ""
             base.src = src
             if it.aud != nil {
-                base.audio = "not recorded yet — \(chapterId)-\(it.aud ?? "") is a script in \(lessonSrc)"
+                base.audio =
+                    "not recorded yet — \(chapterId)-\(it.aud ?? "") is a script in \(lessonSrc)"
                 base.audioAsset = it.aud.map { "\(chapterId)-\($0)" } ?? ""
                 base.prompt = it.prompt ?? ""
                 listen.append(base)
@@ -168,17 +181,18 @@ struct WordRow: Identifiable, Hashable, Sendable {
             if case .cards(let sc) = f.screen.payload {
                 for c in sc.cards ?? [] {
                     guard let fn = c.fn else { continue }
-                    out.append(WordRow(
-                        id: "\(f.chapter.id)-\(f.lesson.id)-\(c.id)",
-                        w: c.w,
-                        m: fn,
-                        e: c.frame ?? "",
-                        r: c.ipa.map { ipa in ipa + (c.stress.map { " · \($0)" } ?? "") } ?? "",
-                        st: "Taught",
-                        seen: "\(f.chapter.id)-\(f.lesson.id)-\(c.id)",
-                        ill: c.ill,
-                        aud: c.aud.map { "\(f.chapter.id)-\($0)" } ?? ""
-                    ))
+                    out.append(
+                        WordRow(
+                            id: "\(f.chapter.id)-\(f.lesson.id)-\(c.id)",
+                            w: c.w,
+                            m: fn,
+                            e: c.frame ?? "",
+                            r: c.ipa.map { ipa in ipa + (c.stress.map { " · \($0)" } ?? "") } ?? "",
+                            st: "Taught",
+                            seen: "\(f.chapter.id)-\(f.lesson.id)-\(c.id)",
+                            ill: c.ill,
+                            aud: c.aud.map { "\(f.chapter.id)-\($0)" } ?? ""
+                        ))
                 }
             }
         }
@@ -210,7 +224,10 @@ struct SceneScript: Sendable, Hashable {
         for f in course.flat.reversed() {
             var roleplay: RoleplayScreen?
             for s in f.lesson.screens {
-                if case .roleplay(let rp) = s.payload { roleplay = rp; break }
+                if case .roleplay(let rp) = s.payload {
+                    roleplay = rp
+                    break
+                }
             }
             guard let rp = roleplay else { continue }
 
@@ -219,21 +236,30 @@ struct SceneScript: Sendable, Hashable {
             for s in f.lesson.screens {
                 if case .practice(let pr) = s.payload {
                     let items = (pr.items ?? []).filter { ($0.opts ?? []).count >= 3 }
-                    if !items.isEmpty { rehearsalItems = items; break }
+                    if !items.isEmpty {
+                        rehearsalItems = items
+                        break
+                    }
                 }
             }
             guard !rehearsalItems.isEmpty else { continue }
 
             return SceneScript(
-                title: (f.screen.label ?? "").replacingOccurrences(of: "^Roleplay — ", with: "", options: .regularExpression) + " · " + (rp.spec ?? ""),
+                title: (f.screen.label ?? "").replacingOccurrences(
+                    of: "^Roleplay — ", with: "", options: .regularExpression) + " · "
+                    + (rp.spec ?? ""),
                 role: rp.scenario ?? "",
-                close: "Slots completed, not perfection: " + (rp.checklist ?? []).joined(separator: " · ") + ".",
+                close: "Slots completed, not perfection: "
+                    + (rp.checklist ?? []).joined(separator: " · ") + ".",
                 source: "\(f.chapter.id) · \(f.lesson.src ?? "")",
                 turns: rehearsalItems.map { it in
                     Turn(
                         them: it.prompt ?? "",
                         replies: (it.opts ?? []).map { o in
-                            Reply(t: o.text ?? "", reg: (o.id == it.key?.single || o.text == it.key?.single) ? (it.ok ?? "") : (it.no ?? ""))
+                            Reply(
+                                t: o.text ?? "",
+                                reg: (o.id == it.key?.single || o.text == it.key?.single)
+                                    ? (it.ok ?? "") : (it.no ?? ""))
                         }
                     )
                 }

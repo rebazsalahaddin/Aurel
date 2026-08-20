@@ -70,12 +70,14 @@ struct HomeView: View {
                     .font(.figtree(.regular, size: 13))
                     .foregroundStyle(Color.auText.opacity(0.55))
                     .padding(.top, 7)
-                Text("\(inChapter >= ch.count ? "Done: you can " : "By the end: you can ")\(ch.promise)")
-                    .font(.figtree(.regular, size: 12.5))
-                    .lineSpacing(12.5 * 0.45)
-                    .foregroundStyle(Color.auAccentText)
-                    .frame(maxWidth: 288, alignment: .leading)
-                    .padding(.top, 9)
+                Text(
+                    "\(inChapter >= ch.count ? "Done: you can " : "By the end: you can ")\(ch.promise)"
+                )
+                .font(.figtree(.regular, size: 12.5))
+                .lineSpacing(12.5 * 0.45)
+                .foregroundStyle(Color.auAccentText)
+                .frame(maxWidth: 288, alignment: .leading)
+                .padding(.top, 9)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -86,9 +88,15 @@ struct HomeView: View {
                 LinearGradient(
                     stops: [
                         .init(color: Color.auBackground, location: 0),
-                        .init(color: Color.auBackground.mixed(with: 0.07, of: Color.auAccent), location: 0.30),
-                        .init(color: Color.auBackground.mixed(with: 0.16, of: Color.auAccent), location: 0.60),
-                        .init(color: Color.auBackground.mixed(with: 0.10, of: Color.auAccent), location: 0.84),
+                        .init(
+                            color: Color.auBackground.mixed(with: 0.07, of: Color.auAccent),
+                            location: 0.30),
+                        .init(
+                            color: Color.auBackground.mixed(with: 0.16, of: Color.auAccent),
+                            location: 0.60),
+                        .init(
+                            color: Color.auBackground.mixed(with: 0.10, of: Color.auAccent),
+                            location: 0.84),
                         .init(color: Color.auBackground, location: 1),
                     ],
                     startPoint: .top, endPoint: .bottom
@@ -191,13 +199,17 @@ struct HomeView: View {
                                 .monospacedDigit()
                                 .tracking(-0.38)
                                 .foregroundStyle(Color.auAccentText)
-                            Text(r.streak > 0
-                                 ? (r.streak == 1 ? "day. A day counts when both halves are done." : "days. A day counts when both halves are done.")
-                                 : "A lesson, then the words due back — both halves make a day.")
-                                .font(.figtree(.regular, size: 11.5))
-                                .lineSpacing(11.5 * 0.4)
-                                .foregroundStyle(Color.auText.opacity(0.52))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text(
+                                r.streak > 0
+                                    ? (r.streak == 1
+                                        ? "day. A day counts when both halves are done."
+                                        : "days. A day counts when both halves are done.")
+                                    : "A lesson, then the words due back — both halves make a day."
+                            )
+                            .font(.figtree(.regular, size: 11.5))
+                            .lineSpacing(11.5 * 0.4)
+                            .foregroundStyle(Color.auText.opacity(0.52))
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
                     .buttonStyle(.auTap)
@@ -214,11 +226,13 @@ struct HomeView: View {
                     } else {
                         HStack(spacing: 11) {
                             AUIcon(kind: .check, size: 17, color: .auOkText)
-                            Text(dueNow == 0 && r.dayLesson && !r.dayRecall
-                                 ? "Today is complete — nothing was due. Tomorrow, a new lesson."
-                                 : "Today is complete. Tomorrow, these come back one interval wider.")
-                                .font(.figtree(.regular, size: 13.5))
-                                .lineSpacing(13.5 * 0.45)
+                            Text(
+                                dueNow == 0 && r.dayLesson && !r.dayRecall
+                                    ? "Today is complete — nothing was due. Tomorrow, a new lesson."
+                                    : "Today is complete. Tomorrow, these come back one interval wider."
+                            )
+                            .font(.figtree(.regular, size: 13.5))
+                            .lineSpacing(13.5 * 0.45)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 14)
@@ -238,7 +252,9 @@ struct HomeView: View {
                                 .padding(.vertical, 13)
                                 .background(
                                     RoundedRectangle(cornerRadius: 19, style: .continuous)
-                                        .strokeBorder(Color.auText.opacity(0.2), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                        .strokeBorder(
+                                            Color.auText.opacity(0.2),
+                                            style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                                 )
                                 .foregroundStyle(Color.auText.opacity(0.62))
                         }
@@ -261,7 +277,9 @@ struct HomeView: View {
         if r.dayLesson { return "done" }
         let i = min(pathAt, ch.lessons.count - 1)
         let meta = ch.metas.indices.contains(i) ? ch.metas[i] : ""
-        let time = meta.split(separator: "·").count > 1 ? String(meta.split(separator: "·")[1]).trimmingCharacters(in: .whitespaces) : ""
+        let time =
+            meta.split(separator: "·").count > 1
+            ? String(meta.split(separator: "·")[1]).trimmingCharacters(in: .whitespaces) : ""
         return "\(ch.lessons.indices.contains(i) ? ch.lessons[i] : "") · \(time)"
     }
 
@@ -295,7 +313,10 @@ struct HomeView: View {
         return ZStack(alignment: .topLeading) {
             // The winding thread
             WindingPathShape()
-                .stroke(Color.auDivider, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [3, 9]))
+                .stroke(
+                    Color.auDivider,
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [3, 9])
+                )
                 .scaleEffect(x: pathScale, y: pathScale, anchor: .topLeading)
             if pathAt > 0 {
                 WindingPathShape(firstLegOnly: true)
@@ -360,7 +381,7 @@ struct HomeView: View {
         .padding(.top, 16)
     }
 
-    private var pathScale: CGFloat { 402.0 / 402.0 }   // design points map 1:1
+    private var pathScale: CGFloat { 402.0 / 402.0 }  // design points map 1:1
     private var pathOffsetX: CGFloat { 0 }
 
     private struct PathNode {
@@ -384,7 +405,8 @@ struct HomeView: View {
         func meta(_ i: Int) -> String {
             let st = state(i)
             if st == .locked { return "Opens after \(ch.lessons[max(0, i - 1)])" }
-            return (st == .done ? "Complete · " : "") + (ch.metas.indices.contains(i) ? ch.metas[i] : "")
+            return (st == .done ? "Complete · " : "")
+                + (ch.metas.indices.contains(i) ? ch.metas[i] : "")
         }
         func act(_ i: Int) -> () -> Void {
             state(i) == .locked ? { r.nav(.paywall) } : { r.goCourse(i) }
@@ -393,16 +415,25 @@ struct HomeView: View {
         // lesson titles: drop the trailing "Chapter complete" entry (index 4)
         let titles = Array(ch.lessons.prefix(4))
         return [
-            PathNode(x: 132, y: 46, labelX: 196, labelY: 46, labelWidth: 150, alignRight: false,
-                     state: state(0), label: titles.indices.contains(0) ? titles[0] : "", meta: meta(0), action: act(0)),
-            PathNode(x: 274, y: 152, labelX: 402 - 210, labelY: 152, labelWidth: 130, alignRight: true,
-                     state: state(1), label: titles.indices.contains(1) ? titles[1] : "", meta: meta(1), action: act(1)),
-            PathNode(x: 124, y: 266, labelX: 188, labelY: 266, labelWidth: 150, alignRight: false,
-                     state: state(2), label: titles.indices.contains(2) ? titles[2] : "", meta: meta(2), action: act(2)),
-            PathNode(x: 268, y: 374, labelX: 402 - 212, labelY: 374, labelWidth: 128, alignRight: true,
-                     state: state(3), label: titles.indices.contains(3) ? titles[3] : "", meta: meta(3), action: act(3)),
-            PathNode(x: 136, y: 492, labelX: 200, labelY: 492, labelWidth: 146, alignRight: false,
-                     state: state(4), label: "Chapter complete", meta: meta(4), action: act(4)),
+            PathNode(
+                x: 132, y: 46, labelX: 196, labelY: 46, labelWidth: 150, alignRight: false,
+                state: state(0), label: titles.indices.contains(0) ? titles[0] : "", meta: meta(0),
+                action: act(0)),
+            PathNode(
+                x: 274, y: 152, labelX: 402 - 210, labelY: 152, labelWidth: 130, alignRight: true,
+                state: state(1), label: titles.indices.contains(1) ? titles[1] : "", meta: meta(1),
+                action: act(1)),
+            PathNode(
+                x: 124, y: 266, labelX: 188, labelY: 266, labelWidth: 150, alignRight: false,
+                state: state(2), label: titles.indices.contains(2) ? titles[2] : "", meta: meta(2),
+                action: act(2)),
+            PathNode(
+                x: 268, y: 374, labelX: 402 - 212, labelY: 374, labelWidth: 128, alignRight: true,
+                state: state(3), label: titles.indices.contains(3) ? titles[3] : "", meta: meta(3),
+                action: act(3)),
+            PathNode(
+                x: 136, y: 492, labelX: 200, labelY: 492, labelWidth: 146, alignRight: false,
+                state: state(4), label: "Chapter complete", meta: meta(4), action: act(4)),
         ]
     }
 
@@ -422,8 +453,10 @@ struct HomeView: View {
             }
             .frame(width: node.labelWidth, alignment: node.alignRight ? .trailing : .leading)
             .opacity(node.state == .locked ? 0.45 : 1)
-            .position(x: node.alignRight ? node.labelX - node.labelWidth / 2 : node.labelX + node.labelWidth / 2,
-                      y: node.labelY)
+            .position(
+                x: node.alignRight
+                    ? node.labelX - node.labelWidth / 2 : node.labelX + node.labelWidth / 2,
+                y: node.labelY)
         }
     }
 }
@@ -437,13 +470,23 @@ struct WindingPathShape: Shape {
         var p = Path()
         p.move(to: CGPoint(x: 132, y: 46))
         if firstLegOnly {
-            p.addCurve(to: CGPoint(x: 274, y: 152), control1: CGPoint(x: 132, y: 96), control2: CGPoint(x: 274, y: 100))
+            p.addCurve(
+                to: CGPoint(x: 274, y: 152), control1: CGPoint(x: 132, y: 96),
+                control2: CGPoint(x: 274, y: 100))
             return p
         }
-        p.addCurve(to: CGPoint(x: 274, y: 152), control1: CGPoint(x: 132, y: 96), control2: CGPoint(x: 274, y: 100))
-        p.addCurve(to: CGPoint(x: 124, y: 266), control1: CGPoint(x: 274, y: 208), control2: CGPoint(x: 124, y: 210))
-        p.addCurve(to: CGPoint(x: 268, y: 374), control1: CGPoint(x: 124, y: 322), control2: CGPoint(x: 268, y: 318))
-        p.addCurve(to: CGPoint(x: 136, y: 492), control1: CGPoint(x: 268, y: 436), control2: CGPoint(x: 136, y: 432))
+        p.addCurve(
+            to: CGPoint(x: 274, y: 152), control1: CGPoint(x: 132, y: 96),
+            control2: CGPoint(x: 274, y: 100))
+        p.addCurve(
+            to: CGPoint(x: 124, y: 266), control1: CGPoint(x: 274, y: 208),
+            control2: CGPoint(x: 124, y: 210))
+        p.addCurve(
+            to: CGPoint(x: 268, y: 374), control1: CGPoint(x: 124, y: 322),
+            control2: CGPoint(x: 268, y: 318))
+        p.addCurve(
+            to: CGPoint(x: 136, y: 492), control1: CGPoint(x: 268, y: 436),
+            control2: CGPoint(x: 136, y: 432))
         return p
     }
 }

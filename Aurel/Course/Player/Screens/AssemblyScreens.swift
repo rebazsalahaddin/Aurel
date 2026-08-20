@@ -29,7 +29,9 @@ struct OrderScreenView: View {
                         Text("Undo all")
                             .font(.figtree(.semibold, size: 16.5))
                             .frame(width: 96, height: 54)
-                            .background(RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous).strokeBorder(Color.auDivider, lineWidth: 1))
+                            .background(
+                                RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
+                                    .strokeBorder(Color.auDivider, lineWidth: 1))
                     }
                     .buttonStyle(.auTap)
 
@@ -65,7 +67,8 @@ struct OrderScreenView: View {
                         Text(at != nil ? "\(at! + 1)" : "")
                             .font(.figtree(.bold, size: 12))
                             .frame(width: 26, height: 26)
-                            .background(Circle().strokeBorder(Color.primary.opacity(0.7), lineWidth: 1.5))
+                            .background(
+                                Circle().strokeBorder(Color.primary.opacity(0.7), lineWidth: 1.5))
                         Text(t)
                             .font(.figtree(.regular, size: 15.5))
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -78,7 +81,9 @@ struct OrderScreenView: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 17, style: .continuous)
-                            .strokeBorder(at != nil ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1.5)
+                            .strokeBorder(
+                                at != nil ? Color.auAccent.opacity(0.34) : Color.auEdge,
+                                lineWidth: 1.5)
                     )
                     .foregroundStyle(at != nil ? Color.auTintText : Color.auText)
                 }
@@ -87,15 +92,22 @@ struct OrderScreenView: View {
         }
 
         if m.tileComplete {
-            Text(m.tileCorrect ? (task.ok.isEmpty ? "Correct." : task.ok) : (task.no.isEmpty ? "Not yet — tap a row again to take it back." : task.no))
-                .font(.figtree(.regular, size: 14))
-                .lineSpacing(14 * 0.45)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 15)
-                .padding(.vertical, 13)
-                .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(m.tileCorrect ? Color.auOkBg : Color.auErrBg))
-                .foregroundStyle(m.tileCorrect ? Color.auOkText : Color.auErrText)
-                .padding(.top, 14)
+            Text(
+                m.tileCorrect
+                    ? (task.ok.isEmpty ? "Correct." : task.ok)
+                    : (task.no.isEmpty ? "Not yet — tap a row again to take it back." : task.no)
+            )
+            .font(.figtree(.regular, size: 14))
+            .lineSpacing(14 * 0.45)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 15)
+            .padding(.vertical, 13)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
+                    m.tileCorrect ? Color.auOkBg : Color.auErrBg)
+            )
+            .foregroundStyle(m.tileCorrect ? Color.auOkText : Color.auErrText)
+            .padding(.top, 14)
         }
     }
 }
@@ -129,7 +141,12 @@ struct TilesScreenView: View {
                 HStack(spacing: 5) {
                     ForEach(0..<m.taskCount, id: \.self) { k in
                         Capsule()
-                            .fill(k == m.tk ? Color.auAccent : (k < m.tk ? Color.auAccent.opacity(0.4) : Color.auText.opacity(0.14)))
+                            .fill(
+                                k == m.tk
+                                    ? Color.auAccent
+                                    : (k < m.tk
+                                        ? Color.auAccent.opacity(0.4) : Color.auText.opacity(0.14))
+                            )
                             .frame(width: k == m.tk ? 22 : 7, height: 5)
                     }
                 }
@@ -147,25 +164,37 @@ struct TilesScreenView: View {
                 .padding(.vertical, 16)
                 .background(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .strokeBorder(Color.auAccent.opacity(0.36), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+                        .strokeBorder(
+                            Color.auAccent.opacity(0.36),
+                            style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
                 )
                 .padding(.bottom, 16)
 
             FlowTiles(tiles: task.tiles, taken: Set(m.order), onTap: { m.toggleTile($0) })
 
             if m.tileComplete {
-                Text(m.tileCorrect ? (task.ok.isEmpty ? "Correct." : task.ok) : (task.no.isEmpty ? "Not yet — tap a tile again to take it back." : task.no))
-                    .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.45)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 15)
-                    .padding(.vertical, 13)
-                    .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(m.tileCorrect ? Color.auOkBg : Color.auErrBg))
-                    .foregroundStyle(m.tileCorrect ? Color.auOkText : Color.auErrText)
-                    .padding(.top, 16)
+                Text(
+                    m.tileCorrect
+                        ? (task.ok.isEmpty ? "Correct." : task.ok)
+                        : (task.no.isEmpty
+                            ? "Not yet — tap a tile again to take it back." : task.no)
+                )
+                .font(.figtree(.regular, size: 14))
+                .lineSpacing(14 * 0.45)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 15)
+                .padding(.vertical, 13)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
+                        m.tileCorrect ? Color.auOkBg : Color.auErrBg)
+                )
+                .foregroundStyle(m.tileCorrect ? Color.auOkText : Color.auErrText)
+                .padding(.top, 16)
             }
 
-            if isEmail, case .emailAssembly(let e) = m.cur?.screen.payload, let written = e.written, m.tileCorrect {
+            if isEmail, case .emailAssembly(let e) = m.cur?.screen.payload, let written = e.written,
+                m.tileCorrect
+            {
                 Text(written)
                     .font(.figtree(.semibold, size: 16))
                     .tracking(0.16)
@@ -200,7 +229,9 @@ struct TilesScreenView: View {
                     Text("Undo all")
                         .font(.figtree(.semibold, size: 16.5))
                         .frame(width: 96, height: 54)
-                        .background(RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous).strokeBorder(Color.auDivider, lineWidth: 1))
+                        .background(
+                            RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
+                                .strokeBorder(Color.auDivider, lineWidth: 1))
                 }
                 .buttonStyle(.auTap)
 
@@ -293,7 +324,9 @@ struct MissionScreenView: View {
     var body: some View {
         ScreenColumn(topPad: 0, bottomPad: 26, hPad: 0) {
             if case .missionBrief(let mb) = m.cur?.screen.payload {
-                IllustrationPlaceholder(ill: mb.ill ?? IllustrationRef(id: "", alt: ""), height: 250, captionSize: 11.5, fullBleed: true)
+                IllustrationPlaceholder(
+                    ill: mb.ill ?? IllustrationRef(id: "", alt: ""), height: 250, captionSize: 11.5,
+                    fullBleed: true)
 
                 ScreenColumn(topPad: 22) {
                     Text(mb.head ?? "")
@@ -317,7 +350,9 @@ struct MissionScreenView: View {
                                 Text("\(k + 1)")
                                     .font(.figtree(.bold, size: 11.5))
                                     .frame(width: 26, height: 26)
-                                    .background(Circle().strokeBorder(Color.auText.opacity(0.2), lineWidth: 2))
+                                    .background(
+                                        Circle().strokeBorder(
+                                            Color.auText.opacity(0.2), lineWidth: 2))
                                 Text(t)
                                     .font(.figtree(.regular, size: 14.5))
                                     .lineSpacing(14.5 * 0.4)
@@ -336,7 +371,12 @@ struct MissionScreenView: View {
                                     .textCase(.uppercase)
                                     .foregroundStyle(Color.auAccentText)
                                     .padding(.bottom, 9)
-                                ForEach([("NAME", card.name), ("PHONE", card.phone), ("EMAIL", card.email)], id: \.0) { k, v in
+                                ForEach(
+                                    [
+                                        ("NAME", card.name), ("PHONE", card.phone),
+                                        ("EMAIL", card.email),
+                                    ], id: \.0
+                                ) { k, v in
                                     HStack(spacing: 11) {
                                         Text(k)
                                             .font(.figtree(.regular, size: 13.5))
@@ -450,7 +490,10 @@ struct RoleplayScreenView: View {
                     ForEach(Array((rp.checklist ?? []).enumerated()), id: \.offset) { k, _ in
                         let on = k < min(m.turn, (rp.checklist ?? []).count)
                         Capsule()
-                            .strokeBorder(on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.18), lineWidth: 1.5)
+                            .strokeBorder(
+                                on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.18),
+                                lineWidth: 1.5
+                            )
                             .background(Capsule().fill(on ? Color.auOkBg : .clear))
                             .frame(height: 9)
                             .frame(maxWidth: .infinity)
@@ -552,7 +595,9 @@ struct RoleplayScreenView: View {
                         Text("Safe stop")
                             .font(.figtree(.semibold, size: 16.5))
                             .frame(width: 104, height: 54)
-                            .background(RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous).strokeBorder(Color.auDivider, lineWidth: 1))
+                            .background(
+                                RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
+                                    .strokeBorder(Color.auDivider, lineWidth: 1))
                     }
                     .buttonStyle(.auTap)
 

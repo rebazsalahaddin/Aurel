@@ -9,7 +9,7 @@ import Foundation
 // MARK: Envelope
 
 struct CourseChapter: Decodable, Hashable, Identifiable {
-    let id: String          // "A1-C01"
+    let id: String  // "A1-C01"
     let n: Int
     let arc: String
     let title: String
@@ -20,13 +20,13 @@ struct CourseChapter: Decodable, Hashable, Identifiable {
 }
 
 struct CourseLesson: Decodable, Hashable, Identifiable {
-    let id: String          // "L01"
-    let type: String        // "V" | "G" | "C+R" | "M" | "V+G" | "G+C" | "R+M"
+    let id: String  // "L01"
+    let type: String  // "V" | "G" | "C+R" | "M" | "V+G" | "G+C" | "R+M"
     let n: Int
     let title: String
-    let time: String        // "18–20 min" — display string
-    let pause: String?      // "after Practice A (≈10 min)"
-    let src: String?        // authored markdown source
+    let time: String  // "18–20 min" — display string
+    let pause: String?  // "after Practice A (≈10 min)"
+    let src: String?  // authored markdown source
     let screens: [CourseScreen]
 }
 
@@ -47,7 +47,7 @@ struct ChatLine: Decodable, Hashable {
 
 /// A vocabulary card from a micro-set.
 struct VocabCard: Decodable, Hashable, Identifiable {
-    let id: String          // "V001"
+    let id: String  // "V001"
     let w: String
     let ipa: String?
     let stress: String?
@@ -66,7 +66,11 @@ struct PracticeOption: Decodable, Hashable, Identifiable {
     let text: String?
     let ill: IllustrationRef?
 
-    private enum CodingKeys: String, CodingKey { case id, text = "t", ill }
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case text = "t"
+        case ill
+    }
 }
 
 /// Answer keys are option ids ("A") for choices and ordered tile texts for
@@ -94,8 +98,8 @@ enum AnswerKey: Decodable, Hashable {
 struct PracticeItem: Decodable, Hashable, Identifiable {
     let id: String
     let instr: String
-    let icon: String?       // ear | eye | choose | mouth
-    let kind: String?       // image | speak | order (omitted = plain choice)
+    let icon: String?  // ear | eye | choose | mouth
+    let kind: String?  // image | speak | order (omitted = plain choice)
     let aud: String?
     let ill: IllustrationRef?
     let prompt: String?
@@ -108,7 +112,7 @@ struct PracticeItem: Decodable, Hashable, Identifiable {
     let hints: [String]?
     let secs: Int?
     let a11y: [String]?
-    let big: Bool?          // quiz Form A large-print items
+    let big: Bool?  // quiz Form A large-print items
     let note: String?
 }
 
@@ -207,8 +211,8 @@ struct LetterFamily: Decodable, Hashable {
 
 /// Number card for the numbers screens.
 struct NumberCard: Decodable, Hashable {
-    let d: String           // digit
-    let w: String           // word
+    let d: String  // digit
+    let w: String  // word
     let ipa: String?
 }
 
@@ -281,7 +285,11 @@ enum MixCell: Decodable, Hashable {
 
     init(from decoder: Decoder) throws {
         let c = try decoder.singleValueContainer()
-        if let s = try? c.decode(String.self) { self = .text(s) } else { self = .number(try c.decode(Double.self)) }
+        if let s = try? c.decode(String.self) {
+            self = .text(s)
+        } else {
+            self = .number(try c.decode(Double.self))
+        }
     }
 
     var display: String {

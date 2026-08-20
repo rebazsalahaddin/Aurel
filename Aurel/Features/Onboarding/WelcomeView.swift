@@ -23,7 +23,8 @@ struct WelcomeView: View {
                         Text("Chapter One free, no account")
                             .font(.figtree(.semibold, size: 11.5))
                             .tracking(0.23)
-                            .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.86))
+                            .foregroundStyle(
+                                Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.86))
                     }
                     .padding(.leading, 10)
                     .padding(.trailing, 14)
@@ -33,7 +34,9 @@ struct WelcomeView: View {
                             .fill(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.10))
                     )
                     .overlay(
-                        Capsule().strokeBorder(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.18), lineWidth: 1)
+                        Capsule().strokeBorder(
+                            Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.18), lineWidth: 1
+                        )
                     )
                     .auStagger(0)
 
@@ -45,14 +48,16 @@ struct WelcomeView: View {
                         .padding(.top, 22)
                         .auStagger(1)
 
-                    Text("One short lesson a day, rebuilt each morning around the words you are about to forget.")
-                        .font(.figtree(.regular, size: 15.5))
-                        .lineSpacing(15.5 * 0.6)
-                        .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.76))
-                        .frame(maxWidth: 330, alignment: .leading)
-                        .padding(.top, 14)
-                        .padding(.bottom, 30)
-                        .auStagger(2)
+                    Text(
+                        "One short lesson a day, rebuilt each morning around the words you are about to forget."
+                    )
+                    .font(.figtree(.regular, size: 15.5))
+                    .lineSpacing(15.5 * 0.6)
+                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.76))
+                    .frame(maxWidth: 330, alignment: .leading)
+                    .padding(.top, 14)
+                    .padding(.bottom, 30)
+                    .auStagger(2)
 
                     // .au-key — Begin the path
                     Button {
@@ -79,24 +84,32 @@ struct WelcomeView: View {
                         .clipShape(RoundedRectangle(cornerRadius: AURadius.key, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: AURadius.key, style: .continuous)
-                                .strokeBorder(Color(UIColor(hex: 0x602e10)).opacity(0.16), lineWidth: 1)
+                                .strokeBorder(
+                                    Color(UIColor(hex: 0x602e10)).opacity(0.16), lineWidth: 1)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: AURadius.key, style: .continuous)
                                 .strokeBorder(.white.opacity(0.26), lineWidth: 1)
                                 .blur(radius: 0.4)
-                                .mask(Rectangle().frame(height: 1).frame(maxHeight: .infinity, alignment: .top))
+                                .mask(
+                                    Rectangle().frame(height: 1).frame(
+                                        maxHeight: .infinity, alignment: .top))
                         )
                         .shadow(color: .black.opacity(0.22), radius: 3, y: 2)
-                        .shadow(color: Color(UIColor(hex: 0x643312)).opacity(0.42), radius: 11, y: 5)
+                        .shadow(
+                            color: Color(UIColor(hex: 0x643312)).opacity(0.42), radius: 11, y: 5)
                     }
                     .buttonStyle(.auTap)
                     .auStagger(3)
 
                     // Already learning? · Sign in
                     HStack(spacing: 15) {
-                        LinearGradient(colors: [.clear, Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.22)], startPoint: .leading, endPoint: .trailing)
-                            .frame(height: 1)
+                        LinearGradient(
+                            colors: [
+                                .clear, Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.22),
+                            ], startPoint: .leading, endPoint: .trailing
+                        )
+                        .frame(height: 1)
                         Button {
                             env.router.nav(.login)
                         } label: {
@@ -104,18 +117,26 @@ struct WelcomeView: View {
                                 Text("Already learning?")
                                     .font(.figtree(.regular, size: 13.5))
                                     .tracking(0.14)
-                                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.58))
+                                    .foregroundStyle(
+                                        Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.58))
                                 Text("Sign in")
                                     .font(.caprasimo(size: 16))
                                     .tracking(0.19)
                                     .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
-                                    .underline(color: Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.38))
+                                    .underline(
+                                        color: Color(red: 0.969, green: 0.937, blue: 0.886).opacity(
+                                            0.38)
+                                    )
                                     .padding(.bottom, 2)
                             }
                         }
                         .buttonStyle(.auTap)
-                        LinearGradient(colors: [.clear, Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.22)], startPoint: .trailing, endPoint: .leading)
-                            .frame(height: 1)
+                        LinearGradient(
+                            colors: [
+                                .clear, Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.22),
+                            ], startPoint: .trailing, endPoint: .leading
+                        )
+                        .frame(height: 1)
                     }
                     .padding(.top, 24)
                     .padding(.bottom, 2)

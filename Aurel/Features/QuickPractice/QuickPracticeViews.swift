@@ -12,7 +12,8 @@ struct LessonRunnerView: View {
 
     var body: some View {
         let r = env.router
-        let list = r.reviewMode
+        let list =
+            r.reviewMode
             ? r.queue.compactMap { bank.indices.contains($0) ? bank[$0] : nil }
             : bank
 
@@ -34,7 +35,9 @@ struct LessonRunnerView: View {
 
             // verdict dock
             VStack(spacing: 0) {
-                if r.checked || r.nudge, let q = list.indices.contains(r.qi) ? list[r.qi] : nil, q.type != .flash {
+                if r.checked || r.nudge, let q = list.indices.contains(r.qi) ? list[r.qi] : nil,
+                    q.type != .flash
+                {
                     verdict(q: q)
                 }
                 primaryButton(list: list)
@@ -70,7 +73,12 @@ struct LessonRunnerView: View {
             HStack(spacing: 5) {
                 ForEach(list.indices, id: \.self) { k in
                     Capsule()
-                        .fill(k < r.qi ? Color.auAccent : (k == r.qi ? Color.auAccent.opacity(0.55) : Color.auText.opacity(0.12)))
+                        .fill(
+                            k < r.qi
+                                ? Color.auAccent
+                                : (k == r.qi
+                                    ? Color.auAccent.opacity(0.55) : Color.auText.opacity(0.12))
+                        )
                         .frame(height: 4)
                 }
             }
@@ -127,7 +135,11 @@ struct LessonRunnerView: View {
                                 .lineSpacing(14 * 0.55)
                                 .opacity(0.82)
                                 .padding(.top, 18)
-                                .overlay(alignment: .top) { Divider().overlay(Color(red: 0.969, green: 0.910, blue: 0.820).opacity(0.2)).padding(.top, -9) }
+                                .overlay(alignment: .top) {
+                                    Divider().overlay(
+                                        Color(red: 0.969, green: 0.910, blue: 0.820).opacity(0.2)
+                                    ).padding(.top, -9)
+                                }
                         }
                         Spacer(minLength: 12)
                         Text("Tap to hide")
@@ -152,8 +164,11 @@ struct LessonRunnerView: View {
                     // front
                     VStack(spacing: 0) {
                         if let ill = q.ill {
-                            IllustrationPlaceholder(ill: ill, height: 96, cornerRadius: 20, kickerSize: 8, captionSize: 10)
-                                .padding(.bottom, 10)
+                            IllustrationPlaceholder(
+                                ill: ill, height: 96, cornerRadius: 20, kickerSize: 8,
+                                captionSize: 10
+                            )
+                            .padding(.bottom, 10)
                         }
                         Text(q.front)
                             .font(.caprasimo(size: 28))
@@ -192,12 +207,17 @@ struct LessonRunnerView: View {
                         .font(.figtree(.bold, size: 13))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .background(RoundedRectangle(cornerRadius: 17, style: .continuous).strokeBorder(Color.auEdge, lineWidth: 1))
+                        .background(
+                            RoundedRectangle(cornerRadius: 17, style: .continuous).strokeBorder(
+                                Color.auEdge, lineWidth: 1)
+                        )
                         .foregroundStyle(Color.auText.opacity(0.62))
                 }
                 .buttonStyle(.auTap)
 
-                APillButton(title: "I knew it", variant: .quiet, compact: true) { r.advance(list: bank) }
+                APillButton(title: "I knew it", variant: .quiet, compact: true) {
+                    r.advance(list: bank)
+                }
                 APillButton(title: "Didn't", compact: true) { r.advance(list: bank) }
             }
         }
@@ -219,7 +239,9 @@ struct LessonRunnerView: View {
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
                             .fill(Color.auFill)
                     )
-                    .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1)
+                    )
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 22)
             } else {
@@ -243,7 +265,9 @@ struct LessonRunnerView: View {
 
             HStack(spacing: 18) {
                 Button {
-                    env.speaker.speak(q.options.indices.contains(q.answer) ? q.options[q.answer] : q.prompt, slow: false)
+                    env.speaker.speak(
+                        q.options.indices.contains(q.answer) ? q.options[q.answer] : q.prompt,
+                        slow: false)
                 } label: {
                     AUIcon(kind: .ear, size: 24, color: .auBackground)
                         .frame(width: 58, height: 58)
@@ -259,13 +283,17 @@ struct LessonRunnerView: View {
                     .frame(height: 38)
 
                 Button {
-                    env.speaker.speak(q.options.indices.contains(q.answer) ? q.options[q.answer] : q.prompt, slow: true)
+                    env.speaker.speak(
+                        q.options.indices.contains(q.answer) ? q.options[q.answer] : q.prompt,
+                        slow: true)
                 } label: {
                     Text("Slower")
                         .font(.figtree(.bold, size: 11))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 9)
-                        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.auEdge, lineWidth: 1))
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(
+                                Color.auEdge, lineWidth: 1))
                 }
                 .buttonStyle(.auTap)
             }
@@ -316,8 +344,14 @@ struct LessonRunnerView: View {
                             .font(.caprasimo(size: 19))
                             .padding(.horizontal, 16)
                             .padding(.vertical, 11)
-                            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auTintBg))
-                            .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(Color.auAccent.opacity(0.34), lineWidth: 1.5))
+                            .background(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
+                                    Color.auTintBg)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16).strokeBorder(
+                                    Color.auAccent.opacity(0.34), lineWidth: 1.5)
+                            )
                             .foregroundStyle(Color.auTintText)
                     }
                     .buttonStyle(.auTap)
@@ -327,7 +361,9 @@ struct LessonRunnerView: View {
             .padding(16)
             .background(
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .strokeBorder(Color.auAccent.opacity(0.36), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+                    .strokeBorder(
+                        Color.auAccent.opacity(0.36),
+                        style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
             )
             .overlay(alignment: .topLeading) {
                 if r.built.isEmpty {
@@ -342,7 +378,8 @@ struct LessonRunnerView: View {
             // bank
             FlowLayout(spacing: 9) {
                 ForEach(Array(q.words.enumerated()), id: \.offset) { _, word in
-                    let taken = r.built.filter { $0 == word }.count >= q.words.filter { $0 == word }.count
+                    let taken =
+                        r.built.filter { $0 == word }.count >= q.words.filter { $0 == word }.count
                     Button {
                         r.pickWord(word)
                     } label: {
@@ -356,7 +393,9 @@ struct LessonRunnerView: View {
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .strokeBorder(taken ? Color.auText.opacity(0.12) : Color.auEdge, lineWidth: 1.5)
+                                    .strokeBorder(
+                                        taken ? Color.auText.opacity(0.12) : Color.auEdge,
+                                        lineWidth: 1.5)
                             )
                             .foregroundStyle(taken ? Color.auText.opacity(0.25) : Color.auText)
                     }
@@ -391,7 +430,11 @@ struct LessonRunnerView: View {
                 Text(String.letter(i))
                     .font(.figtree(.bold, size: 12))
                     .frame(width: 28, height: 28)
-                    .background(Circle().fill(on || (r.checked && isKey) ? Color.auAccent : Color.auText.opacity(0.09)))
+                    .background(
+                        Circle().fill(
+                            on || (r.checked && isKey) ? Color.auAccent : Color.auText.opacity(0.09)
+                        )
+                    )
                     .foregroundStyle(on || (r.checked && isKey) ? Color.auBackground : Color.auText)
                 Text(label)
                     .font(.figtree(.semibold, size: 15.5))
@@ -405,7 +448,9 @@ struct LessonRunnerView: View {
             .padding(.horizontal, 17)
             .padding(.vertical, 16)
             .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(bg))
-            .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(bd, lineWidth: 1))
+            .overlay(
+                RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(
+                    bd, lineWidth: 1))
         }
         .buttonStyle(.auTap)
         .disabled(r.checked)
@@ -415,18 +460,33 @@ struct LessonRunnerView: View {
 
     @ViewBuilder
     private func verdict(q: QuickItem) -> some View {
-        let ok = r.checked && (r.sel == q.answer || (q.type == .order && r.built.joined(separator: " ") == q.answerText))
+        let ok =
+            r.checked
+            && (r.sel == q.answer
+                || (q.type == .order && r.built.joined(separator: " ") == q.answerText))
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
                 AUIcon(kind: ok ? .check : .close, size: 16, color: .white)
                     .frame(width: 26, height: 26)
                     .background(Circle().fill(ok ? Color.auAccent2 : Color.auErr))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(ok ? "That’s it." : (r.nudge ? "Not quite — one more go." : (q.type == .order ? "Not quite." : "Not quite — \(q.options.indices.contains(q.answer) ? q.options[q.answer] : "")")))
-                        .font(.figtree(.bold, size: 14.5))
-                    Text(r.nudge ? (q.hint.isEmpty ? "Look at the shape of the sentence." : q.hint) : (q.why.isEmpty ? "Four pairs matched." : q.why))
-                        .font(.figtree(.regular, size: 13))
-                        .opacity(0.85)
+                    Text(
+                        ok
+                            ? "That’s it."
+                            : (r.nudge
+                                ? "Not quite — one more go."
+                                : (q.type == .order
+                                    ? "Not quite."
+                                    : "Not quite — \(q.options.indices.contains(q.answer) ? q.options[q.answer] : "")"))
+                    )
+                    .font(.figtree(.bold, size: 14.5))
+                    Text(
+                        r.nudge
+                            ? (q.hint.isEmpty ? "Look at the shape of the sentence." : q.hint)
+                            : (q.why.isEmpty ? "Four pairs matched." : q.why)
+                    )
+                    .font(.figtree(.regular, size: 13))
+                    .opacity(0.85)
                     if q.type == .order, r.checked, !ok, !r.built.isEmpty {
                         VStack(alignment: .leading, spacing: 5) {
                             HStack(alignment: .firstTextBaseline, spacing: 9) {
@@ -469,7 +529,10 @@ struct LessonRunnerView: View {
     private func primaryButton(list: [QuickItem]) -> some View {
         let q = list.indices.contains(r.qi) ? list[r.qi] : nil
         let needsAnswer = q.map { $0.type != .flash } ?? false
-        let disabled = q.map { $0.type == .match && !r.checked || ($0.type != .flash && !r.checked && needsAnswer) } ?? false
+        let disabled =
+            q.map {
+                $0.type == .match && !r.checked || ($0.type != .flash && !r.checked && needsAnswer)
+            } ?? false
         let label: String = {
             guard let q else { return "Go on" }
             if q.type == .flash { return r.flipped ? "Next" : "Turn the card" }
@@ -492,24 +555,31 @@ struct ResultView: View {
 
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
-                Text(r.wasReview ? "Sundown · recall" : (r.starter ? "First lesson" : "Lesson complete"))
-                    .font(.figtree(.bold, size: 11))
-                    .tracking(1.76)
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color.auAccentText)
-                    .padding(.bottom, 10)
+                Text(
+                    r.wasReview
+                        ? "Sundown · recall" : (r.starter ? "First lesson" : "Lesson complete")
+                )
+                .font(.figtree(.bold, size: 11))
+                .tracking(1.76)
+                .textCase(.uppercase)
+                .foregroundStyle(Color.auAccentText)
+                .padding(.bottom, 10)
 
                 if !r.wasReview && r.lessonsDone > 0 {
                     HStack(alignment: .top, spacing: 10) {
                         AUIcon(kind: .check, size: 15, color: .auOkText)
                             .padding(.top, 3)
-                        Text("You can greet someone, introduce yourself, and answer when they do the same.")
-                            .font(.figtree(.semibold, size: 13.5))
-                            .lineSpacing(13.5 * 0.45)
+                        Text(
+                            "You can greet someone, introduce yourself, and answer when they do the same."
+                        )
+                        .font(.figtree(.semibold, size: 13.5))
+                        .lineSpacing(13.5 * 0.45)
                     }
                     .padding(.horizontal, 15)
                     .padding(.vertical, 13)
-                    .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auOkBg))
+                    .background(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auOkBg)
+                    )
                     .foregroundStyle(Color.auOkText)
                     .padding(.bottom, 14)
                 }
@@ -529,13 +599,21 @@ struct ResultView: View {
 
                 // score strip
                 HStack(spacing: 0) {
-                    statTile(value: r.wasReview ? "\(r.caught)/\(r.lastTotal)" : "\(r.correctCount)/\(max(1, scored))",
-                             label: r.wasReview ? "Caught" : "Correct", tinted: true)
-                    statTile(value: "\(r.wasReview ? r.caught : 12)", label: r.wasReview ? "Strengthened" : "Words", tinted: false)
+                    statTile(
+                        value: r.wasReview
+                            ? "\(r.caught)/\(r.lastTotal)" : "\(r.correctCount)/\(max(1, scored))",
+                        label: r.wasReview ? "Caught" : "Correct", tinted: true)
+                    statTile(
+                        value: "\(r.wasReview ? r.caught : 12)",
+                        label: r.wasReview ? "Strengthened" : "Words", tinted: false)
                     statTile(value: r.wasReview ? "1" : "6", label: "Minutes", tinted: false)
                 }
-                .background(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auFill))
-                .overlay(RoundedRectangle(cornerRadius: 26).strokeBorder(Color.auEdge, lineWidth: 1))
+                .background(
+                    RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auFill)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 26).strokeBorder(Color.auEdge, lineWidth: 1)
+                )
                 .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
                 .auLift()
                 .padding(.bottom, 22)
@@ -544,8 +622,12 @@ struct ResultView: View {
                 ACard(radius: 28) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(alignment: .firstTextBaseline) {
-                            Text(r.wasReview ? "Today, held" : (r.streak > 1 ? "Your streak" : "Your streak begins"))
-                                .font(.caprasimo(size: 18))
+                            Text(
+                                r.wasReview
+                                    ? "Today, held"
+                                    : (r.streak > 1 ? "Your streak" : "Your streak begins")
+                            )
+                            .font(.caprasimo(size: 18))
                             Spacer()
                             Text("1")
                                 .font(.figtree(.bold, size: 25))
@@ -568,8 +650,10 @@ struct ResultView: View {
                                 .frame(width: 40, height: 40)
                                 .background(Circle().fill(Color.auTintBg))
                             VStack(alignment: .leading, spacing: 2) {
-                                Text("\(r.mistakes.count == 1 ? "1 item" : "\(r.mistakes.count) items") to revisit")
-                                    .font(.figtree(.semibold, size: 15))
+                                Text(
+                                    "\(r.mistakes.count == 1 ? "1 item" : "\(r.mistakes.count) items") to revisit"
+                                )
+                                .font(.figtree(.semibold, size: 15))
                                 Text("Review before they settle wrong")
                                     .font(.figtree(.regular, size: 12.5))
                                     .foregroundStyle(Color.auText.opacity(0.50))
@@ -579,7 +663,9 @@ struct ResultView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.vertical, 18)
-                        .background(RoundedRectangle(cornerRadius: 26, style: .continuous).strokeBorder(Color.auDivider, lineWidth: 1))
+                        .background(
+                            RoundedRectangle(cornerRadius: 26, style: .continuous).strokeBorder(
+                                Color.auDivider, lineWidth: 1))
                     }
                     .buttonStyle(.auTap)
                     .padding(.bottom, 14)
@@ -587,7 +673,11 @@ struct ResultView: View {
 
                 Spacer(minLength: 16)
 
-                APillButton(title: r.starter ? "Open my path" : (r.wasReview ? "Back to the path — today is done" : "Back to the path")) {
+                APillButton(
+                    title: r.starter
+                        ? "Open my path"
+                        : (r.wasReview ? "Back to the path — today is done" : "Back to the path")
+                ) {
                     r.nav(.home)
                 }
                 .padding(.bottom, 8)
@@ -637,9 +727,11 @@ struct ResultView: View {
         let r = env.router
         if r.wasReview {
             if r.mistakes.isEmpty {
-                return "\(r.caught)\(r.caught == 1 ? " item goes back on a wider interval. Nothing is due until tomorrow." : " items go back on a wider interval. Nothing is due until tomorrow.")"
+                return
+                    "\(r.caught)\(r.caught == 1 ? " item goes back on a wider interval. Nothing is due until tomorrow." : " items go back on a wider interval. Nothing is due until tomorrow.")"
             }
-            return "\(r.caught) caught. \(r.mistakes.count)\(r.mistakes.count == 1 ? " returns tomorrow, closer in." : " return tomorrow, closer in.")"
+            return
+                "\(r.caught) caught. \(r.mistakes.count)\(r.mistakes.count == 1 ? " returns tomorrow, closer in." : " return tomorrow, closer in.")"
         }
         if r.correctCount >= scored {
             return "Greetings are settled. Introductions opens next."

@@ -21,9 +21,11 @@ struct CourseStore: Sendable {
     // MARK: Loading
 
     static func load(bundle: Bundle = .main) throws -> CourseStore {
-        let url = bundle.url(forResource: "a1-course", withExtension: "json")
+        let url =
+            bundle.url(forResource: "a1-course", withExtension: "json")
             ?? bundle.url(forResource: "a1-course", withExtension: "json", subdirectory: "Course")
-            ?? bundle.url(forResource: "a1-course", withExtension: "json", subdirectory: "Resources/Course")
+            ?? bundle.url(
+                forResource: "a1-course", withExtension: "json", subdirectory: "Resources/Course")
         guard let url else { throw CourseError.missingResource }
         let data = try Data(contentsOf: url)
         let chapters = try JSONDecoder().decode([CourseChapter].self, from: data)
@@ -40,7 +42,10 @@ struct CourseStore: Sendable {
         for (x, ch) in chapters.enumerated() {
             for (y, lesson) in ch.lessons.enumerated() {
                 for (z, screen) in lesson.screens.enumerated() {
-                    flat.append(FlatScreen(chapterIdx: x, lessonIdx: y, screenIdx: z, chapter: ch, lesson: lesson, screen: screen))
+                    flat.append(
+                        FlatScreen(
+                            chapterIdx: x, lessonIdx: y, screenIdx: z, chapter: ch, lesson: lesson,
+                            screen: screen))
                 }
             }
         }
@@ -78,7 +83,8 @@ struct CourseStore: Sendable {
     func chapterEndPos(_ chapterIdx: Int) -> Int {
         guard chapters.indices.contains(chapterIdx) else { return 0 }
         let last = chapters[chapterIdx].lessons.count - 1
-        return coursePos(chapterIdx: chapterIdx, lessonIdx: last) + chapters[chapterIdx].lessons[last].screens.count - 1
+        return coursePos(chapterIdx: chapterIdx, lessonIdx: last)
+            + chapters[chapterIdx].lessons[last].screens.count - 1
     }
 
     func screen(at pos: Int) -> FlatScreen? {
@@ -124,7 +130,10 @@ struct CourseStore: Sendable {
             default: items = nil
             }
             for item in items ?? [] {
-                out.append(BankEntry(item: item, chapterIdx: f.chapterIdx, lessonIdx: f.lessonIdx, screenIdx: f.screenIdx))
+                out.append(
+                    BankEntry(
+                        item: item, chapterIdx: f.chapterIdx, lessonIdx: f.lessonIdx,
+                        screenIdx: f.screenIdx))
             }
         }
         return out

@@ -9,16 +9,23 @@ import SwiftUI
 /// The Aurel "A over dune" wordmark (64-unit viewBox, tintable).
 struct AULogoMark: View {
     var size: CGFloat = 27
-    var mono: Bool = false    // true = all currentColor (home header)
+    var mono: Bool = false  // true = all currentColor (home header)
 
     var body: some View {
         ZStack {
-            SVGPathShape(d: "M32.7 4.9 C35.0 14.6 45.8 39.8 58.6 56.4 L50.2 56.4 C41.4 41.2 34.4 20.6 32.2 11.6 C31.0 17.6 22.8 41.2 15.0 56.4 L10.2 56.4 C18.4 40.4 30.4 14.4 32.7 4.9 Z")
-                .fill(mono ? Color.auText : Color(red: 0.969, green: 0.937, blue: 0.886)) // #f7efe2
+            SVGPathShape(
+                d:
+                    "M32.7 4.9 C35.0 14.6 45.8 39.8 58.6 56.4 L50.2 56.4 C41.4 41.2 34.4 20.6 32.2 11.6 C31.0 17.6 22.8 41.2 15.0 56.4 L10.2 56.4 C18.4 40.4 30.4 14.4 32.7 4.9 Z"
+            )
+            // #f7efe2
+            .fill(mono ? Color.auText : Color(red: 0.969, green: 0.937, blue: 0.886))
             SVGPathShape(d: "M24.2 43.4 A8 8 0 0 1 40.2 43.4 Z")
-                .fill(mono ? Color.auAccent : Color(red: 0.886, green: 0.573, blue: 0.353)) // #e2925a
-            SVGPathShape(d: "M18.6 46.8 C26.6 43.4 37 42.2 45.4 42.6 C37 45.4 26.6 47.2 18.6 46.8 Z")
-                .fill(mono ? Color.auText : Color(red: 0.969, green: 0.937, blue: 0.886))
+                // #e2925a
+                .fill(mono ? Color.auAccent : Color(red: 0.886, green: 0.573, blue: 0.353))
+            SVGPathShape(
+                d: "M18.6 46.8 C26.6 43.4 37 42.2 45.4 42.6 C37 45.4 26.6 47.2 18.6 46.8 Z"
+            )
+            .fill(mono ? Color.auText : Color(red: 0.969, green: 0.937, blue: 0.886))
         }
         .frame(width: size, height: size)
         .accessibilityHidden(true)
@@ -35,7 +42,12 @@ struct AUWordmarkRow: View {
                 .tracking(0.32)
                 .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
             Rectangle()
-                .fill(LinearGradient(colors: [Color.white.opacity(0.34 * 247.0 / 255), Color.white.opacity(0.05)], startPoint: .leading, endPoint: .trailing))
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.34 * 247.0 / 255), Color.white.opacity(0.05),
+                        ], startPoint: .leading, endPoint: .trailing)
+                )
                 .frame(height: 1)
             Text("A1 · Foundation")
                 .font(.figtree(.semibold, size: 10))
@@ -63,16 +75,35 @@ struct AUStars: View {
     static let stars: [Star] = {
         var out: [Star] = []
         var id = 0
-        func add(_ pts: [(CGFloat, CGFloat, CGFloat)], size: CGFloat, period: Double, delay: Double) {
+        func add(_ pts: [(CGFloat, CGFloat, CGFloat)], size: CGFloat, period: Double, delay: Double)
+        {
             for (x, y, a) in pts {
-                out.append(Star(id: id, x: x, y: y, size: size, alpha: a, period: period, delay: delay))
+                out.append(
+                    Star(id: id, x: x, y: y, size: size, alpha: a, period: period, delay: delay))
                 id += 1
             }
         }
-        add([(38, 74, 0.9), (142, 96, 0.8), (232, 108, 0.85), (334, 118, 0.75), (64, 148, 0.6), (300, 152, 0.7)], size: 1.7, period: 4.2, delay: 0)
-        add([(96, 42, 0.62), (188, 54, 0.5), (286, 66, 0.58), (372, 82, 0.46), (20, 112, 0.5), (168, 130, 0.42), (256, 208, 0.4), (352, 176, 0.5)], size: 1.7, period: 6.6, delay: 1.8)
-        add([(58, 34, 0.4), (124, 62, 0.32), (212, 30, 0.36), (268, 128, 0.3), (318, 44, 0.34), (84, 106, 0.28), (148, 168, 0.26), (228, 172, 0.24), (382, 138, 0.3), (12, 62, 0.26), (200, 88, 0.22), (356, 96, 0.28)], size: 1.2, period: 3.1, delay: 0.9)
-        add([(44, 196, 0.3), (110, 232, 0.24), (182, 210, 0.2), (290, 238, 0.26), (346, 216, 0.22), (16, 168, 0.24)], size: 1.4, period: 5.4, delay: 3.4)
+        add(
+            [
+                (38, 74, 0.9), (142, 96, 0.8), (232, 108, 0.85), (334, 118, 0.75), (64, 148, 0.6),
+                (300, 152, 0.7),
+            ], size: 1.7, period: 4.2, delay: 0)
+        add(
+            [
+                (96, 42, 0.62), (188, 54, 0.5), (286, 66, 0.58), (372, 82, 0.46), (20, 112, 0.5),
+                (168, 130, 0.42), (256, 208, 0.4), (352, 176, 0.5),
+            ], size: 1.7, period: 6.6, delay: 1.8)
+        add(
+            [
+                (58, 34, 0.4), (124, 62, 0.32), (212, 30, 0.36), (268, 128, 0.3), (318, 44, 0.34),
+                (84, 106, 0.28), (148, 168, 0.26), (228, 172, 0.24), (382, 138, 0.3),
+                (12, 62, 0.26), (200, 88, 0.22), (356, 96, 0.28),
+            ], size: 1.2, period: 3.1, delay: 0.9)
+        add(
+            [
+                (44, 196, 0.3), (110, 232, 0.24), (182, 210, 0.2), (290, 238, 0.26),
+                (346, 216, 0.22), (16, 168, 0.24),
+            ], size: 1.4, period: 5.4, delay: 3.4)
         return out
     }()
 
@@ -80,11 +111,13 @@ struct AUStars: View {
         GeometryReader { geo in
             ZStack {
                 ForEach(Self.stars) { star in
-                    Twinkle(size: star.size, alpha: star.alpha, period: star.period, delay: star.delay)
-                        .position(
-                            x: star.x / 402 * geo.size.width,
-                            y: star.y / 874 * geo.size.height * 0.62   // .au-sky occupies the top 62%
-                        )
+                    Twinkle(
+                        size: star.size, alpha: star.alpha, period: star.period, delay: star.delay
+                    )
+                    .position(
+                        x: star.x / 402 * geo.size.width,
+                        y: star.y / 874 * geo.size.height * 0.62  // .au-sky occupies the top 62%
+                    )
                 }
             }
         }
@@ -99,12 +132,15 @@ struct AUStars: View {
 
         var body: some View {
             Circle()
-                .fill(Color(red: 1, green: 0.973, blue: 0.933)) // #fff8ee
+                .fill(Color(red: 1, green: 0.973, blue: 0.933))  // #fff8ee
                 .frame(width: size, height: size)
                 .opacity(reduceMotion ? 0.7 : (bright ? 1.0 : 0.22))
                 .onAppear {
                     guard !reduceMotion else { return }
-                    withAnimation(.easeInOut(duration: period / 2).repeatForever(autoreverses: true).delay(delay)) {
+                    withAnimation(
+                        .easeInOut(duration: period / 2).repeatForever(autoreverses: true).delay(
+                            delay)
+                    ) {
                         bright = true
                     }
                 }
@@ -126,7 +162,9 @@ struct AUGlint: View {
             .rotationEffect(.degrees(on ? 12 : 0))
             .onAppear {
                 guard !reduceMotion else { return }
-                withAnimation(.easeInOut(duration: 3.15).repeatForever(autoreverses: false).delay(delay)) {
+                withAnimation(
+                    .easeInOut(duration: 3.15).repeatForever(autoreverses: false).delay(delay)
+                ) {
                     on = true
                 }
             }
@@ -160,10 +198,14 @@ struct WelcomeDusk: View {
                         )
                     )
 
-                AUGlint(size: 13).position(x: 72 / 402 * geo.size.width, y: 116 / 874 * geo.size.height)
-                AUGlint(size: 10, delay: 2.6).position(x: 266 / 402 * geo.size.width, y: 58 / 874 * geo.size.height)
-                AUGlint(size: 11, delay: 4.9).position(x: 344 / 402 * geo.size.width, y: 168 / 874 * geo.size.height)
-                AUGlint(size: 9, delay: 6.1).position(x: 160 / 402 * geo.size.width, y: 198 / 874 * geo.size.height)
+                AUGlint(size: 13).position(
+                    x: 72 / 402 * geo.size.width, y: 116 / 874 * geo.size.height)
+                AUGlint(size: 10, delay: 2.6).position(
+                    x: 266 / 402 * geo.size.width, y: 58 / 874 * geo.size.height)
+                AUGlint(size: 11, delay: 4.9).position(
+                    x: 344 / 402 * geo.size.width, y: 168 / 874 * geo.size.height)
+                AUGlint(size: 9, delay: 6.1).position(
+                    x: 160 / 402 * geo.size.width, y: 198 / 874 * geo.size.height)
 
                 // Sun
                 Circle()
@@ -175,19 +217,32 @@ struct WelcomeDusk: View {
                 // Sun haze
                 RadialGradient(
                     stops: [
-                        .init(color: Color(red: 0.941, green: 0.659, blue: 0.467).opacity(0.5), location: 0),
-                        .init(color: Color(red: 0.776, green: 0.443, blue: 0.224).opacity(0.2), location: 0.42),
+                        .init(
+                            color: Color(red: 0.941, green: 0.659, blue: 0.467).opacity(0.5),
+                            location: 0),
+                        .init(
+                            color: Color(red: 0.776, green: 0.443, blue: 0.224).opacity(0.2),
+                            location: 0.42),
                         .init(color: .clear, location: 0.72),
                     ],
-                    center: UnitPoint(x: 0.31, y: 0.70), startRadius: 0, endRadius: geo.size.width * 0.61
+                    center: UnitPoint(x: 0.31, y: 0.70), startRadius: 0,
+                    endRadius: geo.size.width * 0.61
                 )
 
                 // Dunes (bottom third, stretched)
                 GeometryReader { duneGeo in
                     ZStack(alignment: .bottom) {
-                        DuneLayer(fill: Color(UIColor(hex: 0x4a3220)), rim: Color(UIColor(hex: 0xf0a877)).opacity(0.42), rimWidth: 1.2, path: "M0 84 Q58 46 124 68 Q192 92 258 54 Q330 34 402 70")
-                        DuneLayer(fill: Color(UIColor(hex: 0x2c1e15)), rim: Color(UIColor(hex: 0xe2925a)).opacity(0.2), rimWidth: 1, path: "M0 126 Q76 84 152 112 Q224 140 292 100 Q350 76 402 118")
-                        DuneLayer(fill: Color(UIColor(hex: 0x15100d)), rim: .clear, rimWidth: 0, path: "M0 172 Q90 136 174 160 Q246 180 316 148 Q360 130 402 166")
+                        DuneLayer(
+                            fill: Color(UIColor(hex: 0x4a3220)),
+                            rim: Color(UIColor(hex: 0xf0a877)).opacity(0.42), rimWidth: 1.2,
+                            path: "M0 84 Q58 46 124 68 Q192 92 258 54 Q330 34 402 70")
+                        DuneLayer(
+                            fill: Color(UIColor(hex: 0x2c1e15)),
+                            rim: Color(UIColor(hex: 0xe2925a)).opacity(0.2), rimWidth: 1,
+                            path: "M0 126 Q76 84 152 112 Q224 140 292 100 Q350 76 402 118")
+                        DuneLayer(
+                            fill: Color(UIColor(hex: 0x15100d)), rim: .clear, rimWidth: 0,
+                            path: "M0 172 Q90 136 174 160 Q246 180 316 148 Q360 130 402 166")
                     }
                     .frame(height: max(1, duneGeo.size.height * 0.33))
                 }
@@ -197,11 +252,21 @@ struct WelcomeDusk: View {
                 // Scrim
                 LinearGradient(
                     stops: [
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.44), location: 0),
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.03), location: 0.22),
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.3), location: 0.54),
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.8), location: 0.8),
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.95), location: 1),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.44),
+                            location: 0),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.03),
+                            location: 0.22),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.3),
+                            location: 0.54),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.8),
+                            location: 0.8),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.95),
+                            location: 1),
                     ],
                     startPoint: .top, endPoint: .bottom
                 )
@@ -260,7 +325,7 @@ struct DuneLayer: View {
     let fill: Color
     let rim: Color
     let rimWidth: CGFloat
-    let path: String   // the authored top-edge path
+    let path: String  // the authored top-edge path
 
     var body: some View {
         GeometryReader { geo in
@@ -276,7 +341,8 @@ struct DuneLayer: View {
                 GeometryReader { g in
                     DuneFillShape(curve: path)
                         .fill(fill)
-                        .scaleEffect(x: g.size.width / 402, y: g.size.height / 230, anchor: .topLeading)
+                        .scaleEffect(
+                            x: g.size.width / 402, y: g.size.height / 230, anchor: .topLeading)
                 }
             }
         }
@@ -320,7 +386,12 @@ struct PlanDusk: View {
 
                 // Sage haze
                 Ellipse()
-                    .fill(RadialGradient(colors: [Color(red: 0.478, green: 0.541, blue: 0.369).opacity(0.7), .clear], center: .center, startRadius: 0, endRadius: 300))
+                    .fill(
+                        RadialGradient(
+                            colors: [
+                                Color(red: 0.478, green: 0.541, blue: 0.369).opacity(0.7), .clear,
+                            ], center: .center, startRadius: 0, endRadius: 300)
+                    )
                     .frame(width: geo.size.width * 0.8, height: geo.size.height * 0.3)
                     .position(x: geo.size.width * 0.4, y: geo.size.height * 0.27)
                     .blur(radius: 48)
@@ -333,7 +404,9 @@ struct PlanDusk: View {
                                 .init(color: Color(UIColor(hex: 0xffd9a6)), location: 0),
                                 .init(color: Color(UIColor(hex: 0xf0a877)), location: 0.34),
                                 .init(color: Color(UIColor(hex: 0xd97f3f)), location: 0.62),
-                                .init(color: Color(UIColor(hex: 0xc67139)).opacity(0.1), location: 0.78),
+                                .init(
+                                    color: Color(UIColor(hex: 0xc67139)).opacity(0.1),
+                                    location: 0.78),
                                 .init(color: .clear, location: 0.82),
                             ],
                             center: UnitPoint(x: 0.5, y: 0.42), startRadius: 0, endRadius: 60
@@ -345,8 +418,12 @@ struct PlanDusk: View {
 
                 GeometryReader { duneGeo in
                     ZStack(alignment: .bottom) {
-                        DuneLayer(fill: Color(UIColor(hex: 0x3a2718)), rim: .clear, rimWidth: 0, path: "M0 70 Q84 34 166 58 Q242 80 310 46 Q358 28 402 56")
-                        DuneLayer(fill: Color(UIColor(hex: 0x1b1410)), rim: .clear, rimWidth: 0, path: "M0 112 Q94 80 182 102 Q256 120 324 94 Q366 78 402 102")
+                        DuneLayer(
+                            fill: Color(UIColor(hex: 0x3a2718)), rim: .clear, rimWidth: 0,
+                            path: "M0 70 Q84 34 166 58 Q242 80 310 46 Q358 28 402 56")
+                        DuneLayer(
+                            fill: Color(UIColor(hex: 0x1b1410)), rim: .clear, rimWidth: 0,
+                            path: "M0 112 Q94 80 182 102 Q256 120 324 94 Q366 78 402 102")
                     }
                     .frame(height: max(1, duneGeo.size.height * 0.26))
                 }
@@ -355,11 +432,21 @@ struct PlanDusk: View {
 
                 LinearGradient(
                     stops: [
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.5), location: 0),
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.1), location: 0.26),
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.42), location: 0.6),
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.88), location: 0.88),
-                        .init(color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.96), location: 1),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.5),
+                            location: 0),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.1),
+                            location: 0.26),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.42),
+                            location: 0.6),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.88),
+                            location: 0.88),
+                        .init(
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.96),
+                            location: 1),
                     ],
                     startPoint: .top, endPoint: .bottom
                 )
@@ -373,7 +460,7 @@ struct PlanDusk: View {
 // MARK: Step header (onboarding, lines 184–190)
 
 struct StepHeader: View {
-    let step: Int         // 1-based
+    let step: Int  // 1-based
     let total: Int
     let back: () -> Void
 
@@ -428,9 +515,11 @@ struct AUTabBar: View {
                 .strokeBorder(Color.auEdge, lineWidth: 1)
         )
         .overlay(alignment: .top) {
-            Rectangle().fill(Color.auHi).frame(height: 1).padding(.horizontal, 10).allowsHitTesting(false)
+            Rectangle().fill(Color.auHi).frame(height: 1).padding(.horizontal, 10).allowsHitTesting(
+                false)
         }
-        .shadow(color: Color(red: 0.149, green: 0.094, blue: 0.055).opacity(0.72), radius: 22, y: 10)
+        .shadow(
+            color: Color(red: 0.149, green: 0.094, blue: 0.055).opacity(0.72), radius: 22, y: 10)
     }
 
     private enum TabIcon {
@@ -468,16 +557,21 @@ struct AUTabBar: View {
     private func tabIcon(_ icon: TabIcon, tint: Color) -> some View {
         switch icon {
         case .learn:
-            SVGPathShape(d: "M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z").stroke(tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
+            SVGPathShape(d: "M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z").stroke(
+                tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
         case .practice:
             VStack(spacing: 1) {
-                SVGPathShape(d: "M12 3 3 8l9 5 9-5z").stroke(tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
-                SVGPathShape(d: "M3 14l9 5 9-5").stroke(tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
+                SVGPathShape(d: "M12 3 3 8l9 5 9-5z").stroke(
+                    tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
+                SVGPathShape(d: "M3 14l9 5 9-5").stroke(
+                    tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
             }
         case .progressBar:
-            SVGPathShape(d: "M4 19V11M10 19V5M16 19v-6M22 19H2").stroke(tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
+            SVGPathShape(d: "M4 19V11M10 19V5M16 19v-6M22 19H2").stroke(
+                tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
         case .person:
-            SVGPathShape(d: AUIcon.circle(cx: 12, cy: 8, r: 4) + "M4.5 20a7.5 7.5 0 0 1 15 0").stroke(tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
+            SVGPathShape(d: AUIcon.circle(cx: 12, cy: 8, r: 4) + "M4.5 20a7.5 7.5 0 0 1 15 0")
+                .stroke(tint, style: StrokeStyle(lineWidth: 2.6, lineCap: .round, lineJoin: .round))
         }
     }
 }
@@ -539,8 +633,12 @@ struct SelectableRow<Leading: View, Content: View>: View {
                 shape.fill(
                     LinearGradient(
                         stops: [
-                            .init(color: Color.auSurface.mixed(with: 0.18, of: Color.auAccent), location: 0),
-                            .init(color: Color.auSurface.mixed(with: 0.08, of: Color.auAccent), location: 1),
+                            .init(
+                                color: Color.auSurface.mixed(with: 0.18, of: Color.auAccent),
+                                location: 0),
+                            .init(
+                                color: Color.auSurface.mixed(with: 0.08, of: Color.auAccent),
+                                location: 1),
                         ],
                         startPoint: UnitPoint(x: 0.1, y: 0), endPoint: UnitPoint(x: 0.9, y: 1)
                     )

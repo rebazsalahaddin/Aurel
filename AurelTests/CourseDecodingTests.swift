@@ -1,4 +1,5 @@
 import XCTest
+
 @testable import Aurel
 
 /// Pins the exported course JSON against the authored banks.
@@ -6,8 +7,11 @@ import XCTest
 /// items + 22 quiz; the export summary declares 40/43/32 screens.
 final class CourseDecodingTests: XCTestCase {
     static let store: CourseStore = {
-        guard let url = Bundle(for: CourseDecodingTests.self).url(forResource: "a1-course", withExtension: "json")
-            ?? Bundle.main.url(forResource: "a1-course", withExtension: "json") else {
+        guard
+            let url = Bundle(for: CourseDecodingTests.self).url(
+                forResource: "a1-course", withExtension: "json")
+                ?? Bundle.main.url(forResource: "a1-course", withExtension: "json")
+        else {
             fatalError("a1-course.json missing from test bundle")
         }
         let data = try! Data(contentsOf: url)
@@ -17,21 +21,27 @@ final class CourseDecodingTests: XCTestCase {
 
     func testThreeChaptersDecode() {
         XCTAssertEqual(Self.store.chapters.map(\.id), ["A1-C01", "A1-C02", "A1-C03"])
-        XCTAssertEqual(Self.store.chapters.map(\.title), [
-            "Hello! My Name Is Alex",
-            "Spell It and Share Your Details",
-            "Where Are You From?",
-        ])
+        XCTAssertEqual(
+            Self.store.chapters.map(\.title),
+            [
+                "Hello! My Name Is Alex",
+                "Spell It and Share Your Details",
+                "Where Are You From?",
+            ])
         XCTAssertEqual(Self.store.chapters.map(\.n), [1, 2, 3])
     }
 
     func testLessonCounts() {
         XCTAssertEqual(Self.store.chapters.map { $0.lessons.count }, [4, 4, 3])
-        XCTAssertEqual(Self.store.chapters[0].lessons.map(\.title), ["Say Hello", "You and Your Name", "A Real First Meeting", "The Welcome Mission"])
+        XCTAssertEqual(
+            Self.store.chapters[0].lessons.map(\.title),
+            ["Say Hello", "You and Your Name", "A Real First Meeting", "The Welcome Mission"])
     }
 
     func testScreenCounts() {
-        XCTAssertEqual(Self.store.chapters.map { ch in ch.lessons.reduce(0) { $0 + $1.screens.count } }, [40, 43, 32])
+        XCTAssertEqual(
+            Self.store.chapters.map { ch in ch.lessons.reduce(0) { $0 + $1.screens.count } },
+            [40, 43, 32])
         XCTAssertEqual(Self.store.flat.count, 115)
     }
 
@@ -47,12 +57,15 @@ final class CourseDecodingTests: XCTestCase {
         // Bank headers: C1 = 122 practice items + 22 quiz Form A; every chapter
         // of C1–C3 delivered 122/122 (governance QA_STATUS).
         let items = Self.store.allPracticeItems.count
-        XCTAssertGreaterThanOrEqual(items, 366, "expected ≥ 122 items per chapter across 3 chapters, got \(items)")
-        let quizItems = Self.store.flat.filter { if case .quiz = $0.screen.payload { true } else { false } }
-            .compactMap { f -> Int? in
-                if case .quiz(let q) = f.screen.payload { return q.items?.count }
-                return nil
-            }
+        XCTAssertGreaterThanOrEqual(
+            items, 366, "expected ≥ 122 items per chapter across 3 chapters, got \(items)")
+        let quizItems = Self.store.flat.filter {
+            if case .quiz = $0.screen.payload { true } else { false }
+        }
+        .compactMap { f -> Int? in
+            if case .quiz(let q) = f.screen.payload { return q.items?.count }
+            return nil
+        }
         XCTAssertEqual(quizItems.count, 2, "two quiz screens across the course")
         XCTAssertTrue(quizItems.contains(22), "quiz Form A has 22 items; got \(quizItems)")
     }
@@ -60,7 +73,9 @@ final class CourseDecodingTests: XCTestCase {
     func testAnswerKeyShapes() {
         let singles = Self.store.allPracticeItems.filter { $0.item.key?.single != nil }
         let sequences = Self.store.allPracticeItems.filter { $0.item.key?.sequence != nil }
-        XCTAssertEqual(singles.count + sequences.count, Self.store.allPracticeItems.compactMap { $0.item.key }.count)
+        XCTAssertEqual(
+            singles.count + sequences.count,
+            Self.store.allPracticeItems.compactMap { $0.item.key }.count)
         XCTAssertGreaterThan(singles.count, 300)
         XCTAssertGreaterThanOrEqual(sequences.count, 15)
     }
@@ -112,7 +127,10 @@ final class PositionMathTests: XCTestCase {
         XCTAssertEqual(store.chapterEndPos(1), c1Total + 43 - 1)
         // The screen at the chapter end position is the chapter map.
         let end = store.screen(at: store.chapterEndPos(0))
-        if case .chapterMap = end?.screen.payload {} else { XCTFail("last C1 screen is not chapterMap") }
+        if case .chapterMap = end?.screen.payload {
+        } else {
+            XCTFail("last C1 screen is not chapterMap")
+        }
     }
 
     func testPromiseForChapter() {

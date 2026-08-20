@@ -26,7 +26,10 @@ struct ProgressView: View {
         let r = env.router
         let raw: [(String, Int, Int)]
         if r.baseLessons > 0 {
-            raw = [("Vocabulary", 142, 4), ("Grammar", 96, 3), ("Listening", 38, 2), ("Conversation", 24, 2), ("Speaking", 4, 1)]
+            raw = [
+                ("Vocabulary", 142, 4), ("Grammar", 96, 3), ("Listening", 38, 2),
+                ("Conversation", 24, 2), ("Speaking", 4, 1),
+            ]
         } else {
             raw = [
                 ("Vocabulary", r.lessonsDone * 8, r.lessonsDone > 0 ? 2 : 1),
@@ -44,7 +47,8 @@ struct ProgressView: View {
                 items: k.1,
                 meta: i == 0
                     ? (k.2 == 0 ? "Not started — worth ten minutes" : "Weakest — worth ten minutes")
-                    : (k.1 == 0 ? "Nothing recorded yet" : "\(k.1) items \(mastery[k.2].lowercased())"),
+                    : (k.1 == 0
+                        ? "Nothing recorded yet" : "\(k.1) items \(mastery[k.2].lowercased())"),
                 weakest: i == 0
             )
         }
@@ -64,9 +68,11 @@ struct ProgressView: View {
                             .textCase(.uppercase)
                             .foregroundStyle(Color.auAccentText)
                         Spacer()
-                        Text(r.baseLessons > 0 ? "Last practised Thursday" : "Nothing practised yet")
-                            .font(.figtree(.regular, size: 11.5))
-                            .foregroundStyle(Color.auText.opacity(0.55))
+                        Text(
+                            r.baseLessons > 0 ? "Last practised Thursday" : "Nothing practised yet"
+                        )
+                        .font(.figtree(.regular, size: 11.5))
+                        .foregroundStyle(Color.auText.opacity(0.55))
                     }
                     .padding(.bottom, 2)
 
@@ -79,9 +85,13 @@ struct ProgressView: View {
                     VStack(spacing: 2) {
                         ForEach(skills) { k in
                             Button {
-                                if k.label == "Speaking" { r.nav(.speak) }
-                                else if k.label == "Conversation" { r.nav(.scene) }
-                                else { r.nav(.review) }
+                                if k.label == "Speaking" {
+                                    r.nav(.speak)
+                                } else if k.label == "Conversation" {
+                                    r.nav(.scene)
+                                } else {
+                                    r.nav(.review)
+                                }
                             } label: {
                                 VStack(alignment: .leading, spacing: 0) {
                                     HStack(alignment: .firstTextBaseline, spacing: 10) {
@@ -122,8 +132,11 @@ struct ProgressView: View {
                     .padding(.bottom, 18)
 
                     APillButton(title: weakestCta) {
-                        if let w = skills.first, w.label == "Speaking" { r.nav(.speak) }
-                        else { r.goCourse(min(pathAt, 3)) }
+                        if let w = skills.first, w.label == "Speaking" {
+                            r.nav(.speak)
+                        } else {
+                            r.goCourse(min(pathAt, 3))
+                        }
                     }
                     .padding(.bottom, 26)
 
@@ -187,18 +200,22 @@ struct ProgressView: View {
                             .foregroundStyle(Color.auText.opacity(0.50))
                             .padding(.bottom, 6)
 
-                        ForEach(Array([
-                            ("A1", "Foundation · 12 chapters", "Here"),
-                            ("A2", "Elementary", "Not written yet"),
-                            ("B1", "Intermediate", "Not written yet"),
-                            ("B2", "Upper intermediate", "Not written yet"),
-                            ("C1", "Advanced", "Not written yet"),
-                        ].enumerated()), id: \.offset) { i, l in
+                        ForEach(
+                            Array(
+                                [
+                                    ("A1", "Foundation · 12 chapters", "Here"),
+                                    ("A2", "Elementary", "Not written yet"),
+                                    ("B1", "Intermediate", "Not written yet"),
+                                    ("B2", "Upper intermediate", "Not written yet"),
+                                    ("C1", "Advanced", "Not written yet"),
+                                ].enumerated()), id: \.offset
+                        ) { i, l in
                             HStack(spacing: 14) {
                                 Text(l.0)
                                     .font(.caprasimo(size: 18))
                                     .frame(width: 34, alignment: .leading)
-                                    .foregroundStyle(l.2 == "Here" ? Color.auAccent : Color.auText.opacity(0.30))
+                                    .foregroundStyle(
+                                        l.2 == "Here" ? Color.auAccent : Color.auText.opacity(0.30))
                                 Text(l.1)
                                     .font(.figtree(.semibold, size: 14.5))
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -217,7 +234,9 @@ struct ProgressView: View {
                                 }
                             }
                             .padding(.vertical, 13)
-                            .overlay(alignment: .bottom) { if i < 4 { Divider().overlay(Color.auDivider) } }
+                            .overlay(alignment: .bottom) {
+                                if i < 4 { Divider().overlay(Color.auDivider) }
+                            }
                         }
                     }
                     .padding(.vertical, 24)
@@ -371,8 +390,12 @@ struct ProfileView: View {
                         Rectangle().fill(Color.auEdge).frame(width: 1)
                         profileStat("\(r.lessonsDone)", "Lessons")
                     }
-                    .background(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auFill))
-                    .overlay(RoundedRectangle(cornerRadius: 26).strokeBorder(Color.auEdge, lineWidth: 1))
+                    .background(
+                        RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 26).strokeBorder(Color.auEdge, lineWidth: 1)
+                    )
                     .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
                     .padding(.bottom, 18)
 
@@ -381,9 +404,12 @@ struct ProfileView: View {
                             r.nav(.paywall)
                         } label: {
                             HStack(spacing: 16) {
-                                AUIcon(kind: .sparkle, size: 20, color: Color(red: 0.133, green: 0.153, blue: 0.102))
-                                    .frame(width: 44, height: 44)
-                                    .background(Circle().fill(Color.auAccent2))
+                                AUIcon(
+                                    kind: .sparkle, size: 20,
+                                    color: Color(red: 0.133, green: 0.153, blue: 0.102)
+                                )
+                                .frame(width: 44, height: 44)
+                                .background(Circle().fill(Color.auAccent2))
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text("Aurel Pro")
                                         .font(.caprasimo(size: 18))
@@ -399,7 +425,10 @@ struct ProfileView: View {
                                 }
                             }
                             .padding(20)
-                            .background(RoundedRectangle(cornerRadius: 28, style: .continuous).fill(Color.auOkBg))
+                            .background(
+                                RoundedRectangle(cornerRadius: 28, style: .continuous).fill(
+                                    Color.auOkBg)
+                            )
                             .foregroundStyle(Color.auOkText)
                         }
                         .buttonStyle(.auTap)
@@ -412,7 +441,10 @@ struct ProfileView: View {
                         }
                         .padding(.horizontal, 20)
                         .padding(.vertical, 18)
-                        .background(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auOkBg))
+                        .background(
+                            RoundedRectangle(cornerRadius: 26, style: .continuous).fill(
+                                Color.auOkBg)
+                        )
                         .foregroundStyle(Color.auOkText)
                         .padding(.bottom, 20)
                     }
@@ -430,12 +462,19 @@ struct ProfileView: View {
                                 HStack(alignment: .top, spacing: 13) {
                                     Group {
                                         if m.done {
-                                            AUIcon(kind: .check, size: 13, color: Color(red: 0.984, green: 0.980, blue: 0.961))
-                                                .frame(width: 21, height: 21)
-                                                .background(Circle().fill(Color.auAccent2))
+                                            AUIcon(
+                                                kind: .check, size: 13,
+                                                color: Color(red: 0.984, green: 0.980, blue: 0.961)
+                                            )
+                                            .frame(width: 21, height: 21)
+                                            .background(Circle().fill(Color.auAccent2))
                                         } else {
                                             Circle()
-                                                .strokeBorder(Color.auText.opacity(0.24), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                                                .strokeBorder(
+                                                    Color.auText.opacity(0.24),
+                                                    style: StrokeStyle(
+                                                        lineWidth: 1.5, dash: [4, 3])
+                                                )
                                                 .frame(width: 21, height: 21)
                                         }
                                     }
@@ -444,7 +483,8 @@ struct ProfileView: View {
                                         Text(m.label)
                                             .font(.figtree(.semibold, size: 14.5))
                                             .lineSpacing(14.5 * 0.35)
-                                            .foregroundStyle(m.done ? Color.auText : Color.auText.opacity(0.52))
+                                            .foregroundStyle(
+                                                m.done ? Color.auText : Color.auText.opacity(0.52))
                                         Text(m.when)
                                             .font(.figtree(.regular, size: 12))
                                             .foregroundStyle(Color.auText.opacity(0.48))
@@ -453,36 +493,57 @@ struct ProfileView: View {
                                 }
                                 .padding(.horizontal, 19)
                                 .padding(.vertical, 15)
-                                .overlay(alignment: .bottom) { if i < milestones.count - 1 { Divider().overlay(Color.auDivider) } }
+                                .overlay(alignment: .bottom) {
+                                    if i < milestones.count - 1 {
+                                        Divider().overlay(Color.auDivider)
+                                    }
+                                }
                             }
                         }
-                        .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill))
-                        .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1))
+                        .background(
+                            RoundedRectangle(cornerRadius: 22, style: .continuous).fill(
+                                Color.auFill)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 22).strokeBorder(
+                                Color.auEdge, lineWidth: 1)
+                        )
                         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
                         .padding(.bottom, 22)
                     } else {
-                        Text("Nothing yet. The first one arrives when you finish a lesson — they are sentences, not badges.")
-                            .font(.figtree(.regular, size: 13))
-                            .lineSpacing(13 * 0.55)
-                            .foregroundStyle(Color.auText.opacity(0.50))
-                            .padding(20)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                    .strokeBorder(Color.auText.opacity(0.16), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                            )
-                            .padding(.bottom, 22)
+                        Text(
+                            "Nothing yet. The first one arrives when you finish a lesson — they are sentences, not badges."
+                        )
+                        .font(.figtree(.regular, size: 13))
+                        .lineSpacing(13 * 0.55)
+                        .foregroundStyle(Color.auText.opacity(0.50))
+                        .padding(20)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                .strokeBorder(
+                                    Color.auText.opacity(0.16),
+                                    style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                        )
+                        .padding(.bottom, 22)
                     }
 
                     // rows
                     VStack(spacing: 0) {
-                        profileRow("Cedar Group", r.boardOut ? "Off" : "Rank \(r.streak > 1 ? 6 : 30) of 30") { r.nav(.leaderboard) }
+                        profileRow(
+                            "Cedar Group",
+                            r.boardOut ? "Off" : "Rank \(r.streak > 1 ? 6 : 30) of 30"
+                        ) { r.nav(.leaderboard) }
                         profileRow("Subscription", r.pro ? "Pro trial" : "Free") { r.nav(.paywall) }
                         profileRow("Settings", "") { r.nav(.settings) }
                         profileRow("Help and contact", "") {}
                     }
-                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill))
-                    .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1))
+                    .background(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1)
+                    )
                     .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
                 }
                 .padding(.horizontal, 24)
@@ -528,7 +589,9 @@ struct ProfileView: View {
         .padding(.horizontal, 12)
     }
 
-    private func profileRow(_ label: String, _ value: String, action: @escaping () -> Void) -> some View {
+    private func profileRow(_ label: String, _ value: String, action: @escaping () -> Void)
+        -> some View
+    {
         Button(action: action) {
             HStack(spacing: 12) {
                 Text(label)
@@ -575,20 +638,34 @@ struct SettingsView: View {
 
                 sectionLabel("Daily rhythm")
                 VStack(spacing: 0) {
-                    switchRow("Daily reminder", "One, at 19:30", on: r.sw.reminder) { r.toggleSw(\.reminder) }
+                    switchRow("Daily reminder", "One, at 19:30", on: r.sw.reminder) {
+                        r.toggleSw(\.reminder)
+                    }
                     switchRow("Sound", "Soft and sparse", on: r.sw.sound) { r.toggleSw(\.sound) }
-                    switchRow("Haptics", "On answer and completion", on: r.sw.haptics) { r.toggleSw(\.haptics) }
-                    switchRow("Weekly summary", "Sunday evening, by email", on: r.sw.weekly) { r.toggleSw(\.weekly) }
+                    switchRow("Haptics", "On answer and completion", on: r.sw.haptics) {
+                        r.toggleSw(\.haptics)
+                    }
+                    switchRow("Weekly summary", "Sunday evening, by email", on: r.sw.weekly) {
+                        r.toggleSw(\.weekly)
+                    }
                 }
                 .settingsCard()
                 .padding(.bottom, 22)
 
                 sectionLabel("Notifications")
                 VStack(spacing: 0) {
-                    switchRow("Dawn nudge", "Before your lesson time", on: r.notif.dawn) { r.toggleNotif(\.dawn) }
-                    switchRow("Sundown catch-up", "The words due back today", on: r.notif.sundown) { r.toggleNotif(\.sundown) }
-                    switchRow("Milestones", "When you pass something worth naming", on: r.notif.milestone) { r.toggleNotif(\.milestone) }
-                    switchRow("Cedar Group", "Standings and results — off by default", on: r.notif.cohort) { r.toggleNotif(\.cohort) }
+                    switchRow("Dawn nudge", "Before your lesson time", on: r.notif.dawn) {
+                        r.toggleNotif(\.dawn)
+                    }
+                    switchRow("Sundown catch-up", "The words due back today", on: r.notif.sundown) {
+                        r.toggleNotif(\.sundown)
+                    }
+                    switchRow(
+                        "Milestones", "When you pass something worth naming", on: r.notif.milestone
+                    ) { r.toggleNotif(\.milestone) }
+                    switchRow(
+                        "Cedar Group", "Standings and results — off by default", on: r.notif.cohort
+                    ) { r.toggleNotif(\.cohort) }
                 }
                 .settingsCard()
                 .padding(.bottom, 22)
@@ -600,16 +677,22 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("The arc, on your Home Screen")
                             .font(.figtree(.semibold, size: 14.5))
-                        Text("Long-press your Home Screen, then add the small Aurel widget. The sun moves as the day is finished.")
-                            .font(.figtree(.regular, size: 12.5))
-                            .lineSpacing(12.5 * 0.5)
-                            .foregroundStyle(Color.auText.opacity(0.50))
+                        Text(
+                            "Long-press your Home Screen, then add the small Aurel widget. The sun moves as the day is finished."
+                        )
+                        .font(.figtree(.regular, size: 12.5))
+                        .lineSpacing(12.5 * 0.5)
+                        .foregroundStyle(Color.auText.opacity(0.50))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .padding(20)
-                .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill))
-                .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1))
+                .background(
+                    RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1)
+                )
                 .padding(.bottom, 22)
 
                 sectionLabel("Comparison")
@@ -622,10 +705,13 @@ struct SettingsView: View {
                             .foregroundStyle(Color.auText.opacity(0.50))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    Toggle("", isOn: Binding(
-                        get: { !r.boardOut },
-                        set: { r.boardOut = !$0 }
-                    ))
+                    Toggle(
+                        "",
+                        isOn: Binding(
+                            get: { !r.boardOut },
+                            set: { r.boardOut = !$0 }
+                        )
+                    )
                     .labelsHidden()
                     .tint(.auAccent)
                 }
@@ -655,23 +741,33 @@ struct SettingsView: View {
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 8)
                                     .background(
-                                        Capsule().fill(r.typeStep == step ? Color.auAccent : Color.auText.opacity(0.08))
+                                        Capsule().fill(
+                                            r.typeStep == step
+                                                ? Color.auAccent : Color.auText.opacity(0.08))
                                     )
-                                    .foregroundStyle(r.typeStep == step ? Color.auBackground : Color.auText.opacity(0.5))
+                                    .foregroundStyle(
+                                        r.typeStep == step
+                                            ? Color.auBackground : Color.auText.opacity(0.5))
                             }
                             .buttonStyle(.auTap)
                         }
                     }
                     Text("Pleased to meet you.")
                         .font(.figtree(.regular, size: typePreview))
-                    Text("Every screen follows this, and every screen has been checked at the largest size.")
-                        .font(.figtree(.regular, size: 12))
-                        .lineSpacing(12 * 0.5)
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                    Text(
+                        "Every screen follows this, and every screen has been checked at the largest size."
+                    )
+                    .font(.figtree(.regular, size: 12))
+                    .lineSpacing(12 * 0.5)
+                    .foregroundStyle(Color.auText.opacity(0.45))
                 }
                 .padding(20)
-                .background(RoundedRectangle(cornerRadius: 28, style: .continuous).fill(Color.auFill))
-                .overlay(RoundedRectangle(cornerRadius: 28).strokeBorder(Color.auEdge, lineWidth: 1))
+                .background(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous).fill(Color.auFill)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28).strokeBorder(Color.auEdge, lineWidth: 1)
+                )
                 .padding(.bottom, 22)
 
                 sectionLabel("Account")
@@ -691,8 +787,12 @@ struct SettingsView: View {
         .auScreenEntrance()
     }
 
-    private var typeLabel: String { ["Smaller", "Small", "Default", "Large", "Largest"][min(max(env.router.typeStep, 0), 4)] }
-    private var typePreview: CGFloat { [12.5, 13.5, 14.5, 17, 20][min(max(env.router.typeStep, 0), 4)] }
+    private var typeLabel: String {
+        ["Smaller", "Small", "Default", "Large", "Largest"][min(max(env.router.typeStep, 0), 4)]
+    }
+    private var typePreview: CGFloat {
+        [12.5, 13.5, 14.5, 17, 20][min(max(env.router.typeStep, 0), 4)]
+    }
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
@@ -703,7 +803,9 @@ struct SettingsView: View {
             .padding(.bottom, 12)
     }
 
-    private func switchRow(_ label: String, _ sub: String, on: Bool, action: @escaping () -> Void) -> some View {
+    private func switchRow(_ label: String, _ sub: String, on: Bool, action: @escaping () -> Void)
+        -> some View
+    {
         Button(action: action) {
             HStack(spacing: 14) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -728,7 +830,9 @@ struct SettingsView: View {
         .accessibilityAddTraits(on ? .isSelected : [])
     }
 
-    private func accountRow(_ label: String, _ value: String, tint: Color = .auText, action: @escaping () -> Void) -> some View {
+    private func accountRow(
+        _ label: String, _ value: String, tint: Color = .auText, action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Text(label)
@@ -747,8 +851,8 @@ struct SettingsView: View {
     }
 }
 
-private extension View {
-    func settingsCard() -> some View {
+extension View {
+    fileprivate func settingsCard() -> some View {
         self
             .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill))
             .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1))
@@ -764,13 +868,17 @@ struct WidgetPreview: View {
         ZStack {
             AUGradients.sky
             GeometryReader { geo in
-                let sx = geo.size.width / 96, sy = geo.size.height / 96
+                let sx = geo.size.width / 96
+                let sy = geo.size.height / 96
                 // arc
                 Path { p in
                     p.move(to: CGPoint(x: 12, y: 58))
                     p.addQuadCurve(to: CGPoint(x: 84, y: 58), control: CGPoint(x: 48, y: 8))
                 }
-                .stroke(Color.auText.opacity(0.16), style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [2, 6]))
+                .stroke(
+                    Color.auText.opacity(0.16),
+                    style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [2, 6])
+                )
                 .scaleEffect(x: sx, y: sy, anchor: .topLeading)
                 // dunes
                 Path { p in
@@ -856,25 +964,40 @@ struct PaywallView: View {
                     AUStars()
                     RadialGradient(
                         stops: [
-                            .init(color: Color(red: 0.886, green: 0.573, blue: 0.337).opacity(0.56), location: 0),
-                            .init(color: Color(red: 0.776, green: 0.443, blue: 0.224).opacity(0.22), location: 0.44),
+                            .init(
+                                color: Color(red: 0.886, green: 0.573, blue: 0.337).opacity(0.56),
+                                location: 0),
+                            .init(
+                                color: Color(red: 0.776, green: 0.443, blue: 0.224).opacity(0.22),
+                                location: 0.44),
                             .init(color: .clear, location: 0.74),
                         ],
-                        center: UnitPoint(x: 0.66, y: 0.80), startRadius: 0, endRadius: geo.size.width * 0.9
+                        center: UnitPoint(x: 0.66, y: 0.80), startRadius: 0,
+                        endRadius: geo.size.width * 0.9
                     )
                     GeometryReader { duneGeo in
                         ZStack(alignment: .bottom) {
-                            DuneLayer(fill: Color(UIColor(hex: 0x33241a)), rim: .clear, rimWidth: 0, path: "M0 62 Q86 30 168 54 Q244 76 312 44 Q360 26 402 52")
-                            DuneLayer(fill: Color(UIColor(hex: 0x1a1310)), rim: .clear, rimWidth: 0, path: "M0 104 Q96 74 184 96 Q258 114 326 88 Q368 72 402 96")
+                            DuneLayer(
+                                fill: Color(UIColor(hex: 0x33241a)), rim: .clear, rimWidth: 0,
+                                path: "M0 62 Q86 30 168 54 Q244 76 312 44 Q360 26 402 52")
+                            DuneLayer(
+                                fill: Color(UIColor(hex: 0x1a1310)), rim: .clear, rimWidth: 0,
+                                path: "M0 104 Q96 74 184 96 Q258 114 326 88 Q368 72 402 96")
                         }
                         .frame(height: max(1, duneGeo.size.height * 0.22))
                     }
                     GrainOverlay()
                     LinearGradient(
                         stops: [
-                            .init(color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.6), location: 0),
-                            .init(color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.46), location: 0.38),
-                            .init(color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.5), location: 0.72),
+                            .init(
+                                color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.6),
+                                location: 0),
+                            .init(
+                                color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.46),
+                                location: 0.38),
+                            .init(
+                                color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.5),
+                                location: 0.72),
                             .init(color: Color.auBackground, location: 1),
                         ],
                         startPoint: .top, endPoint: .bottom
@@ -889,9 +1012,14 @@ struct PaywallView: View {
                     Button {
                         r.nav(.home)
                     } label: {
-                        AUIcon(kind: .close, size: 17, color: Color(red: 0.969, green: 0.937, blue: 0.886))
-                            .frame(width: 44, height: 44)
-                            .background(Circle().fill(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.2)))
+                        AUIcon(
+                            kind: .close, size: 17,
+                            color: Color(red: 0.969, green: 0.937, blue: 0.886)
+                        )
+                        .frame(width: 44, height: 44)
+                        .background(
+                            Circle().fill(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.2))
+                        )
                     }
                     .buttonStyle(.auTap)
                     .accessibilityLabel("Close")
@@ -913,27 +1041,35 @@ struct PaywallView: View {
                     .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
                     .padding(.bottom, 12)
 
-                Text("Twenty-four chapters, unlimited speaking, and the review engine that decides when to bring a word back.")
-                    .font(.figtree(.regular, size: 14.5))
-                    .lineSpacing(14.5 * 0.6)
-                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.75))
-                    .frame(maxWidth: 290, alignment: .leading)
-                    .padding(.bottom, 26)
+                Text(
+                    "Twenty-four chapters, unlimited speaking, and the review engine that decides when to bring a word back."
+                )
+                .font(.figtree(.regular, size: 14.5))
+                .lineSpacing(14.5 * 0.6)
+                .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.75))
+                .frame(maxWidth: 290, alignment: .leading)
+                .padding(.bottom, 26)
 
                 // plans
                 VStack(spacing: 11) {
-                    planRow(id: "annual", name: "Annual", sub: "£5.00 a month, billed yearly", price: "£59.99", badge: "Save 44%")
-                    planRow(id: "monthly", name: "Monthly", sub: "Cancel any time", price: "£8.99", badge: "")
+                    planRow(
+                        id: "annual", name: "Annual", sub: "£5.00 a month, billed yearly",
+                        price: "£59.99", badge: "Save 44%")
+                    planRow(
+                        id: "monthly", name: "Monthly", sub: "Cancel any time", price: "£8.99",
+                        badge: "")
                 }
                 .padding(.bottom, 20)
 
                 VStack(alignment: .leading, spacing: 10) {
-                    ForEach([
-                        "All twelve A1 chapters — 42 lessons · A2 upward arrives with the adaptation guide",
-                        "Unlimited speaking sessions, scored on clarity not accent",
-                        "Spaced review that decides when a word returns",
-                        "Every recording and illustration, once production replaces the placeholders",
-                    ], id: \.self) { f in
+                    ForEach(
+                        [
+                            "All twelve A1 chapters — 42 lessons · A2 upward arrives with the adaptation guide",
+                            "Unlimited speaking sessions, scored on clarity not accent",
+                            "Spaced review that decides when a word returns",
+                            "Every recording and illustration, once production replaces the placeholders",
+                        ], id: \.self
+                    ) { f in
                         HStack(alignment: .top, spacing: 11) {
                             AUIcon(kind: .check, size: 16, color: .auAccent2)
                                 .padding(.top, 2)
@@ -952,13 +1088,15 @@ struct PaywallView: View {
                 }
                 .padding(.bottom, 10)
 
-                Text(r.plan == "annual"
-                     ? "£59.99 a year after seven days. Cancel any time in Settings."
-                     : "£8.99 a month after seven days. Cancel any time in Settings.")
-                    .font(.figtree(.regular, size: 11.5))
-                    .lineSpacing(11.5 * 0.5)
-                    .foregroundStyle(Color.auText.opacity(0.45))
-                    .frame(maxWidth: .infinity)
+                Text(
+                    r.plan == "annual"
+                        ? "£59.99 a year after seven days. Cancel any time in Settings."
+                        : "£8.99 a month after seven days. Cancel any time in Settings."
+                )
+                .font(.figtree(.regular, size: 11.5))
+                .lineSpacing(11.5 * 0.5)
+                .foregroundStyle(Color.auText.opacity(0.45))
+                .frame(maxWidth: .infinity)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 34)
@@ -966,7 +1104,9 @@ struct PaywallView: View {
         .auScreenEntrance()
     }
 
-    private func planRow(id: String, name: String, sub: String, price: String, badge: String) -> some View {
+    private func planRow(id: String, name: String, sub: String, price: String, badge: String)
+        -> some View
+    {
         let on = env.router.plan == id
         return Button {
             env.router.plan = id

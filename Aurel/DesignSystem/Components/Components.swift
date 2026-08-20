@@ -12,7 +12,8 @@ struct ATapButtonStyle: ButtonStyle {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.972 : 1)
             .opacity(configuration.isPressed ? 0.92 : 1)
-            .animation(.spring(response: 0.22, dampingFraction: 0.7), value: configuration.isPressed)
+            .animation(
+                .spring(response: 0.22, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }
 
@@ -25,16 +26,16 @@ extension ButtonStyle where Self == ATapButtonStyle {
 /// `.au-btn` — 17/22 padding, 22 pt radius, Figtree 600 16.5.
 struct APillButton: View {
     enum Variant {
-        case primary     // .au-btn-primary
-        case ghost       // .au-btn-ghost (glass)
-        case quiet       // .au-btn-quiet (divider outline) — CourseScreen variant
-        case dashed      // the "Start over" / "One more" outline
+        case primary  // .au-btn-primary
+        case ghost  // .au-btn-ghost (glass)
+        case quiet  // .au-btn-quiet (divider outline) — CourseScreen variant
+        case dashed  // the "Start over" / "One more" outline
     }
 
     let title: String
     var variant: Variant = .primary
     var icon: AUIcon.Kind? = nil
-    var compact: Bool = false   // 13/16 padding + 14.5 pt font (inline card buttons)
+    var compact: Bool = false  // 13/16 padding + 14.5 pt font (inline card buttons)
     var disabled: Bool = false
     let action: () -> Void
 
@@ -57,7 +58,10 @@ struct APillButton: View {
             .padding(.horizontal, compact ? 16 : 22)
             .background(background)
             .foregroundStyle(fgColor)
-            .shadow(color: .black.opacity(shadowSpec.opacity), radius: shadowSpec.radius, y: shadowSpec.y)
+            .shadow(
+                color: .black.opacity(shadowSpec.opacity), radius: shadowSpec.radius,
+                y: shadowSpec.y
+            )
             .overlay(alignment: .top) { hiLine }
         }
         .buttonStyle(.auTap)
@@ -80,7 +84,9 @@ struct APillButton: View {
                     RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
                         .strokeBorder(.white.opacity(0.24), lineWidth: 1)
                         .blur(radius: 0.4)
-                        .mask(Rectangle().frame(height: 1).frame(maxHeight: .infinity, alignment: .top))
+                        .mask(
+                            Rectangle().frame(height: 1).frame(
+                                maxHeight: .infinity, alignment: .top))
                 )
         case .ghost:
             AUGradients.glass()
@@ -170,7 +176,9 @@ struct ACard<Content: View>: View {
 
     var body: some View {
         content
-            .padding(padded ? EdgeInsets(top: 16, leading: 18, bottom: 16, trailing: 18) : EdgeInsets())
+            .padding(
+                padded ? EdgeInsets(top: 16, leading: 18, bottom: 16, trailing: 18) : EdgeInsets()
+            )
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
@@ -203,8 +211,20 @@ struct ATag: View {
             .foregroundStyle(fg)
     }
 
-    private var bg: Color { switch variant { case .ok: .auOkBg; case .flat: .auFlatBg; case .tint: .auTintBg } }
-    private var fg: Color { switch variant { case .ok: .auOkQuiet; case .flat: .auFlatText; case .tint: .auTintText } }
+    private var bg: Color {
+        switch variant {
+        case .ok: .auOkBg
+        case .flat: .auFlatBg
+        case .tint: .auTintBg
+        }
+    }
+    private var fg: Color {
+        switch variant {
+        case .ok: .auOkQuiet
+        case .flat: .auFlatText
+        case .tint: .auTintText
+        }
+    }
 }
 
 // MARK: Motion
@@ -220,10 +240,11 @@ struct ScreenEntrance: ViewModifier {
             content
         } else {
             content
-                .transition(.asymmetric(
-                    insertion: .opacity.combined(with: .offset(y: 13)),
-                    removal: .opacity
-                ))
+                .transition(
+                    .asymmetric(
+                        insertion: .opacity.combined(with: .offset(y: 13)),
+                        removal: .opacity
+                    ))
         }
     }
 }
@@ -334,10 +355,10 @@ struct GrainOverlay: View {
 /// Deterministic noise so the grain doesn't shimmer between frames.
 struct SeededRandom: Sendable {
     private var state: UInt64
-    init(seed: UInt64) { state = seed &* 6364136223846793005 &+ 1442695040888963407 }
+    init(seed: UInt64) { state = seed &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407 }
     mutating func next() -> Double {
-        state = state &* 6364136223846793005 &+ 1442695040888963407
-        return Double((state >> 33) & 0xFFFFFFFF) / Double(UInt32.max)
+        state = state &* 6_364_136_223_846_793_005 &+ 1_442_695_040_888_963_407
+        return Double((state >> 33) & 0xFFFF_FFFF) / Double(UInt32.max)
     }
 }
 
@@ -347,7 +368,8 @@ struct AmbientOrbs: View {
 
     var body: some View {
         GeometryReader { geo in
-            let w = geo.size.width, h = geo.size.height
+            let w = geo.size.width
+            let h = geo.size.height
             ZStack {
                 orb(
                     size: 320, center: CGPoint(x: w + 110 - 160, y: -130 + 160),
@@ -366,7 +388,9 @@ struct AmbientOrbs: View {
     }
 
     @ViewBuilder
-    private func orb(size: CGFloat, center: CGPoint, color: Color, duration: Double, delay: Double = 0) -> some View {
+    private func orb(
+        size: CGFloat, center: CGPoint, color: Color, duration: Double, delay: Double = 0
+    ) -> some View {
         if reduceMotion {
             Circle().fill(color).frame(width: size, height: size).position(center)
         } else {
@@ -386,7 +410,10 @@ struct AmbientOrbs: View {
                 .offset(x: drift ? 14 : 0, y: drift ? -11 : 0)
                 .position(center)
                 .onAppear {
-                    withAnimation(.easeInOut(duration: duration).repeatForever(autoreverses: true).delay(delay)) {
+                    withAnimation(
+                        .easeInOut(duration: duration).repeatForever(autoreverses: true).delay(
+                            delay)
+                    ) {
                         drift = true
                     }
                 }
@@ -405,7 +432,7 @@ struct IllustrationPlaceholder: View {
     var cornerRadius: CGFloat = 22
     var kickerSize: CGFloat = 9
     var captionSize: CGFloat = 12
-    var fullBleed = false   // the S01 promise treatment: no radius, no side borders
+    var fullBleed = false  // the S01 promise treatment: no radius, no side borders
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {

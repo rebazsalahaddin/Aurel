@@ -1,5 +1,5 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 /// Root switch over the router's screen state machine — the port of the
 /// prototype's `sc-if` screen blocks. Features land here as they are built.

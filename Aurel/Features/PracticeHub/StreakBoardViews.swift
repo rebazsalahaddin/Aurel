@@ -58,7 +58,9 @@ struct StreakView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 5) {
                             Circle()
-                                .fill(r.baseLessons > 0 ? Color.auText.opacity(0.12) : Color.auAccent2)
+                                .fill(
+                                    r.baseLessons > 0 ? Color.auText.opacity(0.12) : Color.auAccent2
+                                )
                                 .frame(width: 11, height: 11)
                             Circle().fill(Color.auAccent2).frame(width: 11, height: 11)
                         }
@@ -100,7 +102,10 @@ struct StreakView: View {
                         .textCase(.uppercase)
                         .foregroundStyle(Color.auText.opacity(0.45))
                         .padding(.bottom, 14)
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 7), count: 7), spacing: 7) {
+                    LazyVGrid(
+                        columns: Array(repeating: GridItem(.flexible(), spacing: 7), count: 7),
+                        spacing: 7
+                    ) {
                         ForEach(0..<31, id: \.self) { i in
                             Circle()
                                 .fill(monthDotColor(i))
@@ -111,7 +116,10 @@ struct StreakView: View {
                     }
                 }
                 .padding(22)
-                .overlay(RoundedRectangle(cornerRadius: 28, style: .continuous).strokeBorder(Color.auDivider, lineWidth: 1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28, style: .continuous).strokeBorder(
+                        Color.auDivider, lineWidth: 1)
+                )
                 .padding(.bottom, 16)
 
                 HStack(spacing: 14) {
@@ -122,7 +130,9 @@ struct StreakView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 18)
-                .background(RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auOkBg))
+                .background(
+                    RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auOkBg)
+                )
                 .foregroundStyle(Color.auOkText)
             }
             .padding(.horizontal, 24)
@@ -187,7 +197,9 @@ struct LeaderboardView: View {
 
     private var rows: [BoardRow] {
         let r = env.router
-        let me = BoardRow(rank: myRank, name: "Maya Aldrin", sub: myRank > 6 ? "You · joined today" : "You", score: wordsTotal, me: true)
+        let me = BoardRow(
+            rank: myRank, name: "Maya Aldrin", sub: myRank > 6 ? "You · joined today" : "You",
+            score: wordsTotal, me: true)
         let all = (Self.boardAll + [me]).sorted { $0.rank < $1.rank }
         if r.boardAll { return all }
         let near = all.filter { $0.me || $0.rank <= 3 || abs($0.rank - myRank) == 1 }
@@ -264,16 +276,20 @@ struct LeaderboardView: View {
                         VStack(alignment: .leading, spacing: 5) {
                             Text("You've left the group")
                                 .font(.caprasimo(size: 18))
-                            Text("Nothing you do is compared to anyone. Turn it back on in Settings whenever you like.")
-                                .font(.figtree(.regular, size: 13))
-                                .lineSpacing(13 * 0.5)
-                                .foregroundStyle(Color.auText.opacity(0.52))
+                            Text(
+                                "Nothing you do is compared to anyone. Turn it back on in Settings whenever you like."
+                            )
+                            .font(.figtree(.regular, size: 13))
+                            .lineSpacing(13 * 0.5)
+                            .foregroundStyle(Color.auText.opacity(0.52))
                         }
                         .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                .strokeBorder(Color.auText.opacity(0.18), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                .strokeBorder(
+                                    Color.auText.opacity(0.18),
+                                    style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                         )
                     }
 
@@ -305,7 +321,9 @@ struct LeaderboardView: View {
                                     .padding(.vertical, 14)
                                     .background(
                                         RoundedRectangle(cornerRadius: 19, style: .continuous)
-                                            .strokeBorder(Color.auText.opacity(0.20), style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                                            .strokeBorder(
+                                                Color.auText.opacity(0.20),
+                                                style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                                     )
                                     .foregroundStyle(Color.auText.opacity(0.62))
                             }
@@ -315,23 +333,30 @@ struct LeaderboardView: View {
                             HStack(alignment: .top, spacing: 11) {
                                 AUIcon(kind: .check, size: 14, color: .auOkText)
                                     .padding(.top, 3)
-                                Text("Link copied. It holds one seat for seven days — they join at whatever level they place into.")
-                                    .font(.figtree(.regular, size: 12.5))
-                                    .lineSpacing(12.5 * 0.5)
+                                Text(
+                                    "Link copied. It holds one seat for seven days — they join at whatever level they place into."
+                                )
+                                .font(.figtree(.regular, size: 12.5))
+                                .lineSpacing(12.5 * 0.5)
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 14)
-                            .background(RoundedRectangle(cornerRadius: 19, style: .continuous).fill(Color.auOkBg))
+                            .background(
+                                RoundedRectangle(cornerRadius: 19, style: .continuous).fill(
+                                    Color.auOkBg)
+                            )
                             .foregroundStyle(Color.auOkText)
                             .padding(.top, 14)
                         }
 
                         if r.boardRules {
-                            Text("Words retained this week, nothing else. Groups are matched on how often you practise, not how well. Nobody is removed, nobody is demoted, and there are no prizes — it is here only if you find it useful.")
-                                .font(.figtree(.regular, size: 12.5))
-                                .lineSpacing(12.5 * 0.6)
-                                .foregroundStyle(Color.auText.opacity(0.48))
-                                .padding(.top, 12)
+                            Text(
+                                "Words retained this week, nothing else. Groups are matched on how often you practise, not how well. Nobody is removed, nobody is demoted, and there are no prizes — it is here only if you find it useful."
+                            )
+                            .font(.figtree(.regular, size: 12.5))
+                            .lineSpacing(12.5 * 0.6)
+                            .foregroundStyle(Color.auText.opacity(0.48))
+                            .padding(.top, 12)
                         }
                     }
                     .padding(.top, 22)
@@ -391,9 +416,11 @@ struct LeaderboardView: View {
         .background(
             ZStack {
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(row.me ? Color.auFill.mixed(with: 0.15, of: Color.auAccent) : Color.auFill)
+                    .fill(
+                        row.me ? Color.auFill.mixed(with: 0.15, of: Color.auAccent) : Color.auFill)
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .strokeBorder(row.me ? Color.auAccent.opacity(0.30) : Color.auEdge, lineWidth: 1)
+                    .strokeBorder(
+                        row.me ? Color.auAccent.opacity(0.30) : Color.auEdge, lineWidth: 1)
             }
         )
         .padding(.bottom, 5)

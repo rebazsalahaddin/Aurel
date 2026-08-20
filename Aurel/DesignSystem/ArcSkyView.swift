@@ -14,10 +14,10 @@ func auBezier(_ t: Double, _ a: Double, _ b: Double, _ c: Double) -> Double {
 
 /// Pure logic for the day-arc card, ported from renderVals.
 struct DayArcState: Equatable, Sendable {
-    var dayLesson: Bool      // first half (lesson) done
-    var dayRecall: Bool      // second half (review) done
-    var dueNow: Int          // words due back
-    var arcsCompleted: Int   // lifetime completed day-arcs
+    var dayLesson: Bool  // first half (lesson) done
+    var dayRecall: Bool  // second half (review) done
+    var dueNow: Int  // words due back
+    var arcsCompleted: Int  // lifetime completed day-arcs
 
     /// arcT = !dayLesson ? 0 : ((dayRecall || dueNow === 0) ? 1 : 0.5)
     var arcT: Double {
@@ -49,7 +49,8 @@ struct ArcSkyView: View {
     var body: some View {
         GeometryReader { geo in
             let w = geo.size.width
-            let sx = w / 354, sy = height / 118
+            let sx = w / 354
+            let sy = height / 118
 
             ZStack {
                 skyBackground
@@ -71,7 +72,10 @@ struct ArcSkyView: View {
                     .scaleEffect(x: sx, y: sy, anchor: .topLeading)
                 ArcTrack()
                     .trim(from: 0, to: state.arcT)
-                    .stroke(Color.auAccent.opacity(0.8), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                    .stroke(
+                        Color.auAccent.opacity(0.8),
+                        style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                    )
                     .scaleEffect(x: sx, y: sy, anchor: .topLeading)
                     .animation(.easeInOut(duration: 0.9), value: state.arcT)
 
@@ -187,7 +191,9 @@ struct ArcSkyView: View {
                                 .init(color: Color(UIColor(hex: 0xfff1d4)), location: 0),
                                 .init(color: Color(UIColor(hex: 0xf7c489)), location: 0.38),
                                 .init(color: Color(UIColor(hex: 0xe08f4c)), location: 0.68),
-                                .init(color: Color(UIColor(hex: 0xe08f4c)).opacity(0.16), location: 0.82),
+                                .init(
+                                    color: Color(UIColor(hex: 0xe08f4c)).opacity(0.16),
+                                    location: 0.82),
                                 .init(color: .clear, location: 0.86),
                             ],
                             center: UnitPoint(x: 0.5, y: 0.42),
@@ -242,7 +248,9 @@ struct LessonPathNode: View {
                                     stops: [
                                         .init(color: Color.auAccent.opacity(0.8), location: 0),
                                         .init(color: Color.auAccent.opacity(0.9), location: 0.52),
-                                        .init(color: Color.auAccent2Ramp(800).opacity(0.92), location: 1),
+                                        .init(
+                                            color: Color.auAccent2Ramp(800).opacity(0.92),
+                                            location: 1),
                                     ],
                                     startPoint: .top, endPoint: .bottom
                                 )
@@ -250,7 +258,9 @@ struct LessonPathNode: View {
                             .overlay(Circle().strokeBorder(.white.opacity(0.28), lineWidth: 1))
                             .overlay(
                                 VStack(spacing: 2) {
-                                    AUIcon(kind: .play, size: 26, color: Color(red: 1, green: 0.965, blue: 0.918)) // #fff6ea
+                                    AUIcon(
+                                        kind: .play, size: 26,
+                                        color: Color(red: 1, green: 0.965, blue: 0.918))  // #fff6ea
                                     Text(cta)
                                         .font(.figtree(.bold, size: 10))
                                         .tracking(1.2)
@@ -264,15 +274,21 @@ struct LessonPathNode: View {
                             .fill(
                                 LinearGradient(
                                     stops: [
-                                        .init(color: Color.auAccent2Ramp(500).mixed(with: 0.26, of: .white), location: 0),
+                                        .init(
+                                            color: Color.auAccent2Ramp(500).mixed(
+                                                with: 0.26, of: .white), location: 0),
                                         .init(color: Color.auAccent2Ramp(500), location: 0.55),
-                                        .init(color: Color.auAccent2Ramp(600).opacity(0.8), location: 1),
+                                        .init(
+                                            color: Color.auAccent2Ramp(600).opacity(0.8),
+                                            location: 1),
                                     ],
                                     startPoint: .top, endPoint: .bottom
                                 )
                             )
                             .overlay(
-                                AUIcon(kind: .check, size: size * 0.34, color: Color(red: 0.984, green: 0.98, blue: 0.961)) // #fbfaf5
+                                AUIcon(
+                                    kind: .check, size: size * 0.34,
+                                    color: Color(red: 0.984, green: 0.98, blue: 0.961))  // #fbfaf5
                             )
                     case .locked:
                         Circle()
@@ -283,7 +299,8 @@ struct LessonPathNode: View {
                                     style: StrokeStyle(lineWidth: 1.5, dash: [5, 4])
                                 )
                             )
-                            .overlay(AUIcon(kind: .lock, size: size * 0.3, color: .auText.opacity(0.38)))
+                            .overlay(
+                                AUIcon(kind: .lock, size: size * 0.3, color: .auText.opacity(0.38)))
                     }
                 }
                 .frame(width: size, height: size)
@@ -316,7 +333,9 @@ struct LessonPathNode: View {
                 .scaleEffect(on ? 1.18 : 1)
                 .opacity(on ? 0 : 0.45)
                 .onAppear {
-                    withAnimation(.easeOut(duration: 2.8).repeatForever(autoreverses: false)) { on = true }
+                    withAnimation(.easeOut(duration: 2.8).repeatForever(autoreverses: false)) {
+                        on = true
+                    }
                 }
         }
     }
@@ -330,7 +349,9 @@ struct LessonPathNode: View {
                 .scaleEffect(enabled && on ? 1.04 : 1)
                 .onAppear {
                     guard enabled else { return }
-                    withAnimation(.easeInOut(duration: 3.8).repeatForever(autoreverses: true)) { on = true }
+                    withAnimation(.easeInOut(duration: 3.8).repeatForever(autoreverses: true)) {
+                        on = true
+                    }
                 }
         }
     }
@@ -344,7 +365,8 @@ struct WeekDots: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            ForEach(Array(["M", "T", "W", "T", "F", "S", "S"].enumerated()), id: \.offset) { i, label in
+            ForEach(Array(["M", "T", "W", "T", "F", "S", "S"].enumerated()), id: \.offset) {
+                i, label in
                 Text(label)
                     .font(.figtree(.semibold, size: 12))
                     .frame(width: 34, height: 34)
@@ -352,7 +374,10 @@ struct WeekDots: View {
                         if i == todayIndex {
                             Capsule().fill(
                                 LinearGradient(
-                                    colors: [Color.auAccent.mixed(with: 0.26, of: .white), Color.auAccent],
+                                    colors: [
+                                        Color.auAccent.mixed(with: 0.26, of: .white),
+                                        Color.auAccent,
+                                    ],
                                     startPoint: .top, endPoint: .bottom
                                 )
                             )
