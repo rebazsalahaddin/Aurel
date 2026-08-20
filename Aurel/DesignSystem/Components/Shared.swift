@@ -551,7 +551,7 @@ struct AUTabBar: View {
         .buttonStyle(.auTap)
         .accessibilityLabel(label)
         .accessibilityAddTraits(on ? .isSelected : [])
-        .accessibilityIdentifier("au.tab.\(screen.rawName)")
+        .accessibilityIdentifier("au.tab.\(label.auSlug)")
     }
 
     @ViewBuilder

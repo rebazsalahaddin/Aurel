@@ -164,7 +164,6 @@ struct HomeView: View {
             }
             .padding(.horizontal, 24)
             .padding(.top, 14)
-            .accessibilityIdentifier("au.home.pending")
         }
     }
 

@@ -13,6 +13,8 @@ xcrun simctl bootstatus "$DEVICE" -b >/dev/null
 xcrun simctl uninstall "$DEVICE" "$BUNDLE" 2>/dev/null || true
 xcrun simctl privacy "$DEVICE" revoke microphone "$BUNDLE" 2>/dev/null || true
 
+
+
 RESULT="/tmp/aurel-ui-full-$(date +%s).xcresult"
 xcodebuild test \
   -project Aurel.xcodeproj -scheme Aurel \

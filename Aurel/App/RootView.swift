@@ -41,7 +41,6 @@ private struct ScreenHost: View {
     @ViewBuilder
     var body: some View {
         screenBody
-            .accessibilityIdentifier("au.screen.\(env.router.screen.rawName)")
     }
 
     @ViewBuilder

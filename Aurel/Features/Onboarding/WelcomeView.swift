@@ -100,6 +100,7 @@ struct WelcomeView: View {
                             color: Color(UIColor(hex: 0x643312)).opacity(0.42), radius: 11, y: 5)
                     }
                     .buttonStyle(.auTap)
+                    .accessibilityIdentifier("au.btn.begin-the-path")
                     .auStagger(3)
 
                     // Already learning? · Sign in
