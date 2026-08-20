@@ -8,7 +8,7 @@ Statuses: `open → verified → fixing → fixed → retested-closed | deferred
 
 | ID | Title | Sev | Found by | Fix commit | Retest |
 |---|---|---|---|---|---|
-| S0-001 | SVGPathShape infinite loop on `s`/`t` path commands — main-thread hang on the Goal screen (any accessibility client: XCUITest, VoiceOver) | S0 | harness bring-up (Phase 0.5) | (this iteration) | SVGPathShapeTests 4/4; SmokeSuite 4/4 incl. full onboarding walk |
+| S0-001 | SVGPathShape infinite loop on `s`/`t` path commands — main-thread hang on the Goal screen (any accessibility client: XCUITest, VoiceOver) | S0 | harness bring-up (Phase 0.5) | `9787a55` | SVGPathShapeTests 4/4; SmokeSuite 4/4 incl. full onboarding walk |
 
 **S0-001 detail.** Source: authored exam-goal icon `…c0 1.7 2.6 3 5.8 3s5.8-1.3 5.8-3…` (design Aurel.dc.html goal screen glyph). The parser's command switch had `S`/`T` but no lowercase `s`/`t`; the fallback consumed zero tokens, so the scan index never advanced — `path(in:)` spun forever on the main thread during layout. Repro: render any `d` containing lowercase `s`/`t`; AX snapshot or layout triggers it. Also fixed: implicit M-repetition pairs drew as moves instead of lines (e.g. the close icon's `M18 6 6 18` half-X). Regression: `AurelTests/SVGPathShapeTests.swift` (every authored icon path returns; exam icon non-empty; implicit-M pairs draw lines; s/S/t/T parse).
 
