@@ -40,6 +40,10 @@ struct SVGPathShape: Shape {
         let tokens = Self.lex(d)
         var i = 0
         var lastCmd: Character?
+        // Smooth-curve state (SVG S/s reflect the previous C/S control point;
+        // T/t reflect the previous Q/T control). Reset by any other command.
+        var lastC2: CGPoint?
+        var lastQ: CGPoint?
 
         func num() -> CGFloat {
             defer { i += 1 }
@@ -60,70 +64,116 @@ struct SVGPathShape: Shape {
             }
             lastCmd = cmd
             switch cmd {
-            case "M":
-                x = num()
-                y = num()
-                startX = x
-                startY = y
-                path.move(to: CGPoint(x: x, y: y))
-            case "m":
-                x += num()
-                y += num()
-                startX = x
-                startY = y
-                path.move(to: CGPoint(x: x, y: y))
+            case "M", "m":
+                let rel = cmd == "m"
+                // Per the SVG spec, pairs after the first in an M sequence are
+                // implicit LINETOs, not additional movetos.
+                var first = true
+                while i < tokens.count, case .number = tokens[i] {
+                    let nx = rel ? x + num() : num()
+                    let ny = rel ? y + num() : num()
+                    if first {
+                        startX = nx
+                        startY = ny
+                        path.move(to: CGPoint(x: nx, y: ny))
+                        first = false
+                    } else {
+                        path.addLine(to: CGPoint(x: nx, y: ny))
+                    }
+                    x = nx
+                    y = ny
+                }
+                lastC2 = nil
+                lastQ = nil
             case "L":
                 x = num()
                 y = num()
                 path.addLine(to: CGPoint(x: x, y: y))
+                lastC2 = nil
+                lastQ = nil
             case "l":
                 x += num()
                 y += num()
                 path.addLine(to: CGPoint(x: x, y: y))
+                lastC2 = nil
+                lastQ = nil
             case "H":
                 x = num()
                 path.addLine(to: CGPoint(x: x, y: y))
+                lastC2 = nil
+                lastQ = nil
             case "h":
                 x += num()
                 path.addLine(to: CGPoint(x: x, y: y))
+                lastC2 = nil
+                lastQ = nil
             case "V":
                 y = num()
                 path.addLine(to: CGPoint(x: x, y: y))
+                lastC2 = nil
+                lastQ = nil
             case "v":
                 y += num()
                 path.addLine(to: CGPoint(x: x, y: y))
+                lastC2 = nil
+                lastQ = nil
             case "C":
                 let c1 = CGPoint(x: num(), y: num())
                 let c2 = CGPoint(x: num(), y: num())
                 x = num()
                 y = num()
                 path.addCurve(to: CGPoint(x: x, y: y), control1: c1, control2: c2)
+                lastC2 = c2
+                lastQ = nil
             case "c":
                 let c1 = CGPoint(x: x + num(), y: y + num())
                 let c2 = CGPoint(x: x + num(), y: y + num())
                 x += num()
                 y += num()
                 path.addCurve(to: CGPoint(x: x, y: y), control1: c1, control2: c2)
-            case "S":
-                let c2 = CGPoint(x: num(), y: num())
-                x = num()
-                y = num()
-                path.addCurve(
-                    to: CGPoint(x: x, y: y), control1: path.currentPoint ?? .zero, control2: c2)
+                lastC2 = c2
+                lastQ = nil
+            case "S", "s":
+                let rel = cmd == "s"
+                let c2 =
+                    rel
+                    ? CGPoint(x: x + num(), y: y + num()) : CGPoint(x: num(), y: num())
+                let to =
+                    rel
+                    ? CGPoint(x: x + num(), y: y + num()) : CGPoint(x: num(), y: num())
+                let here = CGPoint(x: x, y: y)
+                let c1 = lastC2.map { CGPoint(x: 2 * here.x - $0.x, y: 2 * here.y - $0.y) } ?? here
+                path.addCurve(to: to, control1: c1, control2: c2)
+                x = to.x
+                y = to.y
+                lastC2 = c2
+                lastQ = nil
             case "Q":
                 let c = CGPoint(x: num(), y: num())
                 x = num()
                 y = num()
                 path.addQuadCurve(to: CGPoint(x: x, y: y), control: c)
+                lastQ = c
+                lastC2 = nil
             case "q":
                 let c = CGPoint(x: x + num(), y: y + num())
                 x += num()
                 y += num()
                 path.addQuadCurve(to: CGPoint(x: x, y: y), control: c)
-            case "T":
-                x = num()
-                y = num()
-                path.addLine(to: CGPoint(x: x, y: y))
+                lastQ = c
+                lastC2 = nil
+            case "T", "t":
+                let rel = cmd == "t"
+                let to =
+                    rel
+                    ? CGPoint(x: x + num(), y: y + num()) : CGPoint(x: num(), y: num())
+                let here = CGPoint(x: x, y: y)
+                let c = lastQ.map { CGPoint(x: 2 * here.x - $0.x, y: 2 * here.y - $0.y) } ?? here
+                path.addQuadCurve(to: to, control: c)
+                x = to.x
+                y = to.y
+                lastQ = c
+                lastC2 = nil
             case "A":
                 let rx = num()
                 _ = num()
@@ -137,6 +187,8 @@ struct SVGPathShape: Shape {
                     sweep: sweep > 0)
                 x = x2
                 y = y2
+                lastC2 = nil
+                lastQ = nil
             case "a":
                 let rx = num()
                 _ = num()
@@ -150,11 +202,16 @@ struct SVGPathShape: Shape {
                     radius: rx, sweep: sweep > 0)
                 x += dx
                 y += dy
+                lastC2 = nil
+                lastQ = nil
             case "Z", "z":
                 path.addLine(to: CGPoint(x: startX, y: startY))
                 path.closeSubpath()
+                lastC2 = nil
+                lastQ = nil
             default:
-                break
+                // Unknown command: skip the token so parsing always advances.
+                i += 1
             }
         }
         // Icons are authored in a 24×24 viewBox; scale into the destination.
@@ -197,12 +254,6 @@ struct AUIcon: View {
     }
 
     /// One authored sub-path: the `d` string plus whether it fills or strokes.
-    fileprivate struct Sub {
-        let d: String
-        let fill: Bool
-        let strokeWidth: CGFloat
-    }
-
     let kind: Kind
     var size: CGFloat = 16
     var color: Color = .auText
@@ -227,7 +278,15 @@ struct AUIcon: View {
 
     // d strings are copied verbatim from the design files' <symbol> defs
     // (CourseScreen.dc.html lines 63–79, Aurel.dc.html lines 455/471/129).
-    fileprivate static func subpaths(_ kind: Kind) -> [Sub] {
+    // Internal (not fileprivate) so the SVGPathShape regression tests can
+    // sweep every authored path.
+    struct Sub {
+        let d: String
+        let fill: Bool
+        let strokeWidth: CGFloat
+    }
+
+    static func subpaths(_ kind: Kind) -> [Sub] {
         switch kind {
         case .ear:
             return [
