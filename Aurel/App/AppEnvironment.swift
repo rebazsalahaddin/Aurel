@@ -13,12 +13,22 @@ final class AppEnvironment {
     let speaker: Speaker
     let connectivity: Connectivity
 
+    /// S1-004: the bundled course could not be decoded — RootView shows the
+    /// course-recovery surface instead of the shell (a launch-time decode
+    /// failure must not crash; retry rebuilds the environment).
+    private(set) var courseLoadFailed: Bool
+
     init(modelContext: ModelContext?) {
         let store: CourseStore
         do {
             store = try CourseStore.load()
+            courseLoadFailed = false
         } catch {
-            fatalError("Aurel could not load its course: \(error)")
+            // The router/chapter plan already renders an honest fallback for
+            // an empty course ("Chapter data not loaded"); the recovery view
+            // surfaces the failure and offers a retry.
+            store = CourseStore(chapters: [])
+            courseLoadFailed = true
         }
         course = store
         router = AppRouter(course: store, modelContext: modelContext)

@@ -7,14 +7,25 @@ struct RootView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var env: AppEnvironment?
+    /// S1-003: shown once when the on-disk store was corrupt and got moved
+    /// aside (local progress reset) — never blocks the flow.
+    private let storeRecovered: Bool
+
+    init(storeRecovered: Bool = false) {
+        self.storeRecovered = storeRecovered
+    }
 
     private var typeStep: Int { env?.router.typeStep ?? 2 }
 
     var body: some View {
         ZStack {
             if let env {
-                ScreenHost()
-                    .environment(env)
+                if env.courseLoadFailed {
+                    CourseRecoveryView(retry: retryEnvironment)
+                } else {
+                    ScreenHost()
+                        .environment(env)
+                }
             } else {
                 Color.auBackground.ignoresSafeArea()
             }
@@ -32,6 +43,16 @@ struct RootView: View {
         .onChange(of: dynamicTypeSize) { _, size in
             AUTypeScale.systemCategory = UIContentSizeCategory(size)
         }
+        .overlay(alignment: .top) {
+            if storeRecovered {
+                StoreRecoveredBanner()
+            }
+        }
+    }
+
+    /// S1-004: retry loading the course (rebuild the environment).
+    private func retryEnvironment() {
+        env = AppEnvironment(modelContext: modelContext)
     }
 
     private var colorScheme: ColorScheme? {
