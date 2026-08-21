@@ -205,113 +205,16 @@ final class ContentConformanceTests: XCTestCase {
     /// One pinned shipped-vs-authored difference. Keys are
     /// "<chapter> <record>.<field>" and `shipped` is the exact value the app
     /// delivers today; anything outside this list is new drift and fails.
-    private static let documentedDrift: Set<Drift> = [
-        // Lesson titles: the C2-L02 and C3-L03 bank titles were rewritten away
-        // from the lesson files' own H1 titles.
-        Drift(key: "A1-C02 L02.title", shipped: "Numbers, Contacts, and Are You…?"),
-        Drift(key: "A1-C03 L03.title", shipped: "Profile Cards and Your Dot"),
-        // C3 option order: the bank rotated the option order (remapping the
-        // key) on four items — the correct answer text is unchanged.
-        Drift(key: "A1-C03 PR-RD003.options", shipped: "A:Their|B:His|C:Her"),
-        Drift(key: "A1-C03 PR-RD005.options", shipped: "A:Nina|B:Maya|C:Kenji"),
-        Drift(
-            key: "A1-C03 PR-LS012.options",
-            shipped: "A:Japanese and English|B:Arabic and English|C:English and French"),
-        Drift(
-            key: "A1-C03 PR-CV016.options",
-            shipped: "A:This is my friend Maya.|B:Her is Maya.|C:Nice to meet you too."),
-        // Feedback copy: the bank dropped PR-V014's emoji and re-spaced
-        // QZ-WR001's "(? )".
-        Drift(key: "A1-C01 PR-V014.ok", shipped: "Yes — no!"),
-        Drift(key: "A1-C01 QZ-WR001.no", shipped: "The asking hook (?) ends the line."),
-        // C2 Set C vocabulary: V009 lost its trailing period, and the bank
-        // attached shifted illustration ids to V010–V018 (authored briefs:
-        // ILL018 phone, ILL019 email, ILL020 address, ILL021 at, ILL022 dot,
-        // ILL024 the register page).
-        Drift(key: "A1-C02 V009.w", shipped: "Please speak slowly"),
-        Drift(key: "A1-C02 V010.ill", shipped: "A1-C02-ILL016"),
-        Drift(key: "A1-C02 V011.ill", shipped: "A1-C02-ILL024"),
-        Drift(key: "A1-C02 V012.ill", shipped: "A1-C02-ILL018"),
-        Drift(key: "A1-C02 V013.ill", shipped: "A1-C02-ILL024"),
-        Drift(key: "A1-C02 V014.ill", shipped: "A1-C02-ILL019"),
-        Drift(key: "A1-C02 V015.ill", shipped: "A1-C02-ILL020"),
-        Drift(key: "A1-C02 V016.ill", shipped: "A1-C02-ILL021"),
-        Drift(key: "A1-C02 V017.ill", shipped: "A1-C02-ILL022"),
-        Drift(key: "A1-C02 V018.ill", shipped: "A1-C02-ILL023"),
-        // Vocab card alts that paraphrase the record's authored alt_text (the
-        // qa/defects.md S2-004 class). C3 sentence-cases its card alts — that
-        // projection is compared case-insensitively, not registered.
-        Drift(
-            key: "A1-C01 V017.cardAlt",
-            shipped: "Leo gives a gentle content nod with a soft small smile, feeling fine"),
-        Drift(
-            key: "A1-C01 V019.cardAlt",
-            shipped: "Alex raises both arms high with a big open smile, feeling great"),
-        Drift(
-            key: "A1-C01 V020.cardAlt",
-            shipped:
-                "Leo gives an easy shoulder shrug with open palms and a small friendly smile — not bad"
-        ),
-        Drift(
-            key: "A1-C01 V021.cardAlt",
-            shipped:
-                "A blank name badge pinned to a shirt with two empty line shapes — a shorter top line and a longer bottom line"
-        ),
-        Drift(
-            key: "A1-C01 V024.cardAlt",
-            shipped:
-                "Alex gestures with an open hand toward the blank badge on their own chest while introducing themselves"
-        ),
-        Drift(
-            key: "A1-C01 V026.cardAlt",
-            shipped: "Maya leans slightly toward you with an open hand, asking a friendly question"),
-        Drift(
-            key: "A1-C01 V027.cardAlt",
-            shipped:
-                "Nina and Leo shake hands warmly at their first meeting, both smiling genuinely"),
-        Drift(
-            key: "A1-C02 V003.cardAlt",
-            shipped: "Three sound dots sit widely spaced between two people"),
-        Drift(key: "A1-C02 V004.cardAlt", shipped: "A loop arrow circles a play triangle"),
-        Drift(key: "A1-C02 V007.cardAlt", shipped: "Nina tilts her head at the badge, pen ready"),
-        Drift(
-            key: "A1-C02 V008.cardAlt",
-            shipped: "A listener cups one hand at their ear while Nina leans in kindly"),
-        Drift(
-            key: "A1-C02 V009.cardAlt",
-            shipped: "The sound dots stretch wide apart again"),
-        Drift(
-            key: "A1-C02 V010.cardAlt",
-            shipped: "A simple phone lies on the register page beside Nina's pen"),
-        Drift(
-            key: "A1-C02 V011.cardAlt",
-            shipped: "The register page: a name row, a digits row and a message row"),
-        Drift(
-            key: "A1-C02 V012.cardAlt",
-            shipped: "A small envelope shape resting on the message row of the register"),
-        Drift(
-            key: "A1-C02 V013.cardAlt",
-            shipped: "The message row of the register page, waiting to be filled"),
-        Drift(
-            key: "A1-C02 V014.cardAlt",
-            shipped: "A door with a small plate beside it, no letters shown"),
-        Drift(
-            key: "A1-C02 V015.cardAlt",
-            shipped: "A round looping mark drawn on the message row"),
-        Drift(
-            key: "A1-C02 V016.cardAlt",
-            shipped: "A single small round mark on the message row"),
-        Drift(
-            key: "A1-C02 V017.cardAlt",
-            shipped: "Nina moves her pen to the digits row and looks up"),
-        Drift(
-            key: "A1-C02 V018.cardAlt",
-            shipped: "Nina moves her pen to the message row and looks up"),
-        Drift(
-            key: "A1-C03 V032.cardAlt",
-            shipped:
-                "Figure asking a question, one hand raised, question-shaped bubble (no letters)"),
-    ]
+    /// One pinned shipped-vs-authored difference. Keys are
+    /// "<chapter> <record>.<field>" and `shipped` is the exact value the app
+    /// delivers today; anything outside this list is new drift and fails.
+    ///
+    /// The registry is currently EMPTY: the 40 documented drift entries were
+    /// fixed in the export pipeline (tools/content-corrections.mjs, ledger
+    /// S1-005/006, S2-004b/007/008/009/010). The mechanism stays as the
+    /// tripwire for NEW drift — an entry may only land here together with a
+    /// matching exporter correction or an owner deferral.
+    private static let documentedDrift: Set<Drift> = []
 
     /// The registry slice a given test owns, by record-field suffix.
     private func registry(_ suffixes: String...) -> Set<Drift> {
@@ -639,15 +542,15 @@ final class ContentConformanceTests: XCTestCase {
         "A1-C01": [
             "A1-C01-ILL001": 4, "A1-C01-ILL002": 6, "A1-C01-ILL003": 3, "A1-C01-ILL004": 5,
             "A1-C01-ILL005": 3, "A1-C01-ILL006": 2, "A1-C01-ILL007": 2, "A1-C01-ILL009": 2,
-            "A1-C01-ILL012": 2, "A1-C01-ILL013": 6, "A1-C01-ILL015": 3, "A1-C01-ILL016": 3,
-            "A1-C01-ILL017": 3, "A1-C01-ILL018": 8, "A1-C01-ILL019": 4, "A1-C01-ILL020": 5,
-            "A1-C01-ILL021": 2, "A1-C01-ILL022": 4, "A1-C01-ILL027": 2, "A1-C01-ILL028": 2,
+            "A1-C01-ILL012": 2, "A1-C01-ILL013": 6, "A1-C01-ILL015": 3, "A1-C01-ILL016": 4,
+            "A1-C01-ILL017": 3, "A1-C01-ILL018": 8, "A1-C01-ILL019": 4, "A1-C01-ILL020": 6,
+            "A1-C01-ILL021": 3, "A1-C01-ILL022": 4, "A1-C01-ILL027": 2, "A1-C01-ILL028": 2,
             "A1-C01-ILL032": 2, "A1-C01-ILL033": 3,
         ],
         "A1-C02": [
-            "A1-C02-ILL002": 3, "A1-C02-ILL010": 3, "A1-C02-ILL012": 2, "A1-C02-ILL014": 2,
-            "A1-C02-ILL016": 2, "A1-C02-ILL018": 2, "A1-C02-ILL019": 2, "A1-C02-ILL020": 2,
-            "A1-C02-ILL022": 2, "A1-C02-ILL023": 4, "A1-C02-ILL024": 5, "A1-C02-ILL028": 4,
+            "A1-C02-ILL002": 3, "A1-C02-ILL010": 4, "A1-C02-ILL012": 3, "A1-C02-ILL013": 2,
+            "A1-C02-ILL014": 3, "A1-C02-ILL018": 3, "A1-C02-ILL019": 3, "A1-C02-ILL020": 2,
+            "A1-C02-ILL022": 2, "A1-C02-ILL023": 3, "A1-C02-ILL024": 5, "A1-C02-ILL028": 4,
             "A1-C02-ILL032": 2, "A1-C02-ILL034": 2,
         ],
         "A1-C03": [

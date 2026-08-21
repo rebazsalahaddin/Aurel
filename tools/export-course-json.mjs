@@ -24,6 +24,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import vm from 'node:vm';
+import { CONTENT_CORRECTIONS } from './content-corrections.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const banks = ['course-c1.js', 'course-c2.js', 'course-c3.js'];
@@ -484,8 +485,80 @@ function replaceC3Quiz(course) {
     + `S29–S32 pending → quizIntro/quiz/results/remediation/reviewPlan/chapterMap`);
 }
 
+// ── Content corrections (see tools/content-corrections.mjs) ─────────────────
+
+function applyCorrections(course) {
+  const cardFields = ['cards', 'gallery'];
+  const itemFields = ['items', 'pr', 'bank', 'bankA', 'bankB', 'quiz'];
+  let applied = 0;
+
+  for (const c of CONTENT_CORRECTIONS) {
+    const name = `${c.chapter} ${c.lesson ?? ''}${c.card ?? c.item ?? ''}.${c.field}`;
+    const chapter = course.chapters.find((x) => x.id === c.chapter);
+    if (!chapter) fail(`correction ${name}: chapter missing`);
+
+    // Normalized expect/value accessors per field (opts compare by the
+    // "A:t|B:t" signature the drift registry uses).
+    const asExpect = () => (c.field === 'opts' ? { opts: c.expect.opts, key: c.expect.key } : c.expect);
+    const asValue = () =>
+      c.field === 'opts'
+        ? { opts: c.value.opts.map((o) => `${o.id}:${o.t}`).join('|'), key: c.value.key }
+        : c.value;
+
+    const targets = [];
+    if (c.field === 'title') {
+      targets.push(chapter.lessons.find((l) => l.id === c.lesson));
+    } else {
+      for (const lesson of chapter.lessons) {
+        for (const screen of lesson.screens ?? []) {
+          for (const f of c.card ? cardFields : itemFields) {
+            for (const entry of screen[f] ?? []) {
+              if (entry && entry.id === (c.card ?? c.item)) targets.push(entry);
+            }
+          }
+        }
+      }
+    }
+    // Card objects are shared across surfaces (cards screen + review gallery)
+    // — dedupe so each correction applies exactly once.
+    const unique = [...new Set(targets)].filter(Boolean);
+    if (unique.length === 0) fail(`correction ${name}: no bank entry found`);
+
+    for (const t of unique) {
+      let current;
+      switch (c.field) {
+        case 'title': current = t.title; break;
+        case 'w': current = t.w; break;
+        case 'ill': current = { id: t.ill?.id, alt: t.ill?.alt }; break;
+        case 'cardAlt': case 'itemIllAlt': current = t.ill?.alt; break;
+        case 'opts': current = { opts: (t.opts ?? []).map((o) => `${o.id}:${o.t}`).join('|'), key: t.key }; break;
+        case 'ok': current = t.ok; break;
+        case 'no': current = t.no; break;
+        default: fail(`correction ${name}: unknown field`);
+      }
+      const want = asValue();
+      if (JSON.stringify(current) === JSON.stringify(want)) continue;  // already applied (shared object)
+      if (JSON.stringify(current) !== JSON.stringify(asExpect())) {
+        fail(`correction ${name}: bank value changed — bank has ${JSON.stringify(current)}, expects ${JSON.stringify(asExpect())} (prune or update the correction in tools/content-corrections.mjs)`);
+      }
+      switch (c.field) {
+        case 'title': t.title = c.value; break;
+        case 'w': t.w = c.value; break;
+        case 'ill': t.ill = { id: c.value.id, alt: c.value.alt }; break;
+        case 'cardAlt': case 'itemIllAlt': t.ill.alt = c.value; break;
+        case 'opts': t.opts = c.value.opts.map((o) => ({ id: o.id, t: o.t })); t.key = c.value.key; break;
+        case 'ok': t.ok = c.value; break;
+        case 'no': t.no = c.value; break;
+      }
+      applied += 1;
+    }
+  }
+  console.log(`content corrections: ${applied} applications from ${CONTENT_CORRECTIONS.length} entries`);
+}
+
 // ── run ─────────────────────────────────────────────────────────────────────
 
+applyCorrections(course);
 replaceC3Quiz(course);
 
 const out = path.join(root, 'Aurel', 'Resources', 'Course');

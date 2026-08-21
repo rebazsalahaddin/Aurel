@@ -851,7 +851,7 @@
          }
         ],
         "key": "C",
-        "ok": "Yes — no!",
+        "ok": "Yes — no! 🙂",
         "no": "The word starts with n-. Listen again.",
         "hints": [
          "Play again; the head-shake half of the pair picture lights up.",
@@ -1466,7 +1466,7 @@
         "face": "fine",
         "ill": {
          "id": "A1-C01-ILL014",
-         "alt": "Leo gives a gentle content nod with a soft small smile, feeling fine"
+         "alt": "Leo gives a gentle content nod with a soft smile, feeling fine"
         },
         "fn": "state word (calm positive)"
        },
@@ -1490,7 +1490,7 @@
         "face": "great",
         "ill": {
          "id": "A1-C01-ILL016",
-         "alt": "Alex raises both arms high with a big open smile, feeling great"
+         "alt": "Alex raises both arms with a big open smile, feeling great"
         },
         "fn": "state word (strong positive)"
        },
@@ -1502,7 +1502,7 @@
         "face": "not bad",
         "ill": {
          "id": "A1-C01-ILL017",
-         "alt": "Leo gives an easy shoulder shrug with open palms and a small friendly smile — not bad"
+         "alt": "Leo gives an easy shrug with a small friendly smile — not bad"
         },
         "fn": "greeting-state chunk (mild positive)"
        }
@@ -1534,7 +1534,7 @@
         "aud": "AUD025",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank name badge pinned to a shirt with two empty line shapes — a shorter top line and a longer bottom line"
+         "alt": "A blank name badge pinned to a shirt, with two empty line shapes where names go"
         },
         "fn": "noun (the word someone is called)",
         "badge": "both"
@@ -1570,7 +1570,7 @@
         "aud": "AUD028",
         "ill": {
          "id": "A1-C01-ILL019",
-         "alt": "Alex gestures with an open hand toward the blank badge on their own chest while introducing themselves"
+         "alt": "Alex gestures toward the blank badge on their own chest while speaking"
         },
         "fn": "introduction chunk",
         "chunk": true
@@ -1594,7 +1594,7 @@
         "aud": "AUD030",
         "ill": {
          "id": "A1-C01-ILL020",
-         "alt": "Maya leans slightly toward you with an open hand, asking a friendly question"
+         "alt": "Maya leans in with an open hand, asking a friendly question"
         },
         "fn": "name question chunk",
         "chunk": true
@@ -1606,7 +1606,7 @@
         "aud": "AUD031",
         "ill": {
          "id": "A1-C01-ILL021",
-         "alt": "Nina and Leo shake hands warmly at their first meeting, both smiling genuinely"
+         "alt": "Nina and Leo shake hands warmly at their first meeting, both smiling"
         },
         "fn": "first-meeting chunk",
         "chunk": true
@@ -3835,7 +3835,7 @@
         "face": "fine",
         "ill": {
          "id": "A1-C01-ILL014",
-         "alt": "Leo gives a gentle content nod with a soft small smile, feeling fine"
+         "alt": "Leo gives a gentle content nod with a soft smile, feeling fine"
         },
         "fn": "state word (calm positive)"
        },
@@ -3859,7 +3859,7 @@
         "face": "great",
         "ill": {
          "id": "A1-C01-ILL016",
-         "alt": "Alex raises both arms high with a big open smile, feeling great"
+         "alt": "Alex raises both arms with a big open smile, feeling great"
         },
         "fn": "state word (strong positive)"
        },
@@ -3871,7 +3871,7 @@
         "face": "not bad",
         "ill": {
          "id": "A1-C01-ILL017",
-         "alt": "Leo gives an easy shoulder shrug with open palms and a small friendly smile — not bad"
+         "alt": "Leo gives an easy shrug with a small friendly smile — not bad"
         },
         "fn": "greeting-state chunk (mild positive)"
        },
@@ -3882,7 +3882,7 @@
         "aud": "AUD025",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank name badge pinned to a shirt with two empty line shapes — a shorter top line and a longer bottom line"
+         "alt": "A blank name badge pinned to a shirt, with two empty line shapes where names go"
         },
         "fn": "noun (the word someone is called)",
         "badge": "both"
@@ -3918,7 +3918,7 @@
         "aud": "AUD028",
         "ill": {
          "id": "A1-C01-ILL019",
-         "alt": "Alex gestures with an open hand toward the blank badge on their own chest while introducing themselves"
+         "alt": "Alex gestures toward the blank badge on their own chest while speaking"
         },
         "fn": "introduction chunk",
         "chunk": true
@@ -3942,7 +3942,7 @@
         "aud": "AUD030",
         "ill": {
          "id": "A1-C01-ILL020",
-         "alt": "Maya leans slightly toward you with an open hand, asking a friendly question"
+         "alt": "Maya leans in with an open hand, asking a friendly question"
         },
         "fn": "name question chunk",
         "chunk": true
@@ -3954,7 +3954,7 @@
         "aud": "AUD031",
         "ill": {
          "id": "A1-C01-ILL021",
-         "alt": "Nina and Leo shake hands warmly at their first meeting, both smiling genuinely"
+         "alt": "Nina and Leo shake hands warmly at their first meeting, both smiling"
         },
         "fn": "first-meeting chunk",
         "chunk": true
@@ -6851,7 +6851,7 @@
          "?"
         ],
         "ok": "What's your name? — with the asking hook!",
-        "no": "The asking hook (?) ends the line.",
+        "no": "The asking hook (? ) ends the line.",
         "hints": [
          "Play the model and point.",
          "The hook goes last."
@@ -8025,7 +8025,7 @@
         "fn": "describing word — not fast",
         "ill": {
          "id": "A1-C02-ILL012",
-         "alt": "Three sound dots sit widely spaced between two people"
+         "alt": "Three sound dots sit widely spaced between two calm faces"
         },
         "moment": "Nina speaks; three dots sit WIDELY spaced between you"
        },
@@ -8037,7 +8037,7 @@
         "fn": "one more time",
         "ill": {
          "id": "A1-C02-ILL013",
-         "alt": "A loop arrow circles a play triangle"
+         "alt": "A circular loop arrow wraps around a small play triangle above two seated people"
         },
         "moment": "Loop arrow circles the play triangle"
        },
@@ -8068,7 +8068,7 @@
         "chunk": true,
         "ill": {
          "id": "A1-C02-ILL010",
-         "alt": "Nina tilts her head at the badge, pen ready"
+         "alt": "Nina tilts her head at a blank badge with her pen ready to write letters"
         },
         "moment": "Nina tilts her head at the badge, pen ready"
        },
@@ -8081,20 +8081,20 @@
         "chunk": true,
         "ill": {
          "id": "A1-C02-ILL014",
-         "alt": "A listener cups one hand at their ear while Nina leans in kindly"
+         "alt": "A learner cups a hand behind an ear and smiles politely while Nina leans in kindly"
         },
         "moment": "Your hand cups your ear; Nina leans in kindly"
        },
        {
         "id": "V009",
-        "w": "Please speak slowly",
+        "w": "Please speak slowly.",
         "ipa": "/pliːz ˈspiːk ˈsloʊli/",
         "aud": "AUD010",
         "fn": "repair chunk — ask for slower speech",
         "chunk": true,
         "ill": {
          "id": "A1-C02-ILL012",
-         "alt": "The sound dots stretch wide apart again"
+         "alt": "Nina speaks calmly with three sound dots spaced widely between her and a listener"
         },
         "moment": "Dots stretch wide again"
        }
@@ -8554,7 +8554,7 @@
         "fn": "describing word — not fast",
         "ill": {
          "id": "A1-C02-ILL012",
-         "alt": "Three sound dots sit widely spaced between two people"
+         "alt": "Three sound dots sit widely spaced between two calm faces"
         },
         "moment": "Nina speaks; three dots sit WIDELY spaced between you"
        },
@@ -8566,7 +8566,7 @@
         "fn": "one more time",
         "ill": {
          "id": "A1-C02-ILL013",
-         "alt": "A loop arrow circles a play triangle"
+         "alt": "A circular loop arrow wraps around a small play triangle above two seated people"
         },
         "moment": "Loop arrow circles the play triangle"
        },
@@ -8597,7 +8597,7 @@
         "chunk": true,
         "ill": {
          "id": "A1-C02-ILL010",
-         "alt": "Nina tilts her head at the badge, pen ready"
+         "alt": "Nina tilts her head at a blank badge with her pen ready to write letters"
         },
         "moment": "Nina tilts her head at the badge, pen ready"
        },
@@ -8610,20 +8610,20 @@
         "chunk": true,
         "ill": {
          "id": "A1-C02-ILL014",
-         "alt": "A listener cups one hand at their ear while Nina leans in kindly"
+         "alt": "A learner cups a hand behind an ear and smiles politely while Nina leans in kindly"
         },
         "moment": "Your hand cups your ear; Nina leans in kindly"
        },
        {
         "id": "V009",
-        "w": "Please speak slowly",
+        "w": "Please speak slowly.",
         "ipa": "/pliːz ˈspiːk ˈsloʊli/",
         "aud": "AUD010",
         "fn": "repair chunk — ask for slower speech",
         "chunk": true,
         "ill": {
          "id": "A1-C02-ILL012",
-         "alt": "The sound dots stretch wide apart again"
+         "alt": "Nina speaks calmly with three sound dots spaced widely between her and a listener"
         },
         "moment": "Dots stretch wide again"
        }
@@ -8648,7 +8648,7 @@
     "id": "L02",
     "type": "V+G",
     "n": 2,
-    "title": "Numbers, Contacts, and Are You…?",
+    "title": "Big Numbers and Contact Details",
     "time": "≈20 min",
     "src": "A1_C02_L02_LESSON.md",
     "screens": [
@@ -8867,8 +8867,8 @@
         "aud": "AUD046",
         "fn": "noun — the thing you call with",
         "ill": {
-         "id": "A1-C02-ILL016",
-         "alt": "A simple phone lies on the register page beside Nina's pen"
+         "id": "A1-C02-ILL018",
+         "alt": "Maya holds up a simple rounded mobile phone with a blank screen"
         }
        },
        {
@@ -8878,8 +8878,8 @@
         "aud": "AUD047",
         "fn": "noun chunk — the digits row",
         "ill": {
-         "id": "A1-C02-ILL024",
-         "alt": "The register page: a name row, a digits row and a message row"
+         "id": "A1-C02-ILL018",
+         "alt": "Nina points at the digits row of the open register"
         }
        },
        {
@@ -8889,8 +8889,8 @@
         "aud": "AUD048",
         "fn": "noun — the message you send",
         "ill": {
-         "id": "A1-C02-ILL018",
-         "alt": "A small envelope shape resting on the message row of the register"
+         "id": "A1-C02-ILL019",
+         "alt": "A paper envelope with a small closed flap flies toward an open laptop"
         }
        },
        {
@@ -8900,8 +8900,8 @@
         "aud": "AUD049",
         "fn": "noun chunk — the message row",
         "ill": {
-         "id": "A1-C02-ILL024",
-         "alt": "The message row of the register page, waiting to be filled"
+         "id": "A1-C02-ILL019",
+         "alt": "Nina underlines the email line of the open register"
         }
        },
        {
@@ -8911,8 +8911,8 @@
         "aud": "AUD050",
         "fn": "noun — where something is sent",
         "ill": {
-         "id": "A1-C02-ILL019",
-         "alt": "A door with a small plate beside it, no letters shown"
+         "id": "A1-C02-ILL020",
+         "alt": "A small house with a blank plaque beside the door"
         }
        },
        {
@@ -8923,8 +8923,8 @@
         "fn": "email symbol word (@)",
         "symbol": "@",
         "ill": {
-         "id": "A1-C02-ILL020",
-         "alt": "A round looping mark drawn on the message row"
+         "id": "A1-C02-ILL021",
+         "alt": "A hand with one finger pointing directly at a community-house door"
         }
        },
        {
@@ -8935,8 +8935,8 @@
         "fn": "email symbol word (.)",
         "symbol": ".",
         "ill": {
-         "id": "A1-C02-ILL021",
-         "alt": "A single small round mark on the message row"
+         "id": "A1-C02-ILL022",
+         "alt": "One round dot sits between two blank word-tiles on a line"
         }
        },
        {
@@ -8947,8 +8947,8 @@
         "fn": "detail question chunk",
         "chunk": true,
         "ill": {
-         "id": "A1-C02-ILL022",
-         "alt": "Nina moves her pen to the digits row and looks up"
+         "id": "A1-C02-ILL024",
+         "alt": "Nina circles the digits row of the register with her pen and looks up"
         }
        },
        {
@@ -8959,8 +8959,8 @@
         "fn": "detail question chunk",
         "chunk": true,
         "ill": {
-         "id": "A1-C02-ILL023",
-         "alt": "Nina moves her pen to the message row and looks up"
+         "id": "A1-C02-ILL024",
+         "alt": "Nina circles the email line of the register with her pen and looks up"
         }
        }
       ],
@@ -10707,8 +10707,8 @@
         "aud": "AUD046",
         "fn": "noun — the thing you call with",
         "ill": {
-         "id": "A1-C02-ILL016",
-         "alt": "A simple phone lies on the register page beside Nina's pen"
+         "id": "A1-C02-ILL018",
+         "alt": "Maya holds up a simple rounded mobile phone with a blank screen"
         }
        },
        {
@@ -10718,8 +10718,8 @@
         "aud": "AUD047",
         "fn": "noun chunk — the digits row",
         "ill": {
-         "id": "A1-C02-ILL024",
-         "alt": "The register page: a name row, a digits row and a message row"
+         "id": "A1-C02-ILL018",
+         "alt": "Nina points at the digits row of the open register"
         }
        },
        {
@@ -10729,8 +10729,8 @@
         "aud": "AUD048",
         "fn": "noun — the message you send",
         "ill": {
-         "id": "A1-C02-ILL018",
-         "alt": "A small envelope shape resting on the message row of the register"
+         "id": "A1-C02-ILL019",
+         "alt": "A paper envelope with a small closed flap flies toward an open laptop"
         }
        },
        {
@@ -10740,8 +10740,8 @@
         "aud": "AUD049",
         "fn": "noun chunk — the message row",
         "ill": {
-         "id": "A1-C02-ILL024",
-         "alt": "The message row of the register page, waiting to be filled"
+         "id": "A1-C02-ILL019",
+         "alt": "Nina underlines the email line of the open register"
         }
        },
        {
@@ -10751,8 +10751,8 @@
         "aud": "AUD050",
         "fn": "noun — where something is sent",
         "ill": {
-         "id": "A1-C02-ILL019",
-         "alt": "A door with a small plate beside it, no letters shown"
+         "id": "A1-C02-ILL020",
+         "alt": "A small house with a blank plaque beside the door"
         }
        },
        {
@@ -10763,8 +10763,8 @@
         "fn": "email symbol word (@)",
         "symbol": "@",
         "ill": {
-         "id": "A1-C02-ILL020",
-         "alt": "A round looping mark drawn on the message row"
+         "id": "A1-C02-ILL021",
+         "alt": "A hand with one finger pointing directly at a community-house door"
         }
        },
        {
@@ -10775,8 +10775,8 @@
         "fn": "email symbol word (.)",
         "symbol": ".",
         "ill": {
-         "id": "A1-C02-ILL021",
-         "alt": "A single small round mark on the message row"
+         "id": "A1-C02-ILL022",
+         "alt": "One round dot sits between two blank word-tiles on a line"
         }
        },
        {
@@ -10787,8 +10787,8 @@
         "fn": "detail question chunk",
         "chunk": true,
         "ill": {
-         "id": "A1-C02-ILL022",
-         "alt": "Nina moves her pen to the digits row and looks up"
+         "id": "A1-C02-ILL024",
+         "alt": "Nina circles the digits row of the register with her pen and looks up"
         }
        },
        {
@@ -10799,8 +10799,8 @@
         "fn": "detail question chunk",
         "chunk": true,
         "ill": {
-         "id": "A1-C02-ILL023",
-         "alt": "Nina moves her pen to the message row and looks up"
+         "id": "A1-C02-ILL024",
+         "alt": "Nina circles the email line of the register with her pen and looks up"
         }
        }
       ],
@@ -13209,7 +13209,7 @@
         "icon": "eye",
         "ill": {
          "id": "A1-C02-ILL033",
-         "alt": "Nine cups in a three-by-three grid"
+         "alt": "Exactly nine cups stand in a neat three-by-three grid on the table"
         },
         "opts": [
          {
@@ -15643,7 +15643,7 @@
         "aud": "AUD033",
         "ill": {
          "id": "A1-C03-ILL001",
-         "alt": "Figure asking a question, one hand raised, question-shaped bubble (no letters)"
+         "alt": "figure asking a question, one hand raised, question-mark-shaped bubble (no letters)"
         },
         "fn": "chunk — asks a person's country",
         "frame": "Where are you from? … I'm from Egypt.",
@@ -18152,7 +18152,7 @@
         "aud": "AUD033",
         "ill": {
          "id": "A1-C03-ILL001",
-         "alt": "Figure asking a question, one hand raised, question-shaped bubble (no letters)"
+         "alt": "figure asking a question, one hand raised, question-mark-shaped bubble (no letters)"
         },
         "fn": "chunk — asks a person's country",
         "frame": "Where are you from? … I'm from Egypt.",
@@ -18235,7 +18235,7 @@
     "id": "L03",
     "type": "R+M",
     "n": 3,
-    "title": "Profile Cards and Your Dot",
+    "title": "Profiles, Your Introduction, the Chapter Quiz",
     "time": "≈20 min · quiz and mission self-paced after",
     "src": "A1_C03_L03_LESSON.md",
     "screens": [
@@ -18423,18 +18423,18 @@
         "opts": [
          {
           "id": "A",
-          "t": "Their"
-         },
-         {
-          "id": "B",
           "t": "His"
          },
          {
-          "id": "C",
+          "id": "B",
           "t": "Her"
+         },
+         {
+          "id": "C",
+          "t": "Their"
          }
         ],
-        "key": "A",
+        "key": "C",
         "ok": "Their email — Alex is they.",
         "no": "Alex → they → their.",
         "a11y": [
@@ -18475,7 +18475,7 @@
         "opts": [
          {
           "id": "A",
-          "t": "Nina"
+          "t": "Kenji"
          },
          {
           "id": "B",
@@ -18483,10 +18483,10 @@
          },
          {
           "id": "C",
-          "t": "Kenji"
+          "t": "Nina"
          }
         ],
-        "key": "A",
+        "key": "C",
         "ok": "Nina — Peru, teacher.",
         "no": "Scan the job column, then read the name.",
         "a11y": [
@@ -18796,18 +18796,18 @@
         "opts": [
          {
           "id": "A",
-          "t": "Japanese and English"
-         },
-         {
-          "id": "B",
           "t": "Arabic and English"
          },
          {
-          "id": "C",
+          "id": "B",
           "t": "English and French"
+         },
+         {
+          "id": "C",
+          "t": "Japanese and English"
          }
         ],
-        "key": "A",
+        "key": "C",
         "ok": "Japanese and English.",
         "no": "Listen for the two language words.",
         "a11y": [
@@ -19053,18 +19053,18 @@
         "opts": [
          {
           "id": "A",
-          "t": "This is my friend Maya."
-         },
-         {
-          "id": "B",
           "t": "Her is Maya."
          },
          {
-          "id": "C",
+          "id": "B",
           "t": "Nice to meet you too."
+         },
+         {
+          "id": "C",
+          "t": "This is my friend Maya."
          }
         ],
-        "key": "A",
+        "key": "C",
         "ok": "This is my friend Maya. — introduction done!",
         "no": "Show the person: This is + my friend + name.",
         "a11y": [
