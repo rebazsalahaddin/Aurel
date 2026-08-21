@@ -198,11 +198,11 @@ final class AppRouter {
         {
             load(from: profile)
         }
-        // Verification hook: SIMCTL_CHILD_AUREL_SCREEN=home
-        if let raw = ProcessInfo.processInfo.environment["AUREL_SCREEN"], let s = Screen.named(raw)
-        {
+        // Verification hook: SIMCTL_CHILD_AUREL_SCREEN=home — routes like the
+        // fast path and never writes the store (a debug route must not mark
+        // the learner onboarded).
+        if let s = Self.screenHook(ProcessInfo.processInfo.environment) {
             screen = s
-            persist()
         }
         // UI-test fast path: launch with ["-AUREL_TEST_START", "home"] — routes
         // like the env hook but never writes the store.
@@ -212,6 +212,13 @@ final class AppRouter {
         {
             screen = s
         }
+    }
+
+    /// The `AUREL_SCREEN` verification hook: pure routing only — a debug
+    /// route must never write SwiftData (S2-001: it used to `persist()` and
+    /// stamped `onboardedAt` for a debug launch).
+    static func screenHook(_ env: [String: String]) -> Screen? {
+        env["AUREL_SCREEN"].flatMap(Screen.named)
     }
 
     /// Preview-only mid-journey seed (seedFor('mid-journey'), line 1747).
@@ -309,6 +316,14 @@ final class AppRouter {
 
     // MARK: Onboarding (toggleGoal / assessPick, lines 1863–1880)
 
+    /// Delayed-transition tasks (S2-002). The authored prototype drives each
+    /// delay with a single `setTimeout`; unstructured `Task { sleep }` stacks
+    /// a second transition on top of the first on rapid taps. One live handle
+    /// per delay — a new interaction supersedes (cancels) the pending one.
+    private var assessPickTask: Task<Void, Never>?
+    private var sceneReplyTask: Task<Void, Never>?
+    private var speakStopTask: Task<Void, Never>?
+
     func toggleGoal(_ id: String) {
         if goals.contains(id) {
             goals = goals.filter { $0 != id }
@@ -330,9 +345,16 @@ final class AppRouter {
         let k = assessStep - 1
         guard k >= 0 && k < 6 else { return }
         assessAnswers[k] = i
-        // 420 ms after a pick: advance, or open the review when all six are in.
-        Task { @MainActor in
-            try? await Task.sleep(for: .seconds(0.42))
+        // 420 ms after a pick: advance, or open the review when all six are
+        // in (lines 1869–1871). A newer pick — or navigating away — supersedes
+        // the pending transition.
+        assessPickTask?.cancel()
+        assessPickTask = Task { @MainActor in
+            do {
+                try await Task.sleep(for: .seconds(0.42))
+            } catch {
+                return  // superseded
+            }
             if assessAnswers.allSatisfy({ $0 != nil }) {
                 screen = .assessReview
             } else {
@@ -343,15 +365,23 @@ final class AppRouter {
 
     func skipPlacement() { screen = .plan }
     func assessBegin() {
+        assessPickTask?.cancel()
         screen = .plan
         assessStep = 0
     }
-    func assessBack() { assessStep = assessStep > 1 ? assessStep - 1 : 0 }
+    func assessBack() {
+        assessPickTask?.cancel()
+        assessStep = assessStep > 1 ? assessStep - 1 : 0
+    }
     func assessLast() {
+        assessPickTask?.cancel()
         screen = .assess
         assessStep = 6
     }
-    func assessStopEarly() { assessStep = 6 }
+    func assessStopEarly() {
+        assessPickTask?.cancel()
+        assessStep = 6
+    }
 
     /// assessReviewRows (line 2309–2313): one row per PLACEMENT question —
     /// PLACEMENT is empty by governance, so this is empty exactly as the
@@ -366,6 +396,7 @@ final class AppRouter {
         []  // PLACEMENT = [] (DECISIONS.md — placement stubs only until F2)
     }
     func assessConfirm() {
+        assessPickTask?.cancel()
         screen = .plan
         assessStep = 0
     }
@@ -393,9 +424,18 @@ final class AppRouter {
     // MARK: Course player wiring (lines 2028–2036, 2267–2277)
 
     func goCourse(_ i: Int) {
+        // Authored `go.course` (line 2029) hardwires `i >= 4` for the chapter
+        // end — written for four-lesson chapters. C3 has three lessons: its
+        // "Chapter complete" node passes i = 3, which `coursePos` cannot match
+        // and fell through to 0 (C1 · L1 · S01). Generalize the threshold to
+        // the chapter's own lesson count — identical for four-lesson chapters
+        // (C1/C2), repairs the three-lesson chapter (C3).
+        let lessons =
+            course.chapters.indices.contains(chapterIdx)
+            ? course.chapters[chapterIdx].lessons.count : 4
         courseLesson = min(i, 3)
         coursePos =
-            i >= 4
+            i >= lessons
             ? course.chapterEndPos(chapterIdx)
             : course.coursePos(chapterIdx: chapterIdx, lessonIdx: i)
         pending = nil
@@ -595,6 +635,7 @@ final class AppRouter {
     func setSolo() { sceneRoleB = false }
     func setDuo() { sceneRoleB = true }
     func replayScene() {
+        sceneReplyTask?.cancel()
         sceneTurn = 0
         scenePicks = []
     }
@@ -602,13 +643,23 @@ final class AppRouter {
     func pickSceneReply(_ i: Int, turnCount: Int) {
         while scenePicks.count <= sceneTurn { scenePicks.append(nil) }
         scenePicks[sceneTurn] = i
-        Task { @MainActor in
-            try? await Task.sleep(for: .seconds(0.64))
+        // 640 ms after a pick the turn advances (line 2705); a newer pick
+        // supersedes the pending advance instead of stacking a second one.
+        sceneReplyTask?.cancel()
+        sceneReplyTask = Task { @MainActor in
+            do {
+                try await Task.sleep(for: .seconds(0.64))
+            } catch {
+                return  // superseded
+            }
             if sceneTurn < turnCount { sceneTurn += 1 }
         }
     }
 
-    func leaveScene() { screen = .stories }
+    func leaveScene() {
+        sceneReplyTask?.cancel()
+        screen = .stories
+    }
 
     // MARK: Say-aloud mock (lines 1886–1896)
 
@@ -620,13 +671,22 @@ final class AppRouter {
         speaking = true
         speakScored = false
         typing = false
-        Task { @MainActor in
-            try? await Task.sleep(for: .seconds(2.6))
+        // The 2.6 s take window (line 1890): restarting (or an earlier manual
+        // stop) supersedes the pending auto-stop rather than stacking one —
+        // the old code stopped the second take early with the first timer.
+        speakStopTask?.cancel()
+        speakStopTask = Task { @MainActor in
+            do {
+                try await Task.sleep(for: .seconds(2.6))
+            } catch {
+                return  // superseded
+            }
             stopSpeak()
         }
     }
 
     func stopSpeak() {
+        speakStopTask?.cancel()
         speakTake += 1
         speaking = false
         speakScored = true
