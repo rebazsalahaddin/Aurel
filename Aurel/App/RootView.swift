@@ -5,7 +5,10 @@ import SwiftUI
 /// prototype's `sc-if` screen blocks. Features land here as they are built.
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var env: AppEnvironment?
+
+    private var typeStep: Int { env?.router.typeStep ?? 2 }
 
     var body: some View {
         ZStack {
@@ -22,6 +25,12 @@ struct RootView: View {
             if env == nil {
                 env = AppEnvironment(modelContext: modelContext)
             }
+            AUTypeScale.step = typeStep  // S1-001: the persisted text-size step
+        }
+        // S1-001: the Settings text-size control drives the type scale live.
+        .onChange(of: typeStep) { _, step in AUTypeScale.step = step }
+        .onChange(of: dynamicTypeSize) { _, size in
+            AUTypeScale.systemCategory = UIContentSizeCategory(size)
         }
     }
 
@@ -31,6 +40,76 @@ struct RootView: View {
         case 1: return .light
         case 2: return .dark
         default: return nil
+        }
+    }
+}
+
+/// S1-004: the course bundle could not be decoded — an honest recovery
+/// surface instead of a launch crash.
+private struct CourseRecoveryView: View {
+    let retry: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.auBackground.ignoresSafeArea()
+            VStack(spacing: 0) {
+                AUIcon(kind: .loop, size: 44, color: .auAccentText)
+                    .padding(.bottom, 18)
+                Text("Aurel can't open its lessons right now.")
+                    .font(.caprasimo(size: 25))
+                    .tracking(-0.45)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 10)
+                Text("Your saved progress is safe. Try again in a moment.")
+                    .font(.figtree(.regular, size: 14.5))
+                    .lineSpacing(14.5 * 0.45)
+                    .foregroundStyle(Color.auText.opacity(0.62))
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 26)
+                APillButton(title: "Try again", icon: .arrow, aid: "au.btn.try-again") {
+                    retry()
+                }
+            }
+            .padding(.horizontal, 24)
+            .frame(maxWidth: 342)
+        }
+    }
+}
+
+/// S1-003: the store was moved aside and a fresh one created.
+private struct StoreRecoveredBanner: View {
+    @State private var visible = true
+
+    var body: some View {
+        if visible {
+            HStack(spacing: 10) {
+                AUIcon(kind: .sparkle, size: 16, color: .auTintText)
+                Text("Your saved progress could not be read and was reset.")
+                    .font(.figtree(.semibold, size: 13))
+                    .lineSpacing(13 * 0.45)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button {
+                    visible = false
+                } label: {
+                    AUIcon(kind: .close, size: 14, color: .auTintText)
+                }
+                .buttonStyle(.auTap)
+                .accessibilityLabel("Dismiss")
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auTintBg)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(Color.auEdge, lineWidth: 1)
+            )
+            .padding(.horizontal, 16)
+            .transition(
+                .move(edge: .top).combined(with: .opacity)
+            )
+            .accessibilityIdentifier("au.banner.store-recovered")
         }
     }
 }
@@ -69,7 +148,7 @@ private struct ScreenHost: View {
         case .profile: ProfileView()
         case .settings: SettingsView()
         case .paywall: PaywallView()
-        case .assessReview: UnbuiltScreen()
+        case .assessReview: AssessReviewView()
         }
     }
 }

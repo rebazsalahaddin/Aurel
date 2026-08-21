@@ -111,26 +111,100 @@ enum Caprasimo {
 // MARK: SwiftUI conveniences
 
 extension Font {
-    /// Figtree at a design point size.
+    /// Figtree at a design point size, scaled for the effective content size
+    /// category (S1-001 — the authored text-size steps + system Dynamic Type).
     static func figtree(_ weight: Font.Weight = .regular, size: CGFloat) -> Font {
-        Font(Figtree.uiFont(weight: weight, size: size))
+        Font(Figtree.uiFont(weight: weight, size: AUTypeScale.scaled(size)))
     }
 
-    /// Caprasimo display at a design point size.
+    /// Caprasimo display at a design point size, scaled likewise.
     static func caprasimo(size: CGFloat) -> Font {
-        Font(Caprasimo.uiFont(size: size))
+        Font(Caprasimo.uiFont(size: AUTypeScale.scaled(size)))
     }
 }
 
-// MARK: Design scale → Dynamic Type mapping
+// MARK: Design scale → Dynamic Type mapping (S1-001)
 //
 // The prototype sets a fixed body size (15px) with a `--au-type` zoom for its
-// text-size setting. Natively we map design sizes onto UIFontMetrics text
-// styles so every label reflows with the user's content size category; the
-// Settings screen's text-size control (standard/large/x-large) maps onto
-// UIContentSizeCategory the same way the prototype's zoom multiplier did.
+// text-size setting (Aurel.dc.html:113,121,2757–2761 — five steps, multipliers
+// [0.88, 0.94, 1, 1.18, 1.4]). Natively those steps map onto content-size
+// categories; the effective category is the larger of the system setting and
+// the in-app step, so a learner who needs AX sizes keeps them at any step.
+// RootView keeps `step` (from the persisted `typeStep`) and
+// `systemCategory` (from the `dynamicTypeSize` environment) current.
 
 enum AUTypeScale {
+    /// The authored five steps as content-size categories.
+    static let stepCategories: [UIContentSizeCategory] = [
+        .small, .medium, .large, .extraExtraExtraLarge, .accessibilityMedium,
+    ]
+
+    /// Category ordering, standard sizes then accessibility sizes.
+    private static let ordered: [UIContentSizeCategory] = [
+        .extraSmall, .small, .medium, .large, .extraLarge, .extraExtraLarge,
+        .extraExtraExtraLarge, .accessibilityMedium, .accessibilityLarge,
+        .accessibilityExtraLarge, .accessibilityExtraExtraLarge,
+        .accessibilityExtraExtraExtraLarge,
+    ]
+
+    /// Lock-guarded mutable storage (same pattern as FontCache below — reads
+    /// happen on the main thread during view updates, writes are rare).
+    private final class Box: @unchecked Sendable {
+        private let lock = NSLock()
+        private var stepStorage: Int = 2  // 2 = Default (Aurel.dc.html:1743)
+        private var systemStorage: UIContentSizeCategory = .large
+
+        var step: Int {
+            get {
+                lock.lock()
+                defer { lock.unlock() }
+                return stepStorage
+            }
+            set {
+                lock.lock()
+                stepStorage = min(max(newValue, 0), stepCategories.count - 1)
+                lock.unlock()
+            }
+        }
+
+        var systemCategory: UIContentSizeCategory {
+            get {
+                lock.lock()
+                defer { lock.unlock() }
+                return systemStorage
+            }
+            set {
+                lock.lock()
+                systemStorage = newValue
+                lock.unlock()
+            }
+        }
+    }
+
+    private static let box = Box()
+
+    /// The in-app text-size step (0…4).
+    static var step: Int {
+        get { box.step }
+        set { box.step = newValue }
+    }
+
+    /// The system content size category, kept current by RootView.
+    static var systemCategory: UIContentSizeCategory {
+        get { box.systemCategory }
+        set { box.systemCategory = newValue }
+    }
+
+    /// The larger of the step category and the system category.
+    static var effectiveCategory: UIContentSizeCategory {
+        let stepCategory = stepCategories[step]
+        return rank(stepCategory) >= rank(systemCategory) ? stepCategory : systemCategory
+    }
+
+    private static func rank(_ c: UIContentSizeCategory) -> Int {
+        ordered.firstIndex(of: c) ?? ordered.count / 2
+    }
+
     /// Map a design point size to the closest text style for scaling purposes.
     static func textStyle(forDesignSize size: CGFloat) -> UIFont.TextStyle {
         switch size {
@@ -148,10 +222,10 @@ enum AUTypeScale {
         }
     }
 
-    /// Scale a design size for the current content size category.
-    @MainActor
+    /// Scale a design size for the effective content size category.
     static func scaled(_ size: CGFloat) -> CGFloat {
-        UIFontMetrics(forTextStyle: textStyle(forDesignSize: size))
-            .scaledValue(for: size)
+        let traits = UITraitCollection(preferredContentSizeCategory: effectiveCategory)
+        return UIFontMetrics(forTextStyle: textStyle(forDesignSize: size))
+            .scaledValue(for: size, compatibleWith: traits)
     }
 }
