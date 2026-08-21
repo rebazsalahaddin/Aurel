@@ -28,7 +28,7 @@ struct HomeView: View {
 
             AUTabBar(current: .home)
                 .padding(.horizontal, 14)
-                .padding(.bottom, 4)
+                .padding(.bottom, 26)  // design: bottom:26px above home indicator
         }
         .auScreenEntrance()
     }
@@ -309,87 +309,131 @@ struct HomeView: View {
 
     // MARK: Lesson path (lines 530–632)
 
-    /// The five stops at their authored positions in a 402×816 field.
+    /// Design canvas is 402×724 (svg 402×816; card tops at 570). Laid out
+    /// in design points, then uniformly scaled to the live width so stops,
+    /// labels, and the next-chapter card keep authored proportions.
     private var lessonPath: some View {
-        let nodes = pathNodes
+        Color.clear
+            .aspectRatio(402 / 724, contentMode: .fit)
+            .overlay {
+                GeometryReader { geo in
+                    let scale = max(geo.size.width, 1) / 402
+                    let nodes = pathNodes
+                    let cta = env.router.basePos == 0 && pathAt == 0 ? "Begin" : "Resume"
 
-        return ZStack(alignment: .topLeading) {
-            // The winding thread
-            WindingPathShape()
-                .stroke(
-                    Color.auDivider,
-                    style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [3, 9])
-                )
-                .scaleEffect(x: pathScale, y: pathScale, anchor: .topLeading)
-            if pathAt > 0 {
-                WindingPathShape(firstLegOnly: true)
-                    .stroke(Color.auAccent, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                    .opacity(1)
-                    .scaleEffect(x: pathScale, y: pathScale, anchor: .topLeading)
-            }
+                    ZStack(alignment: .topLeading) {
+                        // Winding thread (design coords).
+                        WindingPathShape()
+                            .stroke(
+                                Color.auDivider,
+                                style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [3, 9])
+                            )
+                            .frame(width: 402, height: 816, alignment: .topLeading)
 
-            ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
-                LessonPathNode(
-                    state: node.state,
-                    index: i,
-                    cta: env.router.basePos == 0 && pathAt == 0 ? "Begin" : "Resume",
-                    label: node.label,
-                    meta: node.meta,
-                    action: node.action
-                )
-                .position(x: node.x * pathScale + pathOffsetX, y: node.y * pathScale)
-                .frame(width: 132)
-            }
+                        WindingPathShape(firstLegOnly: true)
+                            .stroke(
+                                Color.auAccent,
+                                style: StrokeStyle(lineWidth: 2.5, lineCap: .round)
+                            )
+                            .opacity(pathAt > 0 ? 1 : 0.55)
+                            .frame(width: 402, height: 816, alignment: .topLeading)
 
-            // Labels beside the stops (authored placements)
-            nodeLabels()
+                        // Discs — design `translate(-50%, -50%)` via `.position`.
+                        ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
+                            LessonPathNode(
+                                state: node.state,
+                                index: i,
+                                cta: cta,
+                                label: node.label,
+                                meta: node.meta,
+                                action: node.action
+                            )
+                            .position(x: node.x, y: node.y)
+                        }
 
-            // Next chapter card (line 628)
-            Button {
-                env.router.nav(.paywall)
-            } label: {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(ch.nextNo)
-                            .font(.caprasimo(size: 15))
-                        Text(ch.nextName)
-                            .font(.figtree(.regular, size: 12))
-                            .foregroundStyle(Color.auText.opacity(0.48))
+                        // Side labels only (Caprasimo heading + meta).
+                        ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
+                            VStack(alignment: node.alignRight ? .trailing : .leading, spacing: 3) {
+                                Text(node.label)
+                                    .font(.caprasimo(size: i == 0 ? 16 : 15))
+                                    .multilineTextAlignment(
+                                        node.alignRight ? .trailing : .leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text(node.meta)
+                                    .font(.figtree(.regular, size: 12))
+                                    .foregroundStyle(Color.auText.opacity(0.52))
+                                    .multilineTextAlignment(
+                                        node.alignRight ? .trailing : .leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            .frame(
+                                width: node.labelWidth,
+                                alignment: node.alignRight ? .trailing : .leading
+                            )
+                            .opacity(node.state == .locked ? 0.45 : 1)
+                            .position(
+                                // left: leading edge at labelX; right: trailing edge at labelX
+                                x: node.alignRight
+                                    ? node.labelX - node.labelWidth / 2
+                                    : node.labelX + node.labelWidth / 2,
+                                y: node.labelY
+                            )
+                        }
+
+                        // Next chapter card — left:24 right:24 top:570
+                        Button {
+                            env.router.nav(.paywall)
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(ch.nextNo)
+                                        .font(.caprasimo(size: 15))
+                                    Text(ch.nextName)
+                                        .font(.figtree(.regular, size: 12))
+                                        .foregroundStyle(Color.auText.opacity(0.48))
+                                }
+                                Spacer(minLength: 8)
+                                Text(env.router.pro ? "Open" : "Opens with Pro")
+                                    .font(.figtree(.bold, size: 11))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 3)
+                                    .background(
+                                        Capsule().fill(
+                                            env.router.pro ? Color.auOkBg : Color.auFlatBg)
+                                    )
+                                    .foregroundStyle(
+                                        env.router.pro ? Color.auOkQuiet : Color.auFlatText)
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 18)
+                            .background(
+                                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                    .fill(Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                                    .strokeBorder(Color.auEdge, lineWidth: 1)
+                            )
+                            .auLift()
+                        }
+                        .buttonStyle(.auTap)
+                        .accessibilityIdentifier("au.home.next-chapter")
+                        .frame(width: 402 - 48)
+                        .position(x: 201, y: 570 + 28)
                     }
-                    Spacer()
-                    Text(env.router.pro ? "Open" : "Opens with Pro")
-                        .font(.figtree(.bold, size: 11))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 3)
-                        .background(Capsule().fill(env.router.pro ? Color.auOkBg : Color.auFlatBg))
-                        .foregroundStyle(env.router.pro ? Color.auOkQuiet : Color.auFlatText)
+                    .frame(width: 402, height: 724, alignment: .topLeading)
+                    .scaleEffect(x: scale, y: scale, anchor: .topLeading)
+                    .frame(
+                        width: geo.size.width, height: 724 * scale, alignment: .topLeading)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 18)
-                .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .fill(Color.auFill)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .strokeBorder(Color.auEdge, lineWidth: 1)
-                )
-                .auLift()
             }
-            .buttonStyle(.auTap)
-            .accessibilityIdentifier("au.home.next-chapter")
-            .frame(width: 402 * pathScale - 48)
-            .position(x: 402 * pathScale / 2, y: 570 * pathScale + 28)
-        }
-        .frame(width: 402 * pathScale, height: 816 * pathScale, alignment: .topLeading)
-        .padding(.top, 16)
+            .padding(.top, 16)
     }
-
-    private var pathScale: CGFloat { 402.0 / 402.0 }  // design points map 1:1
-    private var pathOffsetX: CGFloat { 0 }
 
     private struct PathNode {
         let x: CGFloat, y: CGFloat
+        /// Design-space X of the label's leading edge (left-aligned) or
+        /// trailing edge (right-aligned via design `right:`).
         let labelX: CGFloat, labelY: CGFloat
         let labelWidth: CGFloat
         let alignRight: Bool
@@ -402,13 +446,16 @@ struct HomeView: View {
     /// mkNode (lines 2122–2141) mapped onto the five authored stop positions.
     private var pathNodes: [PathNode] {
         let r = env.router
-        let cta = r.basePos == 0 && pathAt == 0 ? "Begin" : "Resume"
         func state(_ i: Int) -> LessonPathNode.NodeState {
             i < pathAt ? .done : (i == pathAt ? .open : .locked)
         }
         func meta(_ i: Int) -> String {
             let st = state(i)
-            if st == .locked { return "Opens after \(ch.lessons[max(0, i - 1)])" }
+            if st == .locked {
+                let prev = ch.lessons.indices.contains(max(0, i - 1))
+                    ? ch.lessons[max(0, i - 1)] : ""
+                return "Opens after \(prev)"
+            }
             return (st == .done ? "Complete · " : "")
                 + (ch.metas.indices.contains(i) ? ch.metas[i] : "")
         }
@@ -418,6 +465,7 @@ struct HomeView: View {
 
         // lesson titles: drop the trailing "Chapter complete" entry (index 4)
         let titles = Array(ch.lessons.prefix(4))
+        // Right-aligned labels use design `right: Npx` → trailing edge at 402-N.
         return [
             PathNode(
                 x: 132, y: 46, labelX: 196, labelY: 46, labelWidth: 150, alignRight: false,
@@ -439,29 +487,6 @@ struct HomeView: View {
                 x: 136, y: 492, labelX: 200, labelY: 492, labelWidth: 146, alignRight: false,
                 state: state(4), label: "Chapter complete", meta: meta(4), action: act(4)),
         ]
-    }
-
-    @ViewBuilder
-    private func nodeLabels() -> some View {
-        let nodes = pathNodes
-        let cta = env.router.basePos == 0 && pathAt == 0 ? "Begin" : "Resume"
-        ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
-            VStack(alignment: node.alignRight ? .trailing : .leading, spacing: 3) {
-                Text(node.label)
-                    .font(.caprasimo(size: i == 0 ? 16 : 15))
-                    .multilineTextAlignment(node.alignRight ? .trailing : .leading)
-                Text(node.meta)
-                    .font(.figtree(.regular, size: 12))
-                    .foregroundStyle(Color.auText.opacity(0.52))
-                    .multilineTextAlignment(node.alignRight ? .trailing : .leading)
-            }
-            .frame(width: node.labelWidth, alignment: node.alignRight ? .trailing : .leading)
-            .opacity(node.state == .locked ? 0.45 : 1)
-            .position(
-                x: node.alignRight
-                    ? node.labelX - node.labelWidth / 2 : node.labelX + node.labelWidth / 2,
-                y: node.labelY)
-        }
     }
 }
 

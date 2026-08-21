@@ -369,7 +369,7 @@ struct LeaderboardView: View {
 
             AUTabBar(current: .leaderboard)
                 .padding(.horizontal, 14)
-                .padding(.bottom, 4)
+                .padding(.bottom, 26)
         }
         .auScreenEntrance()
     }

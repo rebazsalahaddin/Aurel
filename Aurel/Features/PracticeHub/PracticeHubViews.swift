@@ -121,7 +121,7 @@ struct StoriesView: View {
 
             AUTabBar(current: .stories)
                 .padding(.horizontal, 14)
-                .padding(.bottom, 4)
+                .padding(.bottom, 26)
         }
         .auScreenEntrance()
     }

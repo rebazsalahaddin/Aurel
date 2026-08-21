@@ -641,15 +641,21 @@ struct OnboardingScaffold<Content: View>: View {
     @ViewBuilder var content: Content
 
     var body: some View {
-        VStack(spacing: 0) {
-            StepHeader(step: step, total: 4, back: back)
-                .padding(.bottom, 34)
-            content
+        GeometryReader { geo in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    StepHeader(step: step, total: 4, back: back)
+                        .padding(.bottom, 34)
+                    content
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 74)
+                .padding(.bottom, 32)
+                // Fill the phone when content is short (design 402×874 stage),
+                // scroll when Dynamic Type / small phones need more room.
+                .frame(minHeight: geo.size.height, alignment: .top)
+            }
         }
-        .padding(.horizontal, 24)
-        .padding(.top, 74)
-        .padding(.bottom, 32)
-        .frame(minHeight: 874, alignment: .top)
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
     }

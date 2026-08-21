@@ -159,7 +159,10 @@ struct ScreenColumn<Content: View>: View {
         .padding(.horizontal, hPad)
         .padding(.top, topPad)
         .padding(.bottom, bottomPad)
-        .frame(minHeight: 790, alignment: .top)
+        // Design stage is ~874; chrome ~68 → body ~790. Prefer flexible
+        // height so small phones / large type don't clip — the ScrollView
+        // parent already owns overflow.
+        .frame(maxWidth: .infinity, alignment: .top)
     }
 }
 

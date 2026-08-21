@@ -48,55 +48,52 @@ struct ArcSkyView: View {
 
     var body: some View {
         GeometryReader { geo in
-            let w = geo.size.width
+            let w = max(geo.size.width, 1)
+            let h = max(geo.size.height, 1)
             let sx = w / 354
-            let sy = height / 118
+            let sy = h / 118
 
-            ZStack {
+            ZStack(alignment: .topLeading) {
                 skyBackground
 
-                // Dunes behind the arcs.
-                DuneShape()
-                    .fill(Color.auDune)
-                    .scaleEffect(x: sx, y: sy, anchor: .topLeading)
-                DuneShape(back: false)
-                    .fill(Color.auDune2)
-                    .scaleEffect(x: sx, y: sy, anchor: .topLeading)
+                // Design-space layer (354×118), stretched to the live card width.
+                ZStack(alignment: .topLeading) {
+                    DuneShape()
+                        .fill(Color.auDune)
+                    DuneShape(back: false)
+                        .fill(Color.auDune2)
 
-                // The arc: dashed ghost + accent progress.
-                ArcTrack()
-                    .stroke(
-                        Color.auText.opacity(0.15),
-                        style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [2, 7])
-                    )
-                    .scaleEffect(x: sx, y: sy, anchor: .topLeading)
-                ArcTrack()
-                    .trim(from: 0, to: state.arcT)
-                    .stroke(
-                        Color.auAccent.opacity(0.8),
-                        style: StrokeStyle(lineWidth: 2, lineCap: .round)
-                    )
-                    .scaleEffect(x: sx, y: sy, anchor: .topLeading)
-                    .animation(.easeInOut(duration: 0.9), value: state.arcT)
+                    ArcTrack()
+                        .stroke(
+                            Color.auText.opacity(0.15),
+                            style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [2, 7])
+                        )
+                    ArcTrack()
+                        .trim(from: 0, to: state.arcT)
+                        .stroke(
+                            Color.auAccent.opacity(0.8),
+                            style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                        )
+                        .animation(.easeInOut(duration: 0.9), value: state.arcT)
 
-                // The travelling sun.
-                SunMark()
-                    .frame(width: 34, height: 34)
-                    .position(
-                        x: state.sunPoint.x * sx,
-                        y: state.sunPoint.y * sy
-                    )
-                    .animation(.easeInOut(duration: 0.9), value: state.arcT)
+                    SunMark()
+                        .frame(width: 34, height: 34)
+                        .position(x: state.sunPoint.x, y: state.sunPoint.y)
+                        .animation(.easeInOut(duration: 0.9), value: state.arcT)
+                }
+                .frame(width: 354, height: 118, alignment: .topLeading)
+                .scaleEffect(x: sx, y: sy, anchor: .topLeading)
+                .frame(width: w, height: h, alignment: .topLeading)
 
-                // Dawn / Sundown chips.
+                // Dawn / Sundown chips sit on the live card (not design-scaled text).
                 HStack(alignment: .center) {
                     chip(done: dawnDone, label: "Dawn", meta: dawnMeta)
-                    Spacer()
+                    Spacer(minLength: 8)
                     chip(done: sundownDone, label: "Sundown", meta: sundownMeta)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 11)
-                .frame(maxHeight: .infinity, alignment: .bottom)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             }
         }
         .frame(height: height)
@@ -211,6 +208,8 @@ struct ArcSkyView: View {
 
 /// One stop on the home lesson path: open (breathing accent sun-disc with
 /// halo), done (sage disc with check), or locked (dashed glass with lock).
+/// Labels sit beside the disc in `HomeView` (design absolute placements) —
+/// this view is the disc only, centered on the stop via translate(-50%,-50%).
 struct LessonPathNode: View {
     enum NodeState { case open, done, locked }
 
@@ -223,6 +222,7 @@ struct LessonPathNode: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// Disc diameter from mkNode (open 94; done/locked per-stop sizes).
     private var size: CGFloat {
         switch state {
         case .open: 94
@@ -233,92 +233,83 @@ struct LessonPathNode: View {
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 10) {
-                ZStack {
-                    switch state {
-                    case .open:
-                        if !reduceMotion {
-                            Circle().fill(Color.auAccent)
-                                .frame(width: size + 20, height: size + 20)
-                                .modifier(PulseHalo())
-                        }
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: Color.auAccent.opacity(0.8), location: 0),
-                                        .init(color: Color.auAccent.opacity(0.9), location: 0.52),
-                                        .init(
-                                            color: Color.auAccent2Ramp(800).opacity(0.92),
-                                            location: 1),
-                                    ],
-                                    startPoint: .top, endPoint: .bottom
-                                )
-                            )
-                            .overlay(Circle().strokeBorder(.white.opacity(0.28), lineWidth: 1))
-                            .overlay(
-                                VStack(spacing: 2) {
-                                    AUIcon(
-                                        kind: .play, size: 26,
-                                        color: Color(red: 1, green: 0.965, blue: 0.918))  // #fff6ea
-                                    Text(cta)
-                                        .font(.figtree(.bold, size: 10))
-                                        .tracking(1.2)
-                                        .textCase(.uppercase)
-                                }
-                                .foregroundStyle(Color(red: 1, green: 0.965, blue: 0.918))
-                            )
-                            .modifier(Breath(enabled: !reduceMotion))
-                    case .done:
-                        Circle()
-                            .fill(
-                                LinearGradient(
-                                    stops: [
-                                        .init(
-                                            color: Color.auAccent2Ramp(500).mixed(
-                                                with: 0.26, of: .white), location: 0),
-                                        .init(color: Color.auAccent2Ramp(500), location: 0.55),
-                                        .init(
-                                            color: Color.auAccent2Ramp(600).opacity(0.8),
-                                            location: 1),
-                                    ],
-                                    startPoint: .top, endPoint: .bottom
-                                )
-                            )
-                            .overlay(
-                                AUIcon(
-                                    kind: .check, size: size * 0.34,
-                                    color: Color(red: 0.984, green: 0.98, blue: 0.961))  // #fbfaf5
-                            )
-                    case .locked:
-                        Circle()
-                            .fill(.ultraThinMaterial)
-                            .overlay(
-                                Circle().strokeBorder(
-                                    Color.auText.opacity(0.18),
-                                    style: StrokeStyle(lineWidth: 1.5, dash: [5, 4])
-                                )
-                            )
-                            .overlay(
-                                AUIcon(kind: .lock, size: size * 0.3, color: .auText.opacity(0.38)))
+            ZStack {
+                switch state {
+                case .open:
+                    // Halo sits behind the disc (design: absolute sibling, not clipped).
+                    if !reduceMotion {
+                        Circle().fill(Color.auAccent)
+                            .frame(width: size + 20, height: size + 20)
+                            .modifier(PulseHalo())
                     }
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color.auAccent.opacity(0.8), location: 0),
+                                    .init(color: Color.auAccent.opacity(0.9), location: 0.52),
+                                    .init(
+                                        color: Color.auAccent2Ramp(800).opacity(0.92),
+                                        location: 1),
+                                ],
+                                startPoint: .top, endPoint: .bottom
+                            )
+                        )
+                        .overlay(Circle().strokeBorder(.white.opacity(0.28), lineWidth: 1))
+                        .overlay(
+                            VStack(spacing: 2) {
+                                AUIcon(
+                                    kind: .play, size: 26,
+                                    color: Color(red: 1, green: 0.965, blue: 0.918))  // #fff6ea
+                                Text(cta)
+                                    .font(.figtree(.bold, size: 10))
+                                    .tracking(1.2)
+                                    .textCase(.uppercase)
+                            }
+                            .foregroundStyle(Color(red: 1, green: 0.965, blue: 0.918))
+                        )
+                        .frame(width: size, height: size)
+                        .modifier(Breath(enabled: !reduceMotion))
+                case .done:
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                stops: [
+                                    .init(
+                                        color: Color.auAccent2Ramp(500).mixed(
+                                            with: 0.26, of: .white), location: 0),
+                                    .init(color: Color.auAccent2Ramp(500), location: 0.55),
+                                    .init(
+                                        color: Color.auAccent2Ramp(600).opacity(0.8),
+                                        location: 1),
+                                ],
+                                startPoint: .top, endPoint: .bottom
+                            )
+                        )
+                        .overlay(
+                            AUIcon(
+                                kind: .check, size: min(30, size * 0.4),
+                                color: Color(red: 0.984, green: 0.98, blue: 0.961))  // #fbfaf5
+                        )
+                        .frame(width: size, height: size)
+                case .locked:
+                    Circle()
+                        .fill(Color.auFill.opacity(0.72))
+                        .overlay(
+                            Circle().strokeBorder(
+                                Color.auText.opacity(0.18),
+                                style: StrokeStyle(lineWidth: 1.5, dash: [5, 4])
+                            )
+                        )
+                        .overlay(
+                            AUIcon(kind: .lock, size: 19, color: .auText.opacity(0.38))
+                        )
+                        .frame(width: size, height: size)
                 }
-                .frame(width: size, height: size)
-
-                Text(label)
-                    .font(.figtree(.semibold, size: 12.5))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .opacity(state == .locked ? 0.45 : 1)
-
-                Text(meta)
-                    .font(.figtree(.regular, size: 10))
-                    .foregroundStyle(Color.auText.opacity(0.52))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .opacity(state == .locked ? 0.45 : 1)
             }
-            .frame(width: 132)
+            // Keep layout box = disc size so `.position` centers on the stop
+            // (halo paints outside without shifting the layout origin).
+            .frame(width: size, height: size)
         }
         .buttonStyle(.auTap)
         .accessibilityLabel("Lesson \(index + 1), \(label)")
