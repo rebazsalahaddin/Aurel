@@ -10,7 +10,7 @@ import XCTest
 /// which `tools/export-design-tokens.mjs` evaluates out of the three CSS source
 /// layers (base styles.css → Aurel.dc.html shell → CourseScreen.dc.html player).
 /// The JSON lives in the app bundle (the test host), like the course JSON.
-final class DesignTokenTests: XCTestCase {
+final class DesignTokenTests: @MainActor XCTestCase {
 
     // MARK: - Fixture
 

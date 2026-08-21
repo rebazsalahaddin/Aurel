@@ -52,6 +52,7 @@ struct HomeView: View {
                 }
                 .buttonStyle(.auTap)
                 .accessibilityLabel("Settings")
+                .accessibilityIdentifier("au.home.settings")
             }
             .padding(.top, 62)
             .padding(.bottom, 28)

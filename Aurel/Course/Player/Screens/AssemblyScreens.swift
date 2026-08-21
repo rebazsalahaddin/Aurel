@@ -273,7 +273,8 @@ struct SubstitutionScreenView: View {
                                 ForEach(sl.opts, id: \.self) { opt in
                                     SubOptionChip(
                                         opt: opt,
-                                        on: m.picked[sl.slot] == opt
+                                        on: m.picked[sl.slot] == opt,
+                                        aid: "au.player.chip.\(opt.auSlug)"
                                     ) {
                                         m.picked[sl.slot] = opt
                                     }
@@ -422,6 +423,7 @@ struct MissionScreenView: View {
 struct SubOptionChip: View {
     let opt: String
     let on: Bool
+    var aid: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -434,6 +436,7 @@ struct SubOptionChip: View {
                 .background(chipBackground)
         }
         .buttonStyle(.auTap)
+        .accessibilityIdentifier(aid ?? "au.player.chip.\(opt.auSlug)")
     }
 
     @ViewBuilder

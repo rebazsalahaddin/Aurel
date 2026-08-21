@@ -76,6 +76,8 @@ targets:
     platform: iOS
     sources:
       - path: AurelUITests
+      # The walker solves "Put in order" items from the authored key.
+      - path: Aurel/Resources/Course/a1-course.json
     dependencies:
       - target: Aurel
     settings:

@@ -1,0 +1,367 @@
+import XCTest
+
+/// Milestone suite — e2e lesson completion, background/resume, Dynamic-Type
+/// AX sizes, and the tab/settings/paywall round trip. Runs at loop milestones
+/// and at exit (~15–25 min on the gate device; `qa/run-ui-ax.sh` runs the AX
+/// test on the matrix devices).
+///
+/// The lesson walker is state-driven, not scripted: the authored retry ladder
+/// guarantees forward progress (miss → hint → reveal), so the walk needs no
+/// baked answer keys to complete a lesson end-to-end. Answer-key-driven walks
+/// land with the content-conformance fixture in a loop iteration.
+@MainActor
+final class MilestoneSuite: XCTestCase {
+    private var app: XCUIApplication!
+
+    override func setUp() async throws {
+        try await super.setUp()
+        continueAfterFailure = false
+        app = XCUIApplication()
+        // Self-sufficiency: suites run alphabetically (Milestone before
+        // Smoke), so this suite cannot assume an onboarded store — bootstrap
+        // to Home through the non-persisting fast path instead.
+        app.launchArguments = ["-AUREL_TEST_START", "home"]
+    }
+
+    // MARK: helpers (same query discipline as SmokeSuite)
+
+    @discardableResult
+    private func anyElement(_ id: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(identifier: id).firstMatch
+    }
+
+    @discardableResult
+    private func wait(
+        _ id: String, timeout: TimeInterval = 6, file: StaticString = #filePath, line: UInt = #line
+    ) -> XCUIElement {
+        let candidates: [XCUIElement] = [
+            app.buttons.matching(identifier: id).firstMatch,
+            app.textFields.matching(identifier: id).firstMatch,
+            anyElement(id),
+        ]
+        for candidate in candidates where candidate.waitForExistence(timeout: timeout) {
+            return candidate
+        }
+        XCTAssertTrue(false, "Missing element \(id)", file: file, line: line)
+        return candidates[0]
+    }
+
+    @discardableResult
+    private func tap(_ id: String, timeout: TimeInterval = 8) -> XCUIElement {
+        let e = wait(id, timeout: timeout)
+        e.tap()
+        return e
+    }
+
+    private func onHome(timeout: TimeInterval = 10) -> Bool {
+        app.buttons.matching(identifier: "au.tab.learn").firstMatch.waitForExistence(
+            timeout: timeout)
+    }
+
+    /// The authored tile answers, keyed by the sorted tile set: order-kind
+    /// practice items, standalone tile/order tasks, and emailAssembly keys
+    /// from a1-course.json (bundled with the UI-test target).
+    private static let orderKeys: [String: [String]] = {
+        guard
+            let url = Bundle(for: MilestoneSuite.self).url(
+                forResource: "a1-course", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let chapters = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]]
+        else { return [:] }
+        var map: [String: [String]] = [:]
+        func add(_ tiles: [String]?, _ key: [String]?) {
+            guard let tiles, let key, !tiles.isEmpty else { return }
+            map[tiles.sorted().joined(separator: "\u{1F}")] = key
+        }
+        for ch in chapters {
+            for les in ch["lessons"] as? [[String: Any]] ?? [] {
+                for sc in les["screens"] as? [[String: Any]] ?? [] {
+                    for it in sc["items"] as? [[String: Any]] ?? [] {
+                        add(it["tiles"] as? [String], it["key"] as? [String])
+                    }
+                    for t in sc["tasks"] as? [[String: Any]] ?? [] {
+                        add(t["tiles"] as? [String], t["key"] as? [String])
+                    }
+                    add(sc["tiles"] as? [String], sc["key"] as? [String])
+                }
+            }
+        }
+        return map
+    }()
+
+    /// The practice Next/Go-on pill — only when actually tappable (the pill
+    /// is rendered disabled at 0.45 opacity until the item is passable).
+    private func enabledGoOn(timeout: TimeInterval = 1) -> XCUIElement? {
+        let go = app.buttons.matching(identifier: "au.player.go-on").firstMatch
+        guard go.waitForExistence(timeout: timeout), go.isEnabled else { return nil }
+        return go
+    }
+
+    /// Order items: solve deterministically from the authored key — tap the
+    /// tile buttons by label, in key order (fresh items only: the line starts
+    /// empty because advance()/goto() reset the order).
+    private func solveOrderItemIfPresent() -> Bool {
+        let tiles = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH 'au.player.tile.'"))
+        guard tiles.firstMatch.exists else { return false }
+        let labels: [String] = (0..<tiles.count).compactMap { i in
+            let t = tiles.element(boundBy: i)
+            return t.exists ? t.label : nil
+        }
+        guard !labels.isEmpty,
+            let key = Self.orderKeys[labels.sorted().joined(separator: "\u{1F}")]
+        else { return false }
+        guard Set(key).count == key.count else { return false }  // duplicate tiles: skip solving
+        for word in key {
+            let tile = tiles.matching(NSPredicate(format: "label CONTAINS %@", word)).firstMatch
+            if tile.exists, tile.isHittable { tile.tap() }
+        }
+        return true
+    }
+
+    /// Walk course screens until the lesson finishes and Home returns.
+    /// Returns the number of advances performed. Cheap visible-state
+    /// signature: leading static text labels + control count. Unchanged
+    /// across rounds while the walker acts = true stall.
+    private func stateSignature() -> String {
+        let texts = app.staticTexts.allElementsBoundByIndex.prefix(5).map(\.label)
+        let controls = app.buttons.count
+        return texts.joined(separator: "|") + "#\(controls)"
+    }
+
+    @discardableResult
+    private func walkLessonToEnd(timeout: TimeInterval = 480) -> Int {
+        var advances = 0
+        var stalledRounds = 0
+        var signature = stateSignature()
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if onHome(timeout: 2) { return advances }
+
+            // Order items: solved from the authored key (fresh items only).
+            if solveOrderItemIfPresent() {
+                advances += 1
+                continue
+            }
+
+            // Practice options: climb the authored retry ladder (a miss
+            // nudges, the third reveals and enables Go-on). The pill merely
+            // *existing* is not enough — it renders disabled until passable.
+            let options = app.buttons.matching(
+                NSPredicate(format: "identifier BEGINSWITH 'au.player.option.'"))
+            if options.firstMatch.exists {
+                var picks = 0
+                let n = max(1, options.count)
+                while picks < 4, enabledGoOn(timeout: 0.5) == nil {
+                    let option = options.element(boundBy: picks % n)
+                    if option.exists, option.isHittable {
+                        option.tap()
+                        advances += 1
+                    }
+                    picks += 1
+                }
+            }
+
+            // Substitution chips: pick the first chip in each slot group.
+            let chips = app.buttons.matching(
+                NSPredicate(format: "identifier BEGINSWITH 'au.player.chip.'"))
+            if chips.firstMatch.exists {
+                var idx = 0
+                while true {
+                    let chip = chips.element(boundBy: idx)
+                    guard chip.exists, chip.isHittable else { break }
+                    chip.tap()
+                    advances += 1
+                    idx += 1
+                }
+            }
+
+            // The gated pill — only when enabled.
+            if let go = enabledGoOn(timeout: 3) {
+                go.tap()
+                advances += 1
+                continue
+            }
+
+            // Generic advancement: any *enabled* au.btn.* CTA on this screen
+            // (Check / Next card / Go on / Skip — say it later …). Disabled
+            // ones are skipped — the option/order passes above satisfy them.
+            let ctas = app.buttons.matching(
+                NSPredicate(format: "identifier BEGINSWITH 'au.btn.' AND enabled == true"))
+            var tapped = false
+            for i in 0..<max(ctas.count, 4) {
+                let cta = ctas.element(boundBy: i)
+                guard cta.exists, cta.isHittable else { continue }
+                cta.tap()
+                advances += 1
+                tapped = true
+                break
+            }
+            if tapped { continue }
+
+            if !options.firstMatch.exists {
+                // A screen type without an exposed control — tap the screen
+                // center (the promise screen's "tap anywhere").
+                app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6)).tap()
+                advances += 1
+            }
+
+            let newSignature = stateSignature()
+            if newSignature == signature {
+                stalledRounds += 1
+                if stalledRounds == 6 {
+                    let tree = XCTAttachment(string: app.debugDescription)
+                    tree.lifetime = .keepAlways
+                    tree.name = "walker-stall-tree.txt"
+                    add(tree)
+                    let shot = XCTAttachment(screenshot: app.screenshot())
+                    shot.lifetime = .keepAlways
+                    shot.name = "walker-stall.png"
+                    add(shot)
+                    XCTFail("Walker stalled — screen unchanged for 6 rounds; tree attached")
+                    return advances
+                }
+            } else {
+                stalledRounds = 0
+                signature = newSignature
+            }
+        }
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.lifetime = .keepAlways
+        shot.name = "walker-stall.png"
+        add(shot)
+        XCTFail("Lesson did not finish within \(timeout)s")
+        return advances
+    }
+
+    // MARK: 1 — the starter lesson, end to end
+
+    func test1FirstLessonEndToEnd() {
+        app.launch()
+        XCTAssertTrue(onHome(timeout: 30))
+        app.swipeUp()
+        tap("au.home.node.0")
+        XCTAssertTrue(
+            app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
+                timeout: 10))
+
+        let advances = walkLessonToEnd()
+        XCTAssertGreaterThan(advances, 10, "the starter lesson has more than ten screens")
+        XCTAssertTrue(onHome(), "finishing the lesson must return Home")
+    }
+
+    // MARK: 2 — background and resume mid-lesson (twice)
+
+    func test2BackgroundResumeMidLesson() {
+        app.launch()
+        XCTAssertTrue(onHome(timeout: 30))
+        app.swipeUp()
+        tap("au.home.node.0")
+        XCTAssertTrue(
+            app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
+                timeout: 10))
+
+        for cycle in 0..<2 {
+            for _ in 0...cycle {
+                let go = app.buttons.matching(identifier: "au.player.go-on").firstMatch
+                if go.waitForExistence(timeout: 4) { go.tap() }
+            }
+            XCUIDevice.shared.press(.home)
+            sleep(2)
+            app.activate()
+            XCTAssertTrue(
+                app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
+                    timeout: 10),
+                "cycle \(cycle): the player must survive backgrounding")
+        }
+
+        walkLessonToEnd()
+        XCTAssertTrue(onHome())
+    }
+
+    // MARK: 3 — Dynamic Type at AX sizes (run on matrix devices via run-ui-ax.sh)
+
+    func test3DynamicTypeAXHittability() {
+        app.launchArguments = [
+            "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL",
+            "-AUREL_TEST_START", "home",
+        ]
+        app.launch()  // setUp's fast path + the AX content size
+        XCTAssertTrue(onHome(timeout: 30))
+
+        let window = app.windows.firstMatch
+        func assertUsable(_ id: String, file: StaticString = #filePath, line: UInt = #line) {
+            let e = wait(id, timeout: 10, file: file, line: line)
+            XCTAssertTrue(e.isHittable, "\(id) not hittable at AX3XL", file: file, line: line)
+            XCTAssertTrue(
+                window.frame.contains(e.frame),
+                "\(id) frame \(e.frame) outside window \(window.frame)",
+                file: file, line: line)
+        }
+        assertUsable("au.tab.learn")
+        assertUsable("au.tab.practice")
+        assertUsable("au.home.settings")
+
+        // Settings surface at AX size.
+        tap("au.home.settings")
+        assertUsable("au.settings.type.0")
+        assertUsable("au.settings.type.4")
+    }
+
+    // MARK: 4 — tab matrix + settings/paywall round trip
+
+    func test4TabMatrixAndSettingsPaywall() {
+        app.launch()
+        XCTAssertTrue(onHome(timeout: 30))
+
+        for tab in ["au.tab.practice", "au.tab.progress", "au.tab.you", "au.tab.learn"] {
+            tap(tab, timeout: 10)
+        }
+        XCTAssertTrue(onHome())
+
+        tap("au.home.settings")
+        tap("au.settings.type.4")  // Largest
+        tap("au.settings.type.2")  // back to Default
+        // Leave settings via the back control (label "Settings" → back).
+        let back = app.navigationBars.buttons.firstMatch
+        if back.waitForExistence(timeout: 3) { back.tap() } else { app.swipeDown() }
+        XCTAssertTrue(
+            onHome(timeout: 10)
+                || app.buttons.matching(identifier: "au.home.settings").firstMatch
+                    .waitForExistence(timeout: 5)
+        )
+
+        // Paywall round trip via the next-chapter card.
+        app.swipeUp()
+        let next = app.buttons.matching(identifier: "au.home.next-chapter").firstMatch
+        if next.waitForExistence(timeout: 6) {
+            next.tap()
+            XCTAssertTrue(
+                anyElement("au.btn.start-free-trial").waitForExistence(timeout: 8)
+                    || anyElement("au.btn.begin-trial").waitForExistence(timeout: 8)
+                    || app.buttons.matching(NSPredicate(format: "label CONTAINS 'trial'"))
+                        .firstMatch
+                        .waitForExistence(timeout: 8),
+                "paywall trial CTA not found")
+        }
+    }
+
+    // MARK: 5 — Lesson 2 end to end (S0-002 UI regression: L2's practice
+    // screens carry "Put in order" items whose Go-on used to stay disabled
+    // forever — the course dead-ended here)
+
+    func test5SecondLessonEndToEnd() {
+        app.launch()
+        XCTAssertTrue(onHome(timeout: 30))
+        app.swipeUp()
+        // test1 finished L1, so the open node is L2 ("You and Your Name").
+        tap("au.home.node.1", timeout: 10)
+        XCTAssertTrue(
+            app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
+                timeout: 10))
+
+        let advances = walkLessonToEnd()
+        XCTAssertGreaterThan(advances, 10, "L2 (10 screens, 31 items) is a full walk")
+        XCTAssertTrue(onHome(), "finishing L2 must return Home")
+    }
+}
