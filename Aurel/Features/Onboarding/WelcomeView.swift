@@ -103,7 +103,7 @@ struct WelcomeView: View {
                     .accessibilityIdentifier("au.btn.begin-the-path")
                     .auStagger(3)
 
-                    // Already learning? · Sign in
+                // Already learning? · Sign in — keep on one line (design flex row).
                     HStack(spacing: 15) {
                         LinearGradient(
                             colors: [
@@ -118,20 +118,22 @@ struct WelcomeView: View {
                                 Text("Already learning?")
                                     .font(.figtree(.regular, size: 13.5))
                                     .tracking(0.14)
-                                    .foregroundStyle(
-                                        AUSceneArt.duskCream.opacity(0.58))
+                                    .foregroundStyle(AUSceneArt.duskCream.opacity(0.58))
+                                    .fixedSize()
                                 Text("Sign in")
                                     .font(.caprasimo(size: 16))
                                     .tracking(0.19)
                                     .foregroundStyle(AUSceneArt.duskCream)
                                     .underline(
-                                        color: AUSceneArt.duskCream.opacity(
-                                            0.38)
+                                        color: AUSceneArt.duskCream.opacity(0.38)
                                     )
+                                    .fixedSize()
                                     .padding(.bottom, 2)
                             }
+                            .fixedSize()
                         }
                         .buttonStyle(.auTap)
+                        .layoutPriority(1)
                         LinearGradient(
                             colors: [
                                 .clear, AUSceneArt.duskCream.opacity(0.22),

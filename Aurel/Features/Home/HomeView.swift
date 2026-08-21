@@ -22,7 +22,9 @@ struct HomeView: View {
                     dayArcCard
                     lessonPath
                 }
-                .padding(.bottom, 130)
+                // Clearance for the floating glass tab (design bottom:26 + bar ~72)
+                // plus enough room that the first locked stop is not buried.
+                .padding(.bottom, 160)
             }
             .ignoresSafeArea(edges: .top)
 
@@ -312,23 +314,28 @@ struct HomeView: View {
     /// Design canvas is 402×724 (svg 402×816; card tops at 570). Laid out
     /// in design points, then uniformly scaled to the live width so stops,
     /// labels, and the next-chapter card keep authored proportions.
+    ///
+    /// IMPORTANT: `402 / 724` is integer division (= 0) — always use
+    /// CGFloat literals or the aspect-ratio collapses and the path clips
+    /// under the tab bar.
     private var lessonPath: some View {
+        // Offer the design aspect ratio to ScrollView first; GeometryReader
+        // inside the overlay then gets a real non-zero size to scale into.
+        // (Bare GeometryReader expands unboundedly / collapses in ScrollView.)
         Color.clear
-            .aspectRatio(402 / 724, contentMode: .fit)
+            .aspectRatio(402.0 / 724.0, contentMode: .fit)
             .overlay {
                 GeometryReader { geo in
-                    let scale = max(geo.size.width, 1) / 402
+                    let scale = max(geo.size.width, 1) / 402.0
                     let nodes = pathNodes
                     let cta = env.router.basePos == 0 && pathAt == 0 ? "Begin" : "Resume"
 
                     ZStack(alignment: .topLeading) {
-                        // Winding thread (design coords).
                         WindingPathShape()
                             .stroke(
                                 Color.auDivider,
                                 style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [3, 9])
                             )
-                            .frame(width: 402, height: 816, alignment: .topLeading)
 
                         WindingPathShape(firstLegOnly: true)
                             .stroke(
@@ -336,9 +343,7 @@ struct HomeView: View {
                                 style: StrokeStyle(lineWidth: 2.5, lineCap: .round)
                             )
                             .opacity(pathAt > 0 ? 1 : 0.55)
-                            .frame(width: 402, height: 816, alignment: .topLeading)
 
-                        // Discs — design `translate(-50%, -50%)` via `.position`.
                         ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
                             LessonPathNode(
                                 state: node.state,
@@ -351,9 +356,10 @@ struct HomeView: View {
                             .position(x: node.x, y: node.y)
                         }
 
-                        // Side labels only (Caprasimo heading + meta).
                         ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
-                            VStack(alignment: node.alignRight ? .trailing : .leading, spacing: 3) {
+                            VStack(
+                                alignment: node.alignRight ? .trailing : .leading, spacing: 3
+                            ) {
                                 Text(node.label)
                                     .font(.caprasimo(size: i == 0 ? 16 : 15))
                                     .multilineTextAlignment(
@@ -372,7 +378,6 @@ struct HomeView: View {
                             )
                             .opacity(node.state == .locked ? 0.45 : 1)
                             .position(
-                                // left: leading edge at labelX; right: trailing edge at labelX
                                 x: node.alignRight
                                     ? node.labelX - node.labelWidth / 2
                                     : node.labelX + node.labelWidth / 2,
@@ -380,7 +385,6 @@ struct HomeView: View {
                             )
                         }
 
-                        // Next chapter card — left:24 right:24 top:570
                         Button {
                             env.router.nav(.paywall)
                         } label: {

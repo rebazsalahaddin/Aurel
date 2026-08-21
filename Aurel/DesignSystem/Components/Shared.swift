@@ -229,8 +229,9 @@ struct WelcomeDusk: View {
                     endRadius: geo.size.width * 0.61
                 )
 
-                // Dunes (bottom third, stretched)
-                GeometryReader { duneGeo in
+                // Dunes — bottom third, pinned to the bottom edge of the scene.
+                VStack(spacing: 0) {
+                    Spacer(minLength: 0)
                     ZStack(alignment: .bottom) {
                         DuneLayer(
                             fill: Color(UIColor(hex: 0x4a3220)),
@@ -244,28 +245,30 @@ struct WelcomeDusk: View {
                             fill: Color(UIColor(hex: 0x15100d)), rim: .clear, rimWidth: 0,
                             path: "M0 172 Q90 136 174 160 Q246 180 316 148 Q360 130 402 166")
                     }
-                    .frame(height: max(1, duneGeo.size.height * 0.33))
+                    .frame(height: max(1, geo.size.height * 0.33))
+                    .frame(maxWidth: .infinity)
                 }
 
                 GrainOverlay()
 
-                // Scrim
+                // Scrim — keep the mid/horizon readable so the sun + dunes stay visible
+                // under the hero copy (design darkens the bottom for type).
                 LinearGradient(
                     stops: [
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.44),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.38),
                             location: 0),
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.03),
-                            location: 0.22),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.0),
+                            location: 0.20),
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.3),
-                            location: 0.54),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.18),
+                            location: 0.48),
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.8),
-                            location: 0.8),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.55),
+                            location: 0.72),
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.95),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.78),
                             location: 1),
                     ],
                     startPoint: .top, endPoint: .bottom
@@ -320,7 +323,11 @@ struct WelcomeDusk: View {
 }
 
 /// One dune fill (+ optional rim stroke), authored in a 402×230 viewBox,
-/// stretched to width with the bottom pinned.
+/// stretched to the live layer size with the bottom pinned.
+///
+/// Geometry is mapped inside `path(in:)` (no scaleEffect) so the dunes
+/// always paint into the proposed rect — the prior scaleEffect stack was
+/// collapsing to an empty frame and wiping the Welcome/Plan horizon.
 struct DuneLayer: View {
     let fill: Color
     let rim: Color
@@ -328,36 +335,46 @@ struct DuneLayer: View {
     let path: String  // the authored top-edge path
 
     var body: some View {
-        GeometryReader { geo in
-            let scaleY = geo.size.height / 230
-            ZStack(alignment: .top) {
-                SVGPathShape(d: path)
+        ZStack {
+            DuneFillShape(curve: path)
+                .fill(fill)
+            if rimWidth > 0 {
+                DuneRidgeShape(curve: path)
                     .stroke(rim, style: StrokeStyle(lineWidth: rimWidth, lineCap: .round))
-                    .scaleEffect(x: geo.size.width / 402, y: scaleY, anchor: .topLeading)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            }
-            .background(alignment: .top) {
-                // Fill below the rim curve, to the bottom of the layer.
-                GeometryReader { g in
-                    DuneFillShape(curve: path)
-                        .fill(fill)
-                        .scaleEffect(
-                            x: g.size.width / 402, y: g.size.height / 230, anchor: .topLeading)
-                }
             }
         }
     }
 
-    /// The rim curve closed down to the layer's bottom edge.
+    /// Ridge curve only, stretched from the 402×230 design box into `rect`.
+    private struct DuneRidgeShape: Shape {
+        let curve: String
+
+        func path(in rect: CGRect) -> Path {
+            let base = SVGPathShape(d: curve).path(
+                in: CGRect(x: 0, y: 0, width: 402, height: 230))
+            let sx = max(rect.width, 1) / 402
+            let sy = max(rect.height, 1) / 230
+            let tf = CGAffineTransform(scaleX: sx, y: sy)
+                .translatedBy(x: rect.minX / sx, y: rect.minY / sy)
+            return base.applying(tf)
+        }
+    }
+
+    /// Ridge closed down to the bottom of the design box, then stretched.
     private struct DuneFillShape: Shape {
         let curve: String
 
         func path(in rect: CGRect) -> Path {
-            var p = SVGPathShape(d: curve).path(in: CGRect(x: 0, y: 0, width: 402, height: 230))
-            p.addLine(to: CGPoint(x: 402, y: 230))
-            p.addLine(to: CGPoint(x: 0, y: 230))
-            p.closeSubpath()
-            return p
+            var base = SVGPathShape(d: curve).path(
+                in: CGRect(x: 0, y: 0, width: 402, height: 230))
+            base.addLine(to: CGPoint(x: 402, y: 230))
+            base.addLine(to: CGPoint(x: 0, y: 230))
+            base.closeSubpath()
+            let sx = max(rect.width, 1) / 402
+            let sy = max(rect.height, 1) / 230
+            let tf = CGAffineTransform(scaleX: sx, y: sy)
+                .translatedBy(x: rect.minX / sx, y: rect.minY / sy)
+            return base.applying(tf)
         }
     }
 }
@@ -416,7 +433,8 @@ struct PlanDusk: View {
                     .position(x: geo.size.width * 0.70, y: geo.size.height * 0.52)
                     .modifier(WelcomeDusk.SunRise())
 
-                GeometryReader { duneGeo in
+VStack(spacing: 0) {
+                    Spacer(minLength: 0)
                     ZStack(alignment: .bottom) {
                         DuneLayer(
                             fill: Color(UIColor(hex: 0x3a2718)), rim: .clear, rimWidth: 0,
@@ -425,7 +443,8 @@ struct PlanDusk: View {
                             fill: Color(UIColor(hex: 0x1b1410)), rim: .clear, rimWidth: 0,
                             path: "M0 112 Q94 80 182 102 Q256 120 324 94 Q366 78 402 102")
                     }
-                    .frame(height: max(1, duneGeo.size.height * 0.26))
+                    .frame(height: max(1, geo.size.height * 0.26))
+                    .frame(maxWidth: .infinity)
                 }
 
                 GrainOverlay()
@@ -433,19 +452,19 @@ struct PlanDusk: View {
                 LinearGradient(
                     stops: [
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.5),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.42),
                             location: 0),
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.1),
-                            location: 0.26),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.05),
+                            location: 0.24),
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.42),
-                            location: 0.6),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.28),
+                            location: 0.55),
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.88),
-                            location: 0.88),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.62),
+                            location: 0.82),
                         .init(
-                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.96),
+                            color: Color(red: 0.063, green: 0.051, blue: 0.047).opacity(0.82),
                             location: 1),
                     ],
                     startPoint: .top, endPoint: .bottom
