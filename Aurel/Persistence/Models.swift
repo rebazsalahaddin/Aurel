@@ -30,6 +30,15 @@ final class LearnerProfile {
     var dayRecallDone: Bool = false
     var dayArcsCompleted: Int = 0
 
+    // Day rollover (S1-009): which start-of-day the two-halves flags belong
+    // to, the streak banked when that day began, whether the day's point was
+    // already counted, and this month's grace-token spend.
+    var activeDay: Date? = nil
+    var dayStartStreak: Int = 0
+    var dayCounted: Bool = false
+    var graceMonth: Int = 0  // YYYYMM of the tracked month
+    var graceUsed: Int = 0
+
     // Quick-practice mistake queue (bank indexes into CourseStore.allPracticeItems)
     var mistakeBankIndexes: [Int] = []
 

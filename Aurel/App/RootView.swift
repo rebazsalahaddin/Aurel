@@ -5,6 +5,7 @@ import SwiftUI
 /// prototype's `sc-if` screen blocks. Features land here as they are built.
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var env: AppEnvironment?
     /// S1-003: shown once when the on-disk store was corrupt and got moved
@@ -42,6 +43,13 @@ struct RootView: View {
         .onChange(of: typeStep) { _, step in AUTypeScale.step = step }
         .onChange(of: dynamicTypeSize) { _, size in
             AUTypeScale.systemCategory = UIContentSizeCategory(size)
+        }
+        // S1-009: crossing midnight in the background must still roll the day
+        // over when the app comes back — durable day flags never outlive
+        // their day.
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            env?.router.rolloverDayIfNeeded()
         }
         .overlay(alignment: .top) {
             if storeRecovered {

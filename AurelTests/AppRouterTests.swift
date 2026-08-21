@@ -93,4 +93,101 @@ final class AppRouterTests: XCTestCase {
         try await Task.sleep(for: .seconds(0.6))
         XCTAssertEqual(r.assessStep, 0, "the superseded transition must not fire")
     }
+
+    // MARK: S1-009 — day rollover, streak counting, grace
+
+    private let dayCal: Calendar = {
+        var c = Calendar(identifier: .gregorian)
+        c.timeZone = TimeZone(identifier: "UTC")!
+        return c
+    }()
+
+    private func day(_ y: Int, _ m: Int, _ d: Int) -> Date {
+        dayCal.date(from: DateComponents(year: y, month: m, day: d))!
+    }
+
+    /// The full authored loop: both halves → the day counts; a single
+    /// missed day burns a grace token; the flags reset for the new day.
+    /// (AppRouter.init seeds `activeDay` with the real today — the test
+    /// starts from a controlled day 1.)
+    func testDayRolloverCountsCompleteDaysAndBridgesSingleMiss() {
+        let r = AppRouter(course: CourseDecodingTests.store)
+
+        // Day 1, banked chain 0 — both halves done: streak 1, day counted.
+        r.activeDay = day(2026, 8, 19)
+        r.dayStartStreak = 0
+        r.streak = 0
+        r.dayLesson = false
+        r.dayRecall = false
+        r.dayCounted = false
+        r.dayLesson = true
+        r.streak = max(r.streak, 1)  // the lesson half's authored display rule
+        r.dayRecall = true
+        r.dayHalfCompleted()
+        XCTAssertEqual(r.streak, 1)
+        XCTAssertTrue(r.dayCounted)
+
+        // Day 2 arrives (gap 1) with day 1 counted: chain carries, banked = 1.
+        r.rolloverDayIfNeeded(now: day(2026, 8, 20), calendar: dayCal)
+        XCTAssertEqual(r.streak, 1, "the counted day's point stays banked")
+        XCTAssertEqual(r.dayStartStreak, 1)
+        XCTAssertFalse(r.dayLesson, "the new day's halves reset")
+        XCTAssertFalse(r.dayRecall)
+        XCTAssertFalse(r.dayCounted)
+
+        // Day 3 arrives (gap 1) with day 2 missed: grace bridges the chain.
+        r.rolloverDayIfNeeded(now: day(2026, 8, 21), calendar: dayCal)
+        XCTAssertEqual(r.streak, 1, "an isolated miss burns a token, not the chain")
+        XCTAssertEqual(r.graceUsed, 1)
+        XCTAssertEqual(r.dayStartStreak, 1)
+
+        // Day 3 completes both halves: the streak grows by exactly one.
+        r.dayLesson = true
+        r.streak = max(r.streak, 1)
+        r.dayRecall = true
+        r.dayHalfCompleted()
+        XCTAssertEqual(r.streak, 2)
+        // A second dayHalfCompleted call must not double-count.
+        r.dayHalfCompleted()
+        XCTAssertEqual(r.streak, 2)
+    }
+
+    /// A longer gap resets — grace is for isolated misses only.
+    func testLongGapResetsStreak() {
+        let r = AppRouter(course: CourseDecodingTests.store)
+        r.activeDay = day(2026, 8, 10)
+        r.dayStartStreak = 5
+        r.streak = 6
+        r.dayCounted = true
+        r.rolloverDayIfNeeded(now: day(2026, 8, 20), calendar: dayCal)
+        XCTAssertEqual(r.streak, 6, "a counted closing day banks its point")
+        XCTAssertFalse(r.dayCounted)
+
+        r.activeDay = day(2026, 8, 20)
+        r.dayStartStreak = 6
+        r.streak = 6
+        r.dayCounted = false
+        r.rolloverDayIfNeeded(now: day(2026, 8, 27), calendar: dayCal)  // gap 7
+        XCTAssertEqual(r.streak, 0, "a week away resets the chain")
+    }
+
+    /// The second grace token bridges; the third miss resets.
+    func testGraceTokensAreLimitedToTwoPerMonth() {
+        var ruling = StreakEngine.rolloverRuling(
+            closingDayCounted: false, gapDays: 1, graceMonth: 202608, graceUsed: 2,
+            today: day(2026, 8, 15), calendar: dayCal)
+        XCTAssertFalse(ruling.chainContinues, "the third miss in a month resets")
+
+        ruling = StreakEngine.rolloverRuling(
+            closingDayCounted: false, gapDays: 1, graceMonth: 202607, graceUsed: 2,
+            today: day(2026, 8, 15), calendar: dayCal)
+        XCTAssertTrue(ruling.chainContinues, "a new month refills the tokens")
+        XCTAssertEqual(ruling.graceUsed, 1)
+
+        ruling = StreakEngine.rolloverRuling(
+            closingDayCounted: true, gapDays: 1, graceMonth: 202608, graceUsed: 0,
+            today: day(2026, 8, 15), calendar: dayCal)
+        XCTAssertTrue(ruling.chainContinues, "a complete day never spends grace")
+        XCTAssertEqual(ruling.graceUsed, 0)
+    }
 }

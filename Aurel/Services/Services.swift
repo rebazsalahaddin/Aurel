@@ -136,6 +136,35 @@ enum StreakEngine {
     static func graceRemaining(usedThisMonth: Int) -> Int {
         max(0, graceDaysPerMonth - usedThisMonth)
     }
+
+    /// The calendar-month stamp (YYYYMM) a date belongs to.
+    static func monthStamp(_ date: Date, calendar: Calendar = .current) -> Int {
+        calendar.component(.year, from: date) * 100 + calendar.component(.month, from: date)
+    }
+
+    /// The closing-day ruling when a new day begins (S1-009). A complete
+    /// closing day carries the chain; a single missed or partial day may
+    /// consume one of the month's two grace tokens instead of resetting
+    /// (governance: no punitive streak destruction); a gap of more than one
+    /// day resets — grace is for isolated misses. Token spend is tracked per
+    /// calendar month of the new day.
+    static func rolloverRuling(
+        closingDayCounted: Bool,
+        gapDays: Int,
+        graceMonth: Int,
+        graceUsed: Int,
+        today: Date,
+        calendar: Calendar = .current
+    ) -> (chainContinues: Bool, graceMonth: Int, graceUsed: Int) {
+        let month = monthStamp(today, calendar: calendar)
+        var used = graceMonth == month ? graceUsed : 0
+        if closingDayCounted { return (true, month, used) }
+        if gapDays == 1 && used < graceDaysPerMonth {
+            used += 1
+            return (true, month, used)
+        }
+        return (false, month, used)
+    }
 }
 
 // MARK: - Speech recognition (say-aloud; on-device, optional)

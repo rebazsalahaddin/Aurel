@@ -163,6 +163,14 @@ final class AppRouter {
     var arcs = 0
     var dayLesson = false
     var dayRecall = false
+
+    // Day rollover (S1-009) — durable, mirrored onto LearnerProfile.
+    var activeDay: Date? = nil
+    var dayStartStreak = 0
+    var dayCounted = false
+    var graceMonth = 0
+    var graceUsed = 0
+
     var coursePos = 0
     var notif = NotifPrefs()
     var sw = SwitchPrefs()
@@ -198,6 +206,9 @@ final class AppRouter {
         {
             load(from: profile)
         }
+        // Midnight rollover (S1-009): durable day flags must never outlive
+        // their day — the prototype was session-scoped, the port persists.
+        rolloverDayIfNeeded()
         // Verification hook: SIMCTL_CHILD_AUREL_SCREEN=home — routes like the
         // fast path and never writes the store (a debug route must not mark
         // the learner onboarded).
@@ -252,6 +263,11 @@ final class AppRouter {
         arcs = p.dayArcsCompleted
         dayLesson = p.dayLessonDone
         dayRecall = p.dayRecallDone
+        activeDay = p.activeDay
+        dayStartStreak = p.dayStartStreak
+        dayCounted = p.dayCounted
+        graceMonth = p.graceMonth
+        graceUsed = p.graceUsed
         coursePos = p.coursePos
         notif = NotifPrefs(
             dawn: p.notifDawn, sundown: p.notifSundown, milestone: p.notifMilestone,
@@ -288,6 +304,11 @@ final class AppRouter {
         profile.dayArcsCompleted = arcs
         profile.dayLessonDone = dayLesson
         profile.dayRecallDone = dayRecall
+        profile.activeDay = activeDay
+        profile.dayStartStreak = dayStartStreak
+        profile.dayCounted = dayCounted
+        profile.graceMonth = graceMonth
+        profile.graceUsed = graceUsed
         profile.coursePos = coursePos
         profile.notifDawn = notif.dawn
         profile.notifSundown = notif.sundown
@@ -305,6 +326,55 @@ final class AppRouter {
             profile.onboardedAt = profile.onboardedAt ?? Date()
         }
         try? modelContext.save()
+    }
+
+    // MARK: Day rollover + streak accounting (S1-009)
+
+    /// Close out the previous active day and reset the two-halves flags when
+    /// a new day begins. Idempotent within a day (gap <= 0 returns). The
+    /// ruling — chain carries / grace token / reset — comes from
+    /// `StreakEngine.rolloverRuling`; the visible streak semantics are the
+    /// authored ones: the lesson half shows "Day one" (`max(streak, 1)`,
+    /// Aurel.dc.html:1921/2275), and the day's point lands when both halves
+    /// are done ("A day counts when both halves are done", line 2338–2339).
+    func rolloverDayIfNeeded(now: Date = Date(), calendar: Calendar = .current) {
+        let today = calendar.startOfDay(for: now)
+        if let active = activeDay {
+            let gap = calendar.dateComponents([.day], from: active, to: today).day ?? 0
+            if gap <= 0 { return }
+            let ruling = StreakEngine.rolloverRuling(
+                closingDayCounted: dayCounted,
+                gapDays: gap,
+                graceMonth: graceMonth,
+                graceUsed: graceUsed,
+                today: today,
+                calendar: calendar)
+            graceMonth = ruling.graceMonth
+            graceUsed = ruling.graceUsed
+            if ruling.chainContinues {
+                // A counted day already banked its point into `streak`; a
+                // grace-bridged day keeps the banked chain instead.
+                streak = dayCounted ? streak : dayStartStreak
+            } else {
+                streak = 0
+            }
+        }
+        dayStartStreak = streak
+        dayLesson = false
+        dayRecall = false
+        arcs = 0
+        dayCounted = false
+        activeDay = today
+        persist()
+    }
+
+    /// The second half of the day landed — count the day's streak point
+    /// exactly once.
+    func dayHalfCompleted() {
+        if dayLesson && dayRecall && !dayCounted {
+            dayCounted = true
+            streak = dayStartStreak + 1
+        }
     }
 
     // MARK: Simple navigation (the `go` map, line 2027)
@@ -467,6 +537,7 @@ final class AppRouter {
         pending = nil
         dayLesson = true
         streak = max(streak, 1)
+        dayHalfCompleted()
         lessonsDone = max(lessonsDone, baseLessons + (courseLesson + 1) - basePos)
         screen = .home
         persist()
@@ -557,6 +628,7 @@ final class AppRouter {
                 reviewMode = false
                 wasReview = true
                 dayRecall = true
+                dayHalfCompleted()
                 arcs += 1
                 screen = .result
                 persist()
@@ -567,6 +639,7 @@ final class AppRouter {
             streak = max(streak, 1)
             lessonsDone = max(lessonsDone, 1)
             dayLesson = true
+            dayHalfCompleted()
             screen = .result
             persist()
             return
