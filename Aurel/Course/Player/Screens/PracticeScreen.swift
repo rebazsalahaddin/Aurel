@@ -48,10 +48,11 @@ struct PracticeScreenView: View {
             unlockNote
             pauseCard
 
-            if let item = m.item {
-                let canGo = m.done || m.isQuiet
+            if m.item != nil {
+                let canGo = m.itemCanGo
                 APillButton(
-                    title: m.i + 1 < list.count ? "Next" : "Go on", icon: .arrow, disabled: !canGo
+                    title: m.i + 1 < list.count ? "Next" : "Go on", icon: .arrow, disabled: !canGo,
+                    aid: "au.player.go-on"
                 ) {
                     m.advance()
                 }
@@ -786,8 +787,11 @@ struct PracticeScreenView: View {
                 )
                 .padding(.bottom, 14)
 
-            FlowTiles(tiles: task.tiles, taken: Set(m.order), onTap: { m.toggleTile($0) })
-                .padding(.bottom, 14)
+            FlowTiles(
+                tiles: task.tiles, taken: Set(m.order), onTap: { m.toggleTile($0) },
+                aidPrefix: "au.player.tile"
+            )
+            .padding(.bottom, 14)
 
             if m.tileComplete {
                 Text(
@@ -806,6 +810,35 @@ struct PracticeScreenView: View {
                         .fill(m.tileCorrect ? Color.auOkBg : Color.auErrBg)
                 )
                 .foregroundStyle(m.tileCorrect ? Color.auOkText : Color.auErrText)
+                .padding(.bottom, 11)
+            }
+
+            // Hint after a wrong ordering (line 1590: `showHint = …
+            // (tileComplete && !tileCorrect)` for order items). The prototype's
+            // option-item index math (`hints[min(wrong, len) - 1]` with
+            // `wrong = 0` → `-1`) selects nothing — an authored-hints artifact;
+            // port the intent: the first authored hint, rung "Hint 1".
+            if m.tileComplete && !m.tileCorrect, let hints = item.hints, !hints.isEmpty {
+                HStack(alignment: .top, spacing: 10) {
+                    Text("Hint 1")
+                        .font(.figtree(.bold, size: 9.5))
+                        .tracking(1)
+                        .padding(.top, 3)
+                        .foregroundStyle(Color.auAccentText)
+                    Text(hints[0])
+                        .font(.figtree(.regular, size: 13.5))
+                        .lineSpacing(13.5 * 0.5)
+                        .foregroundStyle(Color.auText.opacity(0.66))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.horizontal, 15)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(
+                            Color.auAccent.opacity(0.38),
+                            style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                )
                 .padding(.bottom, 11)
             }
         }
@@ -914,6 +947,9 @@ struct FlowTiles: View {
     let tiles: [String]
     var taken: Set<Int> = []
     var onTap: ((Int) -> Void)? = nil
+    /// UI-test identifier prefix — when set, tiles are `"<prefix>.<index>"`
+    /// (mirrors the TilesScreenView rows, `au.player.tile.<k>`).
+    var aidPrefix: String? = nil
 
     var body: some View {
         FlowLayout(spacing: 9) {
@@ -938,6 +974,7 @@ struct FlowTiles: View {
                         .foregroundStyle(on ? Color.auTintText : Color.auText)
                 }
                 .buttonStyle(.auTap)
+                .accessibilityIdentifier(aidPrefix.map { "\($0).\(k)" } ?? "")
             }
         }
     }

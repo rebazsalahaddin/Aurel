@@ -232,6 +232,17 @@ final class PlayerModel {
 
     var isQuiet: Bool { cur?.screen.kind == .quiz }
 
+    /// Whether Next/Go-on is enabled for the current item — `v.canGo`
+    /// (lines 1489–1490: `st.done || s.type === 'quiz'`) with the order-item
+    /// override at line 1590: `if (itemOrder) { v.canGo = v.tileCorrect }`.
+    /// The port originally dropped that override, so order-kind practice items
+    /// gated on `done` (which only `pick()` sets) and lessons stalled forever.
+    var itemCanGo: Bool {
+        guard let it = item else { return false }
+        if it.kind == "order" { return tileCorrect }
+        return done || isQuiet
+    }
+
     func pick(_ o: PracticeOption, item: PlayerItem) {
         guard !done else { return }
         if isQuiet {
