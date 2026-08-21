@@ -38,6 +38,7 @@ final class AppRouter {
             case "commit": .commit
             case "plan": .plan
             case "assess": .assess
+            case "assessReview": .assessReview
             case "login": .login
             case "home": .home
             case "course": .course
@@ -351,6 +352,19 @@ final class AppRouter {
         assessStep = 6
     }
     func assessStopEarly() { assessStep = 6 }
+
+    /// assessReviewRows (line 2309–2313): one row per PLACEMENT question —
+    /// PLACEMENT is empty by governance, so this is empty exactly as the
+    /// authored projection renders it.
+    struct AssessReviewRow: Equatable {
+        let n: Int
+        let prompt: String
+        let answer: String
+    }
+
+    var assessReviewRows: [AssessReviewRow] {
+        []  // PLACEMENT = [] (DECISIONS.md — placement stubs only until F2)
+    }
     func assessConfirm() {
         screen = .plan
         assessStep = 0
