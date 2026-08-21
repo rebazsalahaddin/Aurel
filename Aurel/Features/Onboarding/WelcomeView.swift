@@ -24,18 +24,18 @@ struct WelcomeView: View {
                             .font(.figtree(.semibold, size: 11.5))
                             .tracking(0.23)
                             .foregroundStyle(
-                                Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.86))
+                                AUSceneArt.duskCream.opacity(0.86))
                     }
                     .padding(.leading, 10)
                     .padding(.trailing, 14)
                     .padding(.vertical, 7)
                     .background(
                         Capsule()
-                            .fill(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.10))
+                            .fill(AUSceneArt.duskCream.opacity(0.10))
                     )
                     .overlay(
                         Capsule().strokeBorder(
-                            Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.18), lineWidth: 1
+                            AUSceneArt.duskCream.opacity(0.18), lineWidth: 1
                         )
                     )
                     .auStagger(0)
@@ -44,7 +44,7 @@ struct WelcomeView: View {
                         .font(.caprasimo(size: 44))
                         .lineSpacing(44 * 0.02)
                         .tracking(-1.1)
-                        .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
+                        .foregroundStyle(AUSceneArt.duskCream)
                         .padding(.top, 22)
                         .auStagger(1)
 
@@ -53,7 +53,7 @@ struct WelcomeView: View {
                     )
                     .font(.figtree(.regular, size: 15.5))
                     .lineSpacing(15.5 * 0.6)
-                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.76))
+                    .foregroundStyle(AUSceneArt.duskCream.opacity(0.76))
                     .frame(maxWidth: 330, alignment: .leading)
                     .padding(.top, 14)
                     .padding(.bottom, 30)
@@ -107,7 +107,7 @@ struct WelcomeView: View {
                     HStack(spacing: 15) {
                         LinearGradient(
                             colors: [
-                                .clear, Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.22),
+                                .clear, AUSceneArt.duskCream.opacity(0.22),
                             ], startPoint: .leading, endPoint: .trailing
                         )
                         .frame(height: 1)
@@ -119,13 +119,13 @@ struct WelcomeView: View {
                                     .font(.figtree(.regular, size: 13.5))
                                     .tracking(0.14)
                                     .foregroundStyle(
-                                        Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.58))
+                                        AUSceneArt.duskCream.opacity(0.58))
                                 Text("Sign in")
                                     .font(.caprasimo(size: 16))
                                     .tracking(0.19)
-                                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
+                                    .foregroundStyle(AUSceneArt.duskCream)
                                     .underline(
-                                        color: Color(red: 0.969, green: 0.937, blue: 0.886).opacity(
+                                        color: AUSceneArt.duskCream.opacity(
                                             0.38)
                                     )
                                     .padding(.bottom, 2)
@@ -134,7 +134,7 @@ struct WelcomeView: View {
                         .buttonStyle(.auTap)
                         LinearGradient(
                             colors: [
-                                .clear, Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.22),
+                                .clear, AUSceneArt.duskCream.opacity(0.22),
                             ], startPoint: .trailing, endPoint: .leading
                         )
                         .frame(height: 1)

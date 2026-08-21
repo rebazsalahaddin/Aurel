@@ -406,7 +406,7 @@ struct ProfileView: View {
                             HStack(spacing: 16) {
                                 AUIcon(
                                     kind: .sparkle, size: 20,
-                                    color: Color(red: 0.133, green: 0.153, blue: 0.102)
+                                    color: AUSceneArt.deepGreen
                                 )
                                 .frame(width: 44, height: 44)
                                 .background(Circle().fill(Color.auAccent2))
@@ -464,7 +464,7 @@ struct ProfileView: View {
                                         if m.done {
                                             AUIcon(
                                                 kind: .check, size: 13,
-                                                color: Color(red: 0.984, green: 0.980, blue: 0.961)
+                                                color: AUSceneArt.onAccent2
                                             )
                                             .frame(width: 21, height: 21)
                                             .background(Circle().fill(Color.auAccent2))
@@ -966,10 +966,10 @@ struct PaywallView: View {
                     RadialGradient(
                         stops: [
                             .init(
-                                color: Color(red: 0.886, green: 0.573, blue: 0.337).opacity(0.56),
+                                color: AUSceneArt.sunMid.opacity(0.56),
                                 location: 0),
                             .init(
-                                color: Color(red: 0.776, green: 0.443, blue: 0.224).opacity(0.22),
+                                color: AUSceneArt.sunDeep.opacity(0.22),
                                 location: 0.44),
                             .init(color: .clear, location: 0.74),
                         ],
@@ -991,13 +991,13 @@ struct PaywallView: View {
                     LinearGradient(
                         stops: [
                             .init(
-                                color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.6),
+                                color: AUSceneArt.onAccent2Deep.opacity(0.6),
                                 location: 0),
                             .init(
-                                color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.46),
+                                color: AUSceneArt.onAccent2Deep.opacity(0.46),
                                 location: 0.38),
                             .init(
-                                color: Color(red: 0.071, green: 0.059, blue: 0.051).opacity(0.5),
+                                color: AUSceneArt.onAccent2Deep.opacity(0.5),
                                 location: 0.72),
                             .init(color: Color.auBackground, location: 1),
                         ],
@@ -1015,11 +1015,11 @@ struct PaywallView: View {
                     } label: {
                         AUIcon(
                             kind: .close, size: 17,
-                            color: Color(red: 0.969, green: 0.937, blue: 0.886)
+                            color: AUSceneArt.duskCream
                         )
                         .frame(width: 44, height: 44)
                         .background(
-                            Circle().fill(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.2))
+                            Circle().fill(AUSceneArt.duskCream.opacity(0.2))
                         )
                     }
                     .buttonStyle(.auTap)
@@ -1039,7 +1039,7 @@ struct PaywallView: View {
                     .font(.caprasimo(size: 36))
                     .tracking(-0.9)
                     .lineSpacing(36 * 0.06)
-                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
+                    .foregroundStyle(AUSceneArt.duskCream)
                     .padding(.bottom, 12)
 
                 Text(
@@ -1047,7 +1047,7 @@ struct PaywallView: View {
                 )
                 .font(.figtree(.regular, size: 14.5))
                 .lineSpacing(14.5 * 0.6)
-                .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.75))
+                .foregroundStyle(AUSceneArt.duskCream.opacity(0.75))
                 .frame(maxWidth: 290, alignment: .leading)
                 .padding(.bottom, 26)
 

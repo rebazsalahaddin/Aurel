@@ -137,7 +137,7 @@ struct LessonRunnerView: View {
                                 .padding(.top, 18)
                                 .overlay(alignment: .top) {
                                     Divider().overlay(
-                                        Color(red: 0.969, green: 0.910, blue: 0.820).opacity(0.2)
+                                        AUSceneArt.duskHighlight.opacity(0.2)
                                     ).padding(.top, -9)
                                 }
                         }

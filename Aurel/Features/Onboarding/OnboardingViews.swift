@@ -406,6 +406,123 @@ struct AssessStubView: View {
     }
 }
 
+// MARK: Assess review — "Before we record this" (lines 349–375)
+
+/// The review screen the placement flow opens once all six picks are in
+/// (assessPick → .assessReview, line 336). PLACEMENT is empty by governance
+/// (DECISIONS.md: stubs only until session F2), so the row list is empty
+/// exactly as the authored projection renders it with an empty bank — the
+/// level card and the confirm action still stand on their own.
+struct AssessReviewView: View {
+    @Environment(AppEnvironment.self) private var env
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Spacer()
+            }
+            .frame(height: 44)
+            .overlay(alignment: .leading) {
+                Button {
+                    env.router.assessLast()
+                } label: {
+                    AUIcon(kind: .back, size: 17)
+                        .frame(width: 44, height: 44)
+                        .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
+                }
+                .buttonStyle(.auTap)
+                .accessibilityLabel("Back")
+            }
+            .padding(.bottom, 24)
+
+            Text("Before we record this")
+                .font(.caprasimo(size: 29))
+                .tracking(-0.58)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 5)
+
+            Text("Still nothing saved. Change anything you like, then confirm.")
+                .font(.figtree(.regular, size: 13.5))
+                .lineSpacing(13.5 * 0.45)
+                .foregroundStyle(Color.auText.opacity(0.55))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 18)
+
+            // Rows (assessReviewRows) — empty while PLACEMENT is empty.
+            VStack(spacing: 8) {
+                ForEach(Array(env.router.assessReviewRows.enumerated()), id: \.offset) {
+                    _, row in
+                    HStack(spacing: 13) {
+                        Text("\(row.n)")
+                            .font(.figtree(.semibold, size: 13))
+                            .monospacedDigit()
+                            .foregroundStyle(Color.auText.opacity(0.55))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(row.prompt)
+                                .font(.figtree(.regular, size: 11.5))
+                                .foregroundStyle(Color.auText.opacity(0.52))
+                            Text(row.answer)
+                                .font(.figtree(.semibold, size: 14.5))
+                        }
+                        Spacer(minLength: 8)
+                        Button {
+                            env.router.assessLast()
+                        } label: {
+                            Text("Change")
+                                .font(.figtree(.bold, size: 12.5))
+                        }
+                        .buttonStyle(.auTap)
+                        .foregroundStyle(Color.auAccentText)
+                    }
+                    .padding(.horizontal, 17)
+                    .padding(.vertical, 13)
+                    .background(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .strokeBorder(Color.auEdge, lineWidth: 1)
+                    )
+                    .auLift()
+                }
+            }
+            .padding(.bottom, 12)
+
+            // The level card (levelBand + levelLine, line 2316).
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    Text(env.router.chapterHeader.band)
+                        .font(.caprasimo(size: 22))
+                        .foregroundStyle(Color.auAccent)
+                    Text(
+                        "This puts you at \(env.router.chapterHeader.level). You can move at any time."
+                    )
+                    .font(.figtree(.regular, size: 13))
+                    .lineSpacing(13 * 0.45)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .strokeBorder(Color.auDivider, lineWidth: 1)
+            )
+            .padding(.bottom, 12)
+
+            Spacer(minLength: 0)
+
+            APillButton(title: "Confirm and open my path", icon: .arrow) {
+                env.router.assessConfirm()
+            }
+            .accessibilityIdentifier("au.btn.confirm-and-open-my-path")
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 70)
+        .padding(.bottom, 34)
+    }
+}
+
 // MARK: Plan — "Your plan" over dusk (lines 377–410)
 
 struct PlanView: View {
@@ -429,7 +546,7 @@ struct PlanView: View {
                     .font(.caprasimo(size: 36))
                     .tracking(-0.9)
                     .lineSpacing(36 * 0.06)
-                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
+                    .foregroundStyle(AUSceneArt.duskCream)
                     .padding(.bottom, 12)
 
                 Text(
@@ -437,7 +554,7 @@ struct PlanView: View {
                 )
                 .font(.figtree(.regular, size: 14.5))
                 .lineSpacing(14.5 * 0.6)
-                .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.78))
+                .foregroundStyle(AUSceneArt.duskCream.opacity(0.78))
                 .frame(maxWidth: 300, alignment: .leading)
                 .padding(.bottom, 30)
 
@@ -449,17 +566,17 @@ struct PlanView: View {
                                 .tracking(1.4)
                                 .textCase(.uppercase)
                                 .foregroundStyle(
-                                    Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.6)
+                                    AUSceneArt.duskCream.opacity(0.6)
                                 )
                                 .frame(width: 74, alignment: .leading)
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(row.what)
                                     .font(.caprasimo(size: 16))
-                                    .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886))
+                                    .foregroundStyle(AUSceneArt.duskCream)
                                 Text(row.meta)
                                     .font(.figtree(.regular, size: 12))
                                     .foregroundStyle(
-                                        Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.62))
+                                        AUSceneArt.duskCream.opacity(0.62))
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -467,12 +584,12 @@ struct PlanView: View {
                         .padding(.vertical, 16)
                         .background(
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .fill(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.10))
+                                .fill(AUSceneArt.duskCream.opacity(0.10))
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
                                 .strokeBorder(
-                                    Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.16),
+                                    AUSceneArt.duskCream.opacity(0.16),
                                     lineWidth: 1)
                         )
                         .auStagger(i)
@@ -489,7 +606,7 @@ struct PlanView: View {
                 ALinkButton(title: "See the whole ladder") {
                     env.router.nav(.progress)
                 }
-                .foregroundStyle(Color(red: 0.969, green: 0.937, blue: 0.886).opacity(0.78))
+                .foregroundStyle(AUSceneArt.duskCream.opacity(0.78))
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 34)

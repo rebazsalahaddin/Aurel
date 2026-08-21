@@ -323,3 +323,32 @@ extension View {
         shadow(color: Color(UIColor(hex: 0x2e2b25)).opacity(0.22), radius: 16, y: 6)
     }
 }
+
+// MARK: - Scene art palette (S2-003)
+//
+// The CSS `--au-*` layer defines no custom properties for the dusk/sun art
+// ramps — they are authored as raw hex at their use sites (Aurel.dc.html).
+// Until the design system promotes them to real tokens (owner escalation —
+// extending design/ is out of bounds for the app), these centralize each
+// ramp value ONCE with its authored citation so feature code stops carrying
+// literals. They are theme-fixed art colors: they must never be mapped onto
+// adaptive tokens (e.g. `auAccent` flips in dark mode; the dusk does not).
+
+enum AUSceneArt {
+    /// #f7efe2 — the dusk cream (Aurel.dc.html paywall/plan/scene art, 22 uses).
+    static let duskCream = Color(red: 0.969, green: 0.937, blue: 0.886)
+    /// #fbfaf5 — foreground on accent-2 fills (Aurel.dc.html:999, 2138…).
+    static let onAccent2 = Color(red: 0.984, green: 0.980, blue: 0.961)
+    /// #120f0d — deep foreground on accent-2 fills.
+    static let onAccent2Deep = Color(red: 0.071, green: 0.059, blue: 0.051)
+    /// #fff7ee — foreground on accent-600 fills (Aurel.dc.html:76, 1006…).
+    static let onAccent = Color(red: 1, green: 0.969, blue: 0.933)
+    /// #f7e8d1 — dusk highlight tint.
+    static let duskHighlight = Color(red: 0.969, green: 0.910, blue: 0.820)
+    /// #e29256 — sun mid-tone (Aurel.dc.html:133, 2330).
+    static let sunMid = Color(red: 0.886, green: 0.573, blue: 0.337)
+    /// #c67139 — paywall sun deep stop (theme-fixed; NOT auAccent).
+    static let sunDeep = Color(red: 0.776, green: 0.443, blue: 0.224)
+    /// #22271a — deep green foreground (welcome art).
+    static let deepGreen = Color(red: 0.133, green: 0.153, blue: 0.102)
+}

@@ -24,7 +24,7 @@ struct StoriesView: View {
 
                     hubRow(
                         icon: .match, tint: Color.auAccent2Ramp(600),
-                        iconFg: Color(red: 0.984, green: 0.980, blue: 0.961),
+                        iconFg: AUSceneArt.onAccent2,
                         title: "Scenes",
                         sub: r.sceneTurn > 0 ? "In progress — \(env.scene.title)" : env.scene.title,
                         radius: 28, filled: true
@@ -33,7 +33,7 @@ struct StoriesView: View {
 
                     hubRow(
                         icon: .mic, tint: Color.auAccentRamp(600),
-                        iconFg: Color(red: 1, green: 0.969, blue: 0.933),
+                        iconFg: AUSceneArt.onAccent,
                         title: "Say it aloud",
                         sub: "Hear it, say it, compare — no score",
                         radius: 28, filled: true
@@ -348,7 +348,7 @@ struct SceneView: View {
                                             UnevenCorners(bottomTrailing: 22).fill(
                                                 Color.auAccentRamp(600))
                                         )
-                                        .foregroundStyle(Color(red: 1, green: 0.969, blue: 0.933))
+                                        .foregroundStyle(AUSceneArt.onAccent)
                                     if !reply.reg.isEmpty {
                                         Text(reply.reg)
                                             .font(.figtree(.regular, size: 12.5))
@@ -595,7 +595,7 @@ struct SpeakView: View {
                                 kind: .play, size: 18,
                                 color: r.speakTake == 0
                                     ? .auText.opacity(0.32)
-                                    : Color(red: 0.984, green: 0.980, blue: 0.961)
+                                    : AUSceneArt.onAccent2
                             )
                             .frame(width: 44, height: 44)
                             .background(
