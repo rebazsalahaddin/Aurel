@@ -54,45 +54,58 @@ final class MilestoneSuite: XCTestCase {
     }
 
     private func onHome(timeout: TimeInterval = 10) -> Bool {
-        app.buttons.matching(identifier: "au.tab.learn").firstMatch.waitForExistence(
+        if app.buttons["au.tab.learn"].exists { return true }
+        return app.buttons.matching(identifier: "au.tab.learn").firstMatch.waitForExistence(
             timeout: timeout)
     }
 
     /// The authored tile answers, keyed by the sorted tile set: order-kind
     /// practice items, standalone tile/order tasks, and emailAssembly keys
-    /// from a1-course.json (bundled with the UI-test target).
-    private static let orderKeys: [String: [String]] = {
+    /// from a1-course.json (bundled with the UI-test target), plus option keys
+    /// keyed by item ID.
+    private static let (orderKeys, optionKeys): ([String: [String]], [String: String]) = {
         guard
             let url = Bundle(for: MilestoneSuite.self).url(
                 forResource: "a1-course", withExtension: "json"),
             let data = try? Data(contentsOf: url),
             let chapters = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]]
-        else { return [:] }
-        var map: [String: [String]] = [:]
-        func add(_ tiles: [String]?, _ key: [String]?) {
+        else { return ([:], [:]) }
+        var oMap: [String: [String]] = [:]
+        var pMap: [String: String] = [:]
+        func addOrder(_ tiles: [String]?, _ key: [String]?) {
             guard let tiles, let key, !tiles.isEmpty else { return }
-            map[tiles.sorted().joined(separator: "\u{1F}")] = key
+            oMap[tiles.sorted().joined(separator: "\u{1F}")] = key
         }
         for ch in chapters {
             for les in ch["lessons"] as? [[String: Any]] ?? [] {
                 for sc in les["screens"] as? [[String: Any]] ?? [] {
                     for it in sc["items"] as? [[String: Any]] ?? [] {
-                        add(it["tiles"] as? [String], it["key"] as? [String])
+                        addOrder(it["tiles"] as? [String], it["key"] as? [String])
+                        if let id = it["id"] as? String, let key = it["key"] as? String {
+                            pMap[id] = key
+                        }
                     }
                     for t in sc["tasks"] as? [[String: Any]] ?? [] {
-                        add(t["tiles"] as? [String], t["key"] as? [String])
+                        addOrder(t["tiles"] as? [String], t["key"] as? [String])
+                        if let id = t["id"] as? String, let key = t["key"] as? String {
+                            pMap[id] = key
+                        }
                     }
-                    add(sc["tiles"] as? [String], sc["key"] as? [String])
+                    addOrder(sc["tiles"] as? [String], sc["key"] as? [String])
+                    if let id = sc["id"] as? String, let key = sc["key"] as? String {
+                        pMap[id] = key
+                    }
                 }
             }
         }
-        return map
+        return (oMap, pMap)
     }()
 
     /// The practice Next/Go-on pill — only when actually tappable (the pill
     /// is rendered disabled at 0.45 opacity until the item is passable).
-    private func enabledGoOn(timeout: TimeInterval = 1) -> XCUIElement? {
-        let go = app.buttons.matching(identifier: "au.player.go-on").firstMatch
+    private func enabledGoOn(timeout: TimeInterval = 0.5) -> XCUIElement? {
+        let go = app.buttons["au.player.go-on"]
+        if go.exists && go.isEnabled { return go }
         guard go.waitForExistence(timeout: timeout), go.isEnabled else { return nil }
         return go
     }
@@ -144,21 +157,41 @@ final class MilestoneSuite: XCTestCase {
                 continue
             }
 
-            // Practice options: climb the authored retry ladder (a miss
-            // nudges, the third reveals and enables Go-on). The pill merely
-            // *existing* is not enough — it renders disabled until passable.
+            // Practice options: solve directly from authored key if known, else climb retry ladder
             let options = app.buttons.matching(
                 NSPredicate(format: "identifier BEGINSWITH 'au.player.option.'"))
             if options.firstMatch.exists {
-                var picks = 0
-                let n = max(1, options.count)
-                while picks < 4, enabledGoOn(timeout: 0.5) == nil {
-                    let option = options.element(boundBy: picks % n)
-                    if option.exists, option.isHittable {
-                        option.tap()
-                        advances += 1
+                var solved = false
+                let texts = app.staticTexts.allElementsBoundByIndex.prefix(6).map(\.label)
+                for id in texts {
+                    if let key = Self.optionKeys[id] {
+                        let optBtn = app.buttons["au.player.option.\(key)"]
+                        if optBtn.exists {
+                            if !optBtn.isHittable { app.swipeUp() }
+                            if optBtn.isHittable {
+                                optBtn.tap()
+                                advances += 1
+                                solved = true
+                                break
+                            }
+                        }
                     }
-                    picks += 1
+                }
+                if !solved {
+                    var picks = 0
+                    let n = max(1, options.count)
+                    while picks < 4, enabledGoOn(timeout: 0.5) == nil {
+                        let option = options.element(boundBy: picks % n)
+                        if option.exists {
+                            if !option.isHittable { app.swipeUp() }
+                            if option.isHittable {
+                                option.tap()
+                                advances += 1
+                                sleep(1)
+                            }
+                        }
+                        picks += 1
+                    }
                 }
             }
 
@@ -178,6 +211,7 @@ final class MilestoneSuite: XCTestCase {
 
             // The gated pill — only when enabled.
             if let go = enabledGoOn(timeout: 3) {
+                if !go.isHittable { app.swipeUp() }
                 go.tap()
                 advances += 1
                 continue
@@ -191,7 +225,11 @@ final class MilestoneSuite: XCTestCase {
             var tapped = false
             for i in 0..<max(ctas.count, 4) {
                 let cta = ctas.element(boundBy: i)
-                guard cta.exists, cta.isHittable else { continue }
+                guard cta.exists else { continue }
+                if !cta.isHittable {
+                    app.swipeUp()
+                }
+                guard cta.isHittable || cta.exists else { continue }
                 cta.tap()
                 advances += 1
                 tapped = true
@@ -239,7 +277,6 @@ final class MilestoneSuite: XCTestCase {
     func test1FirstLessonEndToEnd() {
         app.launch()
         XCTAssertTrue(onHome(timeout: 30))
-        app.swipeUp()
         tap("au.home.node.0")
         XCTAssertTrue(
             app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
@@ -255,7 +292,6 @@ final class MilestoneSuite: XCTestCase {
     func test2BackgroundResumeMidLesson() {
         app.launch()
         XCTAssertTrue(onHome(timeout: 30))
-        app.swipeUp()
         tap("au.home.node.0")
         XCTAssertTrue(
             app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
@@ -292,6 +328,9 @@ final class MilestoneSuite: XCTestCase {
         let window = app.windows.firstMatch
         func assertUsable(_ id: String, file: StaticString = #filePath, line: UInt = #line) {
             let e = wait(id, timeout: 10, file: file, line: line)
+            if !e.isHittable {
+                app.swipeUp()
+            }
             XCTAssertTrue(e.isHittable, "\(id) not hittable at AX3XL", file: file, line: line)
             XCTAssertTrue(
                 window.frame.contains(e.frame),
@@ -322,9 +361,13 @@ final class MilestoneSuite: XCTestCase {
         tap("au.home.settings")
         tap("au.settings.type.4")  // Largest
         tap("au.settings.type.2")  // back to Default
-        // Leave settings via the back control (label "Settings" → back).
-        let back = app.navigationBars.buttons.firstMatch
-        if back.waitForExistence(timeout: 3) { back.tap() } else { app.swipeDown() }
+        // Leave settings via the back control.
+        let back = app.buttons.matching(identifier: "au.settings.back").firstMatch
+        if back.waitForExistence(timeout: 4) {
+            back.tap()
+        } else {
+            app.swipeDown()
+        }
         XCTAssertTrue(
             onHome(timeout: 10)
                 || app.buttons.matching(identifier: "au.home.settings").firstMatch
@@ -337,12 +380,15 @@ final class MilestoneSuite: XCTestCase {
         if next.waitForExistence(timeout: 6) {
             next.tap()
             XCTAssertTrue(
-                anyElement("au.btn.start-free-trial").waitForExistence(timeout: 8)
-                    || anyElement("au.btn.begin-trial").waitForExistence(timeout: 8)
-                    || app.buttons.matching(NSPredicate(format: "label CONTAINS 'trial'"))
-                        .firstMatch
-                        .waitForExistence(timeout: 8),
-                "paywall trial CTA not found")
+                anyElement("au.btn.create-account-and-subscribe").waitForExistence(timeout: 8)
+                    || anyElement("au.btn.subscribe").waitForExistence(timeout: 8)
+                    || app.buttons.matching(
+                        NSPredicate(
+                            format: "label CONTAINS[c] 'subscribe' OR label CONTAINS[c] 'account'")
+                    )
+                    .firstMatch
+                    .waitForExistence(timeout: 8),
+                "paywall subscribe CTA not found")
         }
     }
 
@@ -353,7 +399,6 @@ final class MilestoneSuite: XCTestCase {
     func test5SecondLessonEndToEnd() {
         app.launch()
         XCTAssertTrue(onHome(timeout: 30))
-        app.swipeUp()
         // test1 finished L1, so the open node is L2 ("You and Your Name").
         tap("au.home.node.1", timeout: 10)
         XCTAssertTrue(

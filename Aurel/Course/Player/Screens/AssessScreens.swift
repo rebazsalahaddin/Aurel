@@ -29,12 +29,12 @@ struct PendingScreenView: View {
                 Text(m.cur?.screen.label ?? "")
                     .font(.caprasimo(size: 27))
                     .tracking(-0.54)
-                    .lineSpacing(27 * 0.2)
+                    .auHeadLine(27, 1.2)
                     .padding(.bottom, 12)
 
                 Text(p.awaiting ?? "")
                     .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.6)
+                    .auLine(14, 1.6)
                     .foregroundStyle(Color.auText.opacity(0.62))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 20)
@@ -42,7 +42,7 @@ struct PendingScreenView: View {
                 PlaceholderFrame(height: 170, cornerRadius: 20, label: "screen placeholder")
                     .padding(.bottom, 20)
 
-                ACard(radius: 18) {
+                ACard(radius: 18, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Specified, not yet authored")
                             .font(.figtree(.bold, size: 9.5))
@@ -58,7 +58,7 @@ struct PendingScreenView: View {
                                     .padding(.top, 7)
                                 Text(t)
                                     .font(.figtree(.regular, size: 12.8))
-                                    .lineSpacing(12.8 * 0.5)
+                                    .auLine(12.8, 1.5)
                                     .foregroundStyle(Color.auText.opacity(0.66))
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
@@ -66,6 +66,8 @@ struct PendingScreenView: View {
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 17)
+                    .padding(.vertical, 15)
                 }
                 .padding(.bottom, 16)
 
@@ -73,7 +75,7 @@ struct PendingScreenView: View {
 
                 Text("Source: \(p.source ?? "")")
                     .font(.figtree(.regular, size: 11))
-                    .lineSpacing(11 * 0.5)
+                    .auLine(11, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.40))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 14)
@@ -134,7 +136,8 @@ struct QuizIntroScreenView: View {
     let m: PlayerModel
 
     var body: some View {
-        ScreenColumn(topPad: 30, bottomPad: 30) {
+        // `align-items:center; text-align:center` (the only centred player screen)
+        ScreenColumn(topPad: 30, bottomPad: 30, hPad: 26, alignment: .center) {
             if case .quizIntro(let q) = m.cur?.screen.payload {
                 VStack(spacing: 0) {
                     Spacer(minLength: 40)
@@ -146,7 +149,7 @@ struct QuizIntroScreenView: View {
                     Text(q.head ?? "")
                         .font(.caprasimo(size: 32))
                         .tracking(-0.7)
-                        .lineSpacing(32 * 0.15)
+                        .auHeadLine(32, 1.15)
                         .multilineTextAlignment(.center)
                         .padding(.top, 24)
                         .padding(.bottom, 16)
@@ -161,7 +164,7 @@ struct QuizIntroScreenView: View {
                     if let promise = q.promise {
                         Text(promise)
                             .font(.figtree(.regular, size: 13.5))
-                            .lineSpacing(13.5 * 0.55)
+                            .auLine(13.5, 1.55)
                             .padding(.horizontal, 18)
                             .padding(.vertical, 15)
                             .background(
@@ -216,22 +219,23 @@ struct ResultsScreenView: View {
                 }
                 .padding(.bottom, 22)
 
-                ACard(radius: 20) {
-                    VStack(alignment: .leading, spacing: 7) {
-                        Text("Strong")
-                            .font(.figtree(.bold, size: 9.5))
-                            .tracking(1.3)
-                            .textCase(.uppercase)
-                            .foregroundStyle(Color.auOkText.opacity(0.8))
-                        Text(r.strong ?? "")
-                            .font(.figtree(.regular, size: 15.5))
-                            .lineSpacing(15.5 * 0.5)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 7) {
+                    Text("Strong")
+                        .font(.figtree(.bold, size: 9.5))
+                        .tracking(1.3)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auOkText.opacity(0.8))
+                    Text(r.strong ?? "")
+                        .font(.figtree(.regular, size: 15.5))
+                        .auLine(15.5, 1.5)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 19)
+                .padding(.vertical, 17)
                 .background(
                     RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auOkBg)
                 )
+                .foregroundStyle(Color.auOkText)
                 .padding(.bottom, 11)
 
                 ACard(radius: 20) {
@@ -243,7 +247,7 @@ struct ResultsScreenView: View {
                             .foregroundStyle(Color.auText.opacity(0.42))
                         Text(r.developing ?? "")
                             .font(.figtree(.regular, size: 15.5))
-                            .lineSpacing(15.5 * 0.5)
+                            .auLine(15.5, 1.5)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -258,7 +262,7 @@ struct ResultsScreenView: View {
                             .foregroundStyle(Color.auAccentText)
                         Text(r.next ?? "")
                             .font(.figtree(.regular, size: 15.5))
-                            .lineSpacing(15.5 * 0.5)
+                            .auLine(15.5, 1.5)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -279,7 +283,7 @@ struct ResultsScreenView: View {
                 if m.showScore {
                     Text("\(r.score ?? "") — \(r.gate ?? "")")
                         .font(.figtree(.regular, size: 12.5))
-                        .lineSpacing(12.5 * 0.55)
+                        .auLine(12.5, 1.55)
                         .foregroundStyle(Color.auText.opacity(0.55))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 11)
@@ -288,8 +292,10 @@ struct ResultsScreenView: View {
                 Spacer(minLength: 12)
 
                 HStack(spacing: 12) {
-                    APillButton(title: "Try again", variant: .quiet) { m.goto(m.p + 1) }
-                    APillButton(title: "Go on") { m.goto(m.p + 1) }
+                    APillButton(title: "Try again", variant: .quiet, player: true) {
+                        m.goto(m.p + 1)
+                    }
+                    APillButton(title: "Go on", player: true) { m.goto(m.p + 1) }
                 }
                 .padding(.top, 18)
             }
@@ -312,7 +318,7 @@ struct RemediationScreenView: View {
 
                 Text(r.sub ?? "")
                     .font(.figtree(.regular, size: 13.5))
-                    .lineSpacing(13.5 * 0.55)
+                    .auLine(13.5, 1.55)
                     .foregroundStyle(Color.auText.opacity(0.55))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 18)
@@ -328,7 +334,7 @@ struct RemediationScreenView: View {
                                     .font(.figtree(.semibold, size: 15))
                                 Text(c.benefit)
                                     .font(.figtree(.regular, size: 12.5))
-                                    .lineSpacing(12.5 * 0.45)
+                                    .auLine(12.5, 1.45)
                                     .foregroundStyle(Color.auText.opacity(0.52))
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -354,8 +360,10 @@ struct RemediationScreenView: View {
                 Spacer(minLength: 12)
 
                 HStack(spacing: 12) {
-                    APillButton(title: "Skip for now", variant: .quiet) { m.goto(m.p + 1) }
-                    APillButton(title: "Start a pick") { m.goto(m.p + 1) }
+                    APillButton(title: "Skip for now", variant: .quiet, player: true) {
+                        m.goto(m.p + 1)
+                    }
+                    APillButton(title: "Start a pick", player: true) { m.goto(m.p + 1) }
                 }
                 .padding(.top, 18)
             }
@@ -378,7 +386,7 @@ struct ReviewPlanScreenView: View {
 
                 Text(r.sub ?? "")
                     .font(.figtree(.regular, size: 13.5))
-                    .lineSpacing(13.5 * 0.55)
+                    .auLine(13.5, 1.55)
                     .foregroundStyle(Color.auText.opacity(0.55))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 18)
@@ -391,7 +399,7 @@ struct ReviewPlanScreenView: View {
                                 .tracking(0.8)
                             Text(d.t)
                                 .font(.figtree(.regular, size: 9.5))
-                                .lineSpacing(9.5 * 0.3)
+                                .auLine(9.5, 1.3)
                                 .opacity(0.85)
                         }
                         .frame(maxWidth: .infinity)
@@ -412,7 +420,7 @@ struct ReviewPlanScreenView: View {
                 }
                 .padding(.bottom, 20)
 
-                ACard(radius: 18) {
+                ACard(radius: 18, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Exported to the scheduler")
                             .font(.figtree(.bold, size: 9.5))
@@ -427,7 +435,7 @@ struct ReviewPlanScreenView: View {
                                 if e.count > 1 {
                                     Text(e[1])
                                         .font(.figtree(.regular, size: 11.5))
-                                        .lineSpacing(11.5 * 0.45)
+                                        .auLine(11.5, 1.45)
                                         .foregroundStyle(Color.auText.opacity(0.50))
                                 }
                             }
@@ -436,6 +444,8 @@ struct ReviewPlanScreenView: View {
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 17)
+                    .padding(.vertical, 15)
                 }
 
                 Spacer(minLength: 12)
@@ -475,97 +485,118 @@ struct ChapterMapScreenView: View {
     let m: PlayerModel
 
     var body: some View {
-        ScreenColumn(topPad: 26, bottomPad: 26) {
-            if case .chapterMap(let c) = m.cur?.screen.payload {
-                AUIcon(kind: .check, size: 34, color: .auOkText)
-                    .frame(width: 76, height: 76)
-                    .background(Circle().fill(Color.auOkBg))
-                    .padding(.bottom, 20)
+        ZStack {
+            ZStack {
+                Color.auBackground
+                AUPaper()
+            }
+            .ignoresSafeArea()
 
-                Text(c.head ?? "")
-                    .font(.caprasimo(size: 31))
-                    .tracking(-0.68)
-                    .lineSpacing(31 * 0.15)
-                    .padding(.bottom, 12)
+            ScreenColumn(topPad: 26, bottomPad: 26) {
+                if case .chapterMap(let c) = m.cur?.screen.payload {
+                    AUIcon(kind: .check, size: 34, color: .auOkText)
+                        .frame(width: 76, height: 76)
+                        .background(Circle().fill(Color.auOkBg))
+                        .padding(.bottom, 20)
 
-                Text(c.body ?? "")
-                    .font(.figtree(.regular, size: 15))
-                    .lineSpacing(15 * 0.6)
-                    .foregroundStyle(Color.auText.opacity(0.62))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 24)
+                    Text(c.head ?? "")
+                        .font(.caprasimo(size: 31))
+                        .tracking(-0.68)
+                        .auHeadLine(31, 1.15)
+                        .padding(.bottom, 12)
 
-                Text("Arc 1 · \(c.arc ?? "")")
-                    .font(.figtree(.bold, size: 9.5))
-                    .tracking(1.4)
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color.auAccentText)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 11)
+                    Text(c.body ?? "")
+                        .font(.figtree(.regular, size: 15))
+                        .auLine(15, 1.6)
+                        .foregroundStyle(Color.auText.opacity(0.62))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom, 24)
 
-                VStack(spacing: 9) {
-                    ForEach(Array((c.chapters ?? []).enumerated()), id: \.offset) { k, entry in
-                        let done = k < (m.cur?.chapterIdx ?? 0) + 1 && k <= (m.cur?.chapterIdx ?? 0)
-                        let locked = k > (m.cur?.chapterIdx ?? 0)
-                        HStack(spacing: 12) {
-                            Circle()
-                                .strokeBorder(
-                                    done
-                                        ? Color.auOkText
-                                        : (locked ? Color.auText.opacity(0.38) : Color.auAccent),
-                                    lineWidth: 1.5
-                                )
-                                .frame(width: 26, height: 26)
-                                .overlay {
-                                    if done {
-                                        AUIcon(kind: .check, size: 13, color: .auOkText)
-                                    } else if locked {
-                                        AUIcon(kind: .lock, size: 12, color: .auText.opacity(0.38))
+                    Text("Arc 1 · \(c.arc ?? "")")
+                        .font(.figtree(.bold, size: 9.5))
+                        .tracking(1.4)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auAccentText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom, 11)
+
+                    VStack(spacing: 9) {
+                        ForEach(Array((c.chapters ?? []).enumerated()), id: \.offset) { _, entry in
+                            let state = entry.s.lowercased()
+                            let done = state == "done"
+                            let next = state == "next"
+                            let locked = state == "locked"
+
+                            HStack(spacing: 12) {
+                                Circle()
+                                    .fill(done ? Color.auOkText.opacity(0.10) : Color.clear)
+                                    .overlay(
+                                        Circle().strokeBorder(
+                                            next
+                                                ? Color.auAccent
+                                                : (locked
+                                                    ? Color.auText.opacity(0.28) : Color.clear),
+                                            lineWidth: 1.5
+                                        )
+                                    )
+                                    .frame(width: 26, height: 26)
+                                    .overlay {
+                                        if done {
+                                            AUIcon(kind: .check, size: 13, color: .auOkText)
+                                        } else if locked {
+                                            AUIcon(
+                                                kind: .lock, size: 12, color: .auText.opacity(0.38))
+                                        }
                                     }
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("Chapter \(entry.n)")
+                                        .font(.figtree(.bold, size: 9))
+                                        .tracking(1.1)
+                                        .opacity(0.7)
+                                    Text(entry.t)
+                                        .font(.figtree(.regular, size: 14))
+                                        .auLine(14, 1.35)
                                 }
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text("Chapter \(entry.n)")
-                                    .font(.figtree(.bold, size: 9))
-                                    .tracking(1.1)
-                                    .opacity(0.7)
-                                Text(entry.t)
-                                    .font(.figtree(.regular, size: 14))
-                                    .lineSpacing(14 * 0.35)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 13)
+                            .background(
+                                RoundedRectangle(cornerRadius: 17, style: .continuous)
+                                    .fill(
+                                        done ? Color.auOkBg : (next ? Color.auTintBg : Color.clear))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 17, style: .continuous)
+                                    .strokeBorder(locked ? Color.auEdge : Color.clear, lineWidth: 1)
+                            )
+                            .foregroundStyle(
+                                done
+                                    ? Color.auOkText
+                                    : (next ? Color.auTintText : Color.auText.opacity(0.46))
+                            )
                         }
-                        .padding(.horizontal, 15)
-                        .padding(.vertical, 13)
-                        .background(
-                            RoundedRectangle(cornerRadius: 17, style: .continuous)
-                                .fill(done ? Color.auOkBg : .clear)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 17, style: .continuous)
-                                .strokeBorder(done ? Color.auEdge : Color.auEdge, lineWidth: 1)
-                        )
-                        .foregroundStyle(done ? Color.auOkText : Color.auText)
                     }
+
+                    Spacer(minLength: 12)
+
+                    Text("Next: \(c.next ?? "")")
+                        .font(.figtree(.regular, size: 14))
+                        .auLine(14, 1.5)
+                        .padding(.horizontal, 17)
+                        .padding(.vertical, 15)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .strokeBorder(
+                                    Color.auAccent.opacity(0.34),
+                                    style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                        )
+                        .padding(.top, 20)
+
+                    GoOnButton(label: "Go on") { m.goto(m.p + 1) }
+                        .padding(.top, 14)
                 }
-
-                Spacer(minLength: 12)
-
-                Text("Next: \(c.next ?? "")")
-                    .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.5)
-                    .padding(.horizontal, 17)
-                    .padding(.vertical, 15)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .strokeBorder(
-                                Color.auAccent.opacity(0.34),
-                                style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                    )
-                    .padding(.top, 20)
-
-                GoOnButton(label: "Go on") { m.goto(m.p + 1) }
-                    .padding(.top, 14)
             }
         }
     }

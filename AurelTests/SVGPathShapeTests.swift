@@ -23,6 +23,8 @@ final class SVGPathShapeTests: XCTestCase {
             .check, .arrow, .close, .back,
             .play, .mic, .link, .lock,
             .gear, .offline, .sparkle, .flame, .trophy,
+            .pencil, .star, .chevron, .chevronDown,
+            .speech, .reviewLoop, .camera, .alert, .clock, .warning,
         ]
         for kind in kinds {
             for sub in AUIcon.subpaths(kind) {

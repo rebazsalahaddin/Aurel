@@ -21,20 +21,21 @@ final class CourseDecodingTests: XCTestCase {
         return CourseStore(chapters: chapters)
     }()
 
-    func testThreeChaptersDecode() {
-        XCTAssertEqual(Self.store.chapters.map(\.id), ["A1-C01", "A1-C02", "A1-C03"])
+    func testFourChaptersDecode() {
+        XCTAssertEqual(Self.store.chapters.map(\.id), ["A1-C01", "A1-C02", "A1-C03", "A1-C04"])
         XCTAssertEqual(
             Self.store.chapters.map(\.title),
             [
                 "Hello! My Name Is Alex",
                 "Spell It and Share Your Details",
                 "Where Are You From?",
+                "Checkpoint Review 1: Welcome-Day Mission",
             ])
-        XCTAssertEqual(Self.store.chapters.map(\.n), [1, 2, 3])
+        XCTAssertEqual(Self.store.chapters.map(\.n), [1, 2, 3, 4])
     }
 
     func testLessonCounts() {
-        XCTAssertEqual(Self.store.chapters.map { $0.lessons.count }, [4, 4, 3])
+        XCTAssertEqual(Self.store.chapters.map { $0.lessons.count }, [4, 4, 3, 3])
         XCTAssertEqual(
             Self.store.chapters[0].lessons.map(\.title),
             ["Say Hello", "You and Your Name", "A Real First Meeting", "The Welcome Mission"])
@@ -43,10 +44,9 @@ final class CourseDecodingTests: XCTestCase {
     func testScreenCounts() {
         XCTAssertEqual(
             Self.store.chapters.map { ch in ch.lessons.reduce(0) { $0 + $1.screens.count } },
-            [40, 43, 34])
-        XCTAssertEqual(Self.store.flat.count, 117)
-        // The C3 chapter quiz replaced the four pending placeholders (S29–S32)
-        // with six authored screens; no `pending` screen remains anywhere.
+            [40, 43, 34, 14])
+        XCTAssertEqual(Self.store.flat.count, 131)
+        // No `pending` screen remains anywhere in the 4 authored chapters.
         XCTAssertFalse(Self.store.flat.contains { $0.screen.kind == .pending })
         let c3 = Self.store.chapters[2].lessons[2]
         XCTAssertEqual(
@@ -71,7 +71,7 @@ final class CourseDecodingTests: XCTestCase {
     func testPracticeCounts() {
         // Bank headers: C1 = 122 practice items + 22 quiz Form A; every chapter
         // of C1–C3 delivered 122/122 (governance QA_STATUS). C3's chapter quiz
-        // (transcribed by the exporter from A1_C03_L03_LESSON.md) adds 32 items.
+        // adds 32 items; C4's checkpoint quiz adds 31 items.
         let items = Self.store.allPracticeItems.count
         XCTAssertGreaterThanOrEqual(
             items, 366, "expected ≥ 122 items per chapter across 3 chapters, got \(items)")
@@ -82,13 +82,13 @@ final class CourseDecodingTests: XCTestCase {
             if case .quiz(let q) = f.screen.payload { return q.items?.count }
             return nil
         }
-        XCTAssertEqual(quizItems.count, 3, "three quiz screens across the course")
+        XCTAssertEqual(quizItems.count, 4, "four quiz screens across the 4 chapters")
         XCTAssertTrue(quizItems.contains(22), "C1 quiz Form A has 22 items; got \(quizItems)")
         XCTAssertTrue(quizItems.contains(26), "C2 quiz Form A has 26 items; got \(quizItems)")
         XCTAssertTrue(quizItems.contains(32), "C3 quiz Form A has 32 items; got \(quizItems)")
-        // The C3 quiz bank is the authored 32 records: L5 · N5 · V5 · G6 ·
-        // LS5 · RD4 · CN2, cumulative share 8 of 32.
-        XCTAssertEqual(Set(quizItems), [22, 26, 32])
+        XCTAssertTrue(
+            quizItems.contains(31), "C4 checkpoint quiz Form A has 31 items; got \(quizItems)")
+        XCTAssertEqual(Set(quizItems), [22, 26, 31, 32])
     }
 
     /// Three C3 quiz items pinned verbatim against A1_C03_L03_LESSON.md —

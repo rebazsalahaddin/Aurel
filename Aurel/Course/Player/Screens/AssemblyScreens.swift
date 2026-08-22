@@ -14,7 +14,7 @@ struct OrderScreenView: View {
         ScreenColumn(topPad: 22, bottomPad: 26) {
             if case .order(let o) = m.cur?.screen.payload {
                 if let demoWords = o.demoWords {
-                    FlowTiles(tiles: demoWords)
+                    CompactFlowChips(tiles: demoWords, style: .demo)
                         .padding(.bottom, 16)
                 }
 
@@ -99,7 +99,7 @@ struct OrderScreenView: View {
                     : (task.no.isEmpty ? "Not yet — tap a row again to take it back." : task.no)
             )
             .font(.figtree(.regular, size: 14))
-            .lineSpacing(14 * 0.45)
+            .auLine(14, 1.45)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 15)
             .padding(.vertical, 13)
@@ -159,7 +159,7 @@ struct TilesScreenView: View {
             Text(m.tileLine.isEmpty ? " " : m.tileLine)
                 .font(.caprasimo(size: 21))
                 .tracking(-0.21)
-                .lineSpacing(21 * 0.4)
+                .auHeadLine(21, 1.4)
                 .frame(maxWidth: .infinity, minHeight: 74, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)
@@ -181,7 +181,7 @@ struct TilesScreenView: View {
                             ? "Not yet — tap a tile again to take it back." : task.no)
                 )
                 .font(.figtree(.regular, size: 14))
-                .lineSpacing(14 * 0.45)
+                .auLine(14, 1.45)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 15)
                 .padding(.vertical, 13)
@@ -218,7 +218,7 @@ struct TilesScreenView: View {
             if isEmail, case .emailAssembly(let e) = m.cur?.screen.payload, let safety = e.safety {
                 Text(safety)
                     .font(.figtree(.regular, size: 11.5))
-                    .lineSpacing(11.5 * 0.5)
+                    .auLine(11.5, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.44))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -258,7 +258,7 @@ struct SubstitutionScreenView: View {
 
                 Text("Every line plays before you read it. Tap in, tap out.")
                     .font(.figtree(.regular, size: 12.5))
-                    .lineSpacing(12.5 * 0.5)
+                    .auLine(12.5, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.50))
                     .padding(.bottom, 16)
 
@@ -306,7 +306,7 @@ struct SubstitutionScreenView: View {
                 if let note = s.note {
                     Text(note)
                         .font(.figtree(.regular, size: 11.5))
-                        .lineSpacing(11.5 * 0.5)
+                        .auLine(11.5, 1.5)
                         .foregroundStyle(Color.auText.opacity(0.44))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -334,13 +334,13 @@ struct MissionScreenView: View {
                     Text(mb.head ?? "")
                         .font(.caprasimo(size: 26))
                         .tracking(-0.52)
-                        .lineSpacing(26 * 0.2)
+                        .auHeadLine(26, 1.2)
                         .padding(.bottom, 10)
 
                     if let body = mb.body {
                         Text(body)
                             .font(.figtree(.regular, size: 14.5))
-                            .lineSpacing(14.5 * 0.55)
+                            .auLine(14.5, 1.55)
                             .foregroundStyle(Color.auText.opacity(0.62))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 16)
@@ -357,7 +357,7 @@ struct MissionScreenView: View {
                                             Color.auText.opacity(0.2), lineWidth: 2))
                                 Text(t)
                                     .font(.figtree(.regular, size: 14.5))
-                                    .lineSpacing(14.5 * 0.4)
+                                    .auLine(14.5, 1.4)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
@@ -365,7 +365,7 @@ struct MissionScreenView: View {
                     .padding(.bottom, 16)
 
                     if let card = mb.card {
-                        ACard(radius: 18) {
+                        ACard(radius: 18, padded: false) {
                             VStack(alignment: .leading, spacing: 0) {
                                 Text("Your sample card")
                                     .font(.figtree(.bold, size: 9.5))
@@ -392,6 +392,8 @@ struct MissionScreenView: View {
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 17)
+                            .padding(.vertical, 15)
                         }
                         .padding(.bottom, 16)
                     }
@@ -401,15 +403,15 @@ struct MissionScreenView: View {
                     if let privacy = mb.privacy {
                         Text(privacy)
                             .font(.figtree(.regular, size: 11.5))
-                            .lineSpacing(11.5 * 0.5)
+                            .auLine(11.5, 1.5)
                             .foregroundStyle(Color.auText.opacity(0.44))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 14)
                     }
 
                     HStack(spacing: 12) {
-                        APillButton(title: "Speak", icon: .mic) { m.goto(m.p + 1) }
-                        APillButton(title: "Tap", icon: .tap) { m.goto(m.p + 1) }
+                        APillButton(title: "Speak", icon: .mic, player: true) { m.goto(m.p + 1) }
+                        APillButton(title: "Tap", icon: .tap, player: true) { m.goto(m.p + 1) }
                     }
                 }
             }
@@ -518,7 +520,7 @@ struct RoleplayScreenView: View {
                                     .foregroundStyle(Color.auText.opacity(0.38))
                                 Text(c.t)
                                     .font(.figtree(.regular, size: 15))
-                                    .lineSpacing(15 * 0.45)
+                                    .auLine(15, 1.45)
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 13)
                                     .frame(maxWidth: 276, alignment: .leading)
@@ -552,7 +554,7 @@ struct RoleplayScreenView: View {
                                 .font(.figtree(.semibold, size: 10))
                                 .tracking(0.8)
                                 .foregroundStyle(Color.auAccentText)
-                            FlowTiles(tiles: g.t)
+                            CompactFlowChips(tiles: g.t, style: .roleplay)
                         }
                     }
                 }
@@ -574,7 +576,7 @@ struct RoleplayScreenView: View {
                                     Text(t)
                                 }
                                 .font(.figtree(.regular, size: 13.5))
-                                .lineSpacing(13.5 * 0.45)
+                                .auLine(13.5, 1.45)
                             }
                             if let next = fb.next {
                                 HStack(alignment: .firstTextBaseline, spacing: 9) {
@@ -583,7 +585,7 @@ struct RoleplayScreenView: View {
                                     Text(next)
                                 }
                                 .font(.figtree(.regular, size: 13.5))
-                                .lineSpacing(13.5 * 0.45)
+                                .auLine(13.5, 1.45)
                                 .foregroundStyle(Color.auText.opacity(0.62))
                             }
                         }
@@ -605,7 +607,7 @@ struct RoleplayScreenView: View {
                     }
                     .buttonStyle(.auTap)
 
-                    APillButton(title: "Speak", icon: .mic) { m.turn += 1 }
+                    APillButton(title: "Speak", icon: .mic, player: true) { m.turn += 1 }
                 }
                 .padding(.top, 14)
             }

@@ -9,13 +9,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 20,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 21,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 21,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 22,
           "scope": "shell-dark"
         }
       ],
@@ -26,8 +26,8 @@
         "r": 0.549
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 20,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 21,
         "scope": "shell"
       },
       "themeDependent": true
@@ -41,22 +41,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 20,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 21,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 21,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 22,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -68,8 +68,8 @@
         "r": 0.549
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 20,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 21,
         "scope": "shell"
       },
       "themeDependent": true
@@ -83,13 +83,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -100,8 +100,8 @@
         "r": 0.8039
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -115,13 +115,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -132,8 +132,8 @@
         "r": 0.7255
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -147,13 +147,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -164,8 +164,8 @@
         "r": 0.2902
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -179,22 +179,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -206,8 +206,8 @@
         "r": 0.1255
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true,
@@ -237,22 +237,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -264,8 +264,8 @@
         "r": 0.6392
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -279,22 +279,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -306,8 +306,8 @@
         "r": 0.9765
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -321,22 +321,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -348,8 +348,8 @@
         "r": 0.3725
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -363,22 +363,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -390,8 +390,8 @@
         "r": 0.9827
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -405,22 +405,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -432,8 +432,8 @@
         "r": 0.9333
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -447,22 +447,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -474,8 +474,8 @@
         "r": 0.2784
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -489,13 +489,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -506,8 +506,8 @@
         "r": 0.7765
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -521,13 +521,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -538,8 +538,8 @@
         "r": 0.4784
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -553,13 +553,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -570,8 +570,8 @@
         "r": 1
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -585,22 +585,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -612,8 +612,8 @@
         "r": 0.9412
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -627,13 +627,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -644,8 +644,8 @@
         "r": 0.2392
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -659,22 +659,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -686,8 +686,8 @@
         "r": 0.1529
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -701,22 +701,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 20,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 21,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 21,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 22,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -728,8 +728,8 @@
         "r": 0.3373
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 20,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 21,
         "scope": "shell"
       },
       "themeDependent": true
@@ -743,22 +743,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -770,8 +770,8 @@
         "r": 1
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -785,22 +785,22 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -812,8 +812,8 @@
         "r": 0.3922
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -827,17 +827,17 @@
       },
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 8,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 20,
           "scope": "base-dark"
         }
@@ -849,7 +849,7 @@
         "r": 0.7765
       },
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 8,
         "scope": "base"
       },
@@ -858,13 +858,13 @@
     "--color-accent-100": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 24,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 24,
         "scope": "base"
       },
@@ -885,17 +885,17 @@
       },
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 9,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 20,
           "scope": "base-dark"
         }
@@ -907,7 +907,7 @@
         "r": 0.4784
       },
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 9,
         "scope": "base"
       },
@@ -916,13 +916,13 @@
     "--color-accent-2-100": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 34,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 34,
         "scope": "base"
       },
@@ -937,13 +937,13 @@
     "--color-accent-2-200": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 35,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 35,
         "scope": "base"
       },
@@ -958,13 +958,13 @@
     "--color-accent-2-300": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 36,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 36,
         "scope": "base"
       },
@@ -979,13 +979,13 @@
     "--color-accent-2-400": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 37,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 37,
         "scope": "base"
       },
@@ -1000,13 +1000,13 @@
     "--color-accent-2-500": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 38,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 38,
         "scope": "base"
       },
@@ -1021,13 +1021,13 @@
     "--color-accent-2-600": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 39,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 39,
         "scope": "base"
       },
@@ -1042,13 +1042,13 @@
     "--color-accent-2-700": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 40,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 40,
         "scope": "base"
       },
@@ -1063,13 +1063,13 @@
     "--color-accent-2-800": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 41,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 41,
         "scope": "base"
       },
@@ -1084,13 +1084,13 @@
     "--color-accent-2-900": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 42,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 42,
         "scope": "base"
       },
@@ -1105,13 +1105,13 @@
     "--color-accent-200": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 25,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 25,
         "scope": "base"
       },
@@ -1126,13 +1126,13 @@
     "--color-accent-300": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 26,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 26,
         "scope": "base"
       },
@@ -1147,13 +1147,13 @@
     "--color-accent-400": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 27,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 27,
         "scope": "base"
       },
@@ -1168,13 +1168,13 @@
     "--color-accent-500": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 28,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 28,
         "scope": "base"
       },
@@ -1189,13 +1189,13 @@
     "--color-accent-600": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 29,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 29,
         "scope": "base"
       },
@@ -1210,13 +1210,13 @@
     "--color-accent-700": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 30,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 30,
         "scope": "base"
       },
@@ -1231,13 +1231,13 @@
     "--color-accent-800": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 31,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 31,
         "scope": "base"
       },
@@ -1252,13 +1252,13 @@
     "--color-accent-900": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 32,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 32,
         "scope": "base"
       },
@@ -1279,17 +1279,17 @@
       },
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 5,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 20,
           "scope": "base-dark"
         }
@@ -1301,7 +1301,7 @@
         "r": 0.9608
       },
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 5,
         "scope": "base"
       },
@@ -1316,17 +1316,17 @@
       },
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 10,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 20,
           "scope": "base-dark"
         }
@@ -1338,7 +1338,7 @@
         "r": 0.1255
       },
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 10,
         "scope": "base"
       },
@@ -1347,13 +1347,13 @@
     "--color-neutral-100": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 14,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 14,
         "scope": "base"
       },
@@ -1368,13 +1368,13 @@
     "--color-neutral-200": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 15,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 15,
         "scope": "base"
       },
@@ -1389,13 +1389,13 @@
     "--color-neutral-300": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 16,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 16,
         "scope": "base"
       },
@@ -1410,13 +1410,13 @@
     "--color-neutral-400": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 17,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 17,
         "scope": "base"
       },
@@ -1431,13 +1431,13 @@
     "--color-neutral-500": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 18,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 18,
         "scope": "base"
       },
@@ -1452,13 +1452,13 @@
     "--color-neutral-600": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 19,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 19,
         "scope": "base"
       },
@@ -1473,13 +1473,13 @@
     "--color-neutral-700": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 20,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 20,
         "scope": "base"
       },
@@ -1494,13 +1494,13 @@
     "--color-neutral-800": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 21,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 21,
         "scope": "base"
       },
@@ -1515,13 +1515,13 @@
     "--color-neutral-900": {
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 22,
           "scope": "base"
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 22,
         "scope": "base"
       },
@@ -1542,17 +1542,17 @@
       },
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 6,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 20,
           "scope": "base-dark"
         }
@@ -1564,7 +1564,7 @@
         "r": 0.9216
       },
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 6,
         "scope": "base"
       },
@@ -1579,17 +1579,17 @@
       },
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 7,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 20,
           "scope": "base-dark"
         }
@@ -1601,7 +1601,7 @@
         "r": 0.1255
       },
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 7,
         "scope": "base"
       },
@@ -1635,13 +1635,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -1669,8 +1669,8 @@
         ]
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -1710,13 +1710,13 @@
       },
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         }
       ],
@@ -1753,8 +1753,8 @@
         ]
       },
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -1795,22 +1795,22 @@
       ],
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -1842,8 +1842,8 @@
         }
       ],
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -1865,22 +1865,22 @@
       ],
       "declarations": [
         {
-          "file": "design/Aurel.dc.html",
-          "line": 51,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 52,
           "scope": "shell"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 52,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 53,
           "scope": "shell-dark"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 21,
           "scope": "player"
         },
         {
-          "file": "design/CourseScreen.dc.html",
+          "file": "design/prototype/CourseScreen.dc.html",
           "line": 22,
           "scope": "player-dark"
         }
@@ -1900,8 +1900,8 @@
         }
       ],
       "source": {
-        "file": "design/Aurel.dc.html",
-        "line": 51,
+        "file": "design/prototype/Aurel V4.dc.html",
+        "line": 52,
         "scope": "shell"
       },
       "themeDependent": true
@@ -1923,13 +1923,13 @@
       ],
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 63,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         }
       ],
@@ -1948,7 +1948,7 @@
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 63,
         "scope": "base"
       },
@@ -2003,13 +2003,13 @@
       ],
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 62,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         }
       ],
@@ -2028,7 +2028,7 @@
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 62,
         "scope": "base"
       },
@@ -2083,13 +2083,13 @@
       ],
       "declarations": [
         {
-          "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+          "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
           "line": 61,
           "scope": "base"
         },
         {
-          "file": "design/Aurel.dc.html",
-          "line": 18,
+          "file": "design/prototype/Aurel V4.dc.html",
+          "line": 19,
           "scope": "base-dark"
         }
       ],
@@ -2108,7 +2108,7 @@
         }
       ],
       "source": {
-        "file": "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+        "file": "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
         "line": 61,
         "scope": "base"
       },

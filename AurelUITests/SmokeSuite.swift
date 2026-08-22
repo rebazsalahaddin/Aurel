@@ -20,8 +20,7 @@ final class SmokeSuite: XCTestCase {
     private enum Screen {
         static let welcome = "au.btn.begin-the-path"
         static let goal = "au.goal.work"
-        static let placement = "au.level.a1"
-        static let commit = "au.commit.10"
+        static let commit = "au.remind.0730"
         static let plan = "au.btn.start-your-first-lesson"
         static let home = "au.tab.learn"
         static let course = "au.player.close"
@@ -92,12 +91,7 @@ final class SmokeSuite: XCTestCase {
         tap("au.goal.exam")  // third pick swaps, never exceeds two
         tap("au.btn.continue")
 
-        onScreen(Screen.placement)
-        tap("au.level.a1")
-        tap("au.btn.continue")
-
         onScreen(Screen.commit)
-        tap("au.commit.10")
         tap("au.remind.0730")
         tap("au.btn.continue")
 
@@ -120,8 +114,6 @@ final class SmokeSuite: XCTestCase {
         app.launch()
         onScreen(Screen.home)
 
-        // The lesson path sits below the day-arc card — reveal the open node.
-        app.swipeUp()
         tap("au.home.node.0")  // "Begin" on the open lesson node
         onScreen(Screen.course)
 
@@ -145,7 +137,6 @@ final class SmokeSuite: XCTestCase {
         // path present); the pending card itself is ephemeral by design and
         // correctly does not reappear after process death.
         onScreen(Screen.home)
-        app.swipeUp()
         tap("au.home.node.0")
         onScreen(Screen.course)
     }
@@ -173,6 +164,13 @@ final class SmokeSuite: XCTestCase {
         XCTAssertTrue(field.waitForExistence(timeout: 6), "Type-instead field missing")
         field.tap()
         field.typeText("Hello, I'm Maya.")
+        if app.keyboards.buttons["Return"].exists {
+            app.keyboards.buttons["Return"].tap()
+        } else if app.keyboards.buttons["Done"].exists {
+            app.keyboards.buttons["Done"].tap()
+        } else {
+            app.swipeDown()
+        }
 
         tap("au.btn.check-what-i-typed")
         // Process any queued interruption event.

@@ -51,12 +51,11 @@ struct PracticeScreenView: View {
             if m.item != nil {
                 let canGo = m.itemCanGo
                 APillButton(
-                    title: m.i + 1 < list.count ? "Next" : "Go on", icon: .arrow, disabled: !canGo,
-                    aid: "au.player.go-on"
+                    title: m.i + 1 < list.count ? "Next" : "Go on", icon: .arrow, player: true,
+                    disabled: !canGo, aid: "au.player.go-on"
                 ) {
                     m.advance()
                 }
-                .opacity(canGo ? 1 : 0.45)
             }
         }
     }
@@ -74,7 +73,7 @@ struct PracticeScreenView: View {
                     if let support = t.support {
                         Text(support)
                             .font(.figtree(.regular, size: 11.5))
-                            .lineSpacing(11.5 * 0.45)
+                            .auLine(11.5, 1.45)
                     }
                 }
                 .padding(.horizontal, 13)
@@ -109,7 +108,7 @@ struct PracticeScreenView: View {
                         }
                         Text(g.note ?? "")
                             .font(.figtree(.regular, size: 11))
-                            .lineSpacing(11 * 0.45)
+                            .auLine(11, 1.45)
                             .foregroundStyle(Color.auText.opacity(0.48))
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -185,7 +184,7 @@ struct PracticeScreenView: View {
                                             .opacity(0.6)
                                         Text(c.t)
                                             .font(.figtree(.regular, size: 13))
-                                            .lineSpacing(13 * 0.4)
+                                            .auLine(13, 1.4)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                     .padding(.horizontal, 11)
@@ -200,7 +199,7 @@ struct PracticeScreenView: View {
                         }
 
                         if let tiles = teach.patternTiles, !tiles.isEmpty {
-                            FlowTiles(tiles: tiles)
+                            CompactFlowChips(tiles: tiles, style: .teach)
                                 .padding(.bottom, 10)
                         }
 
@@ -212,7 +211,7 @@ struct PracticeScreenView: View {
                                     .opacity(0.75)
                                 Text(r.pattern)
                                     .font(.figtree(.semibold, size: 14))
-                                    .lineSpacing(14 * 0.45)
+                                    .auLine(14, 1.45)
                                 ForEach(r.errs, id: \.self) { e in
                                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                                         Text(e.first ?? "")
@@ -236,14 +235,14 @@ struct PracticeScreenView: View {
                         if let explain = teach.explain {
                             Text(explain)
                                 .font(.figtree(.regular, size: 12.5))
-                                .lineSpacing(12.5 * 0.5)
+                                .auLine(12.5, 1.5)
                                 .foregroundStyle(Color.auText.opacity(0.62))
                         }
 
                         ForEach([teach.notYet].compactMap { $0 }, id: \.self) { note in
                             Text(note)
                                 .font(.figtree(.regular, size: 11))
-                                .lineSpacing(11 * 0.5)
+                                .auLine(11, 1.5)
                                 .foregroundStyle(Color.auText.opacity(0.44))
                                 .padding(.top, 8)
                         }
@@ -287,7 +286,7 @@ struct PracticeScreenView: View {
                                         .foregroundStyle(Color.auAccentText)
                                     Text(p.ill?.alt ?? "")
                                         .font(.figtree(.regular, size: 10.5))
-                                        .lineSpacing(10.5 * 0.4)
+                                        .auLine(10.5, 1.4)
                                         .foregroundStyle(Color.auText.opacity(0.48))
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -460,7 +459,7 @@ struct PracticeScreenView: View {
                     .padding(.top, 2)
                 Text(scene)
                     .font(.figtree(.regular, size: 13.5))
-                    .lineSpacing(13.5 * 0.5)
+                    .auLine(13.5, 1.5)
             }
             .padding(.horizontal, 15)
             .padding(.vertical, 13)
@@ -478,7 +477,7 @@ struct PracticeScreenView: View {
                     .foregroundStyle(Color.auFlatText)
                 Text(said.t)
                     .font(.figtree(.regular, size: 15.5))
-                    .lineSpacing(15.5 * 0.45)
+                    .auLine(15.5, 1.45)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 13)
                     .background(
@@ -497,7 +496,7 @@ struct PracticeScreenView: View {
         if let prompt = item.prompt {
             Text(prompt)
                 .font(.figtree(.regular, size: 16))
-                .lineSpacing(16 * 0.45)
+                .auLine(16, 1.45)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 15)
         }
@@ -521,7 +520,7 @@ struct PracticeScreenView: View {
                     .padding(.top, 1)
                 Text(ok ? (item.ok ?? "Correct.") : (item.no ?? "Try again."))
                     .font(.figtree(.regular, size: 14.5))
-                    .lineSpacing(14.5 * 0.45)
+                    .auLine(14.5, 1.45)
             }
             .padding(.horizontal, 15)
             .padding(.vertical, 13)
@@ -544,7 +543,7 @@ struct PracticeScreenView: View {
                     .foregroundStyle(Color.auAccentText)
                 Text(hints[max(0, idx)])
                     .font(.figtree(.regular, size: 13.5))
-                    .lineSpacing(13.5 * 0.5)
+                    .auLine(13.5, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.66))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -638,7 +637,7 @@ struct PracticeScreenView: View {
                     .padding(.top, 2)
                 Text(unlock)
                     .font(.figtree(.regular, size: 11.5))
-                    .lineSpacing(11.5 * 0.5)
+                    .auLine(11.5, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.44))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -661,7 +660,7 @@ struct PracticeScreenView: View {
                 }
                 Text(pc.body)
                     .font(.figtree(.regular, size: 12.5))
-                    .lineSpacing(12.5 * 0.5)
+                    .auLine(12.5, 1.5)
                 HStack(spacing: 9) {
                     Button {
                         m.goto(m.p + 1)
@@ -762,7 +761,7 @@ struct PracticeScreenView: View {
                             .strokeBorder(Color.auDivider, lineWidth: 1))
             }
             .buttonStyle(.auTap)
-            APillButton(title: "Go on") { m.advance() }
+            APillButton(title: "Go on", player: true) { m.advance() }
         }
     }
 
@@ -775,7 +774,7 @@ struct PracticeScreenView: View {
             Text(m.tileLine.isEmpty ? " " : m.tileLine)
                 .font(.caprasimo(size: 20))
                 .tracking(-0.2)
-                .lineSpacing(20 * 0.4)
+                .auHeadLine(20, 1.4)
                 .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 14)
@@ -801,7 +800,7 @@ struct PracticeScreenView: View {
                             ? "Not yet — tap a tile again to take it back." : task.no)
                 )
                 .font(.figtree(.regular, size: 14))
-                .lineSpacing(14 * 0.45)
+                .auLine(14, 1.45)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 15)
                 .padding(.vertical, 13)
@@ -827,7 +826,7 @@ struct PracticeScreenView: View {
                         .foregroundStyle(Color.auAccentText)
                     Text(hints[0])
                         .font(.figtree(.regular, size: 13.5))
-                        .lineSpacing(13.5 * 0.5)
+                        .auLine(13.5, 1.5)
                         .foregroundStyle(Color.auText.opacity(0.66))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -846,23 +845,39 @@ struct PracticeScreenView: View {
 
     // MARK: Options (lines 483–506)
 
+    @ViewBuilder
     private func optionsView(_ item: PlayerModel.PlayerItem, opts: [PracticeOption]) -> some View {
-        VStack(spacing: 10) {
-            ForEach(Array(opts.enumerated()), id: \.offset) { _, o in
-                let picked = m.sel == o.id
-                let isKey = item.isKey(o)
-                optionRow(o, picked: picked, isKey: isKey, item: item)
-                    .accessibilityIdentifier("au.player.option.\(o.id)")
+        if item.big {
+            HStack(spacing: 10) {
+                ForEach(Array(opts.enumerated()), id: \.offset) { _, o in
+                    let picked = m.sel == o.id
+                    let isKey = item.isKey(o)
+                    optionRow(o, picked: picked, isKey: isKey, item: item, big: true)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityIdentifier("au.player.option.\(o.id)")
+                }
             }
+            .padding(.bottom, 14)
+        } else {
+            VStack(spacing: 10) {
+                ForEach(Array(opts.enumerated()), id: \.offset) { _, o in
+                    let picked = m.sel == o.id
+                    let isKey = item.isKey(o)
+                    optionRow(o, picked: picked, isKey: isKey, item: item)
+                        .accessibilityIdentifier("au.player.option.\(o.id)")
+                }
+            }
+            .padding(.bottom, 14)
         }
-        .padding(.bottom, 14)
     }
 
     @ViewBuilder
     private func optionRow(
-        _ o: PracticeOption, picked: Bool, isKey: Bool, item: PlayerModel.PlayerItem
+        _ o: PracticeOption, picked: Bool, isKey: Bool, item: PlayerModel.PlayerItem,
+        big: Bool = false
     ) -> some View {
         let quiet = m.isQuiet
+        let radius: CGFloat = big ? 22 : 19
         // state colors (optionViews, lines 1223–1240)
         let bg: Color = {
             if quiet {
@@ -890,39 +905,59 @@ struct PracticeScreenView: View {
         Button {
             m.pick(o, item: item)
         } label: {
-            HStack(spacing: 12) {
-                if let ill = o.ill {
-                    VStack(spacing: 4) {
-                        Text(ill.id)
-                            .font(.figtree(.bold, size: 8.5))
-                            .tracking(0.54)
-                            .minimumScaleFactor(0.5)
-                        Text(ill.alt)
-                            .font(.figtree(.regular, size: 12.5))
-                            .lineSpacing(12.5 * 0.45)
+            Group {
+                if big {
+                    Text(o.text ?? o.ill?.alt ?? "")
+                        .font(.caprasimo(size: 42))
+                        .tracking(-0.63)
+                        .frame(maxWidth: .infinity, minHeight: 104)
+                } else {
+                    HStack(spacing: 12) {
+                        if let ill = o.ill {
+                            Text(ill.id)
+                                .font(.figtree(.bold, size: 8.5))
+                                .tracking(0.54)
+                                .minimumScaleFactor(0.5)
+                                .multilineTextAlignment(.center)
+                                .frame(width: 74, height: 52)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                        .fill(Color.auAccent.opacity(0.04))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                        .strokeBorder(
+                                            Color.auAccent.opacity(0.34),
+                                            style: StrokeStyle(lineWidth: 1, dash: [5, 4])
+                                        )
+                                )
+                            Text(ill.alt)
+                                .font(.figtree(.regular, size: 12.5))
+                                .auLine(12.5, 1.45)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        } else if let t = o.text {
+                            Text(t)
+                                .font(.figtree(.regular, size: 16))
+                                .auLine(16, 1.4)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        if m.done && isKey && !quiet {
+                            AUIcon(kind: .check, size: 19, color: .auOkText)
+                        } else if picked && !isKey && !quiet && m.done {
+                            AUIcon(kind: .loop, size: 17, color: .auErrText)
+                        }
                     }
-                    .frame(width: 200, alignment: .leading)
-                } else if let t = o.text {
-                    Text(t)
-                        .font(.figtree(.regular, size: 16))
-                        .lineSpacing(16 * 0.4)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                if m.done && isKey && !quiet {
-                    AUIcon(kind: .check, size: 19, color: .auOkText)
-                } else if picked && !isKey && !quiet && m.done {
-                    AUIcon(kind: .loop, size: 17, color: .auErrText)
+                    .padding(.horizontal, 17)
+                    .padding(.vertical, 14)
+                    .frame(minHeight: 62, alignment: .leading)
                 }
             }
-            .padding(.horizontal, 17)
-            .padding(.vertical, 14)
-            .frame(minHeight: 62, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .fill(bg)
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .strokeBorder(bd, lineWidth: 1.5)
             )
             .foregroundStyle(fg)
@@ -939,6 +974,85 @@ extension PlayerModel {
     func isCorrect(_ item: PlayerItem) -> Bool {
         guard let sel else { return false }
         return item.opts.first { $0.id == sel }.map { item.isKey($0) } ?? false
+    }
+}
+
+enum CompactFlowChipStyle {
+    case demo
+    case pattern
+    case teach
+    case roleplay
+}
+
+/// Authored compact, non-interactive chips used for examples and pattern groups.
+struct CompactFlowChips: View {
+    let tiles: [String]
+    let style: CompactFlowChipStyle
+
+    var body: some View {
+        FlowLayout(spacing: 7) {
+            ForEach(tiles, id: \.self) { tile in
+                Text(tile)
+                    .font(font)
+                    .padding(.horizontal, horizontalPadding)
+                    .padding(.vertical, verticalPadding)
+                    .foregroundStyle(foreground)
+                    .background { chipBackground }
+            }
+        }
+    }
+
+    private var font: Font {
+        switch style {
+        case .demo: .figtree(.semibold, size: 11)
+        case .pattern: .figtree(.semibold, size: 12.5)
+        case .teach: .figtree(.semibold, size: 12)
+        case .roleplay: .figtree(.semibold, size: 12.5)
+        }
+    }
+
+    private var horizontalPadding: CGFloat {
+        switch style {
+        case .demo, .teach: 11
+        case .pattern: 12
+        case .roleplay: 13
+        }
+    }
+
+    private var verticalPadding: CGFloat {
+        switch style {
+        case .demo: 6
+        case .pattern: 8
+        case .teach: 7
+        case .roleplay: 9
+        }
+    }
+
+    private var foreground: Color {
+        switch style {
+        case .demo: .auFlatText
+        case .pattern, .teach: .auTintText
+        case .roleplay: .auText
+        }
+    }
+
+    @ViewBuilder
+    private var chipBackground: some View {
+        switch style {
+        case .demo:
+            Capsule().fill(Color.auFlatBg)
+        case .pattern:
+            RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.auTintBg)
+        case .teach:
+            RoundedRectangle(cornerRadius: 11, style: .continuous).fill(Color.auTintBg)
+        case .roleplay:
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                .fill(Color.auFill)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .strokeBorder(Color.auEdge, lineWidth: 1)
+                )
+        }
     }
 }
 

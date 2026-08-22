@@ -2,10 +2,10 @@ import SwiftUI
 
 // MARK: - Onboarding screens
 //
-// Goal / Placement / Commit / Plan / Assess (the placement stub), ported
-// verbatim from Aurel.dc.html lines 181–410.
+// Goal (1 of 2) / Commit (2 of 2) / Plan, ported verbatim from
+// Aurel V4.dc.html lines 205–302.
 
-// MARK: Goal — "Why English?" (lines 181–227)
+// MARK: Goal — "Why English?" (Step 1 of 2)
 
 struct GoalView: View {
     @Environment(AppEnvironment.self) private var env
@@ -39,13 +39,16 @@ struct GoalView: View {
                     Text("Why English?")
                         .font(.caprasimo(size: 31))
                         .tracking(-0.62)
+                        .auHeadLine(31, 1.12)
                         .auStagger(0)
-                    Text("Pick up to two — it changes what we put in front of you first.")
-                        .font(.figtree(.regular, size: 14))
-                        .lineSpacing(14 * 0.55)
-                        .foregroundStyle(Color.auText.opacity(0.55))
-                        .auStagger(0)
+                    AUParagraph(
+                        text: "Pick up to two — it changes what we put in front of you first.",
+                        size: 14, lineHeight: 1.55, color: Color.auText.opacity(0.55)
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .auStagger(0)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 26)
 
                 VStack(spacing: 11) {
@@ -56,7 +59,9 @@ struct GoalView: View {
                                 .stroke(
                                     on ? Color.auBackground : Color.auAccent,
                                     style: StrokeStyle(
-                                        lineWidth: 2.75, lineCap: .round, lineJoin: .round)
+                                        // 2.75 viewBox units, drawn at 20 pt
+                                        lineWidth: 2.75 * 20 / 24, lineCap: .round, lineJoin: .round
+                                    )
                                 )
                                 .frame(width: 20, height: 20)
                                 .frame(width: 42, height: 42)
@@ -66,8 +71,10 @@ struct GoalView: View {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(goal.title)
                                     .font(.caprasimo(size: 17))
+                                    .auHeadLine(17, 1.2)
                                 Text(goal.sub)
                                     .font(.figtree(.regular, size: 12.5))
+                                    .auLine(12.5, 1.55)
                                     .foregroundStyle(Color.auText.opacity(0.52))
                             }
                         } action: {
@@ -86,23 +93,19 @@ struct GoalView: View {
                     .padding(.bottom, 10)
 
                 APillButton(title: "Continue", disabled: env.router.goals.isEmpty) {
-                    env.router.nav(.placement)
+                    env.router.nav(.commit)
                 }
             })
     }
 }
 
-// MARK: Placement — "Where do you stand today?" (lines 229–255)
+// MARK: Commit — "A focused lesson, with a pause halfway." (Step 2 of 2)
 
-struct PlacementView: View {
+struct CommitView: View {
     @Environment(AppEnvironment.self) private var env
 
-    /// LEVELS (lines 1659–1664) — A1 authored; A2–B2 shown, never selectable.
-    static let levels: [(id: String, band: String, title: String, sub: String, ready: Bool)] = [
-        ("a1", "A1", "Foundation", "12 chapters · 42 lessons · authored", true),
-        ("a2", "A2", "Everyday", "Awaiting the A2–C1 adaptation guide (F2)", false),
-        ("b1", "B1", "Intermediate", "Awaiting the A2–C1 adaptation guide (F2)", false),
-        ("b2", "B2", "Upper intermediate", "Awaiting the A2–C1 adaptation guide (F2)", false),
+    private static let remindOpts: [(t: String, l: String)] = [
+        ("07:30", "Morning"), ("12:30", "Midday"), ("19:30", "Evening"), ("", "No reminder"),
     ]
 
     var body: some View {
@@ -110,144 +113,21 @@ struct PlacementView: View {
             step: 2, back: { env.router.nav(.goal) },
             content: {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Where do you\nstand today?")
-                        .font(.caprasimo(size: 31))
-                        .tracking(-0.62)
-                        .lineSpacing(31 * 0.08)
-                    Text(
-                        "A1 is the level that exists today — 12 chapters, 42 lessons. The higher bands arrive with the adaptation guide."
+                    AUHeading(
+                        text: "A focused lesson,\nwith a pause halfway.",
+                        size: 31, lineHeight: 1.12, tracking: -0.62)
+                    AUParagraph(
+                        text:
+                            "A lesson runs about 20 minutes, with a natural place to stop around the middle. Pause and resume whenever you like — nothing is lost.",
+                        size: 14, lineHeight: 1.55
                     )
-                    .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.55)
                     .foregroundStyle(Color.auText.opacity(0.55))
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 26)
 
-                VStack(spacing: 9) {
-                    ForEach(Array(Self.levels.enumerated()), id: \.element.id) { i, level in
-                        Group {
-                            if level.ready {
-                                SelectableRow(
-                                    selected: env.router.level == level.id,
-                                    aid: "au.level.\(level.id)"
-                                ) {
-                                    Text(level.band)
-                                        .font(.caprasimo(size: 22))
-                                        .frame(width: 46)
-                                        .foregroundStyle(
-                                            env.router.level == level.id
-                                                ? Color.auAccent : Color.auText.opacity(0.52))
-                                } content: {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(level.title)
-                                            .font(.figtree(.semibold, size: 15))
-                                        Text(level.sub)
-                                            .font(.figtree(.regular, size: 12.5))
-                                            .foregroundStyle(Color.auText.opacity(0.52))
-                                    }
-                                } action: {
-                                    env.router.setLevel(level.id)
-                                }
-                            } else {
-                                // Shown, never selectable — dashed, muted.
-                                HStack(spacing: 14) {
-                                    Text(level.band)
-                                        .font(.caprasimo(size: 22))
-                                        .frame(width: 46)
-                                        .foregroundStyle(Color.auText.opacity(0.52))
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(level.title)
-                                            .font(.figtree(.semibold, size: 15))
-                                        Text(level.sub)
-                                            .font(.figtree(.regular, size: 12.5))
-                                            .foregroundStyle(Color.auText.opacity(0.52))
-                                    }
-                                }
-                                .padding(.horizontal, 18)
-                                .padding(.vertical, 15)
-                                .opacity(0.42)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                        .strokeBorder(
-                                            Color.auText.opacity(0.2),
-                                            style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                                )
-                            }
-                        }
-                        .auStagger(i)
-                    }
-                }
-
-                Spacer(minLength: 24)
-
-                APillButton(title: "Continue") {
-                    env.router.nav(.commit)
-                }
-            })
-    }
-}
-
-// MARK: Commit — "How much of a morning can you spare?" (lines 257–293)
-
-struct CommitView: View {
-    @Environment(AppEnvironment.self) private var env
-
-    private static let commitOpts: [(n: Int, title: String, sub: String)] = [
-        (5, "Five minutes", "One lesson, most mornings"),
-        (10, "Ten minutes", "A lesson, and the words due back"),
-        (20, "Twenty minutes", "A full session, unhurried"),
-    ]
-
-    private static let remindOpts: [(t: String, l: String)] = [
-        ("07:30", "Morning"), ("12:30", "Midday"), ("19:30", "Evening"),
-    ]
-
-    var body: some View {
-        OnboardingScaffold(
-            step: 3, back: { env.router.nav(.placement) },
-            content: {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("How much of a\nmorning can you spare?")
-                        .font(.caprasimo(size: 31))
-                        .tracking(-0.62)
-                        .lineSpacing(31 * 0.08)
-                    Text("The day gets built around this. Change it whenever you like.")
-                        .font(.figtree(.regular, size: 14))
-                        .lineSpacing(14 * 0.55)
-                        .foregroundStyle(Color.auText.opacity(0.55))
-                }
-                .padding(.bottom, 26)
-
-                VStack(spacing: 11) {
-                    ForEach(Array(Self.commitOpts.enumerated()), id: \.element.n) { i, opt in
-                        let on = env.router.commit == opt.n
-                        SelectableRow(selected: on, aid: "au.commit.\(opt.n)") {
-                            Text("\(opt.n)")
-                                .font(.figtree(.bold, size: 15))
-                                .monospacedDigit()
-                                .frame(width: 42, height: 42)
-                                .background(
-                                    Circle().fill(on ? Color.auAccent : Color.auText.opacity(0.09))
-                                )
-                                .foregroundStyle(on ? Color.auBackground : Color.auAccentText)
-                        } content: {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(opt.title)
-                                    .font(.caprasimo(size: 17))
-                                Text(opt.sub)
-                                    .font(.figtree(.regular, size: 12.5))
-                                    .foregroundStyle(Color.auText.opacity(0.52))
-                            }
-                        } action: {
-                            env.router.setCommitMinutes(opt.n)
-                        }
-                        .accessibilityLabel("\(opt.title) a day — \(opt.sub)")
-                        .auStagger(i)
-                    }
-                }
-                .padding(.bottom, 26)
-
-                Text("One reminder, at")
+                Text("One reminder, if you like")
                     .font(.figtree(.bold, size: 10.5))
                     .tracking(1.47)
                     .textCase(.uppercase)
@@ -256,40 +136,29 @@ struct CommitView: View {
                     .padding(.bottom, 12)
 
                 HStack(spacing: 9) {
-                    ForEach(Array(Self.remindOpts.enumerated()), id: \.element.t) { i, opt in
+                    ForEach(Array(Self.remindOpts.enumerated()), id: \.element.l) { i, opt in
                         let on = env.router.remindAt == opt.t
                         Button {
                             env.router.setRemindAt(opt.t)
                         } label: {
                             VStack(spacing: 2) {
-                                Text(opt.t)
+                                Text(opt.t.isEmpty ? "—" : opt.t)
                                     .font(.figtree(.bold, size: 15))
                                     .monospacedDigit()
                                 Text(opt.l)
                                     .font(.figtree(.regular, size: 11.5))
+                                    .auLine(11.5, 1.55)
                                     .opacity(0.62)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                        .fill(Color.auFill)
-                                    if on {
-                                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                            .strokeBorder(
-                                                Color.auAccent.opacity(0.58), lineWidth: 1)
-                                    } else {
-                                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                            .strokeBorder(Color.auEdge, lineWidth: 1)
-                                    }
-                                }
-                            )
+                            .padding(.horizontal, 8)
+                            .background(AUSelectSurface(selected: on, radius: 20))
                         }
                         .buttonStyle(.auTap)
                         .accessibilityAddTraits(on ? .isSelected : [])
                         .accessibilityIdentifier(
-                            "au.remind.\(opt.t.replacingOccurrences(of: ":", with: ""))"
+                            "au.remind.\(opt.t.isEmpty ? "none" : opt.t.replacingOccurrences(of: ":", with: ""))"
                         )
                         .auStagger(i)
                     }
@@ -298,232 +167,13 @@ struct CommitView: View {
                 Spacer(minLength: 24)
 
                 APillButton(title: "Continue") {
-                    env.router.skipPlacement()
-                    env.router.persist()
-                }
-                .padding(.bottom, 8)
-
-                ALinkButton(title: "About the placement test") {
-                    env.router.nav(.assess)
+                    env.router.finishOnboarding()
                 }
             })
     }
 }
 
-// MARK: Assess — the placement stub (lines 295–311)
-
-/// PLACEMENT is empty by governance ("stubs only in session F2"), so the
-/// assess flow is this honest stub — exactly as authored.
-struct AssessStubView: View {
-    @Environment(AppEnvironment.self) private var env
-
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Spacer()
-            }
-            .frame(height: 44)
-            .overlay(alignment: .leading) {
-                Button {
-                    env.router.nav(.commit)
-                } label: {
-                    AUIcon(kind: .back, size: 17)
-                        .frame(width: 44, height: 44)
-                        .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
-                }
-                .buttonStyle(.auTap)
-                .accessibilityLabel("Back")
-            }
-            .padding(.bottom, 60)
-
-            Spacer(minLength: 0)
-
-            HStack(spacing: 8) {
-                AUIcon(kind: .lock, size: 12, color: .auText.opacity(0.52))
-                Text("Awaiting course content")
-            }
-            .font(.figtree(.bold, size: 9.5))
-            .tracking(1.33)
-            .textCase(.uppercase)
-            .foregroundStyle(Color.auText.opacity(0.52))
-            .padding(.horizontal, 13)
-            .padding(.vertical, 6)
-            .background(Capsule().fill(Color.auText.opacity(0.08)))
-            .padding(.bottom, 22)
-
-            // The screen placeholder card
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .strokeBorder(
-                    Color.auText.opacity(0.2), style: StrokeStyle(lineWidth: 1.5, dash: [6, 5])
-                )
-                .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .fill(Color.auText.opacity(0.005))
-                )
-                .overlay(
-                    Text("screen placeholder")
-                        .font(.figtree(.bold, size: 10.5))
-                        .tracking(1.47)
-                        .textCase(.uppercase)
-                        .foregroundStyle(Color.auText.opacity(0.36))
-                )
-                .frame(width: 300, height: 140)
-                .padding(.bottom, 26)
-
-            Text("Placement comes later")
-                .font(.caprasimo(size: 27))
-                .tracking(-0.4)
-                .padding(.bottom, 10)
-
-            Text(
-                "The adaptive placement test is a deferred premium in the course plan — stubs only until session F2 writes it. Until then everyone starts where the course starts: A1, Chapter One."
-            )
-            .font(.figtree(.regular, size: 14))
-            .lineSpacing(14 * 0.6)
-            .foregroundStyle(Color.auText.opacity(0.58))
-            .frame(maxWidth: 290)
-            .multilineTextAlignment(.center)
-            .padding(.bottom, 14)
-
-            Text("Source: 00_governance/DECISIONS.md · 03_A1_foundation/STATE.md")
-                .font(.figtree(.regular, size: 11))
-                .lineSpacing(11 * 0.5)
-                .foregroundStyle(Color.auText.opacity(0.40))
-                .frame(maxWidth: 290)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, 28)
-
-            APillButton(title: "Start at A1, Chapter One", compact: false) {
-                env.router.assessBegin()
-            }
-            .frame(width: 220)
-
-            Spacer(minLength: 0)
-        }
-        .padding(.horizontal, 24)
-        .padding(.top, 70)
-        .padding(.bottom, 34)
-    }
-}
-
-// MARK: Assess review — "Before we record this" (lines 349–375)
-
-/// The review screen the placement flow opens once all six picks are in
-/// (assessPick → .assessReview, line 336). PLACEMENT is empty by governance
-/// (DECISIONS.md: stubs only until session F2), so the row list is empty
-/// exactly as the authored projection renders it with an empty bank — the
-/// level card and the confirm action still stand on their own.
-struct AssessReviewView: View {
-    @Environment(AppEnvironment.self) private var env
-
-    var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Spacer()
-            }
-            .frame(height: 44)
-            .overlay(alignment: .leading) {
-                Button {
-                    env.router.assessLast()
-                } label: {
-                    AUIcon(kind: .back, size: 17)
-                        .frame(width: 44, height: 44)
-                        .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
-                }
-                .buttonStyle(.auTap)
-                .accessibilityLabel("Back")
-            }
-            .padding(.bottom, 24)
-
-            Text("Before we record this")
-                .font(.caprasimo(size: 29))
-                .tracking(-0.58)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 5)
-
-            Text("Still nothing saved. Change anything you like, then confirm.")
-                .font(.figtree(.regular, size: 13.5))
-                .lineSpacing(13.5 * 0.45)
-                .foregroundStyle(Color.auText.opacity(0.55))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 18)
-
-            // Rows (assessReviewRows) — empty while PLACEMENT is empty.
-            VStack(spacing: 8) {
-                ForEach(Array(env.router.assessReviewRows.enumerated()), id: \.offset) {
-                    _, row in
-                    HStack(spacing: 13) {
-                        Text("\(row.n)")
-                            .font(.figtree(.semibold, size: 13))
-                            .monospacedDigit()
-                            .foregroundStyle(Color.auText.opacity(0.55))
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(row.prompt)
-                                .font(.figtree(.regular, size: 11.5))
-                                .foregroundStyle(Color.auText.opacity(0.52))
-                            Text(row.answer)
-                                .font(.figtree(.semibold, size: 14.5))
-                        }
-                        Spacer(minLength: 8)
-                        Button {
-                            env.router.assessLast()
-                        } label: {
-                            Text("Change")
-                                .font(.figtree(.bold, size: 12.5))
-                        }
-                        .buttonStyle(.auTap)
-                        .foregroundStyle(Color.auAccentText)
-                    }
-                    .padding(.horizontal, 17)
-                    .padding(.vertical, 13)
-                    .background(
-                        RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .strokeBorder(Color.auEdge, lineWidth: 1)
-                    )
-                    .auLift()
-                }
-            }
-            .padding(.bottom, 12)
-
-            // The level card (levelBand + levelLine, line 2316).
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Text(env.router.chapterHeader.band)
-                        .font(.caprasimo(size: 22))
-                        .foregroundStyle(Color.auAccent)
-                    Text(
-                        "This puts you at \(env.router.chapterHeader.level). You can move at any time."
-                    )
-                    .font(.figtree(.regular, size: 13))
-                    .lineSpacing(13 * 0.45)
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .strokeBorder(Color.auDivider, lineWidth: 1)
-            )
-            .padding(.bottom, 12)
-
-            Spacer(minLength: 0)
-
-            APillButton(title: "Confirm and open my path", icon: .arrow) {
-                env.router.assessConfirm()
-            }
-            .accessibilityIdentifier("au.btn.confirm-and-open-my-path")
-        }
-        .padding(.horizontal, 24)
-        .padding(.top, 70)
-        .padding(.bottom, 34)
-    }
-}
-
-// MARK: Plan — "Your plan" over dusk (lines 377–410)
+// MARK: Plan — "Your plan" over dusk (lines 265–302)
 
 struct PlanView: View {
     @Environment(AppEnvironment.self) private var env
@@ -533,8 +183,6 @@ struct PlanView: View {
             PlanDusk()
 
             VStack(alignment: .leading, spacing: 0) {
-                Spacer(minLength: 74)
-
                 Text("Your plan")
                     .font(.figtree(.bold, size: 10.5))
                     .tracking(2.1)
@@ -542,19 +190,18 @@ struct PlanView: View {
                     .foregroundStyle(Color(UIColor(hex: 0xf0a877)))
                     .padding(.bottom, 12)
 
-                Text(planHead)
-                    .font(.caprasimo(size: 36))
-                    .tracking(-0.9)
-                    .lineSpacing(36 * 0.06)
-                    .foregroundStyle(AUSceneArt.duskCream)
-                    .padding(.bottom, 12)
-
-                Text(
-                    "Arc one first — meet and connect. Greetings, then spelling and contact details, then where people are from. The A1 order is fixed by the course dependency graph, so nothing gets moved; your reason for learning shapes which examples and review items come back first."
+                AUHeading(
+                    text: planHead, size: 36, lineHeight: 1.06, tracking: -0.9,
+                    color: AUSceneArt.duskCream
                 )
-                .font(.figtree(.regular, size: 14.5))
-                .lineSpacing(14.5 * 0.6)
-                .foregroundStyle(AUSceneArt.duskCream.opacity(0.78))
+                .padding(.bottom, 12)
+
+                AUParagraph(
+                    text:
+                        "Arc one first — meet and connect. Greetings, then spelling and contact details, then where people are from. The A1 order is fixed by the course dependency graph, so nothing gets moved; your reason for learning shapes which examples and review items come back first.",
+                    size: 14.5, lineHeight: 1.6,
+                    color: AUSceneArt.duskCream.opacity(0.78)
+                )
                 .frame(maxWidth: 300, alignment: .leading)
                 .padding(.bottom, 30)
 
@@ -572,16 +219,19 @@ struct PlanView: View {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(row.what)
                                     .font(.caprasimo(size: 16))
+                                    .auHeadLine(16, 1.25)
                                     .foregroundStyle(AUSceneArt.duskCream)
                                 Text(row.meta)
                                     .font(.figtree(.regular, size: 12))
+                                    .auLine(12, 1.55)
                                     .foregroundStyle(
                                         AUSceneArt.duskCream.opacity(0.62))
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 18)
-                        .padding(.vertical, 16)
+                        .padding(.horizontal, 19)
+                        .padding(.vertical, 17)
+                        .background(.ultraThinMaterial.opacity(0.55), in: .rect(cornerRadius: 22))
                         .background(
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
                                 .fill(AUSceneArt.duskCream.opacity(0.10))
@@ -603,11 +253,14 @@ struct PlanView: View {
                 }
                 .padding(.bottom, 6)
 
-                ALinkButton(title: "See the whole ladder") {
+                ALinkButton(
+                    title: "See the whole ladder",
+                    tint: AUSceneArt.duskCream.opacity(0.78)
+                ) {
                     env.router.nav(.progress)
                 }
-                .foregroundStyle(AUSceneArt.duskCream.opacity(0.78))
             }
+            .padding(.top, 74)
             .padding(.horizontal, 24)
             .padding(.bottom, 34)
         }
@@ -615,8 +268,7 @@ struct PlanView: View {
     }
 
     private var planHead: String {
-        let match = PlacementView.levels.first { $0.id == env.router.level }
-        return "\(match?.band ?? "A1") · \(match?.title ?? "Foundation")."
+        "A1 · Foundation."
     }
 
     private var planRows: [(when: String, what: String, meta: String)] {
@@ -624,7 +276,7 @@ struct PlanView: View {
         return [
             ("Today", ch.lessons.first ?? "", ch.metas.first ?? ""),
             (
-                "This week", "\(env.router.commit) minutes a day",
+                "Each lesson", "≈20 minutes, pause halfway",
                 "One lesson a session — the course production rule"
             ),
             (ch.no, ch.name, "\(ch.count) lessons · \(ch.level)"),
@@ -643,20 +295,27 @@ struct OnboardingScaffold<Content: View>: View {
     var body: some View {
         GeometryReader { geo in
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    StepHeader(step: step, total: 4, back: back)
+                // The design column is a `flex-direction:column` block: every
+                // child spans the full 354 pt content width, left-aligned.
+                VStack(alignment: .leading, spacing: 0) {
+                    StepHeader(step: step, total: 2, back: back)
                         .padding(.bottom, 34)
                     content
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 24)
                 .padding(.top, 74)
                 .padding(.bottom, 32)
-                // Fill the phone when content is short (design 402×874 stage),
-                // scroll when Dynamic Type / small phones need more room.
                 .frame(minHeight: geo.size.height, alignment: .top)
             }
         }
-        .background(Color.auBackground.ignoresSafeArea())
+        .background {
+            ZStack {
+                Color.auBackground
+                AUPaper()
+            }
+            .ignoresSafeArea()
+        }
         .auScreenEntrance()
     }
 }

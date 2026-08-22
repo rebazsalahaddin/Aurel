@@ -31,7 +31,7 @@ struct PromiseScreenView: View {
 
                     Text(p.newToday ?? "")
                         .font(.caprasimo(size: 22))
-                        .lineSpacing(22 * 0.35)
+                        .auHeadLine(22, 1.35)
                         .tracking(-0.22)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 26)
@@ -43,7 +43,7 @@ struct PromiseScreenView: View {
                                 .frame(width: 26, height: 26)
                             Text(t)
                                 .font(.figtree(.regular, size: 16.5))
-                                .lineSpacing(16.5 * 0.4)
+                                .auLine(16.5, 1.4)
                         }
                         .padding(.bottom, 16)
                         .auStagger(i)
@@ -64,6 +64,8 @@ struct PromiseScreenView: View {
                         .padding(.vertical, 10)
                     }
                     .buttonStyle(.auTap)
+                    // align-self: center
+                    .frame(maxWidth: .infinity)
                     .accessibilityIdentifier("au.player.go-on")
                 }
             }
@@ -90,7 +92,7 @@ struct HookScreenView: View {
                             .opacity(0.75)
                         Text(lead)
                             .font(.figtree(.regular, size: 13))
-                            .lineSpacing(13 * 0.55)
+                            .auLine(13, 1.55)
                     }
                     .padding(.horizontal, 15)
                     .padding(.vertical, 13)
@@ -129,7 +131,7 @@ struct HookScreenView: View {
                             .font(.figtree(.semibold, size: 15))
                         Text("\(h.aud ?? "") · \(h.delivery ?? "") · unscored")
                             .font(.figtree(.regular, size: 12))
-                            .lineSpacing(12 * 0.45)
+                            .auLine(12, 1.45)
                             .foregroundStyle(Color.auText.opacity(0.52))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -151,7 +153,7 @@ struct HookScreenView: View {
                 if let scene = h.scene {
                     Text(scene)
                         .font(.figtree(.regular, size: 12.5))
-                        .lineSpacing(12.5 * 0.55)
+                        .auLine(12.5, 1.55)
                         .foregroundStyle(Color.auText.opacity(0.55))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 16)
@@ -171,7 +173,7 @@ struct HookScreenView: View {
                                         learner ? Color.auTintText : Color.auAccentText)
                                 Text(l.t)
                                     .font(.figtree(.regular, size: 15))
-                                    .lineSpacing(15 * 0.4)
+                                    .auLine(15, 1.4)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .padding(.horizontal, 13)
@@ -216,7 +218,7 @@ struct HookScreenView: View {
                         : "Captions are off until one full playback."
                 )
                 .font(.figtree(.regular, size: 11.5))
-                .lineSpacing(11.5 * 0.5)
+                .auLine(11.5, 1.5)
                 .foregroundStyle(Color.auText.opacity(0.40))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 20)
@@ -250,7 +252,7 @@ struct OrientationScreenView: View {
                 }
                 .padding(.bottom, 22)
 
-                ACard(radius: 26) {
+                ACard(radius: 26, padded: false) {
                     VStack(spacing: 0) {
                         AUIcon(
                             kind: AUIcon.Kind(rawIcon: demo.icon) ?? .tap, size: 46,
@@ -268,10 +270,13 @@ struct OrientationScreenView: View {
 
                         Text(demo.demo)
                             .font(.figtree(.regular, size: 13.5))
-                            .lineSpacing(13.5 * 0.55)
+                            .auLine(13.5, 1.55)
                             .foregroundStyle(Color.auText.opacity(0.55))
                     }
                     .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 30)
+                    .padding(.bottom, 26)
                 }
 
                 Button {
@@ -298,7 +303,7 @@ struct OrientationScreenView: View {
 
                 Text("Watch, then try once. You cannot get this wrong.")
                     .font(.figtree(.regular, size: 11.5))
-                    .lineSpacing(11.5 * 0.5)
+                    .auLine(11.5, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.42))
                     .frame(maxWidth: .infinity)
                     .padding(.top, 14)
@@ -352,20 +357,22 @@ struct PauseScreenView: View {
                     Text(p.head ?? "")
                         .font(.caprasimo(size: 27))
                         .tracking(-0.49)
-                        .lineSpacing(27 * 0.2)
+                        .auHeadLine(27, 1.2)
                         .padding(.bottom, 12)
 
                     Text(p.body ?? "")
                         .font(.figtree(.regular, size: 15))
-                        .lineSpacing(15 * 0.6)
+                        .auLine(15, 1.6)
                         .foregroundStyle(Color.auText.opacity(0.62))
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     Spacer(minLength: 12)
 
                     HStack(spacing: 12) {
-                        APillButton(title: "Take a break", variant: .quiet) { m.goto(m.p + 1) }
-                        APillButton(title: "Go on") { m.goto(m.p + 1) }
+                        APillButton(title: "Take a break", variant: .quiet, player: true) {
+                            m.goto(m.p + 1)
+                        }
+                        APillButton(title: "Go on", player: true) { m.goto(m.p + 1) }
                     }
 
                     Text("Progress saved automatically.")
@@ -472,7 +479,7 @@ struct CardsScreenView: View {
             }
 
             // the card itself
-            ACard(radius: 26) {
+            ACard(radius: 26, padded: false) {
                 VStack(spacing: 0) {
                     if card.chunk {
                         HStack(spacing: 6) {
@@ -492,7 +499,7 @@ struct CardsScreenView: View {
                     Text(card.main)
                         .font(.caprasimo(size: 34))
                         .tracking(-0.68)
-                        .lineSpacing(34 * 0.15)
+                        .auHeadLine(34, 1.15)
                         .multilineTextAlignment(.center)
                         .padding(.bottom, 9)
 
@@ -507,7 +514,7 @@ struct CardsScreenView: View {
                     if !card.sub.isEmpty {
                         Text(card.sub)
                             .font(.figtree(.regular, size: 12.3))
-                            .lineSpacing(12.3 * 0.5)
+                            .auLine(12.3, 1.5)
                             .foregroundStyle(Color.auText.opacity(0.50))
                             .multilineTextAlignment(.center)
                     }
@@ -521,6 +528,8 @@ struct CardsScreenView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
+                .padding(.horizontal, 22)
+                .padding(.vertical, 24)
             }
             .padding(.bottom, 16)
 
@@ -641,7 +650,9 @@ struct CardsScreenView: View {
                 .disabled(m.c == 0)
                 .opacity(m.c == 0 ? 0.45 : 1)
 
-                APillButton(title: m.c + 1 < cards.count ? "Next card" : "Go on", icon: .arrow) {
+                APillButton(
+                    title: m.c + 1 < cards.count ? "Next card" : "Go on", icon: .arrow, player: true
+                ) {
                     if m.c + 1 < cards.count {
                         m.c += 1
                         m.rec = 0
@@ -669,7 +680,7 @@ struct AlphabetScreenView: View {
 
                 Text(a.rule ?? "")
                     .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.55)
+                    .auLine(14, 1.55)
                     .foregroundStyle(Color.auText.opacity(0.60))
                     .padding(.bottom, 18)
 
@@ -709,7 +720,7 @@ struct AlphabetScreenView: View {
                 .padding(.bottom, 16)
 
                 // families
-                ACard(radius: 18) {
+                ACard(radius: 18, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         Text("Four families")
                             .font(.figtree(.bold, size: 9.5))
@@ -735,13 +746,15 @@ struct AlphabetScreenView: View {
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
                 }
                 .padding(.bottom, 14)
 
                 if let note = a.note {
                     Text(note)
                         .font(.figtree(.regular, size: 11.5))
-                        .lineSpacing(11.5 * 0.5)
+                        .auLine(11.5, 1.5)
                         .foregroundStyle(Color.auText.opacity(0.42))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }

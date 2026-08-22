@@ -9,6 +9,11 @@ import SwiftUI
 
 struct SVGPathShape: Shape {
     let d: String
+    /// The authored `viewBox` the `d` string's coordinates live in. The icon set
+    /// is drawn on 24×24, but the scene art (logo mark 64×64, dune fields
+    /// 402×230, the home path canvas) is authored on its own box — passing the
+    /// wrong one silently scales the geometry off-screen.
+    var viewBox: CGSize = CGSize(width: 24, height: 24)
 
     private enum Token {
         case command(Character)
@@ -178,13 +183,13 @@ struct SVGPathShape: Shape {
                 let rx = num()
                 _ = num()
                 _ = num()
-                _ = num()
+                let largeArc = num()
                 let sweep = num()
                 let x2 = num()
                 let y2 = num()
                 addArc(
                     to: &path, from: CGPoint(x: x, y: y), to: CGPoint(x: x2, y: y2), radius: rx,
-                    sweep: sweep > 0)
+                    largeArc: largeArc > 0, sweep: sweep > 0)
                 x = x2
                 y = y2
                 lastC2 = nil
@@ -193,13 +198,13 @@ struct SVGPathShape: Shape {
                 let rx = num()
                 _ = num()
                 _ = num()
-                _ = num()
+                let largeArc = num()
                 let sweep = num()
                 let dx = num()
                 let dy = num()
                 addArc(
                     to: &path, from: CGPoint(x: x, y: y), to: CGPoint(x: x + dx, y: y + dy),
-                    radius: rx, sweep: sweep > 0)
+                    radius: rx, largeArc: largeArc > 0, sweep: sweep > 0)
                 x += dx
                 y += dy
                 lastC2 = nil
@@ -214,16 +219,19 @@ struct SVGPathShape: Shape {
                 i += 1
             }
         }
-        // Icons are authored in a 24×24 viewBox; scale into the destination.
-        let scaleX = rect.width / 24
-        let scaleY = rect.height / 24
-        return path.applying(CGAffineTransform(scaleX: scaleX, y: scaleY))
+        // Scale the authored viewBox into the destination rect.
+        let scaleX = rect.width / max(viewBox.width, 0.001)
+        let scaleY = rect.height / max(viewBox.height, 0.001)
+        let tf = CGAffineTransform(scaleX: scaleX, y: scaleY)
+            .concatenating(CGAffineTransform(translationX: rect.minX, y: rect.minY))
+        return path.applying(tf)
     }
 
     /// SVG elliptical arc (endpoint parameterization) → center parameterization.
     /// Only circular arcs appear in the icon set, which keeps this simple.
     private func addArc(
-        to path: inout Path, from p1: CGPoint, to p2: CGPoint, radius r: CGFloat, sweep: Bool
+        to path: inout Path, from p1: CGPoint, to p2: CGPoint, radius r: CGFloat,
+        largeArc: Bool, sweep: Bool
     ) {
         let mid = CGPoint(x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2)
         let dx = p2.x - p1.x
@@ -231,8 +239,9 @@ struct SVGPathShape: Shape {
         let dist = max((dx * dx + dy * dy).squareRoot(), 0.001)
         let r = max(r, dist / 2)
         let h = max((r * r - (dist / 2) * (dist / 2)).squareRoot(), 0)
-        // Perpendicular offset direction: sign flips with the sweep flag.
-        let sign: CGFloat = sweep ? 1 : -1
+        // Endpoint → centre parameterization (SVG F.6.5): the perpendicular
+        // offset is positive when the large-arc and sweep flags differ.
+        let sign: CGFloat = (largeArc != sweep) ? 1 : -1
         let off = CGPoint(x: -dy / dist * h * sign, y: dx / dist * h * sign)
         let center = CGPoint(x: mid.x + off.x, y: mid.y + off.y)
         let startAngle = atan2(p1.y - center.y, p1.x - center.x)
@@ -251,6 +260,8 @@ struct AUIcon: View {
         case check, arrow, close, back
         case play, mic, link, lock
         case gear, offline, sparkle, flame, trophy
+        case pencil, star, chevron, chevronDown
+        case speech, reviewLoop, camera, alert, clock, warning
     }
 
     /// One authored sub-path: the `d` string plus whether it fills or strokes.
@@ -259,16 +270,21 @@ struct AUIcon: View {
     var color: Color = .auText
 
     var body: some View {
+        // Authored `stroke-width` is in viewBox units; SVG scales it with the
+        // artwork, so a 2.6 stroke on a 24-unit box drawn at 17 pt renders at
+        // 1.84 pt — not 2.6.
         ZStack {
             ForEach(Array(Self.subpaths(kind).enumerated()), id: \.offset) { _, sub in
+                let box = CGSize(width: sub.box, height: sub.box)
                 if sub.fill {
-                    SVGPathShape(d: sub.d).fill(color)
+                    SVGPathShape(d: sub.d, viewBox: box).fill(color)
                 } else {
-                    SVGPathShape(d: sub.d)
+                    SVGPathShape(d: sub.d, viewBox: box)
                         .stroke(
                             color,
                             style: StrokeStyle(
-                                lineWidth: sub.strokeWidth, lineCap: .round, lineJoin: .round))
+                                lineWidth: sub.strokeWidth * size / sub.box, lineCap: .round,
+                                lineJoin: .round))
                 }
             }
         }
@@ -284,6 +300,9 @@ struct AUIcon: View {
         let d: String
         let fill: Bool
         let strokeWidth: CGFloat
+        /// The authored viewBox side (the icon set is 24; the glint sparkle
+        /// is drawn on 14).
+        var box: CGFloat = 24
     }
 
     static func subpaths(_ kind: Kind) -> [Sub] {
@@ -396,12 +415,63 @@ struct AUIcon: View {
                 Sub(d: circle(cx: 12, cy: 19.4, r: 0.7), fill: true, strokeWidth: 0),
                 Sub(d: "M3 3l18 18", fill: false, strokeWidth: 2.6),
             ]
+        case .speech:
+            return [
+                Sub(
+                    d: "M20 12a7.5 7.5 0 0 1-10.9 6.7L4 20l1.4-4.3A7.5 7.5 0 1 1 20 12z",
+                    fill: false, strokeWidth: 2.6)
+            ]
+        case .reviewLoop:
+            return [
+                Sub(d: "M3.5 12a8.5 8.5 0 1 1 2.6 6.1", fill: false, strokeWidth: 2.75),
+                Sub(d: "M3 19v-5h5", fill: false, strokeWidth: 2.75),
+            ]
+        case .camera:
+            return [
+                Sub(d: "M4 8.5 5.2 6h5.6L12 8.5", fill: false, strokeWidth: 2.6),
+                Sub(d: rrect(x: 3, y: 8.5, w: 18, h: 11.5, r: 3), fill: false, strokeWidth: 2.6),
+                Sub(d: circle(cx: 12, cy: 14.2, r: 3.2), fill: false, strokeWidth: 2.6),
+            ]
+        case .pencil:
+            return [
+                Sub(d: "M15.5 4.5l4 4L9 19H5v-4z", fill: false, strokeWidth: 2.75)
+            ]
+        case .star:
+            return [
+                Sub(
+                    d:
+                        "M12 3.5 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8L6.7 20l1-6L3.4 9.9l6-.9z",
+                    fill: false, strokeWidth: 2.75)
+            ]
+        case .chevron:
+            return [
+                Sub(d: "M9 5l7 7-7 7", fill: false, strokeWidth: 2.75)
+            ]
+        case .chevronDown:
+            return [
+                Sub(d: "M6 9l6 6 6-6", fill: false, strokeWidth: 2.75)
+            ]
+        case .alert:
+            return [
+                Sub(d: "M12 8v5", fill: false, strokeWidth: 2.75),
+                Sub(d: circle(cx: 12, cy: 16.5, r: 0.6), fill: true, strokeWidth: 0),
+                Sub(d: circle(cx: 12, cy: 12, r: 9), fill: false, strokeWidth: 2.75),
+            ]
+        case .clock:
+            return [
+                Sub(d: circle(cx: 12, cy: 12, r: 9), fill: false, strokeWidth: 2.75),
+                Sub(d: "M12 7.5V12l3 2", fill: false, strokeWidth: 2.75),
+            ]
+        case .warning:
+            return [
+                Sub(d: "M12 8.5v5M12 17.2h.01", fill: false, strokeWidth: 3)
+            ]
         case .sparkle:
             return [
                 Sub(
                     d:
                         "M7 0 C7.6 5.1 8.9 6.4 14 7 C8.9 7.6 7.6 8.9 7 14 C6.4 8.9 5.1 7.6 0 7 C5.1 6.4 6.4 5.1 7 0 Z",
-                    fill: true, strokeWidth: 0)
+                    fill: true, strokeWidth: 0, box: 14)
             ]
         case .flame:
             return [

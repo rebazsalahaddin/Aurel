@@ -13,6 +13,7 @@
 <script src="course-c1.js"></script>
 <script src="course-c2.js"></script>
 <script src="course-c3.js"></script>
+<script src="course-c4.js"></script>
 <style>
 body{margin:0;background:#e8e0d2}
 .aurel-dark{--color-bg:#1c1917;--color-surface:#272220;--color-text:#f4ebdd;--color-accent:#dc8b57;--color-accent-2:#a3b383;--color-divider:rgba(244,235,221,.16);--shadow-sm:0 1px 2px rgba(0,0,0,.5);--shadow-md:0 4px 14px rgba(0,0,0,.45);--shadow-lg:0 16px 40px rgba(0,0,0,.55)}
@@ -64,21 +65,28 @@ body{margin:0;background:#e8e0d2}
 .au-rays{position:absolute;top:-150px;left:50%;width:540px;height:540px;margin-left:-270px;pointer-events:none;z-index:-1;opacity:.55;background:repeating-conic-gradient(from 0deg at 50% 50%,color-mix(in srgb,var(--color-accent) 46%,transparent) 0deg 3.4deg,transparent 3.4deg 13deg);-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 0,rgba(0,0,0,.45) 32%,transparent 60%);mask-image:radial-gradient(circle at 50% 50%,#000 0,rgba(0,0,0,.45) 32%,transparent 60%);animation:auSpin 120s linear infinite}
 .au-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:0;cursor:pointer;padding:17px 22px;border-radius:22px;overflow:hidden;font:600 16.5px/1.1 var(--font-body);letter-spacing:.014em;-webkit-tap-highlight-color:transparent;transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .26s cubic-bezier(.2,.8,.3,1),background .22s ease,opacity .2s ease}
 .au-btn:active{transform:translateY(.5px)}
-.au-btn-primary{color:#fff8f0;background:linear-gradient(180deg,color-mix(in srgb,var(--color-accent-600) 93%,#fff) 0%,var(--color-accent-600) 46%,var(--color-accent-700) 100%);text-shadow:0 1px 0 rgba(84,40,14,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1.5px 0 rgba(78,36,12,.26),inset 0 0 0 1px rgba(96,46,16,.14),0 1px 1px rgba(74,48,26,.10),0 5px 12px -9px rgba(100,51,18,.4)}
-.au-btn-primary:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1.5px 0 rgba(78,36,12,.24),inset 0 0 0 1px rgba(96,46,16,.14),0 1px 1px rgba(74,48,26,.1),0 9px 18px -10px rgba(100,51,18,.44)}
-.au-btn-primary:active{box-shadow:inset 0 2px 4px rgba(70,32,10,.3),inset 0 0 0 1px rgba(96,46,16,.18),0 1px 1px rgba(74,48,26,.1)}
-.aurel-dark .au-btn-primary{background:linear-gradient(180deg,color-mix(in srgb,var(--color-accent-600) 82%,#fff) 0%,var(--color-accent-600) 48%,var(--color-accent-700) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -1.5px 0 rgba(0,0,0,.3),inset 0 0 0 1px rgba(0,0,0,.16),0 2px 3px rgba(0,0,0,.28),0 8px 18px -12px rgba(0,0,0,.5)}
+.au-btn-primary{color:#fff8f0;background:var(--color-accent-700);box-shadow:none}
+
+.au-btn-primary:active{background:var(--color-accent-800);box-shadow:none}
+.aurel-dark .au-btn-primary{background:var(--color-accent-700);box-shadow:none}
 .au-btn-primary:disabled{background:color-mix(in srgb,var(--color-text) 6%,transparent);color:color-mix(in srgb,var(--color-text) 32%,transparent);text-shadow:none;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--color-text) 9%,transparent);cursor:default}
-.au-btn-ghost{color:var(--color-text);background:var(--au-glass);backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);border:1px solid var(--au-edge);box-shadow:inset 0 1px 0 var(--au-hi),var(--au-soft)}
+.au-btn-ghost{color:var(--color-text);background:var(--au-glass);backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);border:1px solid var(--au-edge);box-shadow:none}
 .au-link{background:transparent;border:0;cursor:pointer;font:600 14.5px var(--font-body);letter-spacing:.012em;color:var(--au-accent-text);padding:13px;position:relative;width:100%;-webkit-tap-highlight-color:transparent}
 .au-link::after{content:"";position:absolute;left:50%;right:50%;bottom:9px;height:1.5px;background:currentColor;opacity:.45;transition:left .26s cubic-bezier(.2,.8,.3,1),right .26s cubic-bezier(.2,.8,.3,1)}
-.au-link:hover::after{left:32%;right:32%}
-.au-key{position:relative;display:flex;align-items:center;gap:12px;width:100%;border:0;cursor:pointer;padding:7px 8px 7px 24px;border-radius:24px;overflow:hidden;color:#fff7ee;text-align:left;-webkit-tap-highlight-color:transparent;background:linear-gradient(180deg,color-mix(in srgb,var(--color-accent-600) 90%,#fff) 0%,var(--color-accent-600) 46%,var(--color-accent-700) 100%);text-shadow:0 1px 0 rgba(84,40,14,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.26),inset 0 -1.5px 0 rgba(78,36,12,.28),inset 0 0 0 1px rgba(96,46,16,.16),0 2px 3px rgba(0,0,0,.22),0 10px 22px -12px rgba(0,0,0,.42);transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .26s cubic-bezier(.2,.8,.3,1)}
-.au-key:hover{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -1.5px 0 rgba(78,36,12,.26),inset 0 0 0 1px rgba(96,46,16,.16),0 3px 5px rgba(0,0,0,.22),0 14px 28px -12px rgba(0,0,0,.46)}
-.au-key:active{transform:translateY(.5px);box-shadow:inset 0 2px 4px rgba(70,32,10,.32),inset 0 0 0 1px rgba(96,46,16,.2),0 1px 2px rgba(0,0,0,.2)}
+
+.au-key{position:relative;display:flex;align-items:center;gap:12px;width:100%;border:0;cursor:pointer;padding:7px 8px 7px 24px;border-radius:24px;overflow:hidden;color:#fff7ee;text-align:left;-webkit-tap-highlight-color:transparent;background:var(--color-accent-700);box-shadow:none;transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .26s cubic-bezier(.2,.8,.3,1)}
+
+.au-key:active{transform:translateY(.5px);background:var(--color-accent-800);box-shadow:none}
 .au-key i{display:none}
+.au-tabb{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:9px 4px 8px;border-radius:20px;cursor:pointer;-webkit-tap-highlight-color:transparent;background:transparent;transition:color .3s cubic-bezier(.2,.8,.3,1)}
+.au-tabb svg{transition:transform .38s cubic-bezier(.34,1.3,.4,1),opacity .3s ease;opacity:.92}
+.au-tabb[data-on="1"] svg{transform:translateY(-1px) scale(1.07);opacity:1}
+.au-tabb span{font-size:10px;font-weight:700;letter-spacing:.01em;transition:opacity .3s ease,transform .38s cubic-bezier(.2,.8,.3,1);opacity:.72}
+.au-tabb[data-on="1"] span{opacity:1}
+.au-tabb:active svg{transform:translateY(0) scale(.94)}
+.au-tab-ind{position:absolute;top:7px;bottom:7px;left:7px;border-radius:20px;background:var(--color-accent-700);pointer-events:none;z-index:0;transition:transform .42s cubic-bezier(.22,.86,.28,1)}
 .au-key .au-knob{transition:transform .34s cubic-bezier(.2,.8,.3,1)}
-.au-key:hover .au-knob{transform:translateX(4px)}
+
 .au-pop{animation:auPop .34s cubic-bezier(.2,.9,.3,1) both}
 @keyframes auScreen{from{opacity:0;transform:translateY(13px) scale(.994)}to{opacity:1;transform:none}}
 @keyframes auStep1{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -97,11 +105,12 @@ body{margin:0;background:#e8e0d2}
 .au-stagger>*:nth-child(6){animation-delay:.33s}
 .au-stagger>*:nth-child(7){animation-delay:.38s}
 .au-stagger>*:nth-child(n+8){animation-delay:.43s}
-.au-tap:hover{transform:translateY(-1.5px)}
+
 .au-tap:active{transform:scale(.972)}
 .au-ring{position:absolute;inset:0;border-radius:999px;border:2px solid var(--color-accent);pointer-events:none;animation:auRipple 2s cubic-bezier(.2,.7,.4,1) infinite}
 .au-ring.d{animation-delay:1s}
-@media (prefers-reduced-motion:reduce){.au-screen,.au-stagger>*,.au-pop,.au-rise,.au-enter,.au-enter-late,.au-sun,.au-ring,.au-rays,.au-amb>i,.au-sky i,.au-glint svg{animation:none!important}.au-sky i{opacity:.7}.au-btn-primary::after,.au-key i{display:none}}
+@media (prefers-reduced-motion:reduce){.au-screen,.au-stagger>*,.au-pop,.au-rise,.au-enter,.au-enter-late,.au-sun,.au-ring,.au-rays,.au-amb>i,.au-sky i,.au-glint svg{animation:none!important}.au-sky i{opacity:.7}.au-key i{display:none}
+.au-tab-ind,.au-tabb,.au-tabb svg,.au-tabb span{transition:none!important}}
 .au-paper{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1}
 .au-paper::before{content:"";position:absolute;inset:0;background:radial-gradient(128% 54% at 92% -8%,color-mix(in srgb,var(--color-accent) 11%,transparent),transparent 68%),radial-gradient(104% 46% at -12% 106%,color-mix(in srgb,var(--color-accent-2) 10%,transparent),transparent 70%)}
 .au-paper::after{content:"";position:absolute;left:-56px;right:-56px;bottom:-190px;height:620px;background-repeat:no-repeat;background-size:100% 100%;-webkit-mask-image:radial-gradient(72% 78% at 24% 96%,#000 0,rgba(0,0,0,.5) 46%,transparent 78%);mask-image:radial-gradient(72% 78% at 24% 96%,#000 0,rgba(0,0,0,.5) 46%,transparent 78%);opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='514' height='620' viewBox='0 0 514 620'%3E%3Cg fill='none' stroke='%23231f1c' stroke-width='1.15' stroke-linecap='round'%3E%3Cpath stroke-opacity='.5' d='M0 470 C86 452 168 448 254 458 C340 468 430 484 514 470'/%3E%3Cpath stroke-opacity='.34' d='M0 512 C92 496 176 492 262 500 C348 508 434 522 514 510'/%3E%3Cpath stroke-opacity='.2' d='M0 556 C96 542 184 538 268 544 C352 550 436 562 514 552'/%3E%3Cg stroke-opacity='.3'%3E%3Cpath d='M40 470 A104 104 0 0 1 248 470'/%3E%3Cpath d='M-16 470 A160 160 0 0 1 304 470' stroke-opacity='.22'/%3E%3Cpath d='M-76 470 A220 220 0 0 1 364 470' stroke-opacity='.16'/%3E%3Cpath d='M-140 470 A284 284 0 0 1 428 470' stroke-opacity='.11'/%3E%3C/g%3E%3Cg stroke-opacity='.26' stroke-dasharray='2 7'%3E%3Cpath d='M300 128 C336 176 366 236 380 300'/%3E%3Cpath d='M356 96 C398 152 432 222 448 296' stroke-opacity='.16'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
@@ -113,6 +122,7 @@ body{margin:0;background:#e8e0d2}
 .au-screen{zoom:var(--au-type,1)}
 .au-sunmark{transition:left .9s cubic-bezier(.2,.8,.3,1),top .9s cubic-bezier(.2,.8,.3,1)}
 @media (prefers-reduced-motion:reduce){.au-sunmark{transition:none}}
+@media (hover:hover) and (pointer:fine){.au-tap:hover{transform:translateY(-1.5px)}.au-btn-primary:hover{background:var(--color-accent-800);box-shadow:none}.au-key:hover{background:var(--color-accent-800);box-shadow:none}.au-key:hover .au-knob{transform:translateX(4px)}.au-link:hover::after{left:32%;right:32%}}
 </style>
 </helmet>
 
@@ -158,11 +168,11 @@ body{margin:0;background:#e8e0d2}
 <span style="font:600 11.5px var(--font-body);letter-spacing:.02em;color:rgba(247,239,226,.86)">Chapter One free, no account</span>
 </div>
 <h1 class="au-enter" style="animation-delay:.08s;margin:0 0 14px;font-size:44px;line-height:1.02;letter-spacing:-.025em;color:#f7efe2">English,<br>unhurried.</h1>
-<p class="au-enter" style="animation-delay:.16s;margin:0 0 30px;font-size:15.5px;line-height:1.6;color:rgba(247,239,226,.76);max-width:min(330px,100%);text-wrap:pretty">One short lesson a day, rebuilt each morning around the words you are about to forget.</p>
+<p class="au-enter" style="animation-delay:.16s;margin:0 0 30px;font-size:15.5px;line-height:1.6;color:rgba(247,239,226,.76);max-width:min(330px,100%);text-wrap:pretty">One lesson at a time, rebuilt each morning around the words you are about to forget.</p>
 <button class="au-key au-enter" onClick="{{ go.goal }}" style="animation-delay:.24s;margin:0 0 4px">
 <i></i>
 <span style="position:relative;flex:1;font:700 16.5px var(--font-body);letter-spacing:.005em">Begin the path</span>
-<span class="au-knob" style="position:relative;width:46px;height:46px;flex:none;border-radius:17px;background:#fff8f0;color:var(--color-accent-700);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.22)">
+<span class="au-knob" style="position:relative;width:46px;height:46px;flex:none;border-radius:17px;background:#fff8f0;color:var(--color-accent-800);display:flex;align-items:center;justify-content:center">
 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15"></path><path d="M13 6l6 6-6 6"></path></svg>
 </span>
 </button>
@@ -185,8 +195,8 @@ body{margin:0;background:#e8e0d2}
 <button class="au-tap" onClick="{{ go.welcome }}" aria-label="Back" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
 </button>
-<div role="progressbar" aria-label="Step 1 of 4" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4" style="flex:1;height:4px;border-radius:999px;background:var(--color-divider);overflow:hidden"><div style="width:25%;height:100%;background:var(--color-accent);border-radius:999px"></div></div>
-<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">1 of 4</span>
+<div role="progressbar" aria-label="Step 1 of 2" aria-valuenow="1" aria-valuemin="1" aria-valuemax="2" style="flex:1;height:4px;border-radius:999px;background:var(--color-divider);overflow:hidden"><div style="width:50%;height:100%;background:var(--color-accent);border-radius:999px"></div></div>
+<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">1 of 2</span>
 </div>
 <h2 style="margin:0 0 10px;font-size:31px;letter-spacing:-.02em">Why English?</h2>
 <p style="margin:0 0 26px;font-size:14px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Pick up to two — it changes what we put in front of you first.</p>
@@ -222,35 +232,7 @@ body{margin:0;background:#e8e0d2}
 </div>
 <div style="flex:1;min-height:24px"></div>
 <p style="margin:0 0 10px;text-align:center;font-size:12.5px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">{{ goalHint }}</p>
-<button class="au-btn au-btn-primary au-tap" onClick="{{ go.placement }}" disabled="{{ goalUnset }}" style="">Continue</button>
-</div>
-</sc-if>
-
-<sc-if value="{{ isPlacement }}" hint-placeholder-val="{{ true }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;display:flex;flex-direction:column;padding:74px 24px 32px">
-<div class="au-paper"></div>
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:34px">
-<button class="au-tap" onClick="{{ go.goal }}" aria-label="Back" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
-<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
-</button>
-<div role="progressbar" aria-label="Step 2 of 4" aria-valuenow="2" aria-valuemin="1" aria-valuemax="4" style="flex:1;height:4px;border-radius:999px;background:var(--color-divider);overflow:hidden"><div style="width:50%;height:100%;background:var(--color-accent);border-radius:999px"></div></div>
-<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">2 of 4</span>
-</div>
-<h2 style="margin:0 0 10px;font-size:31px;letter-spacing:-.02em">Where do you<br>stand today?</h2>
-<p style="margin:0 0 26px;font-size:14px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 55%,transparent)">A1 is the level that exists today — 12 chapters, 42 lessons. The higher bands arrive with the adaptation guide.</p>
-<div class="au-stagger" style="display:flex;flex-direction:column;gap:9px">
-<sc-for list="{{ levels }}" as="l" hint-placeholder-count="4">
-<div class="au-tap" onClick="{{ l.pick }}" style="{{ l.style }}">
-<span style="font:400 22px var(--font-heading);width:46px;flex:none;color:{{ l.code }}">{{ l.band }}</span>
-<div style="flex:1;min-width:0">
-<div style="font-size:15px;font-weight:600">{{ l.title }}</div>
-<div style="font-size:12.5px;margin-top:2px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ l.sub }}</div>
-</div>
-</div>
-</sc-for>
-</div>
-<div style="flex:1;min-height:24px"></div>
-<button class="au-btn au-btn-primary au-tap" onClick="{{ go.commit }}" style="margin:0">Continue</button>
+<button class="au-btn au-btn-primary au-tap" onClick="{{ go.commit }}" disabled="{{ goalUnset }}" style="">Continue</button>
 </div>
 </sc-if>
 
@@ -258,28 +240,17 @@ body{margin:0;background:#e8e0d2}
 <div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;display:flex;flex-direction:column;padding:74px 24px 32px">
 <div class="au-paper"></div>
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:34px">
-<button class="au-tap" onClick="{{ go.placement }}" aria-label="Back" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
+<button class="au-tap" onClick="{{ go.goal }}" aria-label="Back" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
 </button>
-<div role="progressbar" aria-label="Step 3 of 4" aria-valuenow="3" aria-valuemin="1" aria-valuemax="4" style="flex:1;height:4px;border-radius:999px;background:var(--color-divider);overflow:hidden"><div style="width:75%;height:100%;background:var(--color-accent);border-radius:999px"></div></div>
-<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">3 of 4</span>
+<div role="progressbar" aria-label="Step 2 of 2" aria-valuenow="2" aria-valuemin="1" aria-valuemax="2" style="flex:1;height:4px;border-radius:999px;background:var(--color-divider);overflow:hidden"><div style="width:100%;height:100%;background:var(--color-accent);border-radius:999px"></div></div>
+<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">2 of 2</span>
 </div>
-<h2 style="margin:0 0 10px;font-size:31px;letter-spacing:-.02em">How much of a<br>morning can you spare?</h2>
-<p style="margin:0 0 26px;font-size:14px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 55%,transparent)">The day gets built around this. Change it whenever you like.</p>
-<div class="au-stagger" style="display:flex;flex-direction:column;gap:11px;margin-bottom:26px">
-<sc-for list="{{ commitOpts }}" as="c" hint-placeholder-count="3">
-<div class="au-tap" role="button" aria-pressed="{{ c.on }}" aria-label="{{ c.aria }}" onClick="{{ c.pick }}" style="{{ c.style }}">
-<span style="{{ c.mark }}">{{ c.n }}</span>
-<div style="flex:1;min-width:0">
-<div style="font:400 17px/1.2 var(--font-heading)">{{ c.title }}</div>
-<div style="font-size:12.5px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ c.sub }}</div>
-</div>
-</div>
-</sc-for>
-</div>
-<div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">One reminder, at</div>
-<div style="display:flex;gap:9px">
-<sc-for list="{{ remindOpts }}" as="r" hint-placeholder-count="3">
+<h2 style="margin:0 0 10px;font-size:31px;letter-spacing:-.02em">A focused lesson,<br>with a pause halfway.</h2>
+<p style="margin:0 0 26px;font-size:14px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 55%,transparent)">A lesson runs about 20 minutes, with a natural place to stop around the middle. Pause and resume whenever you like — nothing is lost.</p>
+<div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">One reminder, if you like</div>
+<div style="display:flex;gap:9px;flex-wrap:wrap">
+<sc-for list="{{ remindOpts }}" as="r" hint-placeholder-count="4">
 <div class="au-tap" role="button" aria-pressed="{{ r.on }}" onClick="{{ r.pick }}" style="{{ r.style }}">
 <span style="font:700 15px var(--font-body);font-variant-numeric:tabular-nums">{{ r.time }}</span>
 <span style="font-size:11.5px;margin-top:2px;opacity:.62">{{ r.label }}</span>
@@ -287,97 +258,16 @@ body{margin:0;background:#e8e0d2}
 </sc-for>
 </div>
 <div style="flex:1;min-height:24px"></div>
-<button class="au-btn au-btn-primary au-tap" onClick="{{ skipPlacement }}" style="margin:0 0 8px">Continue</button>
-<button class="au-link au-tap" onClick="{{ go.assess }}">About the placement test</button>
+<button class="au-btn au-btn-primary au-tap" onClick="{{ finishOnboarding }}" style="margin:0">Continue</button>
 </div>
 </sc-if>
 
-<sc-if value="{{ isAssess }}" hint-placeholder-val="{{ true }}">
-<sc-if value="{{ assessIntro }}" hint-placeholder-val="{{ true }}">
-<div class="au-screen" style="min-height:874px;display:flex;flex-direction:column;padding:74px 24px 32px;align-items:center;justify-content:center;text-align:center;position:relative;isolation:isolate">
-<div class="au-paper"></div>
 
-<button class="au-tap" onClick="{{ go.commit }}" aria-label="Back" style="position:absolute;top:70px;left:24px;width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer">
-<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
-</button>
-<div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:22px;padding:6px 13px;border-radius:999px;background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 52%,transparent);font:700 9.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase">
-<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.6"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg>Awaiting course content</div>
-<div style="width:100%;max-width:300px;height:140px;border-radius:24px;border:1.5px dashed color-mix(in srgb,var(--color-text) 20%,transparent);background:repeating-linear-gradient(135deg,transparent 0 9px,color-mix(in srgb,var(--color-text) 5%,transparent) 9px 18px);display:flex;align-items:center;justify-content:center;margin-bottom:26px;font:700 10.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 36%,transparent)">screen placeholder</div>
-<h3 style="margin:0 0 10px;font-size:27px;letter-spacing:-.015em">{{ placementStubHead }}</h3>
-<p style="margin:0 0 14px;font-size:14px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 58%,transparent);max-width:290px;text-wrap:pretty">{{ placementStubBody }}</p>
-<p style="margin:0 0 28px;font-size:11px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 40%,transparent);max-width:290px">Source: {{ placementStubSource }}</p>
-<button class="au-btn au-btn-primary au-tap" onClick="{{ assessBegin }}" style="width:auto;padding:16px 38px">Start at A1, Chapter One</button>
-</div>
-</sc-if>
-
-<sc-if value="{{ assessQ }}" hint-placeholder-val="{{ false }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;display:flex;flex-direction:column;padding:70px 24px 34px">
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:32px">
-<button class="au-tap" onClick="{{ assessBack }}" aria-label="Back" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none">
-<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
-</button>
-<div role="progressbar" aria-label="{{ assessAria }}" style="flex:1;height:4px;border-radius:999px;background:var(--color-divider);overflow:hidden"><div style="width:{{ assessPct }};height:100%;background:var(--color-accent);border-radius:999px;transition:width .42s cubic-bezier(.2,.8,.3,1)"></div></div>
-<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent);flex:none">{{ assessCounter }}</span>
-</div>
-<div style="{{ pqStep }}">
-<div style="font:400 10.5px var(--font-body);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--au-accent-text);margin-bottom:12px">Placement</div>
-<h3 style="margin:0 0 16px;font-size:25px;letter-spacing:-.015em">{{ pq.prompt }}</h3>
-<sc-if value="{{ pqHasStem }}" hint-placeholder-val="{{ true }}">
-<div class="au-card" style="margin:0 0 22px;padding:18px 20px;border-radius:22px;font-size:19px;font-weight:600">{{ pq.stem }}</div>
-</sc-if>
-<div class="au-stagger" style="display:flex;flex-direction:column;gap:10px">
-<sc-for list="{{ pqOptions }}" as="o" hint-placeholder-count="3">
-<div class="au-tap" role="button" aria-pressed="{{ o.on }}" onClick="{{ o.pick }}" style="{{ o.style }}">
-<span style="{{ o.markStyle }}">{{ o.letter }}</span>
-<span style="flex:1;font-size:15.5px;font-weight:600">{{ o.label }}</span>
-</div>
-</sc-for>
-</div>
-</div>
-<div style="flex:1;min-height:20px"></div>
-<sc-if value="{{ assessClear }}" hint-placeholder-val="{{ false }}">
-<div class="au-rise au-card" style="padding:15px 17px;border-radius:22px;margin-bottom:14px">
-<div style="font-size:13.5px;line-height:1.5;margin-bottom:11px">Your level looks clear already. Two more questions would only confirm it.</div>
-<button class="au-tap" onClick="{{ assessStopEarly }}" style="width:100%;border:1px solid var(--au-edge);background:transparent;color:var(--au-accent-text);font:700 13.5px var(--font-body);padding:12px;border-radius:17px;cursor:pointer">Stop here and review</button>
-</div>
-</sc-if>
-<p style="margin:0;text-align:center;font-size:12px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Nothing is recorded until you confirm at the end.</p>
-</div>
-</sc-if>
-</sc-if>
-
-<sc-if value="{{ isAssessReview }}" hint-placeholder-val="{{ false }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;display:flex;flex-direction:column;padding:70px 24px 34px">
-<button class="au-tap" onClick="{{ assessLast }}" aria-label="Back" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;margin-bottom:24px">
-<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
-</button>
-<h2 style="margin:0 0 8px;font-size:29px;letter-spacing:-.02em">Before we record this</h2>
-<p style="margin:0 0 22px;font-size:13.5px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Still nothing saved. Change anything you like, then confirm.</p>
-<div class="au-stagger" style="display:flex;flex-direction:column;gap:8px">
-<sc-for list="{{ assessReviewRows }}" as="r" hint-placeholder-count="6">
-<div class="au-tap" onClick="{{ r.change }}" style="display:flex;align-items:center;gap:13px;padding:13px 17px;border-radius:22px;cursor:pointer;background:var(--au-fill);box-shadow:var(--au-lift);border:1px solid var(--au-edge)">
-<span style="width:20px;flex:none;font:600 13px var(--font-body);font-variant-numeric:tabular-nums;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ r.n }}</span>
-<div style="flex:1;min-width:0">
-<div style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ r.prompt }}</div>
-<div style="font-size:14.5px;font-weight:600;margin-top:2px">{{ r.answer }}</div>
-</div>
-<span style="flex:none;font-size:12.5px;font-weight:700;color:var(--au-accent-text)">Change</span>
-</div>
-</sc-for>
-</div>
-<div style="flex:1;min-height:18px"></div>
-<div style="display:flex;align-items:center;gap:13px;padding:16px 18px;border-radius:22px;border:1px solid var(--color-divider);margin-bottom:12px">
-<span style="font:400 22px var(--font-heading);color:var(--color-accent);flex:none">{{ levelBand }}</span>
-<div style="font-size:13px;line-height:1.5">This puts you at {{ levelLine }}. You can move at any time.</div>
-</div>
-<button class="au-btn au-btn-primary au-tap" onClick="{{ assessConfirm }}" style="margin:0">Confirm and open my path</button>
-</div>
-</sc-if>
 
 <sc-if value="{{ isPlan }}" hint-placeholder-val="{{ false }}">
 <div class="au-screen" style="position:relative;min-height:874px;display:flex;flex-direction:column">
 <div style="position:absolute;inset:0;overflow:hidden;background:linear-gradient(180deg,#15121a 0%,#1e1820 26%,#2d2126 46%,#452a1e 60%,#7c441f 71%,#b5642f 80%,#c67139 88%,#7a421e 100%)">
-<div class="au-stars"></div>
+<div class="au-sky"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i></div>
 <div style="position:absolute;left:-10%;top:12%;width:80%;height:30%;border-radius:50%;filter:blur(48px);opacity:.34;background:radial-gradient(closest-side,rgba(122,138,94,.7),transparent 72%)"></div>
 <div class="au-sun" style="position:absolute;left:70%;top:52%;width:120px;height:120px;margin-left:-60px;border-radius:999px;background:radial-gradient(circle at 50% 42%,#ffd9a6 0%,#f0a877 34%,#d97f3f 62%,rgba(198,113,57,.1) 78%,transparent 82%)"></div>
 <svg viewBox="0 0 402 180" preserveAspectRatio="none" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:26%">
@@ -418,11 +308,11 @@ body{margin:0;background:#e8e0d2}
 <p style="margin:0 0 30px;font-size:14px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Your path is where you left it.</p>
 <div class="field" style="margin-bottom:14px">
 <label style="font-size:12px">Email</label>
-<input class="input" type="email" value="{{ email }}" onChange="{{ setEmail }}" placeholder="you@example.com" style="min-height:54px;font-size:15px;border-radius:18px;padding-inline:18px;background:var(--au-glass);border-color:var(--au-edge);box-shadow:inset 0 1px 0 var(--au-hi)">
+<input class="input" type="email" value="{{ email }}" onChange="{{ setEmail }}" placeholder="you@example.com" style="min-height:54px;font-size:15px;border-radius:18px;padding-inline:18px;background:var(--au-glass);border-color:var(--au-edge)">
 </div>
 <div class="field" style="margin-bottom:10px">
 <label style="font-size:12px">Password</label>
-<input class="input" type="password" value="{{ pass }}" onChange="{{ setPass }}" placeholder="••••••••" style="min-height:54px;font-size:15px;border-radius:18px;padding-inline:18px;background:var(--au-glass);border-color:var(--au-edge);box-shadow:inset 0 1px 0 var(--au-hi)">
+<input class="input" type="password" value="{{ pass }}" onChange="{{ setPass }}" placeholder="••••••••" style="min-height:54px;font-size:15px;border-radius:18px;padding-inline:18px;background:var(--au-glass);border-color:var(--au-edge)">
 </div>
 <div style="display:flex;justify-content:flex-end;margin-bottom:22px"><span style="font-size:12.5px;font-weight:600;color:var(--color-accent);cursor:pointer">Forgot password</span></div>
 <sc-if value="{{ loginErr }}" hint-placeholder-val="{{ false }}">
@@ -467,7 +357,7 @@ Continue with Google</button>
 <path d="M24.2 43.4 A8 8 0 0 1 40.2 43.4 Z" fill="var(--color-accent)"></path>
 <path d="M18.6 46.8 C26.6 43.4 37 42.2 45.4 42.6 C37 45.4 26.6 47.2 18.6 46.8 Z" fill="currentColor"></path>
 </svg><span style="font:400 18px/1 var(--font-heading);letter-spacing:.015em">Aurel</span></span>
-<button class="au-tap" onClick="{{ go.settings }}" aria-label="Settings" style="width:40px;height:40px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer">
+<button class="au-tap" onClick="{{ go.settings }}" aria-label="Settings" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer">
 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"></circle><path d="M12 3v2.4M12 18.6V21M4.2 7.5l2 1.2M17.8 15.3l2 1.2M4.2 16.5l2-1.2M17.8 8.7l2-1.2"></path></svg>
 </button>
 </div>
@@ -510,7 +400,7 @@ Continue with Google</button>
 </div>
 </div>
 <div style="padding:14px 16px 16px">
-<div class="au-tap" onClick="{{ go.streak }}" style="display:flex;align-items:baseline;gap:8px;margin-bottom:13px;cursor:pointer">
+<div class="au-tap" onClick="{{ go.streak }}" style="display:flex;align-items:baseline;gap:8px;padding:4px 0;margin-bottom:9px;cursor:pointer">
 <span style="font:700 19px var(--font-body);font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--au-accent-text)">{{ streakFace }}</span>
 <span style="flex:1;font-size:11.5px;line-height:1.4;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ streakRule }}</span>
 </div>
@@ -527,11 +417,19 @@ Continue with Google</button>
 </div>
 </div>
 
-<div style="position:relative;height:724px;margin-top:16px">
-<svg width="402" height="816" viewBox="0 0 402 816" fill="none" style="position:absolute;inset:0">
+<div style="position:relative;margin-top:16px;height:{{ mapH }}">
+<sc-if value="{{ has5 }}" hint-placeholder-val="{{ true }}">
+<svg width="402" height="540" viewBox="0 0 402 540" fill="none" style="position:absolute;left:0;top:0">
 <path d="M132 46 C132 96 274 100 274 152 C274 208 124 210 124 266 C124 322 268 318 268 374 C268 436 136 432 136 492" stroke="var(--color-divider)" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="round"></path>
 <path d="M132 46 C132 96 274 100 274 152" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" opacity="{{ leg1 }}"></path>
 </svg>
+</sc-if>
+<sc-if value="{{ has4 }}" hint-placeholder-val="{{ false }}">
+<svg width="402" height="420" viewBox="0 0 402 420" fill="none" style="position:absolute;left:0;top:0">
+<path d="M132 46 C132 96 274 100 274 152 C274 208 124 210 124 266 C124 322 268 318 268 374" stroke="var(--color-divider)" stroke-width="2" stroke-dasharray="3 9" stroke-linecap="round"></path>
+<path d="M132 46 C132 96 274 100 274 152" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round" opacity="{{ leg1 }}"></path>
+</svg>
+</sc-if>
 
 <div style="position:absolute;left:132px;top:46px;transform:translate(-50%,-50%)">
 <div style="{{ n1.halo }}"></div>
@@ -610,6 +508,7 @@ Continue with Google</button>
 <div style="font-size:12px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ n4.meta }}</div>
 </div>
 
+<sc-if value="{{ has5 }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;left:136px;top:492px;transform:translate(-50%,-50%)">
 <div class="au-tap" role="button" aria-label="{{ n5.aria }}" onClick="{{ n5.tap }}" style="{{ n5.dot }}">
 <sc-if value="{{ n5.done }}" hint-placeholder-val="{{ false }}">
@@ -624,17 +523,19 @@ Continue with Google</button>
 <div style="font:400 15px/1.2 var(--font-heading)">{{ n5.label }}</div>
 <div style="font-size:12px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ n5.meta }}</div>
 </div>
+</sc-if>
 
-<div class="au-tap au-card" onClick="{{ go.paywall }}" style="position:absolute;left:24px;right:24px;top:570px;padding:18px 20px;border-radius:24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+<div class="au-tap au-card" onClick="{{ go.paywall }}" style="position:absolute;left:24px;right:24px;top:{{ nextCardTop }};padding:18px 20px;border-radius:24px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">
 <div><div style="font:400 15px var(--font-heading)">{{ nextChapterNo }}</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 48%,transparent);margin-top:2px">{{ nextChapterName }}</div></div>
 <span style="{{ nextChapterTag }}">{{ nextChapterState }}</span>
 </div>
+<div style="height:110px"></div>
 </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ isCourse }}" hint-placeholder-val="{{ false }}">
-<dc-import name="CourseScreen" p="{{ coursePos }}" bound="{{ true }}" chrome="{{ true }}" onScreen="{{ trackCourse }}" onExit="{{ leaveCourse }}" onFinish="{{ finishCourse }}" hint-size="402px,874px"></dc-import>
+<dc-import name="CourseScreen" p="{{ coursePos }}" bound="{{ true }}" chrome="{{ true }}" onScreen="{{ trackCourse }}" onExit="{{ leaveCourse }}" onFinish="{{ finishCourse }}" hint-size="402px,874px"></dc-import></dc-import>
 </sc-if>
 
 <sc-if value="{{ isLesson }}" hint-placeholder-val="{{ false }}">
@@ -656,7 +557,7 @@ Continue with Google</button>
 <div style="font:400 10.5px var(--font-body);font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--au-accent-text);margin-bottom:12px">{{ qKicker }}</div>
 
 <sc-if value="{{ isFlash }}" hint-placeholder-val="{{ true }}">
-<h3 style="margin:0 0 22px;font-size:25px;letter-spacing:-.015em">Turn the card.</h3>
+<h3 style="margin:0 0 22px;font-size:25px;letter-spacing:-.015em">Tap the card.</h3>
 <div class="au-tap" onClick="{{ flip }}" style="position:relative;height:320px;margin-bottom:20px;perspective:1400px;cursor:pointer">
 <div style="{{ flipInner }}">
 <div class="au-card" style="position:absolute;inset:0;border-radius:30px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:26px 30px;text-align:center;overflow:hidden">
@@ -710,7 +611,7 @@ Continue with Google</button>
 
 <sc-if value="{{ isMatch }}" hint-placeholder-val="{{ false }}">
 <h3 style="margin:0 0 6px;font-size:25px;letter-spacing:-.015em">Match the pairs.</h3>
-<p style="margin:0 0 22px;font-size:13.5px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">Drag one onto the other, or tap a phrase then its meaning.</p>
+<p style="margin:0 0 22px;font-size:13.5px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">Tap a phrase, then tap its meaning.</p>
 <div style="display:flex;gap:12px">
 <div style="flex:1;display:flex;flex-direction:column;gap:10px">
 <sc-for list="{{ matchLeft }}" as="m" hint-placeholder-count="4">
@@ -734,7 +635,7 @@ Continue with Google</button>
 <sc-if value="{{ isListen }}" hint-placeholder-val="{{ false }}">
 <h3 style="margin:0 0 22px;font-size:25px;letter-spacing:-.015em">What do you hear?</h3>
 <div class="au-tap au-card" onClick="{{ playAudio }}" style="display:flex;align-items:center;gap:18px;padding:22px;border-radius:28px;margin-bottom:22px">
-<div style="width:58px;height:58px;flex:none;border-radius:999px;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center">
+<div style="width:58px;height:58px;flex:none;border-radius:999px;background:var(--color-accent-700);color:var(--color-bg);display:flex;align-items:center;justify-content:center">
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6.5 9H3v6h3.5L11 19z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M18.5 5.5a9 9 0 0 1 0 13"></path></svg>
 </div>
 <div style="flex:1;display:flex;align-items:center;gap:4px;height:38px">
@@ -796,14 +697,14 @@ Continue with Google</button>
 </sc-if>
 
 <sc-if value="{{ isOrder }}" hint-placeholder-val="{{ false }}">
-<h3 style="margin:0 0 6px;font-size:25px;letter-spacing:-.015em">Build the sentence.</h3>
-<p style="margin:0 0 22px;font-size:13.5px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ q.prompt }} Drag them, or tap.</p>
+<h3 style="margin:0 0 6px;font-size:25px;letter-spacing:-.015em">Put in order.</h3>
+<p style="margin:0 0 22px;font-size:13.5px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ q.prompt }} Tap the words in order.</p>
 <div onDragOver="{{ trayOver }}" onDrop="{{ trayDrop }}" style="{{ trayStyle }}">
 <sc-for list="{{ built }}" as="b" hint-placeholder-count="0">
 <div class="au-tap" draggable="{{ true }}" onDragStart="{{ b.drag }}" onDragOver="{{ b.over }}" onClick="{{ b.pick }}" style="{{ b.style }}">{{ b.label }}</div>
 </sc-for>
 <sc-if value="{{ builtEmpty }}" hint-placeholder-val="{{ true }}">
-<span style="font-size:13.5px;color:color-mix(in srgb,var(--color-text) 38%,transparent)">Drag or tap the words below.</span>
+<span style="font-size:13.5px;color:color-mix(in srgb,var(--color-text) 38%,transparent)">Tap the words below.</span>
 </sc-if>
 </div>
 <div style="display:flex;flex-wrap:wrap;gap:9px">
@@ -880,7 +781,7 @@ Continue with Google</button>
 </sc-if>
 <div style="flex:1;min-height:16px"></div>
 <button class="au-btn au-btn-primary au-tap" onClick="{{ go.home }}" style="margin:0 0 8px">{{ resultCta }}</button>
-<button class="au-link au-tap" onClick="{{ restartLesson }}">Practise this lesson again</button>
+<button class="au-link au-tap" onClick="{{ restartLesson }}">Practice this lesson again</button>
 </div>
 </sc-if>
 
@@ -890,7 +791,7 @@ Continue with Google</button>
 <button class="au-tap" onClick="{{ go.home }}" aria-label="Back" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer">
 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
 </button>
-<span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Since 15 August</span>
+<span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 45%,transparent)">{{ sinceLine }}</span>
 </div>
 <div style="font:400 96px/1 var(--font-heading);letter-spacing:-.04em;color:var(--color-accent)">{{ streak }}</div>
 <div style="margin-top:8px;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 50%,transparent)">{{ streakWord }}</div>
@@ -931,12 +832,12 @@ Continue with Google</button>
 </sc-if>
 
 <sc-if value="{{ isLeaderboard }}" hint-placeholder-val="{{ false }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:816px;padding:70px 0 124px">
+<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;padding:70px 0 124px">
 <div style="padding:0 24px">
 <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px">
 <h2 style="margin:0;font-size:29px;letter-spacing:-.02em">Cedar Group</h2>
 </div>
-<p style="margin:0 0 18px;font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">30 learners at A2 · resets Monday</p>
+<p style="margin:0 0 18px;font-size:12.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ boardCohort }}</p>
 <sc-if value="{{ boardIn }}" hint-placeholder-val="{{ true }}">
 <div class="au-card" style="padding:17px 19px;border-radius:24px;margin-bottom:20px">
 <div style="font:400 20px/1.28 var(--font-heading);letter-spacing:-.01em;text-wrap:pretty">{{ boardStory }}</div>
@@ -984,26 +885,26 @@ Continue with Google</button>
 </div>
 </sc-if>
 <sc-if value="{{ boardRules }}" hint-placeholder-val="{{ false }}">
-<p class="au-rise" style="margin:12px 0 0;font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 48%,transparent)">Words retained this week, nothing else. Groups are matched on how often you practise, not how well. Nobody is removed, nobody is demoted, and there are no prizes — it is here only if you find it useful.</p>
+<p class="au-rise" style="margin:12px 0 0;font-size:12.5px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 48%,transparent)">Words retained this week, nothing else. Groups are matched on how often you practice, not how well. Nobody is removed, nobody is demoted, and there are no prizes — it is here only if you find it useful.</p>
 </sc-if>
 </div>
 </div>
 </sc-if>
 
 <sc-if value="{{ isStories }}" hint-placeholder-val="{{ false }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:816px;padding:70px 0 124px">
+<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;padding:70px 0 124px">
 <div style="padding:0 24px 22px">
 <h2 style="margin:0 0 24px;font-size:34px;letter-spacing:-.025em">Practice</h2>
 </div>
 <div class="au-tap au-card" onClick="{{ go.scene }}" style="margin:0 24px 12px;display:flex;align-items:center;gap:16px;padding:19px 20px;border-radius:28px;cursor:pointer">
-<div style="width:48px;height:48px;flex:none;border-radius:999px;background:var(--color-accent-2-600);color:#fbfaf5;display:flex;align-items:center;justify-content:center">
+<div style="width:48px;height:48px;flex:none;border-radius:999px;background:var(--color-accent-2-700);color:#fbfaf5;display:flex;align-items:center;justify-content:center">
 <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a7.5 7.5 0 0 1-10.9 6.7L4 20l1.4-4.3A7.5 7.5 0 1 1 20 12z"></path></svg>
 </div>
 <div style="flex:1;min-width:0"><div style="font:400 19px/1.2 var(--font-heading)">Scenes</div><div style="font-size:12.5px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ sceneSub }}</div></div>
 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="opacity:.4;flex:none"><path d="M9 5l7 7-7 7"></path></svg>
 </div>
 <div class="au-tap au-card" onClick="{{ go.speak }}" style="margin:0 24px 12px;display:flex;align-items:center;gap:16px;padding:19px 20px;border-radius:28px;cursor:pointer">
-<div style="width:48px;height:48px;flex:none;border-radius:999px;background:var(--color-accent-600);color:#fff7ee;display:flex;align-items:center;justify-content:center">
+<div style="width:48px;height:48px;flex:none;border-radius:999px;background:var(--color-accent-700);color:#fff7ee;display:flex;align-items:center;justify-content:center">
 <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"></path><path d="M12 18v3"></path></svg>
 </div>
 <div style="flex:1;min-width:0"><div style="font:400 19px/1.2 var(--font-heading)">Say it aloud</div><div style="font-size:12.5px;margin-top:3px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">Hear it, say it, compare — no score</div></div>
@@ -1016,15 +917,8 @@ Continue with Google</button>
 <div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:600">Review mistakes</div><div style="font-size:12.5px;margin-top:2px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">{{ reviewSub }}</div></div>
 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="opacity:.4"><path d="M9 5l7 7-7 7"></path></svg>
 </div>
-<div class="au-tap" onClick="{{ go.hunt }}" role="button" style="margin:0 24px 26px;display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:26px;border:1px dashed color-mix(in srgb,var(--color-text) 20%,transparent);cursor:pointer">
-<div style="width:42px;height:42px;flex:none;border-radius:999px;background:color-mix(in srgb,var(--color-text) 8%,transparent);display:flex;align-items:center;justify-content:center;color:var(--color-accent)">
-<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5 5.2 6h5.6L12 8.5"></path><rect x="3" y="8.5" width="18" height="11.5" rx="3"></rect><circle cx="12" cy="14.2" r="3.2"></circle></svg>
-</div>
-<div style="flex:1;min-width:0"><div style="font-size:15.5px;font-weight:600">Find three words</div><div style="font-size:12.5px;margin-top:2px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">{{ huntSub }}</div></div>
-<span style="flex:none;font:700 9.5px var(--font-body);letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 50%,transparent)">New</span>
-</div>
 <div style="padding:0 24px 14px;display:flex;align-items:baseline;justify-content:space-between">
-<h6 style="margin:0;font-family:var(--font-body);font-weight:700;font-size:10.5px;letter-spacing:.14em">Stories</h6>
+<h3 style="margin:0;font-family:var(--font-body);font-weight:700;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase">Stories</h3>
 <span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Authored texts</span>
 </div>
 <div class="au-stagger" style="padding:0 24px;display:flex;flex-direction:column;gap:12px">
@@ -1042,59 +936,7 @@ Continue with Google</button>
 </div>
 </sc-for>
 </div>
-<p style="margin:14px 24px 44px;font-size:12px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Reading opens where the chapter authored it. A separate graded-reader bank is still to be written.</p>
-</div>
-</sc-if>
-
-<sc-if value="{{ isHunt }}" hint-placeholder-val="{{ false }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;display:flex;flex-direction:column;padding:70px 24px 32px">
-<div class="au-paper"></div>
-<button class="au-tap" onClick="{{ go.stories }}" aria-label="Back" style="width:44px;height:44px;flex:none;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:26px">
-<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
-</button>
-<div style="display:inline-flex;align-self:flex-start;align-items:center;gap:8px;margin-bottom:16px;padding:6px 13px;border-radius:999px;background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 52%,transparent);font:700 9.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase">
-<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.6"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg>Awaiting course content</div>
-<h2 style="margin:0 0 12px;font-size:29px;line-height:1.12;letter-spacing:-.022em;text-wrap:balance">{{ huntTitle }}</h2>
-<p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 58%,transparent);text-wrap:pretty">{{ huntAwaiting }}</p>
-<div style="height:150px;border-radius:24px;border:1.5px dashed color-mix(in srgb,var(--color-text) 20%,transparent);background:repeating-linear-gradient(135deg,transparent 0 9px,color-mix(in srgb,var(--color-text) 5%,transparent) 9px 18px);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font:700 10.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 36%,transparent)">screen placeholder</div>
-<div class="au-card" style="border-radius:22px;padding:17px 19px">
-<div style="font:700 9.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--au-accent-text);margin-bottom:10px">What it needs first</div>
-<sc-for list="{{ huntPlanned }}" as="x" hint-placeholder-count="3">
-<div style="display:flex;gap:10px;align-items:flex-start;padding:6px 0">
-<span style="width:5px;height:5px;flex:none;margin-top:8px;border-radius:999px;background:var(--color-accent-2)"></span>
-<span style="flex:1;font-size:13px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 64%,transparent)">{{ x.t }}</span>
-</div>
-</sc-for>
-</div>
-<div style="flex:1;min-height:20px"></div>
-<div style="font-size:11px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 40%,transparent);margin-bottom:14px;text-wrap:pretty">Source: {{ huntSource }}</div>
-<button class="au-btn au-btn-primary au-tap" onClick="{{ go.stories }}" style="margin:0">Back to practice</button>
-</div>
-</sc-if>
-
-<sc-if value="{{ isReader }}" hint-placeholder-val="{{ false }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;display:flex;flex-direction:column;padding:70px 24px 32px">
-<div class="au-paper"></div>
-<button class="au-tap" onClick="{{ go.stories }}" aria-label="Back" style="width:44px;height:44px;flex:none;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:26px">
-<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
-</button>
-<div style="display:inline-flex;align-self:flex-start;align-items:center;gap:8px;margin-bottom:16px;padding:6px 13px;border-radius:999px;background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 52%,transparent);font:700 9.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase">
-<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.6"></rect><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"></path></svg>Awaiting course content</div>
-<h2 style="margin:0 0 12px;font-size:29px;line-height:1.12;letter-spacing:-.022em;text-wrap:balance">{{ readerTitle }}</h2>
-<p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:color-mix(in srgb,var(--color-text) 58%,transparent);text-wrap:pretty">{{ readerAwaiting }}</p>
-<div style="height:150px;border-radius:24px;border:1.5px dashed color-mix(in srgb,var(--color-text) 20%,transparent);background:repeating-linear-gradient(135deg,transparent 0 9px,color-mix(in srgb,var(--color-text) 5%,transparent) 9px 18px);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font:700 10.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 36%,transparent)">screen placeholder</div>
-<div class="au-card" style="border-radius:22px;padding:17px 19px">
-<div style="font:700 9.5px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--au-accent-text);margin-bottom:10px">What it needs first</div>
-<sc-for list="{{ readerPlanned }}" as="x" hint-placeholder-count="3">
-<div style="display:flex;gap:10px;align-items:flex-start;padding:6px 0">
-<span style="width:5px;height:5px;flex:none;margin-top:8px;border-radius:999px;background:var(--color-accent-2)"></span>
-<span style="flex:1;font-size:13px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 64%,transparent)">{{ x.t }}</span>
-</div>
-</sc-for>
-</div>
-<div style="flex:1;min-height:20px"></div>
-<div style="font-size:11px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 40%,transparent);margin-bottom:14px;text-wrap:pretty">Source: {{ readerSource }}</div>
-<button class="au-btn au-btn-primary au-tap" onClick="{{ go.stories }}" style="margin:0">Back to practice</button>
+<p style="margin:14px 24px 44px;font-size:12px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Every text opens in the chapter that authored it — nothing here is invented for the app layer.</p>
 </div>
 </sc-if>
 
@@ -1169,7 +1011,7 @@ Continue with Google</button>
 
 <div class="au-card" style="padding:15px 17px;border-radius:24px;margin-bottom:10px">
 <div style="display:flex;align-items:center;gap:14px">
-<button class="au-tap" onClick="{{ playAudio }}" aria-label="Hear the native line" style="width:44px;height:44px;flex:none;border-radius:999px;border:0;cursor:pointer;background:var(--color-accent-600);color:#fff7ee;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px -10px rgba(100,51,18,.7)">
+<button class="au-tap" onClick="{{ playAudio }}" aria-label="Hear the native line" style="width:44px;height:44px;flex:none;border-radius:999px;border:0;cursor:pointer;background:var(--color-accent-700);color:#fff7ee;display:flex;align-items:center;justify-content:center">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.53.85l10-6.5a1 1 0 0 0 0-1.7l-10-6.5A1 1 0 0 0 8 5.5"></path></svg>
 </button>
 <div style="flex:1;display:flex;align-items:center;gap:3px;height:34px">
@@ -1212,7 +1054,7 @@ Continue with Google</button>
 <sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}">
 <div class="field" style="margin-bottom:12px">
 <label style="font-size:12px">Type the sentence instead</label>
-<input class="input" value="{{ typed }}" onChange="{{ setTyped }}" placeholder="Hello, I’m Maya…" style="min-height:54px;font-size:15px;border-radius:18px;padding-inline:18px;background:var(--au-fill);border-color:var(--au-edge)">
+<input class="input" value="{{ typed }}" onChange="{{ setTyped }}" placeholder="Hello, I’m Mira…" style="min-height:54px;font-size:15px;border-radius:18px;padding-inline:18px;background:var(--au-fill);border-color:var(--au-edge)">
 </div>
 <button class="au-btn au-btn-primary au-tap" onClick="{{ submitTyped }}" style="margin:0 0 6px">Check what I typed</button>
 <button class="au-link au-tap" onClick="{{ closeTyping }}">Use the microphone instead</button>
@@ -1273,10 +1115,10 @@ Continue with Google</button>
 </sc-if>
 
 <sc-if value="{{ isProgress }}" hint-placeholder-val="{{ false }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:816px;padding:70px 24px 124px">
+<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;padding:70px 24px 124px">
 <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:2px">
-<span style="font:700 10.5px var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--au-accent-text)">Since 15 August</span>
-<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ lastPractised }}</span>
+<span style="font:700 10.5px var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--au-accent-text)">{{ sinceLine }}</span>
+<span style="font-size:11.5px;color:color-mix(in srgb,var(--color-text) 55%,transparent)">{{ lastPracticed }}</span>
 </div>
 <h2 style="margin:0 0 22px;font-size:29px;letter-spacing:-.02em">Progress</h2>
 <div style="display:flex;flex-direction:column;gap:2px;margin-bottom:18px">
@@ -1301,7 +1143,7 @@ Continue with Google</button>
 </div>
 <div style="padding:0 0 24px;border-top:1px solid var(--color-divider);padding-top:20px;margin-bottom:4px">
 <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:20px">
-<span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Time practised, last 8 weeks</span>
+<span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Time practiced, last 8 weeks</span>
 </div>
 <sc-if value="{{ progHas }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;align-items:flex-end;gap:8px;height:96px">
@@ -1335,11 +1177,11 @@ Continue with Google</button>
 </sc-if>
 
 <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
-<div class="au-screen" style="position:relative;isolation:isolate;min-height:816px;padding:70px 24px 124px">
+<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;padding:70px 24px 124px">
 <div style="display:flex;align-items:center;gap:18px;margin-bottom:28px">
-<div style="width:76px;height:76px;flex:none;border-radius:999px;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font:400 30px var(--font-heading)">M</div>
+<div style="width:76px;height:76px;flex:none;border-radius:999px;background:var(--color-accent-700);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font:400 30px var(--font-heading)">M</div>
 <div style="flex:1;min-width:0">
-<h2 style="margin:0 0 4px;font-size:26px;letter-spacing:-.02em">Maya Aldrin</h2>
+<h2 style="margin:0 0 4px;font-size:26px;letter-spacing:-.02em">Mira Aldrin</h2>
 <div style="font-size:13px;color:color-mix(in srgb,var(--color-text) 52%,transparent)">{{ levelLine }} — {{ joinedLine }}</div>
 </div>
 <button class="au-tap" onClick="{{ go.settings }}" aria-label="Edit profile" style="width:44px;height:44px;flex:none;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer">
@@ -1356,14 +1198,14 @@ Continue with Google</button>
 <div style="width:44px;height:44px;flex:none;border-radius:999px;background:var(--color-accent-2);color:#22271a;display:flex;align-items:center;justify-content:center">
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8L6.7 20l1-6L3.4 9.9l6-.9z"></path></svg>
 </div>
-<div style="flex:1;min-width:0"><div style="font:400 18px/1.2 var(--font-heading)">Aurel Pro</div><div style="font-size:12.5px;margin-top:3px;opacity:.85">Seven days free, then unlimited</div></div>
-<span style="display:flex;align-items:center;gap:3px;flex:none;font-size:13px;font-weight:700">Try free<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></span>
+<div style="flex:1;min-width:0"><div style="font:400 18px/1.2 var(--font-heading)">Aurel Pro</div><div style="font-size:12.5px;margin-top:3px;opacity:.85">Chapters 2–4 · no free trial</div></div>
+<span style="display:flex;align-items:center;gap:3px;flex:none;font-size:13px;font-weight:700">Continue<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg></span>
 </div>
 </sc-if>
 <sc-if value="{{ isPro }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;align-items:center;gap:14px;padding:18px 20px;border-radius:26px;background:var(--au-ok-bg);color:var(--au-ok-text);margin-bottom:20px">
 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12.5 10 17.5 19 7"></path></svg>
-<div style="font-size:14px;font-weight:600">Pro — trial ends 22 August</div>
+<div style="font-size:14px;font-weight:600">{{ trialEndLine }}</div>
 </div>
 </sc-if>
 <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:4px 0 12px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">Milestones</div>
@@ -1459,7 +1301,7 @@ Continue with Google</button>
 <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px;color:color-mix(in srgb,var(--color-text) 50%,transparent)">Account</div>
 <div class="au-card" style="border-radius:22px;overflow:hidden">
 <div class="au-tap" onClick="{{ go.paywall }}" style="display:flex;align-items:center;gap:12px;padding:17px 20px;border-bottom:1px solid var(--color-divider);cursor:pointer"><span style="flex:1;font-size:15px;font-weight:600">Subscription</span><span style="font-size:13px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">{{ planLabel }}</span></div>
-<div class="au-tap" style="display:flex;align-items:center;gap:12px;padding:17px 20px;border-bottom:1px solid var(--color-divider);cursor:pointer"><span style="flex:1;font-size:15px;font-weight:600">Email</span><span style="font-size:13px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">maya@aldrin.co</span></div>
+<div class="au-tap" style="display:flex;align-items:center;gap:12px;padding:17px 20px;border-bottom:1px solid var(--color-divider);cursor:pointer"><span style="flex:1;font-size:15px;font-weight:600">Email</span><span style="font-size:13px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">mira@aldrin.co</span></div>
 <div class="au-tap" onClick="{{ go.welcome }}" style="display:flex;align-items:center;gap:12px;padding:17px 20px;border-bottom:1px solid var(--color-divider);cursor:pointer"><span style="flex:1;font-size:15px;font-weight:600;color:var(--au-accent-text)">Sign out</span></div>
 <div class="au-tap" onClick="{{ go.welcome }}" style="display:flex;align-items:center;gap:12px;padding:17px 20px;cursor:pointer"><span style="flex:1;font-size:15px;font-weight:600;color:var(--au-err)">Delete account</span><span style="font-size:13px;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Permanent</span></div>
 </div>
@@ -1469,7 +1311,7 @@ Continue with Google</button>
 <sc-if value="{{ isPaywall }}" hint-placeholder-val="{{ false }}">
 <div style="min-height:874px;display:flex;flex-direction:column;position:relative">
 <div style="position:absolute;top:0;left:0;right:0;height:430px;overflow:hidden;background:linear-gradient(180deg,#16131a 0%,#20191f 24%,#2e2226 46%,#452a1f 62%,#7a431f 72%,#b0602e 80%,#c67139 88%,#7d431f 100%)">
-<div class="au-stars"></div>
+<div class="au-sky"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i></div>
 <div style="position:absolute;inset:0;background:radial-gradient(120% 38% at 66% 80%,rgba(226,146,86,.56) 0%,rgba(198,113,57,.22) 44%,transparent 74%)"></div>
 <svg viewBox="0 0 402 150" preserveAspectRatio="none" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:22%">
 <path d="M0 62 Q86 30 168 54 Q244 76 312 44 Q360 26 402 52 V150 H0Z" fill="#33241a"></path>
@@ -1485,8 +1327,8 @@ Continue with Google</button>
 </button>
 </div>
 <div style="font:700 10.5px var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:#f0a877;margin-bottom:10px">Aurel Pro</div>
-<h1 style="margin:0 0 12px;font-size:36px;line-height:1.06;letter-spacing:-.025em;color:#f7efe2">The whole<br>ladder, open.</h1>
-<p style="margin:0 0 26px;font-size:14.5px;line-height:1.6;color:rgba(247,239,226,.75);max-width:290px">Twenty-four chapters, unlimited speaking, and the review engine that decides when to bring a word back.</p>
+<h1 style="margin:0 0 12px;font-size:36px;line-height:1.06;letter-spacing:-.025em;color:#f7efe2">Continue with<br>Chapters 2–4.</h1>
+<p style="margin:0 0 26px;font-size:14.5px;line-height:1.6;color:rgba(247,239,226,.75);max-width:290px">Chapters 2 through 4, production-ready today, plus unlimited speaking and the review engine that decides when to bring a word back. A2 and beyond arrive as they're written.</p>
 <div style="display:flex;flex-direction:column;gap:11px;margin-bottom:20px">
 <sc-for list="{{ plans }}" as="p" hint-placeholder-count="2">
 <div class="au-tap" onClick="{{ p.pick }}" style="{{ p.style }}">
@@ -1508,9 +1350,36 @@ Continue with Google</button>
 </sc-for>
 </div>
 <div style="flex:1;min-height:12px"></div>
-<button class="au-btn au-btn-primary au-tap" onClick="{{ startTrial }}" style="margin:0 0 10px">Start seven free days</button>
+<button class="au-btn au-btn-primary au-tap" onClick="{{ startSubscribe }}" style="margin:0 0 10px">{{ subscribeCta }}</button>
+<div style="display:flex;justify-content:center;margin:0 0 10px"><button class="au-link au-tap" onClick="{{ restorePurchase }}" style="min-height:44px;padding:0 12px">Restore purchase</button></div>
 <p style="margin:0;text-align:center;font-size:11.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 45%,transparent)">{{ trialNote }}</p>
 </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSubscribeAccount }}" hint-placeholder-val="{{ false }}">
+<div class="au-screen" style="position:relative;isolation:isolate;min-height:874px;display:flex;flex-direction:column;padding:74px 24px 32px">
+<button class="au-tap" onClick="{{ go.paywall }}" aria-label="Back" style="width:44px;height:44px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;margin-bottom:38px">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+</button>
+<h2 style="margin:0 0 10px;font-size:33px;letter-spacing:-.02em">Create your account.</h2>
+<p style="margin:0 0 30px;font-size:14px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 55%,transparent)">Needed to subscribe, and to sync or restore your purchase. Your Chapter 1 progress carries over automatically.</p>
+<div class="field" style="margin-bottom:14px">
+<label style="font-size:12px">Email</label>
+<input class="input" type="email" value="{{ email }}" onChange="{{ setEmail }}" placeholder="you@example.com" style="min-height:54px;font-size:15px;border-radius:18px;padding-inline:18px;background:var(--au-glass);border-color:var(--au-edge)">
+</div>
+<div class="field" style="margin-bottom:18px">
+<label style="font-size:12px">Password</label>
+<input class="input" type="password" value="{{ pass }}" onChange="{{ setPass }}" placeholder="••••••••" style="min-height:54px;font-size:15px;border-radius:18px;padding-inline:18px;background:var(--au-glass);border-color:var(--au-edge)">
+</div>
+<sc-if value="{{ loginErr }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:12px 15px;border-radius:18px;background:var(--au-err-bg);color:var(--au-err-text)">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="flex:none"><path d="M12 8.5v5M12 17.2h.01"></path></svg>
+<span style="font-size:12.5px;line-height:1.4">{{ loginErrText }}</span>
+</div>
+</sc-if>
+<button class="au-btn au-btn-primary au-tap" onClick="{{ createAccountAndSubscribe }}" style="margin:0 0 10px">Create account and subscribe</button>
+<p style="margin:0;text-align:center;font-size:11.5px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 45%,transparent)">Price, billing period, and renewal terms are set by the App Store at checkout. No free trial — Chapter 1 is the free experience.</p>
 </div>
 </sc-if>
 
@@ -1548,11 +1417,12 @@ Continue with Google</button>
 </div>
 </sc-if>
 <sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
-<div class="au-glass" style="position:absolute;left:14px;right:14px;bottom:26px;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:7px;border-radius:27px;box-shadow:inset 0 1px 0 var(--au-hi),0 20px 44px -20px rgba(38,24,14,.72)">
-<div class="au-tap" onClick="{{ go.home }}" style="{{ tab.learn }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path></svg><span style="font-size:10px;font-weight:700;letter-spacing:.01em">Learn</span></div>
-<div class="au-tap" onClick="{{ go.stories }}" style="{{ tab.practice }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"></path><path d="M3 14l9 5 9-5"></path></svg><span style="font-size:10px;font-weight:700;letter-spacing:.01em">Practice</span></div>
-<div class="au-tap" onClick="{{ go.progress }}" style="{{ tab.progress }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V11"></path><path d="M10 19V5"></path><path d="M16 19v-6"></path><path d="M22 19H2"></path></svg><span style="font-size:10px;font-weight:700;letter-spacing:.01em">Progress</span></div>
-<div class="au-tap" onClick="{{ go.profile }}" style="{{ tab.you }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 20a7.5 7.5 0 0 1 15 0"></path></svg><span style="font-size:10px;font-weight:700;letter-spacing:.01em">You</span></div>
+<div class="au-glass" style="position:absolute;left:14px;right:14px;bottom:26px;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:7px;border-radius:27px;box-shadow:0 14px 34px -22px rgba(38,24,14,.5)">
+<div class="au-tab-ind" style="{{ tabInd }}"></div>
+<div class="au-tabb au-tap" onClick="{{ go.home }}" data-on="{{ tabOn.learn }}" style="{{ tab.learn }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path></svg><span style="font-size:10px;font-weight:700;letter-spacing:.01em">Learn</span></div>
+<div class="au-tabb au-tap" onClick="{{ go.stories }}" data-on="{{ tabOn.practice }}" style="{{ tab.practice }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"></path><path d="M3 14l9 5 9-5"></path></svg><span style="font-size:10px;font-weight:700;letter-spacing:.01em">Practice</span></div>
+<div class="au-tabb au-tap" onClick="{{ go.progress }}" data-on="{{ tabOn.progress }}" style="{{ tab.progress }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V11"></path><path d="M10 19V5"></path><path d="M16 19v-6"></path><path d="M22 19H2"></path></svg><span style="font-size:10px;font-weight:700;letter-spacing:.01em">Progress</span></div>
+<div class="au-tabb au-tap" onClick="{{ go.profile }}" data-on="{{ tabOn.you }}" style="{{ tab.you }}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 20a7.5 7.5 0 0 1 15 0"></path></svg><span style="font-size:10px;font-weight:700;letter-spacing:.01em">You</span></div>
 </div>
 </sc-if>
 
@@ -1612,18 +1482,10 @@ function bankFromCourse() {
     back: 'The quick-practice bank is built from the authored chapter banks. Load course-c1.js, course-c2.js and course-c3.js to fill it.', ex: '' }];
 }
 
-/* Placement is a deferred premium: DECISIONS.md and 03_A1_foundation/STATE.md both
-   record "stubs only in session F2". No placement item is authored anywhere in the
-   course source, so none is invented here — the flow shows a stub instead. */
-const PLACEMENT = [];
-const PLACEMENT_STUB = {
-  head: 'Placement comes later',
-  body: 'The adaptive placement test is a deferred premium in the course plan — stubs only until session F2 writes it. Until then everyone starts where the course starts: A1, Chapter One.',
-  source: '00_governance/DECISIONS.md · 03_A1_foundation/STATE.md'
-};
 
 /* The A1 map, verbatim from 03_A1_foundation/A1_COURSE_OVERVIEW.md: three arcs,
-   12 chapters, 42 lessons. Chapters 1–3 are authored; 4–12 are planned. */
+   12 chapters, 39 lesson slots + 3 checkpoints = the 42 the overview counts.
+   Chapters 1–3 are authored here; 4–12 are planned. */
 const CHAPTER_PLAN = [
   { n: 1, arc: 'Meet and connect', name: 'Hello! My Name Is Alex', kind: 'new', lessons: 4 },
   { n: 2, arc: 'Meet and connect', name: 'Spell It and Share Your Details', kind: 'new', lessons: 4 },
@@ -1705,39 +1567,19 @@ function wordsFromCourse() {
   return out.length ? out : [{ w: '\u2014', m: 'No vocabulary records loaded.', e: '', r: '', st: '\u2014', seen: '' }];
 }
 
-/* No graded-reader prose and no camera word-hunt exist in the course source. The
-   authored reading texts are illustrated name badges and a welcome card (C1-L3), a
-   register form and a message card (C2-L3) and three profile cards plus a class roll
-   (C3-L3) — all of them live inside the chapter player. These two features are
-   therefore placeholders until a reading bank is authored. */
-const STORY = {
-  title: 'Graded readers \u2014 awaiting content',
-  meta: 'not yet authored',
-  awaiting: 'No graded-reader text exists in the course source. The reading that IS authored sits in the chapter player: name badges and the welcome card (C1-L3), the register form and message card (C2-L3), the three profile cards and the class roll (C3-L3).',
-  planned: ['\u22659 reading genres across the 12 chapters (A1_COURSE_OVERVIEW.md, production ranges)', 'Every text app-layer, Dynamic Type to XL, never rendered inside art', 'Audio for each text once recordings exist \u2014 scripts only today'],
-  source: '03_A1_foundation/A1_COURSE_OVERVIEW.md \u00b7 04_A1_chapters/*/\u2026_L03_LESSON.md',
-  paras: [], words: []
-};
-const HUNT_STUB = {
-  title: 'Find three words \u2014 awaiting content',
-  awaiting: 'A camera word-hunt is not part of the A1 course plan. Nothing in english_course specifies its word lists, so no words are invented for it here.',
-  planned: ['Needs a lexical source: the ledger row set for a chapter (LEXICAL_LEDGER.csv)', 'Needs an instruction-word check against CONTROLLED_INSTRUCTION_LEXICON.md', 'Needs a privacy ruling \u2014 the course forbids collecting real personal data'],
-  source: 'not specified in english_course'
-};
 
 const MAIN = ['home', 'stories', 'progress', 'profile', 'leaderboard'];
 
 class Component extends DCLogic {
   seedFor(stage) {
     const base = {
-      screen: 'welcome', goals: [], level: 'a1', email: '', pass: '',
-      assessStep: 0, assessAnswers: [null, null, null, null, null, null],
-      qi: 0, sel: null, checked: false, correctCount: 0, commit: 10, remindAt: '07:30', starter: false,
+      screen: 'welcome', goals: [], level: 'a1', email: '', pass: '', account: false,
+      qi: 0, sel: null, checked: false, correctCount: 0, remindAt: '07:30', starter: false,
       courseLesson: 0, coursePos: 0,
       dayLesson: false, dayRecall: false, attempt: 0, nudge: false, wrongSel: null, retries: 0,
       reviewMode: false, queue: [], caught: 0, wasReview: false, lastTotal: 0, loginErr: '', pending: null,
       sceneTurn: 0, scenePicks: [], boardOut: false, boardAll: false, boardRules: false, arcs: 0, dragTray: false,
-      wordSheet: null, selfRate: null, huntIdx: 0, huntShot: false, huntKept: [], sceneRoleB: false, invited: false,
+      wordSheet: null, selfRate: null, sceneRoleB: false, invited: false,
       notif: { dawn: true, sundown: true, milestone: true, cohort: false },
       mistakes: [], flipped: false, matchSel: null, matched: [], matchWrong: null,
       built: [], wrongShake: 0, plan: 'annual', typeStep: 2, speaking: false, speakScored: false, countT: 1,
@@ -1747,7 +1589,7 @@ class Component extends DCLogic {
     if (stage === 'mid-journey') {
       return Object.assign(base, {
         screen: 'home', goals: ['work'], level: 'a1', streak: 43, lessonsDone: 37,
-        baseLessons: 37, basePos: 2, chapterIdx: 1, pro: true, mistakes: [1, 3]
+        baseLessons: 37, basePos: 2, chapterIdx: 1, pro: true, account: true, mistakes: [1, 3]
       });
     }
     return Object.assign(base, { streak: 0, lessonsDone: 0, baseLessons: 0, basePos: 0, chapterIdx: 0, pro: false });
@@ -1867,17 +1709,6 @@ class Component extends DCLogic {
     this.setState({ goals: cur.concat([id]) });
   };
 
-  assessPick = (i) => () => {
-    const k = this.state.assessStep - 1;
-    const a = this.state.assessAnswers.slice();
-    a[k] = i;
-    this.setState({ assessAnswers: a });
-    clearTimeout(this._a);
-    this._a = setTimeout(() => {
-      if (a.every(x => x !== null)) this.setState({ screen: 'assessReview' });
-      else this.setState({ assessStep: k + 2 });
-    }, 420);
-  };
 
   toggleSw = (k) => () => this.setState({ sw: Object.assign({}, this.state.sw, { [k]: !this.state.sw[k] }) });
 
@@ -2024,7 +1855,7 @@ class Component extends DCLogic {
     const scored = list.filter(l => l.type !== 'flash').length;
     const muted = 'color-mix(in srgb, var(--color-text) 52%, transparent)';
     const go = {};
-    ['welcome', 'goal', 'placement', 'commit', 'plan', 'assess', 'login', 'home', 'lesson', 'result', 'streak', 'leaderboard', 'stories', 'reader', 'hunt', 'scene', 'speak', 'review', 'profile', 'progress', 'paywall', 'settings'].forEach(k => { go[k] = this.nav(k); });
+    ['welcome', 'goal', 'commit', 'plan', 'login', 'home', 'lesson', 'result', 'streak', 'leaderboard', 'stories', 'scene', 'speak', 'review', 'profile', 'progress', 'paywall', 'subscribeAccount', 'settings'].forEach(k => { go[k] = this.nav(k); });
     go.lesson = () => { this.resetLesson(); this.setState({ screen: 'lesson', starter: false, pending: null }); };
     go.course = (i) => () => this.setState({ screen: 'course', courseLesson: Math.min(i, 3), coursePos: i >= 4 ? this.chapterEndPos(this.state.chapterIdx) : this.coursePosFor(this.state.chapterIdx, i), pending: null });
     go.starter = () => this.setState({ screen: 'course', courseLesson: 0, coursePos: this.coursePosFor(this.state.chapterIdx, 0), starter: false, reviewMode: false, pending: null });
@@ -2047,12 +1878,6 @@ class Component extends DCLogic {
       g[id] = { style: gRow(id), icon: gIcon(id), on: picked(id), pick: this.toggleGoal(id) };
     });
 
-    const levels = LEVELS.map(l => ({
-      band: l.band, title: l.title, sub: l.sub, ready: l.ready,
-      code: s.level === l.id ? 'var(--color-accent)' : muted,
-      pick: l.ready ? (() => this.setState({ level: l.id })) : (() => {}),
-      style: rowBase + ';padding:15px 18px' + (l.ready ? (s.level === l.id ? selTint : '') : ';opacity:.42;cursor:default;border-style:dashed;box-shadow:none')
-    }));
 
     const optBase = 'display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:22px;cursor:pointer;' + CARD;
     const options = (q.options || []).map((label, i) => {
@@ -2087,7 +1912,7 @@ class Component extends DCLogic {
       if (spent) used.splice(at, 1);
       return { label: w, can: !spent && !s.checked, style: bankBase + (spent ? ';opacity:.28;pointer-events:none' : ''), pick: this.pickWord(w, i), drag: this.dragWord('bank', w) };
     });
-    const chipOn = 'padding:10px 16px;border-radius:15px;font-size:15px;font-weight:600;cursor:grab;color:#fff7ee;background:linear-gradient(179deg,var(--color-accent-600),var(--color-accent-700));box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 5px 12px -9px rgba(100,51,18,.8)';
+    const chipOn = 'padding:10px 16px;border-radius:15px;font-size:15px;font-weight:600;cursor:grab;color:#fff7ee;background:var(--color-accent-700)';
     const built = s.built.map((w, i) => ({
       label: w, style: chipOn, pick: this.unpickWord(i),
       drag: this.dragWord('built', w), over: this.dropOnBuilt(i)
@@ -2127,18 +1952,23 @@ class Component extends DCLogic {
         label: ch.lessons[i],
         cta: s.basePos === 0 && pathAt === 0 ? 'Begin' : 'Resume',
         meta: st === 'locked' ? 'Opens after ' + ch.lessons[Math.max(0, i - 1)] : (st === 'done' ? 'Complete \u00b7 ' : '') + (ch.metas[i] || ''),
-        aria: 'Lesson ' + (i + 1) + ', ' + ch.lessons[i] + ' \u2014 ' + (st === 'done' ? 'complete' : st === 'open' ? 'open, 6 minutes' : 'locked, opens after ' + ch.lessons[Math.max(0, i - 1)]),
+        aria: 'Lesson ' + (i + 1) + ', ' + ch.lessons[i] + ' \u2014 ' + (st === 'done' ? 'complete' : st === 'open' ? 'open, ' + (ch.metas[i] || '') : 'locked, opens after ' + ch.lessons[Math.max(0, i - 1)]),
         done: st === 'done', open: st === 'open', locked: st === 'locked',
         textOp: st === 'locked' ? '.45' : '1',
         tap: st === 'locked' ? go.paywall : go.course(i),
         halo: st === 'open' ? 'position:absolute;inset:-10px;border-radius:999px;background:var(--color-accent);animation:auPulse 2.8s ease-out infinite' : 'display:none',
         dot: st === 'open'
-          ? 'position:relative;width:94px;height:94px;border-radius:999px;background:linear-gradient(180deg,color-mix(in srgb,var(--color-accent) 80%,transparent) 0%,color-mix(in srgb,var(--color-accent) 90%,transparent) 52%,color-mix(in srgb,var(--color-accent-800) 92%,transparent) 100%);backdrop-filter:blur(14px) saturate(1.9);-webkit-backdrop-filter:blur(14px) saturate(1.9);border:1px solid color-mix(in srgb,#fff 28%,transparent);text-shadow:0 1px 2px rgba(74,36,9,.34);box-shadow:inset 0 2px 0 rgba(255,255,255,.5),inset 0 -14px 26px -16px rgba(255,255,255,.3),inset 0 -2px 0 rgba(0,0,0,.18),0 20px 36px -16px var(--au-glow),0 4px 10px rgba(0,0,0,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff6ea;cursor:pointer;animation:auBreath 3.8s ease-in-out infinite'
+          ? 'position:relative;width:94px;height:94px;border-radius:999px;background:var(--color-accent-700);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#fff6ea;cursor:pointer;animation:auBreath 3.8s ease-in-out infinite'
           : st === 'done'
-            ? 'position:relative;width:' + doneSize + 'px;height:' + doneSize + 'px;border-radius:999px;background:linear-gradient(180deg,color-mix(in srgb,var(--color-accent-2) 74%,#fff),var(--color-accent-2) 55%,color-mix(in srgb,var(--color-accent-2) 80%,#000));box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 12px 24px -14px var(--au-glow-2);display:flex;align-items:center;justify-content:center;color:#fbfaf5;cursor:pointer'
-            : 'position:relative;width:' + lockSize + 'px;height:' + lockSize + 'px;border-radius:999px;border:1.5px dashed color-mix(in srgb,var(--color-text) 18%,transparent);display:flex;align-items:center;justify-content:center;color:color-mix(in srgb,var(--color-text) 38%,transparent);cursor:pointer;background:var(--au-glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)'
+            ? 'position:relative;width:' + doneSize + 'px;height:' + doneSize + 'px;border-radius:999px;background:var(--color-accent-2-700);display:flex;align-items:center;justify-content:center;color:#fbfaf5;cursor:pointer'
+            : 'position:relative;width:' + lockSize + 'px;height:' + lockSize + 'px;border-radius:999px;border:1.5px dashed color-mix(in srgb,var(--color-text) 18%,transparent);display:flex;align-items:center;justify-content:center;color:color-mix(in srgb,var(--color-text) 38%,transparent);cursor:pointer;background:transparent'
       };
     };
+    const stops = ch.lessons.length;
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const dayStamp = (d) => d.getDate() + ' ' + MONTHS[d.getMonth()];
+    const today = new Date();
+    const sinceDate = dayStamp(new Date(today.getTime() - Math.max(0, s.streak - 1) * 864e5));
     const dueNow = s.mistakes.length;
     const arcT = !s.dayLesson ? 0 : ((s.dayRecall || dueNow === 0) ? 1 : 0.5);
     const bez = (t, a, b, c) => (1 - t) * (1 - t) * a + 2 * (1 - t) * t * b + t * t * c;
@@ -2175,7 +2005,7 @@ class Component extends DCLogic {
       }
       return { line: '\u2014', ctx: 'No chunk record is loaded yet.' };
     })();
-    const MASTERY = ['Not started', 'Seen', 'Practised', 'Familiar', 'Strong', 'Mastered'];
+    const MASTERY = ['Not started', 'Seen', 'Practiced', 'Familiar', 'Strong', 'Mastered'];
     const MFILL = [0.03, 0.1, 0.3, 0.52, 0.78, 1];
     const rawSkills = s.baseLessons > 0
       ? [['Vocabulary', 142, 4], ['Grammar', 96, 3], ['Listening', 38, 2], ['Conversation', 24, 2], ['Speaking', 4, 1]]
@@ -2186,7 +2016,7 @@ class Component extends DCLogic {
     const skillRows = sorted.map((k, i, all) => ({
       label: k[0], state: MASTERY[k[2]],
       meta: i === 0
-        ? (k[2] === 0 ? 'Not started \u2014 worth ten minutes' : 'Weakest \u2014 worth ten minutes')
+        ? (k[2] === 0 ? 'Not started \u2014 worth a look' : 'Weakest \u2014 worth a look')
         : (k[1] === 0 ? 'Nothing recorded yet' : k[1] + ' items ' + MASTERY[k[2]].toLowerCase()),
       aria: k[0] + ': ' + MASTERY[k[2]] + ', ' + k[1] + ' items',
       tap: k[0] === 'Speaking' ? go.speak : (k[0] === 'Conversation' ? go.scene : go.review),
@@ -2212,12 +2042,9 @@ class Component extends DCLogic {
     const wordsTotal = s.baseLessons > 0 ? 412 + (s.lessonsDone - s.baseLessons) * 12 : s.lessonsDone * 12;
     const minsTotal = s.baseLessons > 0 ? 268 + (s.lessonsDone - s.baseLessons) * 6 : s.lessonsDone * 6;
     const countEase = 1 - Math.pow(1 - (s.countT === undefined ? 1 : s.countT), 3);
-    const tabColor = (k) => {
-      const on = s.screen === k;
-      return 'display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:9px 4px 8px;border-radius:20px;cursor:pointer;transition:background .26s ease,color .26s ease,box-shadow .26s ease;color:'
-        + (on ? '#fff6ea' : 'color-mix(in srgb,var(--color-text) 62%,transparent)')
-        + (on ? ';background:linear-gradient(180deg,color-mix(in srgb,var(--color-accent) 88%,transparent),color-mix(in srgb,var(--color-accent) 94%,transparent) 55%,color-mix(in srgb,var(--color-accent-800) 96%,transparent));backdrop-filter:blur(12px) saturate(1.9);-webkit-backdrop-filter:blur(12px) saturate(1.9);text-shadow:0 1px 2px rgba(74,36,9,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(0,0,0,.16),0 8px 18px -12px var(--au-glow);animation:auPop .34s cubic-bezier(.2,.9,.3,1) both' : '');
-    };
+    const TABS = ['home', 'stories', 'progress', 'profile'];
+    const activeTab = Math.max(0, TABS.indexOf(s.screen));
+    const tabColor = (k) => 'color:' + (s.screen === k ? '#fff6ea' : 'color-mix(in srgb,var(--color-text) 62%,transparent)');
 
     return {
       isDark: dark, themeClass: dark ? 'aurel-dark' : '', deviceW: 402, deviceH: 874,
@@ -2228,28 +2055,15 @@ class Component extends DCLogic {
       statLessons: s.lessonsDone > 0 ? String(s.lessonsDone) : '\u2014',
       joinedLine: s.baseLessons > 0 ? 'six weeks in' : 'joined today',
       unlockNote: s.pro ? 'The rest of this chapter opens as you finish each lesson.' : 'Lessons unlock as you finish the one before.',
-      isWelcome: s.screen === 'welcome', isGoal: s.screen === 'goal', isPlacement: s.screen === 'placement',
+      isWelcome: s.screen === 'welcome', isGoal: s.screen === 'goal',
       isCommit: s.screen === 'commit', isPlan: s.screen === 'plan',
-      levelPicked: (LEVELS.filter(l => l.id === s.level)[0] || LEVELS[0]).band,
-      skipPlacement: () => this.setState({ screen: 'plan' }),
-      commitOpts: [
-        { n: 5, title: 'Five minutes', sub: 'One lesson, most mornings' },
-        { n: 10, title: 'Ten minutes', sub: 'A lesson, and the words due back' },
-        { n: 20, title: 'Twenty minutes', sub: 'A full session, unhurried' }
-      ].map(c => ({
-        n: c.n, title: c.title, sub: c.sub, on: s.commit === c.n,
-        aria: c.title + ' a day \u2014 ' + c.sub,
-        pick: () => this.setState({ commit: c.n }),
-        style: rowBase + (s.commit === c.n ? selTint : ''),
-        mark: 'width:42px;height:42px;flex:none;border-radius:999px;display:flex;align-items:center;justify-content:center;font:700 15px var(--font-body);font-variant-numeric:tabular-nums;'
-          + (s.commit === c.n ? 'background:var(--color-accent);color:var(--color-bg)' : 'background:color-mix(in srgb,var(--color-text) 9%,transparent);color:var(--au-accent-text)')
-      })),
+      finishOnboarding: () => this.setState({ screen: 'plan' }),
       remindOpts: [
-        { t: '07:30', l: 'Morning' }, { t: '12:30', l: 'Midday' }, { t: '19:30', l: 'Evening' }
+        { t: '07:30', l: 'Morning' }, { t: '12:30', l: 'Midday' }, { t: '19:30', l: 'Evening' }, { t: '', l: 'No reminder' }
       ].map(r => ({
-        time: r.t, label: r.l, on: s.remindAt === r.t,
+        time: r.t || '\u2014', label: r.l, on: s.remindAt === r.t,
         pick: () => this.setState({ remindAt: r.t }),
-        style: 'flex:1;display:flex;flex-direction:column;align-items:center;gap:0;padding:14px 8px;border-radius:20px;cursor:pointer;' + CARD
+        style: 'flex:1;display:flex;flex-direction:column;align-items:center;gap:0;padding:14px 8px;border-radius:20px;cursor:pointer;min-width:78px;' + CARD
           + (s.remindAt === r.t ? selTint : '')
       })),
       planHead: (LEVELS.filter(l => l.id === s.level)[0] || LEVELS[0]).band + ' \u00b7 ' + (LEVELS.filter(l => l.id === s.level)[0] || LEVELS[0]).title + '.',
@@ -2258,10 +2072,10 @@ class Component extends DCLogic {
       planNote: 'Arc one first \u2014 meet and connect. Greetings, then spelling and contact details, then where people are from. The A1 order is fixed by the course dependency graph, so nothing gets moved; your reason for learning shapes which examples and review items come back first.',
       planRows: [
         { when: 'Today', what: ch.lessons[0], meta: ch.metas[0] || '' },
-        { when: 'This week', what: s.commit + ' minutes a day', meta: 'One lesson a session \u2014 the course production rule' },
+        { when: 'Each lesson', what: '\u224820 minutes, pause halfway', meta: 'One lesson a session \u2014 the course production rule' },
         { when: ch.no, what: ch.name, meta: ch.count + ' lessons \u00b7 ' + ch.level }
       ],
-      isAssess: s.screen === 'assess', isLogin: s.screen === 'login', isHome: s.screen === 'home',
+      isLogin: s.screen === 'login', isHome: s.screen === 'home',
       isLesson: s.screen === 'lesson', isResult: s.screen === 'result',
       isCourse: s.screen === 'course', coursePos: s.coursePos || 0,
       trackCourse: (n) => { this._at = n; },
@@ -2277,49 +2091,21 @@ class Component extends DCLogic {
       }),
       showTabs: MAIN.indexOf(s.screen) > -1,
       tab: { learn: tabColor('home'), practice: tabColor('stories'), progress: tabColor('progress'), you: tabColor('profile') },
-      go, g, levels, goalUnset: (s.goals || []).length === 0,
+      tabOn: { learn: s.screen === 'home' ? '1' : '0', practice: s.screen === 'stories' ? '1' : '0', progress: s.screen === 'progress' ? '1' : '0', you: s.screen === 'profile' ? '1' : '0' },
+      tabInd: 'width:calc((100% - 23px) / 4);transform:translateX(calc((100% + 3px) * ' + activeTab + '));opacity:' + (TABS.indexOf(s.screen) > -1 ? 1 : 0),
+      go, g, goalUnset: (s.goals || []).length === 0,
       goalHint: (s.goals || []).length === 0 ? 'Pick at least one.' : (s.goals || []).length === 1 ? 'One more, if you like.' : 'Two is the limit — tap another to swap.',
       email: s.email, pass: s.pass,
       setEmail: (e) => this.setState({ email: e.target.value }),
       setPass: (e) => this.setState({ pass: e.target.value }),
-      assessDone: s.assessAnswers.filter(x => x !== null).length,
-      assessClear: s.assessStep >= 4 && s.assessStep < 6,
-      assessStopEarly: () => this.setState({ assessStep: 6 }),
-      assessOffset: 527.8 - (527.8 * s.assessAnswers.filter(x => x !== null).length) / 6,
-      assessIntro: true, assessQ: false,
-      isAssessReview: false,
-      assessCounter: s.assessStep + ' of 6',
-      assessAria: 'Question ' + s.assessStep + ' of 6',
-      assessPct: Math.round((s.assessStep / 6) * 100) + '%',
-      pq: PLACEMENT[Math.max(0, s.assessStep - 1)] || {},
-      placementStubHead: PLACEMENT_STUB.head, placementStubBody: PLACEMENT_STUB.body, placementStubSource: PLACEMENT_STUB.source,
-      pqHasStem: !!(PLACEMENT[Math.max(0, s.assessStep - 1)] || {}).stem,
-      pqOptions: ((PLACEMENT[Math.max(0, s.assessStep - 1)] || {}).options || []).map((label, i) => {
-        const on = s.assessAnswers[s.assessStep - 1] === i;
-        return {
-          label, letter: 'ABC'[i], on, pick: this.assessPick(i),
-          style: optBase + (on ? selTint : ''),
-          markStyle: 'width:28px;height:28px;flex:none;border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:'
-            + (on ? 'var(--color-accent);color:var(--color-bg)' : 'color-mix(in srgb,var(--color-text) 9%,transparent)')
-        };
-      }),
-      assessBegin: () => this.setState({ screen: 'plan', assessStep: 0 }),
-      assessBack: () => { if (s.assessStep > 1) this.setState({ assessStep: s.assessStep - 1 }); else this.setState({ assessStep: 0 }); },
-      assessLast: () => this.setState({ screen: 'assess', assessStep: 6 }),
-      assessReviewRows: PLACEMENT.map((p, k) => ({
-        n: String(k + 1), prompt: p.short,
-        answer: s.assessAnswers[k] === null ? 'Not answered' : p.options[s.assessAnswers[k]],
-        change: () => this.setState({ screen: 'assess', assessStep: k + 1 })
-      })),
-      assessConfirm: () => this.setState({ screen: 'plan', assessStep: 0 }),
       streak: s.streak,
-      chapterNo: ch.no, chapterName: ch.name, levelLine: ch.level, levelBand: ch.band,
+      chapterNo: ch.no, chapterName: ch.name, levelLine: ch.level,
       chapterProgress: inChapter + ' of ' + ch.count + ' lessons',
       chapterPromise: (inChapter >= ch.count ? 'Done: you can ' : 'By the end: you can ') + (ch.promise || ''),
       nextChapterNo: ch.nextNo, nextChapterName: ch.nextName,
-      nextChapterState: s.pro ? 'Open' : 'Opens with Pro',
+      nextChapterState: (s.chapterIdx + 1) > 3 ? 'In development' : (s.pro ? 'Open' : 'Opens with subscription'),
       nextChapterTag: 'display:inline-flex;font-size:11px;padding:3px 10px;border-radius:999px;'
-        + (s.pro ? 'background:var(--au-ok-bg);color:var(--au-ok-quiet)' : 'background:var(--au-flat-bg);color:var(--au-flat-text)'),
+        + ((s.chapterIdx + 1) > 3 ? 'background:var(--au-flat-bg);color:var(--au-flat-text)' : (s.pro ? 'background:var(--au-ok-bg);color:var(--au-ok-quiet)' : 'background:var(--au-flat-bg);color:var(--au-flat-text)')),
       leg1: pathAt > 0 ? '1' : '.55',
       arcOffset: 100 - Math.round(arcT * 100),
       arcSky: 'position:relative;height:118px;background:' + (
@@ -2345,6 +2131,11 @@ class Component extends DCLogic {
         ? 'Today is complete \u2014 nothing was due. Tomorrow, a new lesson.'
         : 'Today is complete. Tomorrow, these come back one interval wider.',
       n1: mkNode(0), n2: mkNode(1), n3: mkNode(2), n4: mkNode(3), n5: mkNode(4),
+      has5: stops > 4, has4: stops === 4,
+      mapH: (stops > 4 ? 724 : 606) + 'px', nextCardTop: (stops > 4 ? 570 : 452) + 'px',
+      sinceLine: 'Since ' + sinceDate,
+      trialEndLine: 'Pro \u2014 Chapters 2\u20134 open',
+      boardCohort: '30 learners at ' + ch.band + ' \u00b7 resets Monday',
       q, isFlash: q.type === 'flash', isChoice: q.type === 'choice', isMatch: q.type === 'match',
       isListen: q.type === 'listen', isOrder: q.type === 'order', isPattern: q.type === 'pattern',
       patternRows: (q.examples || []).map((t, i) => ({
@@ -2355,7 +2146,6 @@ class Component extends DCLogic {
       showCompare: s.checked && q.type === 'order' && s.built.join(' ') !== q.answer && s.built.length > 0,
       compareMine: s.built.join(' '), compareRight: q.answer,
       qStep: 'animation:auStep' + (s.qi % 2 ? '1' : '2') + ' .42s cubic-bezier(.16,.84,.3,1) both',
-      pqStep: 'animation:auStep' + (s.assessStep % 2 ? '1' : '2') + ' .42s cubic-bezier(.16,.84,.3,1) both',
       qKicker: s.reviewMode ? 'Due back \u00b7 ' + q.kicker : q.kicker, qLabel: (s.qi + 1) + ' / ' + list.length,
       qAria: 'Question ' + (s.qi + 1) + ' of ' + list.length,
       lessonPct: Math.round(((s.qi + (s.checked ? 1 : 0)) / list.length) * 100) + '%',
@@ -2374,9 +2164,9 @@ class Component extends DCLogic {
       openWordSheet: () => this.setState({ wordSheet: 0 }),
       rateKnew: () => this.setState({ selfRate: 'knew' }),
       rateNew: () => this.setState({ selfRate: 'new' }),
-      knewStyle: 'flex:none;border:1px solid ' + (s.selfRate === 'knew' ? 'transparent;background:var(--color-accent-2);color:#fbfaf5' : 'var(--au-edge);background:transparent;color:color-mix(in srgb,var(--color-text) 62%,transparent)')
+      knewStyle: 'flex:none;border:1px solid ' + (s.selfRate === 'knew' ? 'transparent;background:var(--color-accent-2-700);color:#fbfaf5' : 'var(--au-edge);background:transparent;color:color-mix(in srgb,var(--color-text) 62%,transparent)')
         + ';font:700 13px var(--font-body);padding:12px 15px;border-radius:17px;cursor:pointer',
-      newStyle: 'flex:none;border:1px solid ' + (s.selfRate === 'new' ? 'transparent;background:var(--color-accent-600);color:#fff7ee' : 'var(--au-edge);background:transparent;color:color-mix(in srgb,var(--color-text) 62%,transparent)')
+      newStyle: 'flex:none;border:1px solid ' + (s.selfRate === 'new' ? 'transparent;background:var(--color-accent-700);color:#fff7ee' : 'var(--au-edge);background:transparent;color:color-mix(in srgb,var(--color-text) 62%,transparent)')
         + ';font:700 13px var(--font-body);padding:12px 15px;border-radius:17px;cursor:pointer',
       options, matchLeft, matchRight, bank, built, builtEmpty: s.built.length === 0, waveBars,
       trayStyle: 'min-height:118px;padding:16px;border-radius:24px;display:flex;flex-wrap:wrap;gap:9px;align-content:flex-start;margin-bottom:12px;transition:border-color .2s ease,background .2s ease;border:1.5px dashed '
@@ -2442,7 +2232,7 @@ class Component extends DCLogic {
       toggleBoardRules: () => this.setState({ boardRules: !s.boardRules }),
       boardRulesChev: 'flex:none;transition:transform .22s ease;transform:rotate(' + (s.boardRules ? '180deg' : '0deg') + ')',
       board: (() => {
-        const me = { rank: myRank, name: 'Maya Aldrin', sub: myRank > 6 ? 'You \u00b7 joined today' : 'You', score: wordsTotal, me: true };
+        const me = { rank: myRank, name: 'Mira Aldrin', sub: myRank > 6 ? 'You \u00b7 joined today' : 'You', score: wordsTotal, me: true };
         const all = BOARD_ALL.concat([me]).sort((a, b) => a.rank - b.rank);
         if (s.boardAll) return all;
         const near = all.filter(r => r.me || r.rank <= 3 || Math.abs(r.rank - myRank) === 1);
@@ -2460,28 +2250,15 @@ class Component extends DCLogic {
             : 'background:var(--au-fill);border:1px solid var(--au-edge)'),
         rankStyle: 'width:24px;flex:none;text-align:right;font:600 13px var(--font-body);font-variant-numeric:tabular-nums;color:' + (r.rank <= 3 ? 'var(--au-accent-text)' : 'color-mix(in srgb,var(--color-text) 65%,transparent)'),
         avatar: 'width:36px;height:36px;flex:none;border-radius:999px;display:flex;align-items:center;justify-content:center;font:400 15px var(--font-heading);'
-          + (r.me ? 'background:var(--color-accent);color:var(--color-bg)' : 'background:color-mix(in srgb,var(--color-text) 9%,transparent)')
+          + (r.me ? 'background:var(--color-accent-700);color:var(--color-bg)' : 'background:color-mix(in srgb,var(--color-text) 9%,transparent)')
       })),
 
-      isHunt: s.screen === 'hunt',
-      huntSub: 'Awaiting course content',
-      huntTitle: HUNT_STUB.title,
-      huntAwaiting: HUNT_STUB.awaiting,
-      huntPlanned: HUNT_STUB.planned.map(t => ({ t: t })),
-      huntSource: HUNT_STUB.source,
-
-      isReader: s.screen === 'reader',
-      readerTitle: STORY.title,
-      readerAwaiting: STORY.awaiting,
-      readerPlanned: STORY.planned.map(t => ({ t: t })),
-      readerSource: STORY.source,
-      readerMeta: STORY.meta,
       /* The reading that IS authored lives in the chapter player — these rows open it there. */
       stories: [
         { title: 'Name badges and the welcome card', meta: 'Chapter 1 \u00b7 Lesson 3 \u00b7 S27\u2013S28', band: 'A1', mark: 'I', tint: 'background:var(--color-accent-200);color:var(--color-accent-800)', locked: false, open: openReading(0, 2) },
         { title: 'The register form and a message card', meta: 'Chapter 2 \u00b7 Lesson 3 \u00b7 S28\u2013S29', band: 'A1', mark: 'II', tint: 'background:var(--color-accent-2-200);color:var(--color-accent-2-800)', locked: false, open: openReading(1, 2) },
         { title: 'Three profile cards and the class roll', meta: 'Chapter 3 \u00b7 Lesson 3 \u00b7 S23', band: 'A1', mark: 'III', tint: 'background:var(--color-accent-200);color:var(--color-accent-800)', locked: false, open: openReading(2, 2) },
-        { title: 'Graded readers', meta: 'Awaiting content \u2014 \u22659 genres planned across 12 chapters', band: 'soon', mark: '\u00b7', tint: 'background:var(--color-neutral-300);color:var(--color-neutral-800)', locked: true, open: go.reader }
+        { title: 'The day\u2019s sign-in sheet', meta: 'Chapter 4 \u00b7 Lesson 2 \u00b7 S14', band: 'A1', mark: 'IV', tint: 'background:var(--color-accent-2-200);color:var(--color-accent-2-800)', locked: false, open: openReading(3, 1) }
       ].map(st => ({
         title: st.title, meta: st.meta, band: st.band, mark: st.mark, locked: st.locked, open: st.open,
         tile: 'width:74px;height:74px;flex:none;border-radius:22px;display:flex;align-items:center;justify-content:center;font:400 26px/1 var(--font-heading);letter-spacing:.02em;' + st.tint,
@@ -2497,7 +2274,7 @@ class Component extends DCLogic {
         n: String(n),
         style: 'width:22px;height:22px;border-radius:999px;display:flex;align-items:center;justify-content:center;font:700 11px var(--font-body);font-variant-numeric:tabular-nums;'
           + (n <= s.speakTake
-            ? 'background:var(--color-accent);color:var(--color-bg)'
+            ? 'background:var(--color-accent-700);color:var(--color-bg)'
             : 'background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 40%,transparent)')
       })),
       nativeWave: Array.from({ length: 26 }, (_, i) => {
@@ -2519,7 +2296,7 @@ class Component extends DCLogic {
       mineBtn: 'width:44px;height:44px;flex:none;border-radius:999px;border:0;display:flex;align-items:center;justify-content:center;'
         + (s.speakTake === 0
           ? 'background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 32%,transparent);cursor:default'
-          : 'background:var(--color-accent-2-600);color:#fbfaf5;cursor:pointer;box-shadow:0 6px 14px -10px rgba(56,63,40,.8)'),
+          : 'background:var(--color-accent-2-700);color:#fbfaf5;cursor:pointer'),
       playMine: () => {},
       speaking: s.speaking, speakScored: s.speakScored,
       speakHint: s.speaking
@@ -2576,13 +2353,13 @@ class Component extends DCLogic {
       sheetSeen: SHEET.seen,
       sheetStateTag: 'font:700 10px var(--font-body);letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--au-tint-bg);color:var(--au-tint-text)',
       reviewEmpty: s.mistakes.length === 0, reviewHas: s.mistakes.length > 0,
-      reviewCta: s.mistakes.length === 0 ? 'Nothing to practise yet' : 'Practise ' + s.mistakes.length + (s.mistakes.length === 1 ? ' item' : ' items'),
+      reviewCta: s.mistakes.length === 0 ? 'Nothing to practice yet' : 'Practice ' + s.mistakes.length + (s.mistakes.length === 1 ? ' item' : ' items'),
       reviewSub: s.mistakes.length === 0 ? 'Empty \u2014 nothing has slipped yet' : s.mistakes.length + ' waiting',
 
-      skills: skillRows, weakestCta: weakest ? 'Practise ' + weakest.label.toLowerCase() + ' \u2014 ' + s.commit + ' minutes' : 'Start a lesson',
+      skills: skillRows, weakestCta: weakest ? 'Practice ' + weakest.label.toLowerCase() : 'Start a lesson',
       weakestAction: weakest && weakest.label === 'Speaking' ? go.speak : go.course(Math.min(pathAt, 3)),
       progWords: wordsTotal, progMins: minsTotal, progLessons: s.lessonsDone,
-      lastPractised: s.baseLessons > 0 ? 'Last practised Thursday' : 'Nothing practised yet',
+      lastPracticed: s.baseLessons > 0 ? 'Last practiced Thursday' : 'Nothing practiced yet',
       boardDaysLeft: 'Two days left this week',
       progEmpty: s.baseLessons === 0, progHas: s.baseLessons > 0,
       progBars: (s.baseLessons > 0 ? [34, 52, 41, 68, 57, 74, 62, 88] : [4, 4, 4, 4, 4, 4, 4, Math.min(88, Math.max(8, (s.lessonsDone - s.baseLessons) * 22))]).map((h, i) => ({
@@ -2604,7 +2381,7 @@ class Component extends DCLogic {
       ].map((l, i) => ({
         code: l.code, title: l.title, state: l.state,
         stateStyle: l.state === 'Here'
-          ? 'display:inline-flex;font-size:11px;letter-spacing:.03em;padding:3px 10px;border-radius:999px;background:var(--color-accent);color:var(--color-bg)'
+          ? 'display:inline-flex;font-size:11px;letter-spacing:.03em;padding:3px 10px;border-radius:999px;background:var(--color-accent-700);color:var(--color-bg)'
           : 'font-size:11.5px;opacity:' + (l.state === 'Passed' ? '.6' : '.4'),
         row: 'display:flex;align-items:center;gap:14px;padding:13px 0' + (i < 4 ? ';border-bottom:1px solid var(--color-divider)' : ''),
         band: 'width:34px;flex:none;font:400 18px var(--font-heading);color:' + (l.state === 'Here' ? 'var(--color-accent)' : 'color-mix(in srgb,var(--color-text) 30%,transparent)')
@@ -2629,14 +2406,14 @@ class Component extends DCLogic {
           title: 'font-size:14.5px;line-height:1.35;font-weight:600' + (m.done ? '' : ';color:color-mix(in srgb,var(--color-text) 52%,transparent)'),
           mark: 'width:21px;height:21px;flex:none;margin-top:1px;border-radius:999px;display:flex;align-items:center;justify-content:center;'
             + (m.done
-              ? 'background:var(--color-accent-2);color:#fbfaf5'
+              ? 'background:var(--color-accent-2-700);color:#fbfaf5'
               : 'border:1.5px dashed color-mix(in srgb,var(--color-text) 24%,transparent)')
         }));
       })(),
       notPro: !s.pro, isPro: s.pro,
       profileRows: [
         { label: 'Cedar Group', value: s.boardOut ? 'Off' : (myRank <= 6 ? 'Rank ' + myRank + ' of 30' : 'Rank ' + myRank + ' of 30'), tap: go.leaderboard },
-        { label: 'Subscription', value: s.pro ? 'Pro trial' : 'Free', tap: go.paywall },
+        { label: 'Subscription', value: s.pro ? 'Subscribed' : 'Free', tap: go.paywall },
         { label: 'Settings', value: '', tap: go.settings },
         { label: 'Help and contact', value: '', tap: () => {} }
       ].map((p, i, a) => ({
@@ -2677,7 +2454,7 @@ class Component extends DCLogic {
       sceneThread: (() => {
         const out = [];
         const themB = 'max-width:88%;padding:14px 17px;border-radius:22px 22px 22px 7px;background:var(--au-fill);border:1px solid var(--au-edge);box-shadow:var(--au-lift);font-size:14.5px;line-height:1.45';
-        const mineB = 'max-width:88%;padding:14px 17px;border-radius:22px 22px 7px 22px;background:var(--color-accent-600);color:#fff7ee;font-size:14.5px;line-height:1.45;box-shadow:0 8px 18px -14px rgba(100,51,18,.7)';
+        const mineB = 'max-width:88%;padding:14px 17px;border-radius:22px 22px 7px 22px;background:var(--color-accent-700);color:#fff7ee;font-size:14.5px;line-height:1.45';
         for (let i = 0; i <= s.sceneTurn && i < SC.turns.length; i++) {
           out.push({
             wrap: 'display:flex;flex-direction:column;align-items:flex-start',
@@ -2706,9 +2483,9 @@ class Component extends DCLogic {
       setSolo: () => this.setState({ sceneRoleB: false }),
       setDuo: () => this.setState({ sceneRoleB: true }),
       soloStyle: 'padding:7px 13px;border-radius:999px;cursor:pointer;font:700 11.5px var(--font-body);'
-        + (!s.sceneRoleB ? 'background:var(--color-accent);color:var(--color-bg)' : 'background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 55%,transparent)'),
+        + (!s.sceneRoleB ? 'background:var(--color-accent-700);color:var(--color-bg)' : 'background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 55%,transparent)'),
       duoStyle: 'padding:7px 13px;border-radius:999px;cursor:pointer;font:700 11.5px var(--font-body);'
-        + (s.sceneRoleB ? 'background:var(--color-accent);color:var(--color-bg)' : 'background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 55%,transparent)'),
+        + (s.sceneRoleB ? 'background:var(--color-accent-700);color:var(--color-bg)' : 'background:color-mix(in srgb,var(--color-text) 8%,transparent);color:color-mix(in srgb,var(--color-text) 55%,transparent)'),
       replayScene: () => this.setState({ sceneTurn: 0, scenePicks: [] }),
       leaveScene: () => this.setState({ screen: 'stories' }),
 
@@ -2728,7 +2505,7 @@ class Component extends DCLogic {
         const okMail = /.+@.+\..+/.test(s.email || '');
         if (!okMail) { this.setState({ loginErr: 'That email address looks incomplete.' }); return; }
         if ((s.pass || '').length < 6) { this.setState({ loginErr: 'Passwords are at least six characters.' }); return; }
-        this.setState({ loginErr: '', screen: 'home' });
+        this.setState({ loginErr: '', account: true, screen: 'home' });
       },
       groupSw: (() => {
         const on = !s.boardOut;
@@ -2761,8 +2538,8 @@ class Component extends DCLogic {
       setType: (e) => this.setState({ typeStep: Number(e.target.value) }),
 
       plans: [
-        { id: 'annual', name: 'Annual', sub: '\u00a35.00 a month, billed yearly', price: '\u00a359.99', badgeText: 'Save 44%' },
-        { id: 'monthly', name: 'Monthly', sub: 'Cancel any time', price: '\u00a38.99', badgeText: '' }
+        { id: 'annual', name: 'Annual', sub: 'Billed once a year', price: 'App Store price', badgeText: 'Best value' },
+        { id: 'monthly', name: 'Monthly', sub: 'Cancel any time', price: 'App Store price', badgeText: '' }
       ].map(p => {
         const on = s.plan === p.id;
         return {
@@ -2779,16 +2556,22 @@ class Component extends DCLogic {
         };
       }),
       proFeatures: [
-        { text: 'All twelve A1 chapters \u2014 42 lessons \u00b7 A2 upward arrives with the adaptation guide' },
+        { text: 'Chapters 2\u20134, production-ready today \u2014 Checkpoint Review 1 included' },
         { text: 'Unlimited speaking sessions, scored on clarity not accent' },
         { text: 'Spaced review that decides when a word returns' },
         { text: 'Every recording and illustration, once production replaces the placeholders' }
       ],
-      planLabel: s.pro ? 'Pro trial' : 'Free',
-      trialNote: s.plan === 'annual'
-        ? '\u00a359.99 a year after seven days. Cancel any time in Settings.'
-        : '\u00a38.99 a month after seven days. Cancel any time in Settings.',
-      startTrial: () => this.setState({ pro: true, screen: 'home' })
+      planLabel: s.pro ? 'Subscribed' : 'Free',
+      isSubscribeAccount: s.screen === 'subscribeAccount',
+      subscribeCta: s.account ? 'Subscribe' : 'Create account and subscribe',
+      trialNote: 'No free trial \u2014 Chapter 1 is the free experience. Price, billing period, and renewal terms are set by the App Store at checkout. Cancel any time in Settings.',
+      startSubscribe: () => this.setState({ screen: s.account ? 'home' : 'subscribeAccount', pro: s.account ? true : s.pro }),
+      restorePurchase: () => this.setState({ screen: s.account ? 'home' : 'login', loginErr: s.account ? '' : 'Sign in to restore a purchase.' }),
+      createAccountAndSubscribe: () => {
+        const okMail = /.+@.+\..+/.test(s.email || '');
+        if (!okMail || (s.pass || '').length < 6) { this.setState({ loginErr: 'Enter a valid email and a password of at least six characters.' }); return; }
+        this.setState({ account: true, pro: true, loginErr: '', screen: 'home' });
+      }
     };
   }
 }

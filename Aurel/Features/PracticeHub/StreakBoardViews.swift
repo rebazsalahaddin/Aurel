@@ -76,13 +76,13 @@ struct StreakView: View {
 
                 Text(streakNote)
                     .font(.figtree(.regular, size: 14.5))
-                    .lineSpacing(14.5 * 0.6)
+                    .auLine(14.5, 1.6)
                     .foregroundStyle(Color.auText.opacity(0.60))
                     .frame(maxWidth: 300, alignment: .leading)
                     .padding(.top, 18)
                     .padding(.bottom, 30)
 
-                ACard(radius: 28) {
+                ACard(radius: 28, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         Text("This week")
                             .font(.figtree(.regular, size: 11))
@@ -90,8 +90,9 @@ struct StreakView: View {
                             .textCase(.uppercase)
                             .foregroundStyle(Color.auText.opacity(0.45))
                             .padding(.bottom, 16)
-                        WeekDots(todayIndex: 0)
+                        streakWeekDots
                     }
+                    .padding(22)
                 }
                 .padding(.bottom, 16)
 
@@ -123,10 +124,11 @@ struct StreakView: View {
                 .padding(.bottom, 16)
 
                 HStack(spacing: 14) {
-                    AUIcon(kind: .loop, size: 20, color: .auOkText)
+                    AUIcon(kind: .clock, size: 20, color: .auOkText)
+                        .frame(width: 20, height: 20)
                     Text("Two rest days a month are built in. Missing one won't undo anything.")
                         .font(.figtree(.regular, size: 13.5))
-                        .lineSpacing(13.5 * 0.5)
+                        .auLine(13.5, 1.5)
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 18)
@@ -141,6 +143,36 @@ struct StreakView: View {
         }
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
+    }
+
+    private var streakWeekDots: some View {
+        HStack(spacing: 7) {
+            ForEach(Array(["M", "T", "W", "T", "F", "S", "S"].enumerated()), id: \.offset) {
+                i, label in
+                VStack(spacing: 8) {
+                    Capsule()
+                        .fill(
+                            i == 0
+                                ? AnyShapeStyle(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.auAccent.mixed(with: 0.26, of: .white),
+                                            Color.auAccent,
+                                        ],
+                                        startPoint: .top, endPoint: .bottom
+                                    )
+                                )
+                                : AnyShapeStyle(Color.auText.opacity(0.10))
+                        )
+                        .frame(height: 34)
+                        .shadow(color: i == 0 ? Color.auGlow : .clear, radius: 4, y: 3)
+                    Text(label)
+                        .font(.figtree(.regular, size: 10.5))
+                        .foregroundStyle(Color.auText.opacity(0.45))
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
     }
 
     private var streakNote: String {
@@ -198,7 +230,7 @@ struct LeaderboardView: View {
     private var rows: [BoardRow] {
         let r = env.router
         let me = BoardRow(
-            rank: myRank, name: "Maya Aldrin", sub: myRank > 6 ? "You · joined today" : "You",
+            rank: myRank, name: "Mira Aldrin", sub: myRank > 6 ? "You · joined today" : "You",
             score: wordsTotal, me: true)
         let all = (Self.boardAll + [me]).sorted { $0.rank < $1.rank }
         if r.boardAll { return all }
@@ -238,7 +270,7 @@ struct LeaderboardView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(boardStory)
                                     .font(.caprasimo(size: 20))
-                                    .lineSpacing(20 * 0.28)
+                                    .auHeadLine(20, 1.28)
                                 Text("Two days left this week")
                                     .font(.figtree(.regular, size: 12.5))
                                     .foregroundStyle(Color.auText.opacity(0.52))
@@ -280,7 +312,7 @@ struct LeaderboardView: View {
                                 "Nothing you do is compared to anyone. Turn it back on in Settings whenever you like."
                             )
                             .font(.figtree(.regular, size: 13))
-                            .lineSpacing(13 * 0.5)
+                            .auLine(13, 1.5)
                             .foregroundStyle(Color.auText.opacity(0.52))
                         }
                         .padding(20)
@@ -303,8 +335,9 @@ struct LeaderboardView: View {
                                 Text("How this works")
                                     .font(.figtree(.semibold, size: 12.5))
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                AUIcon(kind: .arrow, size: 14, color: .auText.opacity(0.55))
-                                    .rotationEffect(.degrees(r.boardRules ? 90 : 0))
+                                AUIcon(kind: .chevronDown, size: 14, color: .auText.opacity(0.55))
+                                    .frame(width: 14, height: 14)
+                                    .rotationEffect(.degrees(r.boardRules ? 180 : 0))
                             }
                             .foregroundStyle(Color.auText.opacity(0.55))
                             .padding(.top, 16)
@@ -337,7 +370,7 @@ struct LeaderboardView: View {
                                     "Link copied. It holds one seat for seven days — they join at whatever level they place into."
                                 )
                                 .font(.figtree(.regular, size: 12.5))
-                                .lineSpacing(12.5 * 0.5)
+                                .auLine(12.5, 1.5)
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 14)
@@ -354,7 +387,7 @@ struct LeaderboardView: View {
                                 "Words retained this week, nothing else. Groups are matched on how often you practise, not how well. Nobody is removed, nobody is demoted, and there are no prizes — it is here only if you find it useful."
                             )
                             .font(.figtree(.regular, size: 12.5))
-                            .lineSpacing(12.5 * 0.6)
+                            .auLine(12.5, 1.6)
                             .foregroundStyle(Color.auText.opacity(0.48))
                             .padding(.top, 12)
                         }

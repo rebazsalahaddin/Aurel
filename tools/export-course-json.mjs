@@ -27,12 +27,12 @@ import vm from 'node:vm';
 import { CONTENT_CORRECTIONS } from './content-corrections.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const banks = ['course-c1.js', 'course-c2.js', 'course-c3.js'];
+const banks = ['course-c1.js', 'course-c2.js', 'course-c3.js', 'course-c4.js'];
 
 const ctx = { window: {} };
 vm.createContext(ctx);
 for (const f of banks) {
-  const code = readFileSync(path.join(root, 'design', f), 'utf8');
+  const code = readFileSync(path.join(root, 'design', 'prototype', f), 'utf8');
   vm.runInContext(code, ctx, { filename: f });
 }
 
@@ -378,9 +378,8 @@ function replaceC3Quiz(course) {
   // transcribed from A1_C03_L03_LESSON.md §S29–S32 (+ the manifest quiz/gate
   // section); source lines cited per screen.
   const at = l03.screens.findIndex((s) => s.id === 'S29');
-  const pending = l03.screens.filter((s) => s.type === 'pending').map((s) => s.id);
-  if (at < 0 || pending.join(',') !== 'S29,S30,S31,S32') {
-    fail(`C3 L03: expected pending S29–S32 to replace, found [${pending.join(', ')}]`);
+  if (at < 0) {
+    fail(`C3 L03: expected S29 to replace`);
   }
 
   const clinics = [
@@ -390,7 +389,7 @@ function replaceC3Quiz(course) {
     { id: 'C3-CLIN-D', name: "I'm from vs I'm a", benefit: 'question→frame routing drill — exit: 8/10 on mixed frames', n: 10, trigger: 'frame collisions (V010/V033/LS001 type)' }
   ];
 
-  l03.screens.splice(at, 4,
+  l03.screens.splice(at, l03.screens.length - at,
     {
       // Lesson line 562: "S29 — Chapter quiz, Form A (32 items)"; line 564
       // carries the sections, the cumulative share, and the pass rule.

@@ -23,7 +23,7 @@ struct StoriesView: View {
                         .padding(.bottom, 24)
 
                     hubRow(
-                        icon: .match, tint: Color.auAccent2Ramp(600),
+                        icon: .speech, tint: Color.auAccent2Ramp(600),
                         iconFg: AUSceneArt.onAccent2,
                         title: "Scenes",
                         sub: r.sceneTurn > 0 ? "In progress — \(env.scene.title)" : env.scene.title,
@@ -40,56 +40,22 @@ struct StoriesView: View {
                     ) { r.nav(.speak) }
                     .padding(.bottom, 12)
 
-                    hubRow(
-                        icon: .loop, tint: .clear, iconFg: .auAccent,
+                    // The quiet variant: 42 pt grey disc, Figtree 15.5/600 title,
+                    // divider outline, no fill or lift.
+                    quietRow(
+                        icon: .reviewLoop,
                         title: "Review mistakes",
                         sub: r.mistakes.isEmpty
                             ? "Empty — nothing has slipped yet" : "\(r.mistakes.count) waiting",
-                        radius: 26, filled: false
+                        dashed: false
                     ) { r.nav(.review) }
-                    .padding(.bottom, 26)
-
-                    // Find three words — the honest stub entry
-                    Button {
-                        r.nav(.hunt)
-                    } label: {
-                        HStack(spacing: 16) {
-                            AUIcon(kind: .tap, size: 19, color: .auAccent)
-                                .frame(width: 42, height: 42)
-                                .background(Circle().fill(Color.auText.opacity(0.08)))
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Find three words")
-                                    .font(.figtree(.semibold, size: 15.5))
-                                Text("Awaiting course content")
-                                    .font(.figtree(.regular, size: 12.5))
-                                    .foregroundStyle(Color.auText.opacity(0.50))
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("New")
-                                .font(.figtree(.bold, size: 9.5))
-                                .tracking(1.14)
-                                .textCase(.uppercase)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Capsule().fill(Color.auText.opacity(0.08)))
-                                .foregroundStyle(Color.auText.opacity(0.50))
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 18)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                                .strokeBorder(
-                                    Color.auText.opacity(0.20),
-                                    style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                        )
-                    }
-                    .buttonStyle(.auTap)
                     .padding(.bottom, 26)
 
                     HStack(alignment: .firstTextBaseline) {
                         Text("Stories")
                             .font(.figtree(.bold, size: 10.5))
                             .tracking(1.47)
+                            .textCase(.uppercase)
                         Spacer()
                         Text("Authored texts")
                             .font(.figtree(.regular, size: 11.5))
@@ -97,20 +63,20 @@ struct StoriesView: View {
                     }
                     .padding(.bottom, 14)
 
-                    // stories list (line 2480) — open the chapter player on the reading screen
+                    // stories list (line 2257) — open the chapter player on the reading screen
                     ForEach(Array(storyRows.enumerated()), id: \.offset) { i, st in
                         storyRow(st) {
-                            if let open = st.open { open() } else { r.nav(.reader) }
+                            st.open?()
                         }
                         .auStagger(i)
                         .padding(.bottom, 12)
                     }
 
                     Text(
-                        "Reading opens where the chapter authored it. A separate graded-reader bank is still to be written."
+                        "Every text opens in the chapter that authored it — nothing here is invented for the app layer."
                     )
                     .font(.figtree(.regular, size: 12))
-                    .lineSpacing(12 * 0.5)
+                    .auLine(12, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.45))
                     .padding(.bottom, 44)
                 }
@@ -166,9 +132,9 @@ struct StoriesView: View {
                 title: "Three profile cards and the class roll", meta: "Chapter 3 · Lesson 3 · S23",
                 band: "A1", mark: "III", locked: false, open: openReading(2, 2)),
             StoryRow(
-                title: "Graded readers",
-                meta: "Awaiting content — ≥9 genres planned across 12 chapters", band: "soon",
-                mark: "·", locked: true, open: nil),
+                title: "The day’s sign-in sheet",
+                meta: "Chapter 4 · Lesson 2 · S14", band: "A1",
+                mark: "IV", locked: false, open: openReading(3, 1)),
         ]
     }
 
@@ -180,14 +146,19 @@ struct StoriesView: View {
                     .frame(width: 74, height: 74)
                     .background(
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(st.band == "A1" ? Color.auAccentRamp(200) : Color.auNeutral(300))
+                            .fill(
+                                (st.mark == "II" || st.mark == "IV")
+                                    ? Color.auAccent2Ramp(200) : Color.auAccentRamp(200)
+                            )
                     )
                     .foregroundStyle(
-                        st.band == "A1" ? Color.auAccentRamp(800) : Color.auNeutral(800))
+                        (st.mark == "II" || st.mark == "IV")
+                            ? Color.auAccent2Ramp(800) : Color.auAccentRamp(800)
+                    )
                 VStack(alignment: .leading, spacing: 4) {
                     Text(st.title)
                         .font(.caprasimo(size: 17))
-                        .lineSpacing(17 * 0.2)
+                        .auHeadLine(17, 1.2)
                     Text(st.meta)
                         .font(.figtree(.regular, size: 12.5))
                         .foregroundStyle(Color.auText.opacity(0.52))
@@ -214,6 +185,41 @@ struct StoriesView: View {
         .buttonStyle(.auTap)
     }
 
+    /// The quiet hub entry (Review mistakes): a 42 pt grey disc, a Figtree
+    /// 15.5/600 title, and a divider outline — no fill, no lift.
+    private func quietRow(
+        icon: AUIcon.Kind, title: String, sub: String, dashed: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 16) {
+                AUIcon(kind: icon, size: 19, color: .auAccent)
+                    .frame(width: 42, height: 42)
+                    .background(Circle().fill(Color.auText.opacity(0.08)))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.figtree(.semibold, size: 15.5))
+                        .auLine(15.5, 1.55)
+                    Text(sub)
+                        .font(.figtree(.regular, size: 12.5))
+                        .auLine(12.5, 1.55)
+                        .foregroundStyle(Color.auText.opacity(0.50))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                AUIcon(kind: .chevron, size: 17, color: .auText.opacity(0.4))
+            }
+            .padding(.horizontal, 21)
+            .padding(.vertical, 19)
+            .overlay(
+                RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .strokeBorder(
+                        Color.auDivider,
+                        style: StrokeStyle(lineWidth: 1, dash: dashed ? [5, 4] : []))
+            )
+        }
+        .buttonStyle(.auTap)
+    }
+
     private func hubRow(
         icon: AUIcon.Kind, tint: Color, iconFg: Color, title: String, sub: String, radius: CGFloat,
         filled: Bool, action: @escaping () -> Void
@@ -226,12 +232,14 @@ struct StoriesView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(.caprasimo(size: 19))
+                        .auHeadLine(19, 1.2)
                     Text(sub)
                         .font(.figtree(.regular, size: 12.5))
+                        .auLine(12.5, 1.55)
                         .foregroundStyle(Color.auText.opacity(0.52))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                AUIcon(kind: .arrow, size: 17, color: .auText.opacity(0.4))
+                AUIcon(kind: .chevron, size: 17, color: .auText.opacity(0.4))
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 19)
@@ -267,6 +275,7 @@ struct SceneView: View {
                 }
                 .buttonStyle(.auTap)
                 .accessibilityLabel("Leave the scene")
+                .padding(.leading, -10)  // margin-left:-10px
 
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Scene")
@@ -277,14 +286,14 @@ struct SceneView: View {
                         .padding(.bottom, 5)
                     Text(sc.title)
                         .font(.caprasimo(size: 19))
-                        .lineSpacing(19 * 0.2)
+                        .auHeadLine(19, 1.2)
                     Text(
                         r.sceneRoleB
                             ? "Two of you, one script. You take the learner turns; they read the partner."
                             : sc.role
                     )
                     .font(.figtree(.regular, size: 12.5))
-                    .lineSpacing(12.5 * 0.45)
+                    .auLine(12.5, 1.45)
                     .foregroundStyle(Color.auText.opacity(0.52))
                     .padding(.top, 4)
                     HStack(spacing: 6) {
@@ -293,6 +302,7 @@ struct SceneView: View {
                     }
                     .padding(.top, 11)
                 }
+                .padding(.top, 3)
             }
             .padding(.horizontal, 22)
             .padding(.top, 70)
@@ -304,34 +314,45 @@ struct SceneView: View {
                 VStack(spacing: 12) {
                     ForEach(0...min(r.sceneTurn, max(0, sc.turns.count - 1)), id: \.self) { i in
                         let turn = sc.turns[i]
-                        VStack(alignment: .leading, spacing: 0) {
-                            if r.sceneRoleB && i == r.sceneTurn {
-                                Text("Their line — pass the phone, or read it aloud")
-                                    .font(.figtree(.bold, size: 9.5))
-                                    .tracking(1.33)
-                                    .textCase(.uppercase)
-                                    .foregroundStyle(Color.auText.opacity(0.42))
-                                    .padding(.bottom, 5)
-                            }
-                            Text(turn.them)
-                                .font(.figtree(.regular, size: 14.5))
-                                .lineSpacing(14.5 * 0.45)
-                                .padding(.horizontal, 17)
-                                .padding(.vertical, 14)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(
-                                    UnevenCorners(bottomTrailing: 7)
-                                        .fill(
-                                            r.sceneRoleB
-                                                ? Color.auTintBg.opacity(0.5) : Color.auFill)
-                                )
-                                .overlay(
-                                    UnevenCorners(bottomTrailing: 7)
-                                        .stroke(
+                        let partnerShape = UnevenRoundedRectangle(
+                            topLeadingRadius: 22, bottomLeadingRadius: 7,
+                            bottomTrailingRadius: 22, topTrailingRadius: 22,
+                            style: .continuous
+                        )
+                        let learnerShape = UnevenRoundedRectangle(
+                            topLeadingRadius: 22, bottomLeadingRadius: 22,
+                            bottomTrailingRadius: 7, topTrailingRadius: 22,
+                            style: .continuous
+                        )
+                        VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 0) {
+                                if r.sceneRoleB && i == r.sceneTurn {
+                                    Text("Their line — pass the phone, or read it aloud")
+                                        .font(.figtree(.bold, size: 9.5))
+                                        .tracking(1.33)
+                                        .textCase(.uppercase)
+                                        .foregroundStyle(Color.auText.opacity(0.42))
+                                        .padding(.bottom, 5)
+                                }
+                                Text(turn.them)
+                                    .font(.figtree(.regular, size: 14.5))
+                                    .auLine(14.5, 1.45)
+                                    .padding(.horizontal, 17)
+                                    .padding(.vertical, 14)
+                                    .frame(maxWidth: 311, alignment: .leading)
+                                    .background(partnerShape.fill(Color.auFill))
+                                    .overlay(
+                                        partnerShape.stroke(
                                             r.sceneRoleB
                                                 ? Color.auAccent.opacity(0.4) : Color.auEdge,
-                                            lineWidth: r.sceneRoleB ? 1.5 : 1)
-                                )
+                                            style: StrokeStyle(
+                                                lineWidth: 1,
+                                                dash: r.sceneRoleB ? [5, 4] : []
+                                            )
+                                        )
+                                    )
+                                    .auLift()
+                            }
 
                             if let pickIdx = r.scenePicks.indices.contains(i)
                                 ? r.scenePicks[i] : nil,
@@ -341,20 +362,23 @@ struct SceneView: View {
                                 VStack(alignment: .trailing, spacing: 7) {
                                     Text(reply.t)
                                         .font(.figtree(.regular, size: 14.5))
-                                        .lineSpacing(14.5 * 0.45)
+                                        .auLine(14.5, 1.45)
                                         .padding(.horizontal, 17)
                                         .padding(.vertical, 14)
-                                        .background(
-                                            UnevenCorners(bottomTrailing: 22).fill(
-                                                Color.auAccentRamp(600))
-                                        )
+                                        .frame(maxWidth: 311, alignment: .leading)
+                                        .background(learnerShape.fill(Color.auAccentRamp(600)))
                                         .foregroundStyle(AUSceneArt.onAccent)
+                                        .shadow(
+                                            color: Color.auAccentRamp(800).opacity(0.22),
+                                            radius: 3, y: 4
+                                        )
                                     if !reply.reg.isEmpty {
                                         Text(reply.reg)
                                             .font(.figtree(.regular, size: 12.5))
-                                            .lineSpacing(12.5 * 0.5)
+                                            .auLine(12.5, 1.5)
                                             .padding(.horizontal, 14)
                                             .padding(.vertical, 11)
+                                            .frame(maxWidth: 318, alignment: .leading)
                                             .background(
                                                 RoundedRectangle(
                                                     cornerRadius: 16, style: .continuous
@@ -401,7 +425,7 @@ struct SceneView: View {
                             } label: {
                                 Text(reply.t)
                                     .font(.figtree(.semibold, size: 14.5))
-                                    .lineSpacing(14.5 * 0.4)
+                                    .auLine(14.5, 1.4)
                                     .padding(.horizontal, 17)
                                     .padding(.vertical, 15)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -411,7 +435,9 @@ struct SceneView: View {
                                     )
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 20).strokeBorder(
-                                            Color.auEdge, lineWidth: 1))
+                                            Color.auEdge, lineWidth: 1)
+                                    )
+                                    .auLift()
                             }
                             .buttonStyle(.auTap)
                         }
@@ -422,7 +448,7 @@ struct SceneView: View {
                             .padding(.top, 3)
                         Text(sc.close)
                             .font(.figtree(.semibold, size: 13.5))
-                            .lineSpacing(13.5 * 0.45)
+                            .auLine(13.5, 1.45)
                     }
                     .padding(.horizontal, 17)
                     .padding(.vertical, 15)
@@ -507,6 +533,8 @@ struct SpeakView: View {
     var body: some View {
         let r = env.router
         let item = sayItem
+        let verdictOK = r.speakVerdict == "clear" || r.speakVerdict == "typed"
+        let verdictLow = r.speakVerdict == "low"
 
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
@@ -550,17 +578,17 @@ struct SpeakView: View {
                 Text(item.line)
                     .font(.caprasimo(size: 25))
                     .tracking(-0.38)
-                    .lineSpacing(25 * 0.26)
+                    .auHeadLine(25, 1.26)
                     .padding(.bottom, 8)
 
                 Text(item.ctx)
                     .font(.figtree(.regular, size: 13))
-                    .lineSpacing(13 * 0.5)
+                    .auLine(13, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.52))
                     .padding(.bottom, 22)
 
                 // native card
-                ACard(radius: 24) {
+                ACard(radius: 24, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(spacing: 14) {
                             Button {
@@ -572,9 +600,12 @@ struct SpeakView: View {
                             }
                             .buttonStyle(.auTap)
                             .accessibilityLabel("Hear the native line")
-                            WaveForm(
-                                heights: nativeWaveHeights, color: Color.auAccent.opacity(0.55)
+                            HubWaveform(
+                                heights: nativeWaveHeights,
+                                color: Color.auAccent.opacity(0.55),
+                                animated: false
                             )
+                            .frame(maxWidth: .infinity)
                             .frame(height: 34)
                         }
                         Text("Native")
@@ -584,11 +615,13 @@ struct SpeakView: View {
                             .foregroundStyle(Color.auText.opacity(0.45))
                             .padding(.top, 11)
                     }
+                    .padding(.horizontal, 17)
+                    .padding(.vertical, 15)
                 }
                 .padding(.bottom, 10)
 
                 // your take
-                ACard(radius: 24) {
+                ACard(radius: 24, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(spacing: 14) {
                             AUIcon(
@@ -602,11 +635,13 @@ struct SpeakView: View {
                                 Circle().fill(
                                     r.speakTake == 0
                                         ? Color.auText.opacity(0.08) : Color.auAccent2Ramp(600)))
-                            WaveForm(
+                            HubWaveform(
                                 heights: speakWaveHeights,
                                 color: Color.auAccent2.opacity(
-                                    r.speaking ? 0.85 : (r.speakTake > 0 ? 0.6 : 0.22))
+                                    r.speaking ? 0.85 : (r.speakTake > 0 ? 0.6 : 0.22)),
+                                animated: r.speaking
                             )
+                            .frame(maxWidth: .infinity)
                             .frame(height: 34)
                         }
                         Text(
@@ -619,42 +654,46 @@ struct SpeakView: View {
                         .foregroundStyle(Color.auText.opacity(0.45))
                         .padding(.top, 11)
                     }
+                    .padding(.horizontal, 17)
+                    .padding(.vertical, 15)
                 }
                 .padding(.bottom, 14)
 
                 if r.speakScored {
                     HStack(alignment: .top, spacing: 12) {
-                        AUIcon(
-                            kind: (r.speakVerdict == "clear" || r.speakVerdict == "typed")
-                                ? .check : .close, size: 15, color: .white
-                        )
-                        .frame(width: 26, height: 26)
-                        .background(
-                            Circle().fill(
-                                (r.speakVerdict == "clear" || r.speakVerdict == "typed")
-                                    ? Color.auAccent2 : Color.auErr))
+                        AUIcon(kind: verdictOK ? .check : .warning, size: 15, color: .white)
+                            .frame(width: 26, height: 26)
+                            .background(
+                                Circle().fill(
+                                    verdictOK
+                                        ? Color.auAccent2
+                                        : (verdictLow ? Color.auText.opacity(0.38) : Color.auErr)
+                                )
+                            )
                         VStack(alignment: .leading, spacing: 3) {
                             Text(speakVerdictTitle)
                                 .font(.figtree(.bold, size: 14.5))
                             Text(speakVerdictBody)
                                 .font(.figtree(.regular, size: 13))
-                                .lineSpacing(13 * 0.5)
+                                .auLine(13, 1.5)
                                 .opacity(0.9)
                         }
                     }
-                    .padding(15)
-                    .padding(.trailing, 2)
+                    .padding(.vertical, 15)
+                    .padding(.horizontal, 17)
                     .background(
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
                             .fill(
-                                (r.speakVerdict == "clear" || r.speakVerdict == "typed")
-                                    ? Color.auOkBg : Color.auErrBg)
+                                verdictOK
+                                    ? Color.auOkBg
+                                    : (verdictLow ? Color.auText.opacity(0.07) : Color.auErrBg)
+                            )
                     )
                     .foregroundStyle(
-                        (r.speakVerdict == "clear" || r.speakVerdict == "typed")
-                            ? Color.auOkText : Color.auErrText
+                        verdictOK
+                            ? Color.auOkText : (verdictLow ? Color.auText : Color.auErrText)
                     )
-                    .padding(.bottom, 14)
+                    .padding(.bottom, 4)
                 }
 
                 Spacer(minLength: 14)
@@ -703,15 +742,28 @@ struct SpeakView: View {
                         .foregroundStyle(Color.auText.opacity(0.50))
 
                         HStack(spacing: 20) {
-                            ALinkButton(title: "Type it instead") { r.typing = true }
+                            Button {
+                                r.typing = true
+                            } label: {
+                                Text("Type it instead")
+                                    .font(.figtree(.semibold, size: 13))
+                                    .foregroundStyle(Color.auAccentText)
+                                    .padding(.horizontal, 2)
+                                    .padding(.vertical, 6)
+                            }
+                            .buttonStyle(.auTap)
+                            .accessibilityIdentifier("au.link.type-it-instead")
                             Button {
                                 r.nav(.stories)
                             } label: {
                                 Text("Skip for now")
                                     .font(.figtree(.semibold, size: 13))
                                     .foregroundStyle(Color.auText.opacity(0.52))
+                                    .padding(.horizontal, 2)
+                                    .padding(.vertical, 6)
                             }
                             .buttonStyle(.auTap)
+                            .accessibilityIdentifier("au.link.skip-for-now")
                         }
                     }
                     .frame(maxWidth: .infinity)
@@ -720,6 +772,7 @@ struct SpeakView: View {
             .padding(.horizontal, 24)
             .padding(.top, 70)
             .padding(.bottom, 34)
+            .frame(minHeight: 874, alignment: .top)
         }
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
@@ -779,7 +832,7 @@ struct ReviewView: View {
                     "Held back and re-shown on a widening interval. They leave this list once they stick."
                 )
                 .font(.figtree(.regular, size: 13.5))
-                .lineSpacing(13.5 * 0.55)
+                .auLine(13.5, 1.55)
                 .foregroundStyle(Color.auText.opacity(0.55))
                 .padding(.bottom, 26)
 
@@ -796,7 +849,7 @@ struct ReviewView: View {
                             .font(.caprasimo(size: 19))
                         Text("Finish a lesson and anything you miss will collect here.")
                             .font(.figtree(.regular, size: 13.5))
-                            .lineSpacing(13.5 * 0.55)
+                            .auLine(13.5, 1.55)
                             .foregroundStyle(Color.auText.opacity(0.52))
                     }
                     .padding(.vertical, 34)
@@ -827,6 +880,7 @@ struct ReviewView: View {
             .padding(.horizontal, 24)
             .padding(.top, 70)
             .padding(.bottom, 34)
+            .frame(minHeight: 874, alignment: .top)
         }
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
@@ -861,7 +915,7 @@ struct ReviewView: View {
         let src = item?.src ?? ""
         let due = k == 0 ? "Due tomorrow" : (k == 1 ? "Due in 2 days" : "Due in 4 days")
 
-        return ACard(radius: 22) {
+        return ACard(radius: 22, padded: false) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .firstTextBaseline) {
                     Text("\(kind)\(src.isEmpty ? "" : " · \(src)")")
@@ -877,147 +931,63 @@ struct ReviewView: View {
                 .padding(.bottom, 9)
                 Text(label)
                     .font(.figtree(.semibold, size: 16))
-                    .lineSpacing(16 * 0.35)
+                    .auLine(16, 1.35)
                 Text(note)
                     .font(.figtree(.regular, size: 13))
-                    .lineSpacing(13 * 0.5)
+                    .auLine(13, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.55))
                     .padding(.top, 8)
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 18)
         }
     }
 }
 
-// MARK: Hunt + Reader stubs (lines 1049–1099)
-
-/// The shared honest stub layout for hunt + reader.
-struct AwaitingContentView: View {
-    let title: String
-    let awaiting: String
-    let plannedTitle: String
-    let planned: [String]
-    let source: String
+private struct HubWaveform: View {
+    let heights: [CGFloat]
+    let color: Color
+    let animated: Bool
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    env.router.nav(.stories)
-                } label: {
-                    AUIcon(kind: .back, size: 17)
-                        .frame(width: 44, height: 44)
-                        .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
-                }
-                .buttonStyle(.auTap)
-                .accessibilityLabel("Back")
-                .padding(.bottom, 26)
-
-                HStack(spacing: 8) {
-                    AUIcon(kind: .lock, size: 12, color: .auText.opacity(0.52))
-                    Text("Awaiting course content")
-                }
-                .font(.figtree(.bold, size: 9.5))
-                .tracking(1.33)
-                .textCase(.uppercase)
-                .foregroundStyle(Color.auText.opacity(0.52))
-                .padding(.horizontal, 13)
-                .padding(.vertical, 6)
-                .background(Capsule().fill(Color.auText.opacity(0.08)))
-                .padding(.bottom, 16)
-
-                Text(title)
-                    .font(.caprasimo(size: 29))
-                    .tracking(-0.64)
-                    .lineSpacing(29 * 0.12)
-                    .padding(.bottom, 12)
-
-                Text(awaiting)
-                    .font(.figtree(.regular, size: 14))
-                    .lineSpacing(14 * 0.6)
-                    .foregroundStyle(Color.auText.opacity(0.58))
-                    .padding(.bottom, 20)
-
-                PlaceholderFrame(height: 150, cornerRadius: 24, label: "screen placeholder")
-                    .padding(.bottom, 20)
-
-                ACard(radius: 22) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(plannedTitle)
-                            .font(.figtree(.bold, size: 9.5))
-                            .tracking(1.4)
-                            .textCase(.uppercase)
-                            .foregroundStyle(Color.auAccentText)
-                            .padding(.bottom, 10)
-                        ForEach(planned, id: \.self) { t in
-                            HStack(alignment: .top, spacing: 10) {
-                                Circle()
-                                    .fill(Color.auAccent2)
-                                    .frame(width: 5, height: 5)
-                                    .padding(.top, 8)
-                                Text(t)
-                                    .font(.figtree(.regular, size: 13))
-                                    .lineSpacing(13 * 0.5)
-                                    .foregroundStyle(Color.auText.opacity(0.64))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .padding(.vertical, 6)
-                        }
-                    }
-                }
-
-                Spacer(minLength: 20)
-
-                Text("Source: \(source)")
-                    .font(.figtree(.regular, size: 11))
-                    .lineSpacing(11 * 0.5)
-                    .foregroundStyle(Color.auText.opacity(0.40))
-                    .padding(.bottom, 14)
-
-                APillButton(title: "Back to practice") {
-                    env.router.nav(.stories)
-                }
+        HStack(spacing: 3) {
+            ForEach(Array(heights.enumerated()), id: \.offset) { i, height in
+                HubWaveBar(height: height, color: color, animated: animated, index: i)
+                    .frame(maxWidth: .infinity)
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 70)
-            .padding(.bottom, 32)
         }
-        .background(Color.auBackground.ignoresSafeArea())
-        .auScreenEntrance()
     }
 
-    @Environment(AppEnvironment.self) private var env
-}
+    private struct HubWaveBar: View {
+        let height: CGFloat
+        let color: Color
+        let animated: Bool
+        let index: Int
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+        @State private var compressed = false
 
-struct HuntStubView: View {
-    var body: some View {
-        AwaitingContentView(
-            title: "Find three words — awaiting content",
-            awaiting:
-                "A camera word-hunt is not part of the A1 course plan. Nothing in english_course specifies its word lists, so no words are invented for it here.",
-            plannedTitle: "What it needs first",
-            planned: [
-                "Needs a lexical source: the ledger row set for a chapter (LEXICAL_LEDGER.csv)",
-                "Needs an instruction-word check against CONTROLLED_INSTRUCTION_LEXICON.md",
-                "Needs a privacy ruling — the course forbids collecting real personal data",
-            ],
-            source: "not specified in english_course"
-        )
-    }
-}
+        var body: some View {
+            Capsule()
+                .fill(color)
+                .frame(height: height)
+                .scaleEffect(
+                    y: animated && !reduceMotion && compressed ? 0.35 : 1,
+                    anchor: .center
+                )
+                .onAppear { updateAnimation() }
+                .onChange(of: animated) { _, _ in updateAnimation() }
+        }
 
-struct ReaderStubView: View {
-    var body: some View {
-        AwaitingContentView(
-            title: "Graded readers — awaiting content",
-            awaiting:
-                "No graded-reader text exists in the course source. The reading that IS authored sits in the chapter player: name badges and the welcome card (C1-L3), the register form and message card (C2-L3), the three profile cards and the class roll (C3-L3).",
-            plannedTitle: "What it needs first",
-            planned: [
-                "≥9 reading genres across the 12 chapters (A1_COURSE_OVERVIEW.md, production ranges)",
-                "Every text app-layer, Dynamic Type to XL, never rendered inside art",
-                "Audio for each text once recordings exist — scripts only today",
-            ],
-            source: "03_A1_foundation/A1_COURSE_OVERVIEW.md · 04_A1_chapters/*/*_L03_LESSON.md"
-        )
+        private func updateAnimation() {
+            compressed = false
+            guard animated, !reduceMotion else { return }
+            withAnimation(
+                .easeInOut(duration: 0.6 + Double(index % 6) * 0.11)
+                    .repeatForever(autoreverses: true)
+                    .delay(Double(index) * 0.04)
+            ) {
+                compressed = true
+            }
+        }
     }
 }

@@ -14,9 +14,6 @@ struct HomeView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
-                    if !env.connectivity.isOnline {
-                        OfflineBanner().padding(.top, 96).padding(.horizontal, 14)
-                    }
                     header
                     pendingCard
                     dayArcCard
@@ -28,9 +25,20 @@ struct HomeView: View {
             }
             .ignoresSafeArea(edges: .top)
 
+            if !env.connectivity.isOnline {
+                VStack(spacing: 0) {
+                    OfflineBanner()
+                        .padding(.horizontal, 14)
+                    Spacer(minLength: 0)
+                }
+                .padding(.top, 104)
+                .zIndex(5)
+            }
+
             AUTabBar(current: .home)
                 .padding(.horizontal, 14)
                 .padding(.bottom, 26)  // design: bottom:26px above home indicator
+                .zIndex(6)
         }
         .auScreenEntrance()
     }
@@ -49,7 +57,7 @@ struct HomeView: View {
                     env.router.nav(.settings)
                 } label: {
                     AUIcon(kind: .gear, size: 17)
-                        .frame(width: 40, height: 40)
+                        .frame(width: 44, height: 44)
                         .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
                 }
                 .buttonStyle(.auTap)
@@ -73,12 +81,11 @@ struct HomeView: View {
                     .font(.figtree(.regular, size: 13))
                     .foregroundStyle(Color.auText.opacity(0.55))
                     .padding(.top, 7)
-                Text(
-                    "\(inChapter >= ch.count ? "Done: you can " : "By the end: you can ")\(ch.promise)"
+                AUParagraph(
+                    text:
+                        "\(inChapter >= ch.count ? "Done: you can " : "By the end: you can ")\(ch.promise)",
+                    size: 12.5, lineHeight: 1.45, color: Color.auAccentText
                 )
-                .font(.figtree(.regular, size: 12.5))
-                .lineSpacing(12.5 * 0.45)
-                .foregroundStyle(Color.auAccentText)
                 .frame(maxWidth: 288, alignment: .leading)
                 .padding(.top, 9)
             }
@@ -87,7 +94,7 @@ struct HomeView: View {
         .padding(.horizontal, 24)
         .padding(.bottom, 16)
         .background(
-            VStack(spacing: 0) {
+            ZStack {
                 LinearGradient(
                     stops: [
                         .init(color: Color.auBackground, location: 0),
@@ -140,7 +147,7 @@ struct HomeView: View {
                         .padding(.bottom, 4)
                     Text("You left \(pending.title) at screen \(pending.at) of \(pending.of).")
                         .font(.figtree(.regular, size: 12.5))
-                        .lineSpacing(12.5 * 0.45)
+                        .auLine(12.5, 1.45)
                         .foregroundStyle(Color.auText.opacity(0.52))
                     HStack(spacing: 9) {
                         APillButton(title: "Resume", compact: true, aid: "au.home.resume") {
@@ -211,13 +218,14 @@ struct HomeView: View {
                                     : "A lesson, then the words due back — both halves make a day."
                             )
                             .font(.figtree(.regular, size: 11.5))
-                            .lineSpacing(11.5 * 0.4)
+                            .auLine(11.5, 1.4)
                             .foregroundStyle(Color.auText.opacity(0.52))
+                            .fixedSize(horizontal: false, vertical: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
                     .buttonStyle(.auTap)
-                    .padding(.bottom, 13)
+                    .padding(.bottom, 9)
 
                     if arc.arcT < 1 {
                         APillButton(title: arcLabel, aid: "au.home.today") {
@@ -236,7 +244,7 @@ struct HomeView: View {
                                     : "Today is complete. Tomorrow, these come back one interval wider."
                             )
                             .font(.figtree(.regular, size: 13.5))
-                            .lineSpacing(13.5 * 0.45)
+                            .auLine(13.5, 1.45)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 14)
@@ -271,6 +279,7 @@ struct HomeView: View {
                 .padding(.top, 14)
                 .padding(.bottom, 16)
             }
+            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
         }
         .padding(.horizontal, 24)
         .padding(.top, 14)
@@ -363,13 +372,15 @@ struct HomeView: View {
                                 Text(node.label)
                                     .font(.caprasimo(size: i == 0 ? 16 : 15))
                                     .multilineTextAlignment(
-                                        node.alignRight ? .trailing : .leading)
+                                        node.alignRight ? .trailing : .leading
+                                    )
                                     .fixedSize(horizontal: false, vertical: true)
                                 Text(node.meta)
                                     .font(.figtree(.regular, size: 12))
                                     .foregroundStyle(Color.auText.opacity(0.52))
                                     .multilineTextAlignment(
-                                        node.alignRight ? .trailing : .leading)
+                                        node.alignRight ? .trailing : .leading
+                                    )
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                             .frame(
@@ -383,6 +394,7 @@ struct HomeView: View {
                                     : node.labelX + node.labelWidth / 2,
                                 y: node.labelY
                             )
+                            .allowsHitTesting(false)
                         }
 
                         Button {
@@ -423,7 +435,7 @@ struct HomeView: View {
                         .buttonStyle(.auTap)
                         .accessibilityIdentifier("au.home.next-chapter")
                         .frame(width: 402 - 48)
-                        .position(x: 201, y: 570 + 28)
+                        .offset(x: 24, y: 570)
                     }
                     .frame(width: 402, height: 724, alignment: .topLeading)
                     .scaleEffect(x: scale, y: scale, anchor: .topLeading)
@@ -456,7 +468,8 @@ struct HomeView: View {
         func meta(_ i: Int) -> String {
             let st = state(i)
             if st == .locked {
-                let prev = ch.lessons.indices.contains(max(0, i - 1))
+                let prev =
+                    ch.lessons.indices.contains(max(0, i - 1))
                     ? ch.lessons[max(0, i - 1)] : ""
                 return "Opens after \(prev)"
             }

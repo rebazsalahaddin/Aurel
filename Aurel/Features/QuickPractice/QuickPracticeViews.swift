@@ -18,7 +18,11 @@ struct LessonRunnerView: View {
             : bank
 
         ZStack(alignment: .bottom) {
-            Color.auBackground.ignoresSafeArea()
+            ZStack {
+                Color.auBackground
+                AUPaper()
+            }
+            .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 header(list: list)
@@ -45,12 +49,23 @@ struct LessonRunnerView: View {
             .padding(.horizontal, 24)
             .padding(.top, 18)
             .padding(.bottom, 30)
-            .background(
-                AUGradients.glass()
-                    .clipShape(Rectangle())
-                    .overlay(alignment: .top) { Divider().overlay(Color.auEdge) }
-                    .ignoresSafeArea(edges: .bottom)
-            )
+            .background {
+                ZStack {
+                    Rectangle().fill(.ultraThinMaterial.opacity(0.5))
+                    AUGradients.glass()
+                }
+                .clipShape(
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 30, bottomLeadingRadius: 0, bottomTrailingRadius: 0,
+                        topTrailingRadius: 30, style: .continuous
+                    )
+                )
+                .overlay(alignment: .top) {
+                    Rectangle().fill(Color.auEdge).frame(height: 1)
+                }
+                .auSoft()
+                .ignoresSafeArea(edges: .bottom)
+            }
         }
         .auScreenEntrance()
     }
@@ -72,14 +87,27 @@ struct LessonRunnerView: View {
 
             HStack(spacing: 5) {
                 ForEach(list.indices, id: \.self) { k in
-                    Capsule()
-                        .fill(
-                            k < r.qi
-                                ? Color.auAccent
-                                : (k == r.qi
-                                    ? Color.auAccent.opacity(0.55) : Color.auText.opacity(0.12))
+                    let complete = k < r.qi || (k == r.qi && r.checked)
+                    ZStack {
+                        Capsule().fill(
+                            k == r.qi
+                                ? Color.auAccent.opacity(0.40) : Color.auText.opacity(0.12)
                         )
-                        .frame(height: 4)
+                        if complete {
+                            Capsule()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.auAccent.mixed(with: 0.28, of: .white),
+                                            Color.auAccent,
+                                        ],
+                                        startPoint: .top, endPoint: .bottom
+                                    )
+                                )
+                                .shadow(color: Color.auGlow, radius: 4, y: 2)
+                        }
+                    }
+                    .frame(height: 6)
                 }
             }
 
@@ -110,7 +138,8 @@ struct LessonRunnerView: View {
         case .choice: choiceView(q)
         case .listen: listenView(q)
         case .order: orderView(q)
-        case .match, .pattern: choiceView(q)
+        case .match: matchView(q)
+        case .pattern: patternView(q)
         }
     }
 
@@ -127,12 +156,12 @@ struct LessonRunnerView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         Text(q.back)
                             .font(.figtree(.semibold, size: 16))
-                            .lineSpacing(16 * 0.5)
+                            .auLine(16, 1.5)
                         if !q.ex.isEmpty {
                             Text(q.ex)
                                 .font(.figtree(.regular, size: 14))
                                 .italic()
-                                .lineSpacing(14 * 0.55)
+                                .auLine(14, 1.55)
                                 .opacity(0.82)
                                 .padding(.top, 18)
                                 .overlay(alignment: .top) {
@@ -277,9 +306,10 @@ struct LessonRunnerView: View {
                 .accessibilityLabel("Play audio")
 
                 let waveHeights: [CGFloat] = (0..<18).map { i in
-                    CGFloat(8 + Int(20 * abs(sin(Double(i) * 0.7))))
+                    CGFloat(10 + (i * 7) % 22)
                 }
-                WaveForm(heights: waveHeights, color: .auAccent)
+                LessonWaveform(heights: waveHeights)
+                    .frame(maxWidth: .infinity)
                     .frame(height: 38)
 
                 Button {
@@ -309,7 +339,7 @@ struct LessonRunnerView: View {
             if r.checked {
                 Text("Transcript — “\(q.audio)”")
                     .font(.figtree(.regular, size: 13))
-                    .lineSpacing(13 * 0.5)
+                    .auLine(13, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.58))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 20)
@@ -341,28 +371,27 @@ struct LessonRunnerView: View {
                         if let idx = r.built.firstIndex(of: word) { r.unpickWord(idx) }
                     } label: {
                         Text(word)
-                            .font(.caprasimo(size: 19))
+                            .font(.figtree(.semibold, size: 15))
                             .padding(.horizontal, 16)
-                            .padding(.vertical, 11)
+                            .padding(.vertical, 10)
                             .background(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
-                                    Color.auTintBg)
+                                LinearGradient(
+                                    colors: [Color.auAccentRamp(600), Color.auAccentRamp(700)],
+                                    startPoint: .top, endPoint: .bottom
+                                ),
+                                in: RoundedRectangle(cornerRadius: 15, style: .continuous)
                             )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16).strokeBorder(
-                                    Color.auAccent.opacity(0.34), lineWidth: 1.5)
-                            )
-                            .foregroundStyle(Color.auTintText)
+                            .foregroundStyle(AUSceneArt.onAccent)
                     }
                     .buttonStyle(.auTap)
                 }
             }
-            .frame(minHeight: 74, alignment: .leading)
             .padding(16)
+            .frame(maxWidth: .infinity, minHeight: 118, alignment: .topLeading)
             .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .strokeBorder(
-                        Color.auAccent.opacity(0.36),
+                        Color.auText.opacity(0.15),
                         style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
             )
             .overlay(alignment: .topLeading) {
@@ -384,22 +413,187 @@ struct LessonRunnerView: View {
                         r.pickWord(word)
                     } label: {
                         Text(word)
-                            .font(.caprasimo(size: 19))
-                            .padding(.horizontal, 16)
+                            .font(.figtree(.semibold, size: 15))
+                            .padding(.horizontal, 17)
                             .padding(.vertical, 11)
                             .background(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
                                     .fill(taken ? Color.clear : Color.auFill)
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
                                     .strokeBorder(
                                         taken ? Color.auText.opacity(0.12) : Color.auEdge,
-                                        lineWidth: 1.5)
+                                        lineWidth: 1)
                             )
                             .foregroundStyle(taken ? Color.auText.opacity(0.25) : Color.auText)
                     }
                     .buttonStyle(.auTap)
+                }
+            }
+        }
+    }
+
+    private func matchView(_ q: QuickItem) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Match the pairs.")
+                .font(.caprasimo(size: 25))
+                .tracking(-0.38)
+                .padding(.bottom, 6)
+
+            Text("Tap a phrase, then tap its meaning.")
+                .font(.figtree(.regular, size: 13.5))
+                .foregroundStyle(Color.auText.opacity(0.52))
+                .padding(.bottom, 22)
+
+            HStack(alignment: .top, spacing: 12) {
+                VStack(spacing: 10) {
+                    ForEach(
+                        Array(q.options.prefix(max(1, q.options.count / 2)).enumerated()),
+                        id: \.offset
+                    ) { i, label in
+                        let on = r.sel == i
+                        Button {
+                            r.pickOption(i)
+                        } label: {
+                            HStack {
+                                Text(label)
+                                    .font(.figtree(.semibold, size: 14.5))
+                                    .auLine(14.5, 1.35)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                if r.checked && on {
+                                    AUIcon(kind: .check, size: 15, color: .auAccent2)
+                                }
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .fill(on ? Color.auAccent.opacity(0.12) : Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .strokeBorder(
+                                        on ? Color.auAccent : Color.auEdge, lineWidth: on ? 1.5 : 1)
+                            )
+                            .auLift()
+                        }
+                        .buttonStyle(.auTap)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+
+                VStack(spacing: 10) {
+                    ForEach(
+                        Array(
+                            q.options.suffix(
+                                from: min(q.options.count, max(1, q.options.count / 2))
+                            ).enumerated()), id: \.offset
+                    ) { j, label in
+                        let i = max(1, q.options.count / 2) + j
+                        let on = r.sel == i
+                        Button {
+                            r.pickOption(i)
+                        } label: {
+                            HStack {
+                                Text(label)
+                                    .font(.figtree(.semibold, size: 14.5))
+                                    .auLine(14.5, 1.35)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                if r.checked && on {
+                                    AUIcon(kind: .check, size: 15, color: .auAccent2)
+                                }
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .fill(on ? Color.auAccent.opacity(0.12) : Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .strokeBorder(
+                                        on ? Color.auAccent : Color.auEdge, lineWidth: on ? 1.5 : 1)
+                            )
+                            .auLift()
+                        }
+                        .buttonStyle(.auTap)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private func patternView(_ q: QuickItem) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(q.prompt.isEmpty ? "Notice the pattern." : q.prompt)
+                .font(.caprasimo(size: 25))
+                .tracking(-0.38)
+                .padding(.bottom, 6)
+
+            Text("All three are correct. No rule yet — just look.")
+                .font(.figtree(.regular, size: 13.5))
+                .foregroundStyle(Color.auText.opacity(0.52))
+                .padding(.bottom, 20)
+
+            if !q.stem.isEmpty {
+                let lines = q.stem.components(separatedBy: "\n").filter { !$0.isEmpty }
+                VStack(spacing: 8) {
+                    ForEach(Array(lines.prefix(3).enumerated()), id: \.offset) { i, line in
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text("\(i + 1)")
+                                .font(.figtree(.bold, size: 11))
+                                .monospacedDigit()
+                                .foregroundStyle(Color.auText.opacity(0.38))
+                                .frame(width: 20, alignment: .leading)
+                            Text(line)
+                                .font(.figtree(.semibold, size: 16))
+                                .auLine(16, 1.35)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous).fill(
+                                Color.auFill)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18).strokeBorder(
+                                Color.auEdge, lineWidth: 1))
+                    }
+                }
+                .padding(.bottom, 20)
+            }
+
+            if r.checked && (!q.why.isEmpty || !q.hint.isEmpty) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("THE RULE, ONCE")
+                        .font(.figtree(.bold, size: 10.5))
+                        .tracking(1.47)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auAccentRamp(700))
+                    Text(!q.why.isEmpty ? q.why : q.hint)
+                        .font(.figtree(.regular, size: 13.5))
+                        .auLine(13.5, 1.45)
+                }
+                .padding(EdgeInsets(top: 16, leading: 18, bottom: 16, trailing: 18))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(Color.auAccentRamp(100))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .strokeBorder(Color.auAccentRamp(200), lineWidth: 1)
+                )
+                .foregroundStyle(Color.auAccentRamp(800))
+                .padding(.bottom, 20)
+            }
+
+            VStack(spacing: 10) {
+                ForEach(Array(q.options.enumerated()), id: \.offset) { i, label in
+                    optionRow(q: q, i: i, label: label)
                 }
             }
         }
@@ -412,14 +606,15 @@ struct LessonRunnerView: View {
         let isKey = i == q.answer
         let bg: Color = {
             if r.checked && isKey { return .auOkBg }
-            if on && !isKey { return .auErrBg }
-            if on { return Color.auFill.mixed(with: 0.18, of: Color.auAccent) }
+            if r.checked && on && !isKey { return .auErrBg }
+            if !r.checked && on { return Color.auFill.mixed(with: 0.18, of: Color.auAccent) }
             return .auFill
         }()
         let bd: Color = {
             if r.checked && isKey { return .auAccent2 }
-            if on && !isKey { return .auErr }
-            if on { return .auAccent.opacity(0.58) }
+            if r.checked && on && !isKey { return .auErr }
+            if !r.checked && r.wrongSel == i { return .auErr }
+            if !r.checked && on { return .auAccent.opacity(0.58) }
             return .auEdge
         }()
 
@@ -432,10 +627,16 @@ struct LessonRunnerView: View {
                     .frame(width: 28, height: 28)
                     .background(
                         Circle().fill(
-                            on || (r.checked && isKey) ? Color.auAccent : Color.auText.opacity(0.09)
+                            r.checked && isKey
+                                ? Color.auAccent2
+                                : (on ? Color.auAccent : Color.auText.opacity(0.09))
                         )
                     )
-                    .foregroundStyle(on || (r.checked && isKey) ? Color.auBackground : Color.auText)
+                    .foregroundStyle(
+                        r.checked && isKey
+                            ? AUSceneArt.onAccent2
+                            : (on ? Color.auBackground : Color.auText)
+                    )
                 Text(label)
                     .font(.figtree(.semibold, size: 15.5))
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -453,7 +654,8 @@ struct LessonRunnerView: View {
                     bd, lineWidth: 1))
         }
         .buttonStyle(.auTap)
-        .disabled(r.checked)
+        .disabled(r.checked || r.wrongSel == i)
+        .opacity(!r.checked && r.wrongSel == i ? 0.5 : 1)
         .accessibilityIdentifier("au.lesson.option.\(String.letter(i))")
     }
 
@@ -536,10 +738,12 @@ struct LessonRunnerView: View {
             } ?? false
         let label: String = {
             guard let q else { return "Go on" }
-            if q.type == .flash { return r.flipped ? "Next" : "Turn the card" }
+            if q.type == .flash { return r.flipped ? "Continue" : "Reveal the answer" }
+            if r.checked { return r.qi == list.count - 1 ? "Finish lesson" : "Continue" }
             return "Check"
         }()
-        APillButton(title: label, icon: .arrow, disabled: disabled) {
+        // App-level `.au-btn.au-btn-primary`, not the chapter-player variant.
+        APillButton(title: label, disabled: disabled) {
             r.advance(list: list)
         }
     }
@@ -574,7 +778,7 @@ struct ResultView: View {
                             "You can greet someone, introduce yourself, and answer when they do the same."
                         )
                         .font(.figtree(.semibold, size: 13.5))
-                        .lineSpacing(13.5 * 0.45)
+                        .auLine(13.5, 1.45)
                     }
                     .padding(.horizontal, 15)
                     .padding(.vertical, 13)
@@ -588,12 +792,12 @@ struct ResultView: View {
                 Text(resultHead(scored: scored))
                     .font(.caprasimo(size: 38))
                     .tracking(-0.95)
-                    .lineSpacing(38 * 0.05)
+                    .auHeadLine(38, 1.05)
                     .padding(.bottom, 10)
 
                 Text(resultBody(scored: scored))
                     .font(.figtree(.regular, size: 14.5))
-                    .lineSpacing(14.5 * 0.55)
+                    .auLine(14.5, 1.55)
                     .foregroundStyle(Color.auText.opacity(0.55))
                     .frame(maxWidth: 290, alignment: .leading)
                     .padding(.bottom, 30)
@@ -637,7 +841,7 @@ struct ResultView: View {
                                 .foregroundStyle(Color.auAccentText)
                         }
                         .padding(.bottom, 14)
-                        WeekDots(todayIndex: 0)
+                        resultWeekDots
                     }
                 }
                 .padding(.bottom, 14)
@@ -647,7 +851,7 @@ struct ResultView: View {
                         r.nav(.review)
                     } label: {
                         HStack(spacing: 14) {
-                            AUIcon(kind: .loop, size: 18, color: .auTintText)
+                            AUIcon(kind: .alert, size: 18, color: .auTintText)
                                 .frame(width: 40, height: 40)
                                 .background(Circle().fill(Color.auTintBg))
                             VStack(alignment: .leading, spacing: 2) {
@@ -660,7 +864,7 @@ struct ResultView: View {
                                     .foregroundStyle(Color.auText.opacity(0.50))
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            AUIcon(kind: .arrow, size: 17, color: .auText.opacity(0.4))
+                            AUIcon(kind: .chevron, size: 17, color: .auText.opacity(0.4))
                         }
                         .padding(.horizontal, 20)
                         .padding(.vertical, 18)
@@ -689,13 +893,53 @@ struct ResultView: View {
             }
             .padding(.horizontal, 24)
             .padding(.top, 74)
-            .padding(.bottom, 40)
+            .padding(.bottom, 32)
+            .frame(minHeight: 874, alignment: .top)
         }
-        .background(Color.auBackground.ignoresSafeArea())
+        .background {
+            // `.au-rays` + `.au-amb` (two drifting orbs) + `.au-contour`
+            ZStack {
+                Color.auBackground
+                AURays()
+                AmbientOrbs()
+                AUContour()
+            }
+            .ignoresSafeArea()
+        }
         .auScreenEntrance()
     }
 
     private var bank: [QuickItem] { QuickItem.bank(from: env.course) }
+
+    private var resultWeekDots: some View {
+        HStack(spacing: 7) {
+            ForEach(Array(["M", "T", "W", "T", "F", "S", "S"].enumerated()), id: \.offset) {
+                i, label in
+                VStack(spacing: 7) {
+                    Capsule()
+                        .fill(
+                            i == 0
+                                ? AnyShapeStyle(
+                                    LinearGradient(
+                                        colors: [
+                                            Color.auAccent.mixed(with: 0.26, of: .white),
+                                            Color.auAccent,
+                                        ],
+                                        startPoint: .top, endPoint: .bottom
+                                    )
+                                )
+                                : AnyShapeStyle(Color.auText.opacity(0.10))
+                        )
+                        .frame(height: 34)
+                        .shadow(color: i == 0 ? Color.auGlow : .clear, radius: 4, y: 3)
+                    Text(label)
+                        .font(.figtree(.regular, size: 10))
+                        .foregroundStyle(Color.auText.opacity(0.45))
+                }
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
 
     private func statTile(value: String, label: String, tinted: Bool) -> some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -740,5 +984,42 @@ struct ResultView: View {
         return r.mistakes.count == 1
             ? "One item comes back tomorrow, then on a widening interval."
             : "\(r.mistakes.count) items come back tomorrow, then on a widening interval."
+    }
+}
+
+private struct LessonWaveform: View {
+    let heights: [CGFloat]
+
+    var body: some View {
+        HStack(spacing: 4) {
+            ForEach(Array(heights.enumerated()), id: \.offset) { i, height in
+                LessonWaveBar(height: height, index: i)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private struct LessonWaveBar: View {
+        let height: CGFloat
+        let index: Int
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+        @State private var compressed = false
+
+        var body: some View {
+            Capsule()
+                .fill(Color.auAccent.opacity(0.4))
+                .frame(height: height)
+                .scaleEffect(y: reduceMotion ? 1 : (compressed ? 0.35 : 1), anchor: .center)
+                .onAppear {
+                    guard !reduceMotion else { return }
+                    withAnimation(
+                        .easeInOut(duration: 0.7 + Double(index % 5) * 0.14)
+                            .repeatForever(autoreverses: true)
+                            .delay(Double(index) * 0.05)
+                    ) {
+                        compressed = true
+                    }
+                }
+        }
     }
 }

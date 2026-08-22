@@ -25,14 +25,14 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const FILES = {
-  base: join(ROOT, "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css"),
-  shell: join(ROOT, "design/Aurel.dc.html"),
-  player: join(ROOT, "design/CourseScreen.dc.html"),
+  base: join(ROOT, "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css"),
+  shell: join(ROOT, "design/prototype/Aurel V4.dc.html"),
+  player: join(ROOT, "design/prototype/CourseScreen.dc.html"),
 };
 const LABELS = {
-  base: "design/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
-  shell: "design/Aurel.dc.html",
-  player: "design/CourseScreen.dc.html",
+  base: "design/prototype/_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css",
+  shell: "design/prototype/Aurel V4.dc.html",
+  player: "design/prototype/CourseScreen.dc.html",
 };
 const OUT_PATH = join(ROOT, "Aurel/Resources/Design/design-tokens.json");
 

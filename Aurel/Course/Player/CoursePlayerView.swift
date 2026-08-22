@@ -88,9 +88,9 @@ private struct PlayerChrome: View {
                             .foregroundStyle(Color.auFlatText)
                     }
                 }
+                // padding: 60px 20px 0
                 .padding(.top, 60)
                 .padding(.horizontal, 20)
-                .padding(.bottom, 8)
             }
 
             ScrollView(showsIndicators: false) {
@@ -150,29 +150,37 @@ struct ScreenColumn<Content: View>: View {
     var topPad: CGFloat = 24
     var bottomPad: CGFloat = 28
     var hPad: CGFloat = 22
+    /// The authored `align-items` — a flex column stretches (and so reads as
+    /// left-aligned) unless the screen sets `align-items:center`.
+    var alignment: HorizontalAlignment = .leading
     @ViewBuilder var content: Content
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: alignment, spacing: 0) {
             content
         }
+        // The authored player body is 790 points including its insets. Put the
+        // flexible height inside the padding so nested Spacers receive it.
+        .frame(
+            maxWidth: .infinity,
+            minHeight: max(0, 790 - topPad - bottomPad),
+            alignment: alignment == .center ? .top : .topLeading
+        )
         .padding(.horizontal, hPad)
         .padding(.top, topPad)
         .padding(.bottom, bottomPad)
-        // Design stage is ~874; chrome ~68 → body ~790. Prefer flexible
-        // height so small phones / large type don't clip — the ScrollView
-        // parent already owns overflow.
-        .frame(maxWidth: .infinity, alignment: .top)
     }
 }
 
-/// "Go on" primary with the arrow, the standard screen CTA.
+/// "Go on" primary with the arrow, the standard screen CTA. The player has
+/// its own `.au-btn` (CourseScreen.dc.html): 16/20 padding, 20 pt radius,
+/// Figtree 600 16, and a flat accent-600 fill rather than the shell gradient.
 struct GoOnButton: View {
     let label: String
     var aid: String = "au.player.go-on"
     let action: () -> Void
 
     var body: some View {
-        APillButton(title: label, icon: .arrow, aid: aid, action: action)
+        APillButton(title: label, icon: .arrow, player: true, aid: aid, action: action)
     }
 }

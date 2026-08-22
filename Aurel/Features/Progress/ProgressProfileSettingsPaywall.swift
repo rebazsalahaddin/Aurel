@@ -143,7 +143,11 @@ struct ProgressView: View {
                     // totals
                     HStack(spacing: 0) {
                         totalTile(value: "\(wordsTotal)", label: "Words retained")
-                        Rectangle().fill(Color.auDivider).frame(width: 1).padding(.vertical, 2)
+                        Rectangle()
+                            .fill(Color.auDivider)
+                            .frame(width: 1)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 2)
                         totalTile(value: "\(minsTotal)", label: "Minutes total")
                     }
                     .padding(.bottom, 26)
@@ -159,10 +163,7 @@ struct ProgressView: View {
 
                         HStack(alignment: .bottom, spacing: 8) {
                             ForEach(Array(bars.enumerated()), id: \.offset) { i, h in
-                                RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                    .fill(barColor(i, h))
-                                    .frame(height: CGFloat(h))
-                                    .frame(maxHeight: 96, alignment: .bottom)
+                                practiceBar(index: i, height: h)
                                     .modifier(GrowBar(delay: Double(i) * 0.06))
                             }
                         }
@@ -182,7 +183,7 @@ struct ProgressView: View {
                         if r.baseLessons == 0 {
                             Text("Eight weeks from now this will say something.")
                                 .font(.figtree(.regular, size: 13.5))
-                                .lineSpacing(13.5 * 0.55)
+                                .auLine(13.5, 1.55)
                                 .foregroundStyle(Color.auText.opacity(0.48))
                                 .padding(.top, 16)
                         }
@@ -276,16 +277,42 @@ struct ProgressView: View {
     }
 
     private var bars: [Int] {
-        let r = env.router
-        return r.baseLessons > 0
+        env.router.baseLessons > 0
             ? [34, 52, 41, 68, 57, 74, 62, 88]
-            : [4, 4, 4, 4, 4, 4, 4, min(88, max(8, (r.lessonsDone - r.baseLessons) * 22))]
+            : [22, 30, 26, 38, 33, 44, 40, 58]
     }
 
-    private func barColor(_ i: Int, _ h: Int) -> Color {
-        let r = env.router
-        if r.baseLessons > 0 { return i == 7 ? .auAccent : Color.auAccentRamp(300) }
-        return i == 7 ? .auAccent : Color.auText.opacity(0.11)
+    private func practiceBar(index: Int, height: Int) -> some View {
+        let hasProgress = env.router.baseLessons > 0
+        let isToday = index == 7
+        let colors: [Color] = {
+            if hasProgress {
+                let color = isToday ? Color.auAccent : Color.auAccentRamp(300)
+                return [color, color]
+            }
+            if isToday {
+                return [Color.auAccent.mixed(with: 0.28, of: .white), Color.auAccent]
+            }
+            return [Color.auText.opacity(0.05), .clear]
+        }()
+
+        return RoundedRectangle(cornerRadius: 6, style: .continuous)
+            .fill(LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom))
+            .overlay {
+                if !hasProgress && !isToday {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .strokeBorder(
+                            Color.auText.opacity(0.15),
+                            style: StrokeStyle(lineWidth: 1, dash: [4, 3])
+                        )
+                }
+            }
+            .shadow(
+                color: isToday && !hasProgress ? Color.auAccent.opacity(0.28) : .clear, radius: 7,
+                y: 6
+            )
+            .frame(height: CGFloat(height))
+            .frame(maxHeight: 96, alignment: .bottom)
     }
 
     private func tagBg(_ s: Int) -> Color {
@@ -319,7 +346,6 @@ struct ProgressView: View {
                 .padding(.top, 9)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 20)
     }
 }
 
@@ -359,10 +385,10 @@ struct ProfileView: View {
                         Text("M")
                             .font(.caprasimo(size: 30))
                             .frame(width: 76, height: 76)
-                            .background(Circle().fill(Color.auAccent))
-                            .foregroundStyle(Color.auBackground)
+                            .background(Circle().fill(Color.auAccentRamp(700)))
+                            .foregroundStyle(Color(UIColor(hex: 0xfff8f0)))
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Maya Aldrin")
+                            Text("Mira Aldrin")
                                 .font(.caprasimo(size: 26))
                                 .tracking(-0.52)
                             Text("A1 · Foundation — joined today")
@@ -373,7 +399,7 @@ struct ProfileView: View {
                         Button {
                             r.nav(.settings)
                         } label: {
-                            AUIcon(kind: .gear, size: 17)
+                            AUIcon(kind: .pencil, size: 17)
                                 .frame(width: 44, height: 44)
                                 .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
                         }
@@ -384,11 +410,13 @@ struct ProfileView: View {
 
                     // stats
                     HStack(spacing: 0) {
-                        profileStat("\(max(r.streak, 0))", "Streak")
+                        // An em dash stands in for a stat with nothing behind it.
+                        profileStat(r.streak > 0 ? "\(r.streak)" : "—", "Streak")
                         Rectangle().fill(Color.auEdge).frame(width: 1)
-                        profileStat("\(r.lessonsDone * 12)", "Words")
+                        profileStat(
+                            r.lessonsDone > 0 ? "\(r.lessonsDone * 12)" : "—", "Words")
                         Rectangle().fill(Color.auEdge).frame(width: 1)
-                        profileStat("\(r.lessonsDone)", "Lessons")
+                        profileStat(r.lessonsDone > 0 ? "\(r.lessonsDone)" : "—", "Lessons")
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auFill)
@@ -397,6 +425,7 @@ struct ProfileView: View {
                         RoundedRectangle(cornerRadius: 26).strokeBorder(Color.auEdge, lineWidth: 1)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+                    .auLift()
                     .padding(.bottom, 18)
 
                     if !r.pro {
@@ -405,7 +434,7 @@ struct ProfileView: View {
                         } label: {
                             HStack(spacing: 16) {
                                 AUIcon(
-                                    kind: .sparkle, size: 20,
+                                    kind: .star, size: 20,
                                     color: AUSceneArt.deepGreen
                                 )
                                 .frame(width: 44, height: 44)
@@ -413,15 +442,15 @@ struct ProfileView: View {
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text("Aurel Pro")
                                         .font(.caprasimo(size: 18))
-                                    Text("Seven days free, then unlimited")
+                                    Text("Chapters 2–4 · no free trial")
                                         .font(.figtree(.regular, size: 12.5))
                                         .opacity(0.85)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 HStack(spacing: 3) {
-                                    Text("Try free")
+                                    Text("Continue")
                                         .font(.figtree(.bold, size: 13))
-                                    AUIcon(kind: .arrow, size: 14, color: .auOkText)
+                                    AUIcon(kind: .chevron, size: 14, color: .auOkText)
                                 }
                             }
                             .padding(20)
@@ -436,7 +465,7 @@ struct ProfileView: View {
                     } else {
                         HStack(spacing: 14) {
                             AUIcon(kind: .check, size: 19, color: .auOkText)
-                            Text("Pro — trial ends 22 August")
+                            Text("Subscribed — Chapters 2–4")
                                 .font(.figtree(.semibold, size: 14))
                         }
                         .padding(.horizontal, 20)
@@ -482,7 +511,7 @@ struct ProfileView: View {
                                     VStack(alignment: .leading, spacing: 3) {
                                         Text(m.label)
                                             .font(.figtree(.semibold, size: 14.5))
-                                            .lineSpacing(14.5 * 0.35)
+                                            .auLine(14.5, 1.35)
                                             .foregroundStyle(
                                                 m.done ? Color.auText : Color.auText.opacity(0.52))
                                         Text(m.when)
@@ -509,13 +538,14 @@ struct ProfileView: View {
                                 Color.auEdge, lineWidth: 1)
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                        .auLift()
                         .padding(.bottom, 22)
                     } else {
                         Text(
                             "Nothing yet. The first one arrives when you finish a lesson — they are sentences, not badges."
                         )
                         .font(.figtree(.regular, size: 13))
-                        .lineSpacing(13 * 0.55)
+                        .auLine(13, 1.55)
                         .foregroundStyle(Color.auText.opacity(0.50))
                         .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -534,9 +564,11 @@ struct ProfileView: View {
                             "Cedar Group",
                             r.boardOut ? "Off" : "Rank \(r.streak > 1 ? 6 : 30) of 30"
                         ) { r.nav(.leaderboard) }
-                        profileRow("Subscription", r.pro ? "Pro trial" : "Free") { r.nav(.paywall) }
+                        profileRow("Subscription", r.pro ? "Subscribed" : "Free") {
+                            r.nav(.paywall)
+                        }
                         profileRow("Settings", "") { r.nav(.settings) }
-                        profileRow("Help and contact", "") {}
+                        profileRow("Help and contact", "", divider: false) {}
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill)
@@ -545,6 +577,7 @@ struct ProfileView: View {
                         RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .auLift()
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 70)
@@ -589,9 +622,9 @@ struct ProfileView: View {
         .padding(.horizontal, 12)
     }
 
-    private func profileRow(_ label: String, _ value: String, action: @escaping () -> Void)
-        -> some View
-    {
+    private func profileRow(
+        _ label: String, _ value: String, divider: Bool = true, action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             HStack(spacing: 12) {
                 Text(label)
@@ -600,11 +633,13 @@ struct ProfileView: View {
                 Text(value)
                     .font(.figtree(.regular, size: 13))
                     .foregroundStyle(Color.auText.opacity(0.45))
-                AUIcon(kind: .arrow, size: 16, color: .auText.opacity(0.35))
+                AUIcon(kind: .chevron, size: 16, color: .auText.opacity(0.35))
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 17)
-            .overlay(alignment: .bottom) { Divider().overlay(Color.auDivider) }
+            .overlay(alignment: .bottom) {
+                if divider { Divider().overlay(Color.auDivider) }
+            }
         }
         .buttonStyle(.auTap)
     }
@@ -621,7 +656,7 @@ struct SettingsView: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 Button {
-                    r.nav(.profile)
+                    r.leaveSettings()
                 } label: {
                     AUIcon(kind: .back, size: 17)
                         .frame(width: 44, height: 44)
@@ -629,6 +664,7 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.auTap)
                 .accessibilityLabel("Back")
+                .accessibilityIdentifier("au.settings.back")
                 .padding(.bottom, 26)
 
                 Text("Settings")
@@ -645,7 +681,10 @@ struct SettingsView: View {
                     switchRow("Haptics", "On answer and completion", on: r.sw.haptics) {
                         r.toggleSw(\.haptics)
                     }
-                    switchRow("Weekly summary", "Sunday evening, by email", on: r.sw.weekly) {
+                    switchRow(
+                        "Weekly summary", "Sunday evening, by email", on: r.sw.weekly,
+                        divider: false
+                    ) {
                         r.toggleSw(\.weekly)
                     }
                 }
@@ -654,17 +693,22 @@ struct SettingsView: View {
 
                 sectionLabel("Notifications")
                 VStack(spacing: 0) {
-                    switchRow("Dawn nudge", "Before your lesson time", on: r.notif.dawn) {
+                    switchRow(
+                        "Dawn", "Today's lesson is ready, at \(r.remindAt)", on: r.notif.dawn
+                    ) {
                         r.toggleNotif(\.dawn)
                     }
-                    switchRow("Sundown catch-up", "The words due back today", on: r.notif.sundown) {
+                    switchRow(
+                        "Sundown", "Only when something is actually due", on: r.notif.sundown
+                    ) {
                         r.toggleNotif(\.sundown)
                     }
                     switchRow(
                         "Milestones", "When you pass something worth naming", on: r.notif.milestone
                     ) { r.toggleNotif(\.milestone) }
                     switchRow(
-                        "Cedar Group", "Standings and results — off by default", on: r.notif.cohort
+                        "Cedar Group", "Standings and results — off by default", on: r.notif.cohort,
+                        divider: false
                     ) { r.toggleNotif(\.cohort) }
                 }
                 .settingsCard()
@@ -681,7 +725,7 @@ struct SettingsView: View {
                             "Long-press your Home Screen, then add the small Aurel widget. The sun moves as the day is finished."
                         )
                         .font(.figtree(.regular, size: 12.5))
-                        .lineSpacing(12.5 * 0.5)
+                        .auLine(12.5, 1.5)
                         .foregroundStyle(Color.auText.opacity(0.50))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -693,30 +737,31 @@ struct SettingsView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1)
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                .auLift()
                 .padding(.bottom, 22)
 
                 sectionLabel("Comparison")
-                HStack(spacing: 14) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Cedar Group")
-                            .font(.figtree(.semibold, size: 15))
-                        Text("Off hides the group everywhere. Nothing is lost.")
-                            .font(.figtree(.regular, size: 12.5))
-                            .foregroundStyle(Color.auText.opacity(0.50))
+                Button {
+                    r.boardOut.toggle()
+                } label: {
+                    HStack(spacing: 14) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Cedar Group")
+                                .font(.figtree(.semibold, size: 15))
+                            Text("Off hides the group everywhere. Nothing is lost.")
+                                .font(.figtree(.regular, size: 12.5))
+                                .foregroundStyle(Color.auText.opacity(0.50))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        AuthoredSwitch(isOn: !r.boardOut)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    Toggle(
-                        "",
-                        isOn: Binding(
-                            get: { !r.boardOut },
-                            set: { r.boardOut = !$0 }
-                        )
-                    )
-                    .labelsHidden()
-                    .tint(.auAccent)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
+                .buttonStyle(.auTap)
+                .accessibilityLabel("Cedar Group")
+                .accessibilityAddTraits(!r.boardOut ? .isSelected : [])
                 .settingsCard()
                 .padding(.bottom, 22)
 
@@ -730,36 +775,49 @@ struct SettingsView: View {
                             .font(.figtree(.regular, size: 13))
                             .foregroundStyle(Color.auAccent)
                     }
-                    // segmented text-size control (5 steps)
-                    HStack(spacing: 6) {
-                        ForEach(0..<5, id: \.self) { step in
-                            Button {
-                                r.setTypeStep(step)
-                            } label: {
-                                Text("\(step + 1)")
-                                    .font(.figtree(.semibold, size: 11))
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 8)
-                                    .background(
-                                        Capsule().fill(
-                                            r.typeStep == step
-                                                ? Color.auAccent : Color.auText.opacity(0.08))
-                                    )
-                                    .foregroundStyle(
-                                        r.typeStep == step
-                                            ? Color.auBackground : Color.auText.opacity(0.5))
+                    GeometryReader { geo in
+                        let step = min(max(r.typeStep, 0), 4)
+                        let travel = max(0, geo.size.width - 20)
+                        let progress = CGFloat(step) / 4
+
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(Color.auText.opacity(0.12))
+                                .frame(height: 4)
+                                .padding(.horizontal, 10)
+                            Capsule()
+                                .fill(Color.auAccent)
+                                .frame(width: 10 + travel * progress, height: 4)
+                                .padding(.leading, 10)
+                            Circle()
+                                .fill(Color.auAccent)
+                                .frame(width: 20, height: 20)
+                                .shadow(color: Color.auAccent.opacity(0.20), radius: 4, y: 2)
+                                .offset(x: travel * progress)
+                            HStack(spacing: 0) {
+                                ForEach(0..<5, id: \.self) { target in
+                                    Button {
+                                        r.setTypeStep(target)
+                                    } label: {
+                                        Color.clear
+                                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                            .contentShape(Rectangle())
+                                    }
+                                    .buttonStyle(.plain)
+                                    .accessibilityLabel(typeLabel(for: target))
+                                    .accessibilityIdentifier("au.settings.type.\(target)")
+                                }
                             }
-                            .buttonStyle(.auTap)
-                            .accessibilityIdentifier("au.settings.type.\(step)")
                         }
                     }
+                    .frame(height: 30)
                     Text("Pleased to meet you.")
                         .font(.figtree(.regular, size: typePreview))
                     Text(
                         "Every screen follows this, and every screen has been checked at the largest size."
                     )
                     .font(.figtree(.regular, size: 12))
-                    .lineSpacing(12 * 0.5)
+                    .auLine(12, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.45))
                 }
                 .padding(20)
@@ -769,14 +827,18 @@ struct SettingsView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 28).strokeBorder(Color.auEdge, lineWidth: 1)
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+                .auLift()
                 .padding(.bottom, 22)
 
                 sectionLabel("Account")
                 VStack(spacing: 0) {
-                    accountRow("Subscription", r.pro ? "Pro trial" : "Free") { r.nav(.paywall) }
-                    accountRow("Email", "maya@aldrin.co") {}
+                    accountRow("Subscription", r.pro ? "Subscribed" : "Free") { r.nav(.paywall) }
+                    accountRow("Email", "mira@aldrin.co") {}
                     accountRow("Sign out", "", tint: .auAccentText) { r.nav(.welcome) }
-                    accountRow("Delete account", "Permanent", tint: .auErr) { r.nav(.welcome) }
+                    accountRow("Delete account", "Permanent", tint: .auErr, divider: false) {
+                        r.nav(.welcome)
+                    }
                 }
                 .settingsCard()
             }
@@ -795,6 +857,10 @@ struct SettingsView: View {
         [12.5, 13.5, 14.5, 17, 20][min(max(env.router.typeStep, 0), 4)]
     }
 
+    private func typeLabel(for step: Int) -> String {
+        ["Smaller", "Small", "Default", "Large", "Largest"][min(max(step, 0), 4)]
+    }
+
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
             .font(.figtree(.bold, size: 10.5))
@@ -804,9 +870,10 @@ struct SettingsView: View {
             .padding(.bottom, 12)
     }
 
-    private func switchRow(_ label: String, _ sub: String, on: Bool, action: @escaping () -> Void)
-        -> some View
-    {
+    private func switchRow(
+        _ label: String, _ sub: String, on: Bool, divider: Bool = true,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             HStack(spacing: 14) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -817,14 +884,13 @@ struct SettingsView: View {
                         .foregroundStyle(Color.auText.opacity(0.50))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                Toggle("", isOn: .constant(on))
-                    .labelsHidden()
-                    .tint(.auAccent)
-                    .allowsHitTesting(false)
+                AuthoredSwitch(isOn: on)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
-            .overlay(alignment: .bottom) { Divider().overlay(Color.auDivider) }
+            .overlay(alignment: .bottom) {
+                if divider { Divider().overlay(Color.auDivider) }
+            }
         }
         .buttonStyle(.auTap)
         .accessibilityLabel(label)
@@ -832,7 +898,8 @@ struct SettingsView: View {
     }
 
     private func accountRow(
-        _ label: String, _ value: String, tint: Color = .auText, action: @escaping () -> Void
+        _ label: String, _ value: String, tint: Color = .auText, divider: Bool = true,
+        action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
             HStack(spacing: 12) {
@@ -846,9 +913,29 @@ struct SettingsView: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 17)
-            .overlay(alignment: .bottom) { Divider().overlay(Color.auDivider) }
+            .overlay(alignment: .bottom) {
+                if divider { Divider().overlay(Color.auDivider) }
+            }
         }
         .buttonStyle(.auTap)
+    }
+}
+
+private struct AuthoredSwitch: View {
+    let isOn: Bool
+
+    var body: some View {
+        Capsule()
+            .fill(isOn ? Color.auAccent : Color.auText.opacity(0.16))
+            .frame(width: 50, height: 30)
+            .overlay(alignment: isOn ? .trailing : .leading) {
+                Circle()
+                    .fill(Color.auBackground)
+                    .frame(width: 24, height: 24)
+                    .shadow(color: Color.auText.opacity(0.16), radius: 2, y: 1)
+                    .padding(3)
+            }
+            .accessibilityHidden(true)
     }
 }
 
@@ -858,6 +945,7 @@ extension View {
             .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill))
             .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1))
             .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .auLift()
     }
 }
 
@@ -1005,7 +1093,9 @@ struct PaywallView: View {
                     )
                 }
             }
-            .ignoresSafeArea()
+            .frame(height: 430)
+            .frame(maxHeight: .infinity, alignment: .top)
+            .ignoresSafeArea(edges: .top)
 
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
@@ -1035,18 +1125,18 @@ struct PaywallView: View {
                     .foregroundStyle(Color(UIColor(hex: 0xf0a877)))
                     .padding(.bottom, 10)
 
-                Text("The whole\nladder, open.")
+                Text("Continue with\nChapters 2–4.")
                     .font(.caprasimo(size: 36))
                     .tracking(-0.9)
-                    .lineSpacing(36 * 0.06)
+                    .auHeadLine(36, 1.06)
                     .foregroundStyle(AUSceneArt.duskCream)
                     .padding(.bottom, 12)
 
                 Text(
-                    "Twenty-four chapters, unlimited speaking, and the review engine that decides when to bring a word back."
+                    "Chapters 2 through 4, production-ready today, plus unlimited speaking and the review engine that decides when to bring a word back. A2 and beyond arrive as they’re written."
                 )
                 .font(.figtree(.regular, size: 14.5))
-                .lineSpacing(14.5 * 0.6)
+                .auLine(14.5, 1.6)
                 .foregroundStyle(AUSceneArt.duskCream.opacity(0.75))
                 .frame(maxWidth: 290, alignment: .leading)
                 .padding(.bottom, 26)
@@ -1054,18 +1144,18 @@ struct PaywallView: View {
                 // plans
                 VStack(spacing: 11) {
                     planRow(
-                        id: "annual", name: "Annual", sub: "£5.00 a month, billed yearly",
-                        price: "£59.99", badge: "Save 44%")
+                        id: "annual", name: "Annual", sub: "Billed once a year",
+                        price: "App Store price", badge: "Best value")
                     planRow(
-                        id: "monthly", name: "Monthly", sub: "Cancel any time", price: "£8.99",
-                        badge: "")
+                        id: "monthly", name: "Monthly", sub: "Cancel any time",
+                        price: "App Store price", badge: "")
                 }
                 .padding(.bottom, 20)
 
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(
                         [
-                            "All twelve A1 chapters — 42 lessons · A2 upward arrives with the adaptation guide",
+                            "Chapters 2–4, production-ready today — Checkpoint Review 1 included",
                             "Unlimited speaking sessions, scored on clarity not accent",
                             "Spaced review that decides when a word returns",
                             "Every recording and illustration, once production replaces the placeholders",
@@ -1076,7 +1166,7 @@ struct PaywallView: View {
                                 .padding(.top, 2)
                             Text(f)
                                 .font(.figtree(.regular, size: 14))
-                                .lineSpacing(14 * 0.45)
+                                .auLine(14, 1.45)
                         }
                     }
                 }
@@ -1084,24 +1174,36 @@ struct PaywallView: View {
 
                 Spacer(minLength: 12)
 
-                APillButton(title: "Start seven free days") {
-                    r.startTrial()
+                APillButton(title: r.hasAccount ? "Subscribe" : "Create account and subscribe") {
+                    r.startSubscribe()
                 }
+                .padding(.bottom, 6)
+
+                Button {
+                    r.restorePurchase()
+                } label: {
+                    Text("Restore purchase")
+                        .font(.figtree(.semibold, size: 13))
+                        .foregroundStyle(Color.auAccentText)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                }
+                .buttonStyle(.auTap)
                 .padding(.bottom, 10)
 
                 Text(
-                    r.plan == "annual"
-                        ? "£59.99 a year after seven days. Cancel any time in Settings."
-                        : "£8.99 a month after seven days. Cancel any time in Settings."
+                    "No free trial — Chapter 1 is the free experience. Price, billing period, and renewal terms are set by the App Store at checkout. Cancel any time in Settings."
                 )
                 .font(.figtree(.regular, size: 11.5))
-                .lineSpacing(11.5 * 0.5)
-                .foregroundStyle(Color.auText.opacity(0.45))
+                .auLine(11.5, 1.5)
+                .foregroundStyle(Color.auText.opacity(0.50))
+                .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 34)
         }
+        .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
     }
 
@@ -1141,26 +1243,166 @@ struct PaywallView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Text(price)
-                    .font(.figtree(.bold, size: 17))
-                    .monospacedDigit()
-                    .tracking(-0.34)
+                    .font(.figtree(.bold, size: 14.5))
+                    .foregroundStyle(Color.auText.opacity(0.70))
             }
             .padding(.horizontal, 19)
             .padding(.vertical, 17)
             .background(
                 ZStack {
-                    RoundedRectangle(cornerRadius: 24, style: .continuous).fill(Color.auFill)
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .fill(Color.auFill)
                     if on {
                         RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .strokeBorder(Color.auAccent.opacity(0.70), lineWidth: 1)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color.auAccent.opacity(0.18), Color.auAccent.opacity(0.08),
+                                    ],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                )
+                            )
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .strokeBorder(Color.auAccent.opacity(0.70), lineWidth: 1.5)
                     } else {
                         RoundedRectangle(cornerRadius: 24, style: .continuous)
                             .strokeBorder(Color.auEdge, lineWidth: 1)
                     }
                 }
             )
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
         .buttonStyle(.auTap)
+        .auLift()
         .accessibilityAddTraits(on ? .isSelected : [])
+    }
+}
+
+// MARK: Subscribe Account (Screen 20)
+
+struct SubscribeAccountView: View {
+    @Environment(AppEnvironment.self) private var env
+
+    var body: some View {
+        let r = env.router
+        ZStack {
+            Color.auBackground.ignoresSafeArea()
+            AUPaper().ignoresSafeArea()
+
+            VStack(alignment: .leading, spacing: 0) {
+                Button {
+                    r.nav(.paywall)
+                } label: {
+                    AUIcon(kind: .back, size: 17)
+                        .frame(width: 44, height: 44)
+                        .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
+                }
+                .buttonStyle(.auTap)
+                .accessibilityLabel("Back")
+                .padding(.bottom, 38)
+
+                AUHeading(text: "Create your account.", size: 33, lineHeight: 1.12, tracking: -0.66)
+                    .padding(.bottom, 10)
+
+                AUParagraph(
+                    text:
+                        "Needed to subscribe, and to sync or restore your purchase. Your Chapter 1 progress carries over automatically.",
+                    size: 14, lineHeight: 1.55, color: Color.auText.opacity(0.55)
+                )
+                .padding(.bottom, 30)
+
+                if !r.loginErr.isEmpty {
+                    Text(r.loginErr)
+                        .font(.figtree(.regular, size: 13))
+                        .foregroundStyle(Color.auErrText)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .fill(Color.auErrBg)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .strokeBorder(Color.auErr, lineWidth: 1)
+                        )
+                        .padding(.bottom, 16)
+                }
+
+                VStack(alignment: .leading, spacing: 14) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Email")
+                            .font(.figtree(.semibold, size: 12))
+                            .foregroundStyle(Color.auText.opacity(0.60))
+                        TextField(
+                            "you@example.com",
+                            text: Binding(
+                                get: { r.email },
+                                set: { r.setEmail($0) }
+                            )
+                        )
+                        .font(.figtree(.medium, size: 15))
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .padding(.horizontal, 18)
+                        .frame(minHeight: 54)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .fill(Color.auFill)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .strokeBorder(Color.auEdge, lineWidth: 1)
+                        )
+                    }
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Password")
+                            .font(.figtree(.semibold, size: 12))
+                            .foregroundStyle(Color.auText.opacity(0.60))
+                        SecureField(
+                            "••••••••",
+                            text: Binding(
+                                get: { r.pass },
+                                set: { r.setPass($0) }
+                            )
+                        )
+                        .font(.figtree(.medium, size: 15))
+                        .padding(.horizontal, 18)
+                        .frame(minHeight: 54)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .fill(Color.auFill)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .strokeBorder(Color.auEdge, lineWidth: 1)
+                        )
+                    }
+                }
+                .padding(.bottom, 20)
+
+                Spacer(minLength: 24)
+
+                APillButton(title: "Create account and subscribe") {
+                    r.createAccountAndSubscribe()
+                }
+                .padding(.bottom, 12)
+
+                Text(
+                    "Price, billing period, and renewal terms are set by the App Store at checkout. No free trial — Chapter 1 is the free experience."
+                )
+                .font(.figtree(.regular, size: 11.5))
+                .auLine(11.5, 1.5)
+                .foregroundStyle(Color.auText.opacity(0.50))
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 74)
+            .padding(.bottom, 32)
+        }
+        .auScreenEntrance()
     }
 }

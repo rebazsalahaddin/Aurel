@@ -1,9 +1,8 @@
 /* A1-C03 — "Where Are You From?". Screen inventory S01–S32.
    Every string here is transcribed from english_course/04_A1_chapters/A1_C03/*.
-   L01 (S01–S12) and L02 (S13–S22) are delivered in the source and fully implemented.
-   L03 is delivered through S28 only; S29–S32 are marked `pending` — the source lesson
-   ends at the "A1-C03-L03-CONTINUES-2" marker, so the app shows an awaiting-content
-   placeholder instead of invented quiz/results/wrap-up material. */
+   Audited 2026-08-20: the chapter is complete in the source (A1_C03_QA_REPORT.md,
+   STATE.md) — L01 (S01–S12), L02 (S13–S22) and L03 (S23–S32, incl. quiz Form A,
+   results, clinic seeds and the spaced-review export) are all transcribed here. */
 (function () {
   var C = (window.AUREL_COURSE = window.AUREL_COURSE || { chapters: [] });
   var __guard = C.chapters.some(function (x) { return x.id === 'A1-C03'; });
@@ -494,7 +493,6 @@
       {
         id: 'L03', type: 'R+M', n: 3, title: 'Profile Cards and Your Dot', time: '≈20 min · quiz and mission self-paced after',
         src: 'A1_C03_L03_LESSON.md',
-        partial: 'The source lesson is delivered through S28 and ends at the "A1-C03-L03-CONTINUES-2" marker. Screens S29–S32 are placeholders until the chapter closer is authored.',
         screens: [
           {
             id: 'S23', type: 'reading', label: 'Reading — three profile cards + the class roll', step: 'STEP 13',
@@ -615,35 +613,76 @@
             assets: ['A1-C03-AUD061', 'A1-C03-ILL034']
           },
           {
-            id: 'S29', type: 'pending', label: 'Chapter quiz — Form A', step: 'STEP 16 · awaiting content',
-            awaiting: 'The chapter quiz is specified but not yet authored. The source stops at the "A1-C03-L03-CONTINUES-2" marker after the mission.',
-            planned: ['Form A: 32 items — sections L5 · N5 · V5 · G6 · LS5 · RD4 · CN2', 'Cumulative share: 8 of 32 (25% — the band ceiling, flagged in the manifest) retrieving Chapter 1 and Chapter 2 targets with A1-C01-* / A1-C02-* prerequisite citations', 'Tap-first delivery, one item per screen-swap, interleaved, quiet progress bar', 'Transcripts released only after the whole quiz'],
-            source: 'A1_C03_MANIFEST.md — "Chapter quiz Form A: 30–36 items" · A1_C03_L03_LESSON.md artifacts_manifest quiz_form_A: 32',
-            tip: 'This screen intentionally shows no items. Inventing quiz content would break the single-source rule — the design waits for the authored bank.',
+            id: 'S29', type: 'quiz', label: 'Quiz — Form A', step: 'STEP 16',
+            mix: [['listening', 5], ['numbers', 5], ['vocabulary', 5], ['grammar', 6], ['discourse', 5], ['reading', 4], ['culture', 2]],
+            bank: 'Quiz Form A · 32 items · 8 cumulative (25.0%, band ceiling) retrieving Chapter 1 + Chapter 2 targets',
+            note: 'One item per screen-swap, interleaved sections, no headers revealing the skill mix. Listening: one default replay; transcripts release only after the whole quiz.',
+            items: [
+              { id: 'A1-C03-QZ-L004', instr: 'Listen. Choose.', scene: "SAM: Hi! I'm Sam. I speak Spanish and English.", prompt: 'Sam speaks ____.', opts: [{ id: 'A', t: 'Arabic and English' }, { id: 'B', t: 'English and French' }, { id: 'C', t: 'Spanish and English' }], key: 'C', ok: 'Spanish and English.', no: 'Catch the two language words.' },
+              { id: 'A1-C03-QZ-L005', instr: 'Listen. Choose.', scene: 'GUIDE: Good morning!', prompt: 'Choose the reply.', opts: [{ id: 'A', t: 'Goodbye.' }, { id: 'B', t: 'Good morning.' }, { id: 'C', t: 'See you.' }], key: 'B', ok: 'Greeting meets greeting.', no: 'Morning greeting → morning greeting.', cumulative: true },
+              { id: 'A1-C03-QZ-N001', instr: 'Look. Choose.', prompt: 'The card: phone 5-5-5, 2-0-9. Whose card is this?', opts: [{ id: 'A', t: 'Nina' }, { id: 'B', t: 'Maya' }, { id: 'C', t: 'Sam' }], key: 'A', ok: "Nina's card — two zero nine.", no: 'Compare the last three digits: 2-0-9.', cumulative: true },
+              { id: 'A1-C03-QZ-N002', instr: 'Look. Choose.', prompt: 'Whose phone number: 6-2-0, 1-5-4?', opts: [{ id: 'A', t: 'Maya' }, { id: 'B', t: 'Leo' }, { id: 'C', t: 'Alex' }], key: 'B', ok: 'Leo — from the Chapter 2 check-in!', no: "Leo's number ends 1-5-4.", cumulative: true },
+              { id: 'A1-C03-QZ-N003', instr: 'Look. Tap.', prompt: 'Tap the number you see: 13', opts: [{ id: 'A', t: '3' }, { id: 'B', t: '13' }, { id: 'C', t: '12' }], key: 'B', ok: 'Thirteen.', no: 'Thirteen: 1-3.', cumulative: true },
+              { id: 'A1-C03-QZ-N004', instr: 'Look. Choose.', prompt: 'The word: seventeen. Tap the digits.', opts: [{ id: 'A', t: '7' }, { id: 'B', t: '11' }, { id: 'C', t: '17' }], key: 'C', ok: 'Seventeen has the -teen: 17.', no: 'Not quite — seventeen has the -teen.', cumulative: true },
+              { id: 'A1-C03-QZ-N005', instr: 'Look. Tap.', prompt: 'Tap the number you see: 12', opts: [{ id: 'A', t: '2' }, { id: 'B', t: '10' }, { id: 'C', t: '12' }], key: 'C', ok: 'Twelve: 1-2.', no: 'Twelve: 1-2.', cumulative: true },
+              { id: 'A1-C03-QZ-V001', instr: 'Look. Choose.', prompt: 'Map card, Brazil region highlighted. Which country?', opts: [{ id: 'A', t: 'Spain' }, { id: 'B', t: 'Brazil' }, { id: 'C', t: 'India' }], key: 'B', ok: 'Brazil!', no: "Look at the highlighted region's shape and place." },
+              { id: 'A1-C03-QZ-V002', instr: 'Look. Choose.', prompt: 'Leo, at the café kitchen. Leo is a ____.', opts: [{ id: 'A', t: 'cook' }, { id: 'B', t: 'driver' }, { id: 'C', t: 'doctor' }], key: 'A', ok: 'A cook!', no: 'The café kitchen says cook.' },
+              { id: 'A1-C03-QZ-V003', instr: 'Choose.', prompt: 'One person. Ten ____.', opts: [{ id: 'A', t: 'people' }, { id: 'B', t: 'person' }, { id: 'C', t: 'friends' }], key: 'A', ok: 'Ten people!', no: 'Many persons = people.' },
+              { id: 'A1-C03-QZ-V004', instr: 'Choose.', prompt: 'How do you spell that? — the country: PERU', opts: [{ id: 'A', t: 'P-R-E-U' }, { id: 'B', t: 'P-E-R-O' }, { id: 'C', t: 'P-E-R-U' }], key: 'C', ok: 'P-E-R-U.', no: 'Say it slowly: Pe-ru.', cumulative: true },
+              { id: 'A1-C03-QZ-V005', instr: 'Choose.', prompt: 'MAYA: "Nice to meet you." You say:', opts: [{ id: 'A', t: 'See you.' }, { id: 'B', t: 'Nice to meet you too.' }, { id: 'C', t: "I'm good." }], key: 'B', ok: 'Nice to meet you too!', no: 'Return the meeting line — with too.' },
+              { id: 'A1-C03-QZ-G001', instr: 'Choose.', prompt: 'Alex is my friend. ____ a designer.', opts: [{ id: 'A', t: "He's" }, { id: 'B', t: "They're" }, { id: 'C', t: "She's" }], key: 'B', ok: "They're a designer.", no: 'Alex → they → they\u2019re.' },
+              { id: 'A1-C03-QZ-G002', instr: 'Choose.', prompt: 'Where ____ Maya from?', opts: [{ id: 'A', t: 'am' }, { id: 'B', t: 'are' }, { id: 'C', t: 'is' }], key: 'C', ok: 'Where is Maya from? — Egypt.', no: 'One person → is.' },
+              { id: 'A1-C03-QZ-G003', instr: 'Choose.', prompt: 'Are Maya and Sam from Mexico?', opts: [{ id: 'A', t: 'Yes, they are.' }, { id: 'B', t: "No, she isn't." }, { id: 'C', t: "No, they aren't." }], key: 'C', ok: "No, they aren't. Sam is — Maya isn't!", no: 'Two people → they; and check Maya\u2019s country.' },
+              { id: 'A1-C03-QZ-G004', instr: 'Choose.', prompt: 'Leo, phone icon: ____ phone is 6-2-0, 1-5-4.', opts: [{ id: 'A', t: 'His' }, { id: 'B', t: 'Her' }, { id: 'C', t: 'Our' }], key: 'A', ok: 'His phone.', no: 'Leo → he → his.' },
+              { id: 'A1-C03-QZ-G005', instr: 'Choose.', prompt: 'Maya is ____ nurse.', opts: [{ id: 'A', t: 'a' }, { id: 'B', t: 'an' }], key: 'A', ok: 'A nurse — the sound decides.', no: 'NURSE starts /n/ → a.' },
+              { id: 'A1-C03-QZ-G006', instr: 'Choose.', prompt: 'Is Nina a teacher?', opts: [{ id: 'A', t: 'Yes, she is.' }, { id: 'B', t: 'Yes, she are.' }, { id: 'C', t: 'Yes, he is.' }], key: 'A', ok: 'Yes, she is!', no: "Copy the question's person: she." },
+              { id: 'A1-C03-QZ-LS001', instr: 'Choose.', prompt: 'SAM: "What do you do?" You say:', opts: [{ id: 'A', t: "I'm from Peru." }, { id: 'B', t: "I'm an engineer." }, { id: 'C', t: 'My name is Peru.' }], key: 'B', ok: "I'm an engineer.", no: 'Job question → job frame.' },
+              { id: 'A1-C03-QZ-LS002', instr: 'Choose.', prompt: 'YOU: "This is my friend Kenji." Sam says:', opts: [{ id: 'A', t: 'See you!' }, { id: 'B', t: "I'm good." }, { id: 'C', t: 'Nice to meet you!' }], key: 'C', ok: 'Nice to meet you!', no: 'A new person arrives — the meeting reply.' },
+              { id: 'A1-C03-QZ-LS003', instr: 'Listen. Choose.', scene: 'SAM (fast): four zero one, seven three two!', prompt: 'Too fast! What do you say?', opts: [{ id: 'A', t: 'Can you repeat that, please?' }, { id: 'B', t: 'How do you spell that?' }, { id: 'C', t: 'Nice to meet you too.' }], key: 'A', ok: 'Can you repeat that, please? — the C2 repair lives!', no: 'Numbers need a REPEAT, not a spelling.', cumulative: true },
+              { id: 'A1-C03-QZ-LS004', instr: 'Choose.', prompt: 'ALEX: "Where is Nina from?" — that asks:', opts: [{ id: 'A', t: "Nina's job" }, { id: 'B', t: "Nina's country" }, { id: 'C', t: "Nina's name" }], key: 'B', ok: 'Her country — Where + from.', no: 'WHERE asks a place.' },
+              { id: 'A1-C03-QZ-LS005', instr: 'Choose.', prompt: "You are from Brazil. KENJI: \"Are you from Japan?\"", opts: [{ id: 'A', t: 'Yes, I am.' }, { id: 'B', t: "No, she isn't." }, { id: 'C', t: "No, I'm not. I'm from Brazil." }], key: 'C', ok: "No, I'm not. I'm from Brazil — your facts, your answer.", no: 'Check WHO is asked and WHERE you are from.' },
+              { id: 'A1-C03-QZ-RD001', instr: 'Read. Choose.', prompt: "Maya's profile card. Maya is a ____.", opts: [{ id: 'A', t: 'nurse' }, { id: 'B', t: 'teacher' }, { id: 'C', t: 'doctor' }], key: 'A', ok: 'A nurse.', no: 'Read the Job line.' },
+              { id: 'A1-C03-QZ-RD002', instr: 'Read. Choose.', prompt: "Kenji's profile card. Kenji is from ____.", opts: [{ id: 'A', t: 'Japan' }, { id: 'B', t: 'Kenya' }, { id: 'C', t: 'Canada' }], key: 'A', ok: 'Japan.', no: 'Read the Country line.' },
+              { id: 'A1-C03-QZ-RD003', instr: 'Read. Choose.', prompt: 'The class roll. Who is the cook?', opts: [{ id: 'A', t: 'Leo' }, { id: 'B', t: 'Kenji' }, { id: 'C', t: 'Sam' }], key: 'A', ok: 'Leo — Australia, cook.', no: 'Scan the job column.' },
+              { id: 'A1-C03-QZ-RD004', instr: 'Read. Choose.', prompt: "Alex's profile card. Alex speaks English and ____.", opts: [{ id: 'A', t: 'Arabic' }, { id: 'B', t: 'French' }, { id: 'C', t: 'Japanese' }], key: 'B', ok: 'English and French.', no: 'Read the Languages line.' },
+              { id: 'A1-C03-QZ-CN001', instr: 'Choose.', prompt: "Canada's two official languages:", opts: [{ id: 'A', t: 'English only' }, { id: 'B', t: 'English and French' }, { id: 'C', t: 'French only' }], key: 'B', ok: 'English and French — two official languages, one country.', no: 'Canada has TWO official languages.' },
+              { id: 'A1-C03-QZ-CN002', instr: 'Choose.', prompt: 'Kenji is from Japan. Kenji speaks ____.', opts: [{ id: 'A', t: 'Arabic' }, { id: 'B', t: 'French' }, { id: 'C', t: 'Japanese' }], key: 'C', ok: "Japanese — in Japan, they speak Japanese.", no: "Japan's language is Japanese." }
+            ],
+            tip: 'One item per screen-swap, interleaved skills, correct-position rotation, no section reveals. A quiet progress bar (no countdown). Answer-key balance audited: 16 A / 16 B / 16 C across the full 48 letter-keyed items.',
+            assets: ['A1-C03-AUD062–067', 'A1-C03-ILL035–036']
+          },
+          {
+            id: 'S30', type: 'results', label: 'Results', step: 'STEP 16b',
+            rings: ['origin', 'language', 'job', 'introduce', 'profiles'],
+            strong: 'You can ask and answer where someone is from, and say a job.',
+            developing: "'I'm from ___' and 'I'm a/an ___' still mix sometimes — Checkpoint 1 comes back to this.",
+            next: 'Chapter 4 — Checkpoint Review 1: Welcome-Day Mission.',
+            score: 'Pass is ≥26 / 32', gate: 'Pass: ≥80% overall and no core section below 70%. Near-pass routes to a clinic seed plus retry; below routes to personalised review. Unlimited retries with parallel content. No permanent lock. Mission completion (S28) is required alongside the quiz for the chapter badge.',
+            tip: 'Five can-do rings filling, strengths first, one developing area max, one next step. No percentages-as-judgment; the number sits behind a tap. Retry and continue are equally weighted — no dark pattern.',
+            clinics: [
+              { id: 'C3-CLIN-A', name: 'they is / they are', benefit: 'Match the person word to am, is, or are, every time.', n: 8, trigger: 'be-agreement misses' },
+              { id: 'C3-CLIN-B', name: 'his or her?', benefit: 'Pick the right possessive without stopping to think.', n: 8, trigger: 'possessive misses' },
+              { id: 'C3-CLIN-C', name: 'a or an?', benefit: 'Hear the first sound, choose the article.', n: 9, trigger: 'article misses' },
+              { id: 'C3-CLIN-D', name: "I'm from vs I'm a", benefit: 'Route the question to the right frame — country or job.', n: 8, trigger: 'frame-collision misses' }
+            ],
+            pending: 'Clinic items are seeded specifications; full item sets are authored on first learner need or owner request (owner note carried in the chapter QA report).',
             assets: []
           },
           {
-            id: 'S30', type: 'pending', label: 'Results + gate', step: 'STEP 16b · awaiting content',
-            awaiting: 'The gate rule is fixed in the manifest, but the section rings, strong/developing lines, and score copy belong to the unauthored L3 closer.',
-            planned: ['Gate: 80% overall and ≥70% per core section', 'Near-pass → clinic plus alternate items; below → personalised review', 'Unlimited parallel retries; no permanent lock', 'Gate can-dos mirror the five chapter can-dos'],
-            source: 'A1_C03_MANIFEST.md — Quiz/gate',
-            tip: 'Retry and continue get equal weight and size when this screen is authored, matching C1-S34 and C2-S36.',
+            id: 'S31', type: 'reviewPlan', label: 'Review plan', step: 'STEP 16c',
+            head: 'Your review week', sub: 'Short returns, spaced out. Notifications stay off unless you turn them on.',
+            week: [{ d: 'Tue', t: 'Origins + languages', on: true }, { d: 'Wed', t: '', on: false }, { d: 'Thu', t: 'Jobs + a/an', on: true }, { d: 'Fri', t: '', on: false }, { d: 'Sat', t: 'Introductions', on: true }, { d: 'Sun', t: '', on: false }, { d: 'Mon', t: 'Chapter 4 warm-up', on: true }],
+            exports: [['All 36 L1 records', 'Welcome-day mission + Checkpoint 1'], ['G007–G009', 'Checkpoint grammar sweep; G008 → Ch5 contrast, G009 → every job use'], ['C2 patterns (0–20)', 'Rolling; C5 extends 21–100'], ['C1 chunks', 'Greeting beats of the Ch4 mission framing']],
+            tip: 'A calm week-strip, no streak shaming, optional notifications off by default — the same component family as C1-S36 and C2-S38.',
             assets: []
           },
           {
-            id: 'S31', type: 'pending', label: 'Remediation — clinic seeds', step: 'STEP 16c · awaiting content',
-            awaiting: 'Four clinic seeds (C3-CLIN-A…D) are promised in the L3 artifacts manifest; their names, benefits, and item counts are not yet written.',
-            planned: ['4 clinic seeds, C3-CLIN-A through C3-CLIN-D', 'Remediation map tied to the quiz sections', 'Clinic cards use the warm palette, never red'],
-            source: 'A1_C03_L03_LESSON.md artifacts_manifest — clinic_seeds: 4',
-            tip: 'Take one, take all, or skip — the schedule adapts either way. Copy arrives with the authored closer.',
-            assets: []
-          },
-          {
-            id: 'S32', type: 'pending', label: 'Review plan + chapter map', step: 'Wrap-up · awaiting content',
-            awaiting: 'The spaced-review export and the chapter gate card (with the compact tip required at every chapter end) are part of the unauthored closer.',
-            planned: ['1 spaced-review export: which C3 targets return, and when', 'Chapter map: Ch1 and Ch2 done, Ch3 complete, Ch4 Checkpoint Review 1 next', 'Chapter gate + the compact tip (master prompt §1.5/§1.7)', 'Audio AUD060 and AUD062–067, and illustrations ILL035–036, are also still to be written'],
-            source: 'A1_C03_L03_LESSON.md artifacts_manifest — spaced_review_export: 1 · audio_scripts: 11 (AUD057–067) · illustration_briefs: 6 (ILL031–036)',
-            tip: 'Ends the chapter on the same calm week-strip and one-glance map as C1-S36/S37 and C2-S38/S39.',
+            id: 'S32', type: 'chapterMap', label: 'Chapter map / next', step: 'Wrap-up',
+            head: 'Chapter 3 complete!',
+            body: 'You can ask and answer where someone is from, name a language, say a job, and introduce someone else.',
+            next: 'Chapter 4 — Checkpoint Review 1: Welcome-Day Mission.',
+            arc: 'Meet and connect', chapters: [{ n: 1, t: 'Hello! My Name Is Alex', s: 'done' }, { n: 2, t: 'Spell It and Share Your Details', s: 'done' }, { n: 3, t: 'Where Are You From?', s: 'done' }, { n: 4, t: 'Checkpoint Review 1', s: 'next' }],
+            tip: 'The celebration peak: brief, mutable, reduced-motion safe. The chapter map shows Arc 1 with Chapters 1–3 filled and Checkpoint 1 next — story progress, not point totals.',
             assets: []
           }
         ]

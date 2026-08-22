@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/styles.css">
+<script src="_ds/organic-ae97cabc-b950-4085-bbfd-89c2fd51d81e/_ds_bundle.js"></script>
+<script src="course-c1.js"></script>
+<script src="course-c2.js"></script>
+<script src="course-c3.js"></script>
+<style>
+body{margin:0;background:#e8e0d2}
+a{color:var(--color-accent-700);text-decoration:none}
+a:hover{color:var(--color-accent-800)}
+.aurel-dark{--color-bg:#1c1917;--color-surface:#272220;--color-text:#f4ebdd;--color-accent:#dc8b57;--color-accent-2:#a3b383;--color-divider:rgba(244,235,221,.16)}
+.au-wrap{--au-accent-text:var(--color-accent-700);--au-edge:rgba(32,30,29,.09);--au-fill:color-mix(in srgb,#fffaf2 78%,var(--color-surface));--au-lift:0 1px 2px rgba(74,48,26,.05),0 10px 22px -16px rgba(74,48,26,.4);--au-tint-bg:var(--color-accent-100);--au-tint-text:var(--color-accent-800);--au-flat-bg:var(--color-neutral-200);--au-flat-text:var(--color-neutral-800)}
+.au-wrap.aurel-dark{--au-accent-text:var(--color-accent-300);--au-edge:rgba(255,255,255,.09);--au-fill:color-mix(in srgb,#fff 5.5%,var(--color-surface));--au-lift:0 2px 5px rgba(0,0,0,.4),0 14px 30px -18px rgba(0,0,0,.7);--au-tint-bg:color-mix(in srgb,var(--color-accent) 15%,transparent);--au-tint-text:var(--color-accent-300);--au-flat-bg:color-mix(in srgb,var(--color-text) 10%,transparent);--au-flat-text:color-mix(in srgb,var(--color-text) 72%,transparent)}
+.au-tap{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.2,.8,.3,1),background .2s ease,border-color .2s ease,color .2s ease}
+.au-tap:hover{transform:translateY(-1.5px)}
+.au-tap:active{transform:scale(.975)}
+.au-card{background:var(--au-fill);border:1px solid var(--au-edge);box-shadow:var(--au-lift)}
+.au-scroll{flex:1;overflow-y:auto;scrollbar-width:none}
+.au-scroll::-webkit-scrollbar{display:none}
+.au-wrap :focus-visible{outline:2.5px solid var(--color-accent);outline-offset:3px}
+</style>
+</helmet>
+
+<div class="au-wrap {{ themeClass }}" style="min-height:100vh;display:flex;align-items:flex-start;gap:26px;padding:30px 28px;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)">
+
+<aside style="width:250px;flex:none;position:sticky;top:30px;max-height:calc(100vh - 60px);display:flex;flex-direction:column;gap:14px">
+<div class="au-card" style="border-radius:20px;padding:16px 16px 14px">
+<div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
+<svg width="22" height="22" viewBox="0 0 64 64" fill="none" style="flex:none"><path d="M32.7 4.9 C35.0 14.6 45.8 39.8 58.6 56.4 L50.2 56.4 C41.4 41.2 34.4 20.6 32.2 11.6 C31.0 17.6 22.8 41.2 15.0 56.4 L10.2 56.4 C18.4 40.4 30.4 14.4 32.7 4.9 Z" fill="currentColor"></path><path d="M24.2 43.4 A8 8 0 0 1 40.2 43.4 Z" fill="var(--color-accent)"></path><path d="M18.6 46.8 C26.6 43.4 37 42.2 45.4 42.6 C37 45.4 26.6 47.2 18.6 46.8 Z" fill="currentColor"></path></svg>
+<span style="font:400 17px var(--font-heading);letter-spacing:.015em">Course spec</span>
+<span style="flex:1"></span>
+<button class="au-tap" onClick="{{ toggleTheme }}" aria-label="Toggle appearance" style="width:28px;height:28px;border-radius:999px;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:flex;align-items:center;justify-content:center;font-size:11px">{{ themeGlyph }}</button>
+</div>
+<div style="font:700 9.5px var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--au-accent-text);margin-bottom:5px">A1 Foundation · Arc 1</div>
+<div style="font-size:12.3px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 58%,transparent)">{{ railSummary }}</div>
+<a href="Aurel.dc.html" style="display:inline-flex;align-items:center;gap:7px;margin-top:11px;font:600 12px var(--font-body)">Open the product flow →</a>
+</div>
+<div class="au-card" style="border-radius:20px;padding:10px">
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px">
+<sc-for list="{{ railChapters }}" as="c" hint-placeholder-count="2">
+<button class="au-tap" onClick="{{ c.go }}" style="display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;border:1px solid {{ c.bd }};padding:9px 11px;border-radius:13px;background:{{ c.bg }};color:{{ c.fg }};font-family:var(--font-body);cursor:pointer">
+<span style="font:700 9.5px var(--font-body);letter-spacing:.11em;flex:none">CH {{ c.n }}</span>
+<span style="flex:1;min-width:0;font-size:12.2px;line-height:1.3">{{ c.t }}</span>
+</button>
+</sc-for>
+</div>
+<div style="display:flex;gap:5px">
+<sc-for list="{{ railLessons }}" as="l" hint-placeholder-count="4">
+<button class="au-tap" onClick="{{ l.go }}" style="flex:1;border:1px solid {{ l.bd }};padding:8px 3px;border-radius:11px;background:{{ l.bg }};color:{{ l.fg }};font:700 10.5px var(--font-body);letter-spacing:.04em;cursor:pointer">{{ l.n }}</button>
+</sc-for>
+</div>
+<div style="margin-top:9px;font-size:11.5px;line-height:1.4;color:color-mix(in srgb,var(--color-text) 45%,transparent)">{{ lessonMeta }}</div>
+</div>
+<div class="au-card au-scroll" style="border-radius:20px;padding:8px">
+<sc-for list="{{ railItems }}" as="r" hint-placeholder-count="10">
+<button class="au-tap" onClick="{{ r.go }}" style="display:flex;align-items:center;gap:9px;width:100%;text-align:left;border:0;padding:8px 10px;border-radius:11px;background:{{ r.bg }};color:{{ r.fg }};font-family:var(--font-body);font-size:12.3px;line-height:1.3;cursor:pointer">
+<span style="font-weight:700;font-size:10px;letter-spacing:.05em;opacity:.75;width:26px;flex:none">{{ r.sid }}</span>
+<span style="flex:1;min-width:0">{{ r.label }}</span>
+</button>
+</sc-for>
+</div>
+</aside>
+
+<div style="flex:none;display:flex;flex-direction:column;align-items:center;gap:14px">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" width="402" height="874" dark="{{ statusDark }}" hint-size="402px,874px">
+<dc-import name="CourseScreen" p="{{ p }}" bound="{{ false }}" chrome="{{ true }}" onScreen="{{ setP }}" hint-size="402px,874px"></dc-import>
+</x-import>
+<div style="display:flex;align-items:center;gap:10px">
+<button class="au-tap" onClick="{{ prev }}" style="border:1px solid var(--color-divider);background:transparent;color:var(--color-text);border-radius:999px;padding:9px 16px;font:600 12.5px var(--font-body);cursor:pointer">Back</button>
+<span style="font:600 11.5px var(--font-body);letter-spacing:.04em;color:color-mix(in srgb,var(--color-text) 48%,transparent)">{{ posLabel }}</span>
+<button class="au-tap" onClick="{{ next }}" style="border:1px solid var(--color-divider);background:transparent;color:var(--color-text);border-radius:999px;padding:9px 16px;font:600 12.5px var(--font-body);cursor:pointer">Next</button>
+</div>
+</div>
+
+<aside style="width:322px;flex:none;position:sticky;top:30px;max-height:calc(100vh - 60px);overflow-y:auto;display:flex;flex-direction:column;gap:14px">
+<div class="au-card" style="border-radius:20px;padding:18px">
+<div style="display:flex;align-items:baseline;gap:9px;margin-bottom:4px">
+<span style="font:700 10px var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--au-accent-text)">{{ sid }}</span>
+<span style="font-size:11px;color:color-mix(in srgb,var(--color-text) 42%,transparent)">{{ scr.step }}</span>
+</div>
+<div style="font:400 20px/1.25 var(--font-heading);letter-spacing:-.012em;margin-bottom:14px">{{ scr.label }}</div>
+<div style="font-size:12.6px;line-height:1.62;color:color-mix(in srgb,var(--color-text) 66%,transparent);text-wrap:pretty">{{ scr.tip }}</div>
+</div>
+<sc-if value="{{ hasSample }}" hint-placeholder-val="{{ false }}">
+<div class="au-card" style="border-radius:16px;padding:13px 15px;background:var(--au-tint-bg);border-color:color-mix(in srgb,var(--color-accent) 26%,transparent)">
+<div style="font:700 9.5px var(--font-body);letter-spacing:.13em;text-transform:uppercase;color:var(--au-tint-text);margin-bottom:5px">Shown here</div>
+<div style="font-size:12.3px;line-height:1.5;color:var(--au-tint-text)">{{ scr.sample }} — the full authored bank is in {{ les.src }}.</div>
+</div>
+</sc-if>
+<sc-if value="{{ hasBank }}" hint-placeholder-val="{{ false }}">
+<div class="au-card" style="border-radius:16px;padding:13px 15px">
+<div style="font:700 9.5px var(--font-body);letter-spacing:.13em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 42%,transparent);margin-bottom:5px">Item bank</div>
+<div style="font-size:12.3px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 62%,transparent)">{{ scr.bank }}</div>
+</div>
+</sc-if>
+<div class="au-card" style="border-radius:16px;padding:13px 15px">
+<div style="font:700 9.5px var(--font-body);letter-spacing:.13em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 42%,transparent);margin-bottom:8px">Assets</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px">
+<sc-for list="{{ assetChips }}" as="a" hint-placeholder-count="3">
+<span style="font:600 10.5px var(--font-body);letter-spacing:.02em;padding:5px 9px;border-radius:999px;background:var(--au-flat-bg);color:var(--au-flat-text)">{{ a.t }}</span>
+</sc-for>
+</div>
+</div>
+<div class="au-card" style="border-radius:16px;padding:13px 15px">
+<div style="font:700 9.5px var(--font-body);letter-spacing:.13em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 42%,transparent);margin-bottom:8px">Accessibility</div>
+<sc-for list="{{ a11yList }}" as="x" hint-placeholder-count="3">
+<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px">
+<span style="width:4px;height:4px;flex:none;margin-top:7px;border-radius:999px;background:var(--color-accent-2)"></span>
+<span style="font-size:12px;line-height:1.5;color:color-mix(in srgb,var(--color-text) 60%,transparent)">{{ x.t }}</span>
+</div>
+</sc-for>
+</div>
+<div class="au-card" style="border-radius:16px;padding:13px 15px">
+<div style="font:700 9.5px var(--font-body);letter-spacing:.13em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 42%,transparent);margin-bottom:6px">Source</div>
+<div style="font-size:12px;line-height:1.55;color:color-mix(in srgb,var(--color-text) 58%,transparent)">{{ ch.id }} · {{ les.id }} ({{ les.type }}) · {{ les.title }}<br>{{ les.src }}</div>
+</div>
+</aside>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1120,&quot;height&quot;:980}}">
+class Component extends DCLogic {
+  state = { p: 0, theme: 'light' };
+
+  componentDidMount() { if (!this.chapters().length) this._t = setTimeout(() => this.forceUpdate(), 80); }
+  componentWillUnmount() { if (this._t) clearTimeout(this._t); }
+
+  chapters() { return (typeof window !== 'undefined' && window.AUREL_COURSE && window.AUREL_COURSE.chapters) || []; }
+
+  flat() {
+    const chs = this.chapters();
+    if (this._flat && this._flatN === chs.length) return this._flat;
+    const out = [];
+    chs.forEach(ch => ch.lessons.forEach(le => le.screens.forEach(s => out.push({ ch: ch, le: le, s: s }))));
+    this._flat = out; this._flatN = chs.length;
+    return out;
+  }
+
+  goto(p) {
+    const f = this.flat();
+    if (!f.length) return;
+    this.setState({ p: Math.max(0, Math.min(f.length - 1, p)) });
+  }
+
+  a11y(s) {
+    const base = ['Dynamic Type to XL without truncation', 'Reduced motion respected — no shake, crossfade instead of pans', 'No colour-only meaning; every state also carries an icon or word'];
+    const it = (s.items || [])[0];
+    if (it && it.a11y) return it.a11y.map(t => t.split('_').join(' ')).concat(base.slice(0, 2));
+    if (s.type === 'hook' || s.type === 'conversation') return ['Transcript released only after the scored response', 'One replay by default, logged and unpenalized', 'Captions off by default; "show words" after one full playback'].concat(base.slice(1, 2));
+    if (s.type === 'roleplay' || s.type === 'missionBrief') return ['Mic optional — the tap path is always available and equal in weight', 'Voice processed on-device where possible, deletable, never required', 'Safe-stop always visible'].concat(base.slice(0, 1));
+    return base;
+  }
+
+  renderVals() {
+    const st = this.state, f = this.flat(), cur = f[st.p] || null;
+    const empty = { id: '', label: 'Loading course…', step: '', tip: '', type: '' };
+    const s = cur ? cur.s : empty, le = cur ? cur.le : { id: '', src: '', title: '', type: '' }, ch = cur ? cur.ch : { id: '' };
+
+    const firstOf = (chId, leId) => f.findIndex(r => r.ch.id === chId && (!leId || r.le.id === leId));
+    const railChapters = this.chapters().map(c => {
+      const on = cur && cur.ch.id === c.id;
+      return {
+        n: String(c.n), t: c.title,
+        bg: on ? 'var(--au-tint-bg)' : 'transparent',
+        fg: on ? 'var(--au-tint-text)' : 'color-mix(in srgb,var(--color-text) 62%,transparent)',
+        bd: on ? 'color-mix(in srgb,var(--color-accent) 32%,transparent)' : 'var(--au-edge)',
+        go: () => this.goto(firstOf(c.id, null))
+      };
+    });
+    const railLessons = (cur ? cur.ch.lessons : []).map(l => {
+      const on = cur && cur.le.id === l.id;
+      return {
+        n: 'L' + l.n,
+        bg: on ? 'var(--au-tint-bg)' : 'transparent',
+        fg: on ? 'var(--au-tint-text)' : 'color-mix(in srgb,var(--color-text) 55%,transparent)',
+        bd: on ? 'color-mix(in srgb,var(--color-accent) 32%,transparent)' : 'var(--au-edge)',
+        go: () => this.goto(firstOf(cur.ch.id, l.id))
+      };
+    });
+    const rail = f.map((r, k) => ({ r: r, k: k })).filter(x => cur && x.r.le === cur.le).map(x => {
+      const on = x.k === st.p;
+      return {
+        sid: x.r.s.id, label: x.r.s.label,
+        bg: on ? 'var(--au-tint-bg)' : 'transparent',
+        fg: on ? 'var(--au-tint-text)' : 'color-mix(in srgb,var(--color-text) 66%,transparent)',
+        go: () => this.goto(x.k)
+      };
+    });
+
+    return {
+      themeClass: st.theme === 'dark' ? 'aurel-dark' : '',
+      statusDark: st.theme === 'dark',
+      themeGlyph: st.theme === 'dark' ? '\u25D1' : '\u25D0',
+      toggleTheme: () => this.setState({ theme: st.theme === 'dark' ? 'light' : 'dark' }),
+      p: st.p,
+      setP: (n) => { if (n !== st.p) this.setState({ p: n }); },
+      next: () => this.goto(st.p + 1),
+      prev: () => this.goto(st.p - 1),
+      posLabel: (st.p + 1) + ' / ' + f.length,
+      railItems: rail, railChapters: railChapters, railLessons: railLessons,
+      railSummary: f.length + ' screens · ' + this.chapters().length + ' chapters · every screen, item and asset id traced to the course source.',
+      lessonMeta: cur ? ('Lesson ' + le.n + ' (' + le.type + ') — ' + le.title + ' · ' + (le.screens || []).length + ' screens · ' + (le.time || '')) : '',
+      scr: s, les: le, ch: ch, sid: s.id,
+      hasSample: !!s.sample, hasBank: !!s.bank,
+      assetChips: (s.assets && s.assets.length ? s.assets : ['no media on this screen']).map(a => ({ t: a })),
+      a11yList: this.a11y(s).map(t => ({ t: t }))
+    };
+  }
+}
+
+</script>
+</body>
+</html>

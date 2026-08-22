@@ -82,16 +82,25 @@ final class AppRouterTests: XCTestCase {
         XCTAssertFalse(r.speaking)
     }
 
-    /// A pending assess transition never fires after the learner navigates
-    /// away (old code: the stale task stomped the manual step change).
-    func testAssessBackCancelsPendingAdvance() async throws {
+    /// V4 20-screen routing and subscribeAccount integration.
+    func testSubscribeAccountAndScreenHooks() {
         let r = AppRouter(course: CourseDecodingTests.store)
-        r.assessStep = 1
-        r.assessPick(0)  // pending advance to step 2 in 420 ms
-        r.assessBack()  // learner goes back to step 0
-        XCTAssertEqual(r.assessStep, 0)
-        try await Task.sleep(for: .seconds(0.6))
-        XCTAssertEqual(r.assessStep, 0, "the superseded transition must not fire")
+        XCTAssertEqual(AppRouter.Screen.named("subscribeAccount"), .subscribeAccount)
+        XCTAssertEqual(AppRouter.Screen.subscribeAccount.rawName, "subscribeAccount")
+        XCTAssertFalse(AppRouter.Screen.subscribeAccount.showsTabs)
+
+        // Subscribe flow routes to subscribeAccount when no account exists
+        r.email = ""
+        r.startSubscribe()
+        XCTAssertEqual(r.screen, .subscribeAccount)
+
+        // Creating account and subscribing succeeds with valid email/pass
+        r.setEmail("learner@example.com")
+        r.setPass("secret123")
+        r.createAccountAndSubscribe()
+        XCTAssertTrue(r.pro)
+        XCTAssertEqual(r.screen, .home)
+        XCTAssertEqual(r.loginErr, "")
     }
 
     // MARK: S1-009 — day rollover, streak counting, grace

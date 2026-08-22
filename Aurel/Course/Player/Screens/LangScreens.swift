@@ -33,7 +33,7 @@ struct ReviewScreenView: View {
                 Text(r.head ?? "")
                     .font(.caprasimo(size: 28))
                     .tracking(-0.56)
-                    .lineSpacing(28 * 0.2)
+                    .auHeadLine(28, 1.2)
                     .padding(.bottom, 14)
 
                 VStack(spacing: 9) {
@@ -59,7 +59,7 @@ struct ReviewScreenView: View {
                         ForEach(gallery, id: \.id) { g in
                             Text(g.w)
                                 .font(.figtree(.semibold, size: 12.5))
-                                .lineSpacing(12.5 * 0.3)
+                                .auLine(12.5, 1.3)
                                 .multilineTextAlignment(.center)
                                 .frame(maxWidth: .infinity, minHeight: 56)
                                 .padding(.horizontal, 7)
@@ -93,7 +93,7 @@ struct ReviewScreenView: View {
                 if let keep = r.keepCard {
                     Text(keep)
                         .font(.figtree(.regular, size: 13))
-                        .lineSpacing(13 * 0.5)
+                        .auLine(13, 1.5)
                         .padding(.horizontal, 15)
                         .padding(.vertical, 12)
                         .background(
@@ -110,7 +110,7 @@ struct ReviewScreenView: View {
                 if let next = r.next {
                     Text(next)
                         .font(.figtree(.regular, size: 13.5))
-                        .lineSpacing(13.5 * 0.5)
+                        .auLine(13.5, 1.5)
                         .foregroundStyle(Color.auText.opacity(0.66))
                         .padding(.horizontal, 16)
                         .padding(.vertical, 14)
@@ -175,7 +175,7 @@ struct GrammarScreenView: View {
                                             .opacity(0.6)
                                         Text(c.t)
                                             .font(.figtree(.regular, size: 14))
-                                            .lineSpacing(14 * 0.4)
+                                            .auLine(14, 1.4)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                     .padding(.horizontal, 12)
@@ -226,7 +226,7 @@ struct GrammarScreenView: View {
                                     }
                                     Text(r.pattern)
                                         .font(.figtree(.semibold, size: 15))
-                                        .lineSpacing(15 * 0.45)
+                                        .auLine(15, 1.45)
                                         .padding(.horizontal, 13)
                                         .padding(.vertical, 11)
                                         .background(
@@ -277,7 +277,7 @@ struct GrammarScreenView: View {
                                         .frame(width: 46, alignment: .leading)
                                     Text(row.cells.count > 3 ? row.cells[3] : "")
                                         .font(.figtree(.regular, size: 11.5))
-                                        .lineSpacing(11.5 * 0.35)
+                                        .auLine(11.5, 1.35)
                                         .foregroundStyle(Color.auText.opacity(0.58))
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
@@ -291,14 +291,14 @@ struct GrammarScreenView: View {
                 }
 
                 if let tiles = g.patternTiles, !tiles.isEmpty {
-                    FlowTiles(tiles: tiles)
+                    CompactFlowChips(tiles: tiles, style: .pattern)
                         .padding(.bottom, 12)
                 }
 
                 if let explain = g.explain {
                     Text(explain)
                         .font(.figtree(.regular, size: 13))
-                        .lineSpacing(13 * 0.55)
+                        .auLine(13, 1.55)
                         .foregroundStyle(Color.auText.opacity(0.68))
                         .padding(.horizontal, 14)
                         .padding(.vertical, 12)
@@ -315,7 +315,7 @@ struct GrammarScreenView: View {
                 if let more = g.more {
                     Text(more)
                         .font(.figtree(.regular, size: 12))
-                        .lineSpacing(12 * 0.5)
+                        .auLine(12, 1.5)
                         .foregroundStyle(Color.auText.opacity(0.52))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 10)
@@ -324,7 +324,7 @@ struct GrammarScreenView: View {
                 if let notYet = g.notYet {
                     Text(notYet)
                         .font(.figtree(.regular, size: 11))
-                        .lineSpacing(11 * 0.5)
+                        .auLine(11, 1.5)
                         .foregroundStyle(Color.auText.opacity(0.42))
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -353,7 +353,7 @@ struct PronPerceiveScreenView: View {
 
                 VStack(spacing: 14) {
                     ForEach(p.items ?? [], id: \.id) { it in
-                        ACard(radius: 20) {
+                        ACard(radius: 20, padded: false) {
                             VStack(alignment: .leading, spacing: 0) {
                                 HStack(spacing: 9) {
                                     AUIcon(kind: .ear, size: 18, color: .auText.opacity(0.7))
@@ -370,7 +370,7 @@ struct PronPerceiveScreenView: View {
                                 if let prompt = it.prompt {
                                     Text(prompt)
                                         .font(.figtree(.regular, size: 14.5))
-                                        .lineSpacing(14.5 * 0.45)
+                                        .auLine(14.5, 1.45)
                                         .padding(.bottom, 12)
                                 }
 
@@ -394,7 +394,7 @@ struct PronPerceiveScreenView: View {
                                 if let note = it.note {
                                     Text(note)
                                         .font(.figtree(.regular, size: 11.5))
-                                        .lineSpacing(11.5 * 0.45)
+                                        .auLine(11.5, 1.45)
                                         .foregroundStyle(Color.auFlatText)
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 10)
@@ -406,6 +406,8 @@ struct PronPerceiveScreenView: View {
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 17)
+                            .padding(.vertical, 16)
                         }
                     }
                 }
@@ -434,7 +436,7 @@ struct PronProduceScreenView: View {
 
                 VStack(spacing: 14) {
                     ForEach(p.items ?? [], id: \.id) { it in
-                        ACard(radius: 22) {
+                        ACard(radius: 22, padded: false) {
                             VStack(alignment: .leading, spacing: 0) {
                                 Text(it.word)
                                     .font(.caprasimo(size: 22))
@@ -515,7 +517,7 @@ struct PronProduceScreenView: View {
                                 if let note = it.note {
                                     Text(note)
                                         .font(.figtree(.regular, size: 12.5))
-                                        .lineSpacing(12.5 * 0.45)
+                                        .auLine(12.5, 1.45)
                                         .padding(.horizontal, 13)
                                         .padding(.vertical, 11)
                                         .background(
@@ -527,6 +529,7 @@ struct PronProduceScreenView: View {
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(18)
                         }
                     }
                 }
@@ -535,7 +538,7 @@ struct PronProduceScreenView: View {
 
                 Text("No accent scoring, ever. One actionable note per recording.")
                     .font(.figtree(.regular, size: 11.5))
-                    .lineSpacing(11.5 * 0.5)
+                    .auLine(11.5, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.40))
                     .frame(maxWidth: .infinity)
 
@@ -563,7 +566,7 @@ struct ConversationScreenView: View {
 
                 Text(c.scenario ?? "")
                     .font(.figtree(.regular, size: 12.5))
-                    .lineSpacing(12.5 * 0.5)
+                    .auLine(12.5, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.55))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 14)
@@ -646,7 +649,7 @@ struct ConversationScreenView: View {
                                 .foregroundStyle(Color.auAccentText)
                             Text(t.t)
                                 .font(.figtree(.regular, size: 15))
-                                .lineSpacing(15 * 0.4)
+                                .auLine(15, 1.4)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .padding(.horizontal, 13)
@@ -682,7 +685,7 @@ struct ConversationScreenView: View {
                                     Text(t)
                                 }
                                 .font(.figtree(.regular, size: 12))
-                                .lineSpacing(12 * 0.45)
+                                .auLine(12, 1.45)
                                 .foregroundStyle(Color.auText.opacity(0.62))
                             }
                         }

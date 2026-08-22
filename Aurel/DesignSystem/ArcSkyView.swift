@@ -241,6 +241,7 @@ struct LessonPathNode: View {
                         Circle().fill(Color.auAccent)
                             .frame(width: size + 20, height: size + 20)
                             .modifier(PulseHalo())
+                            .allowsHitTesting(false)
                     }
                     Circle()
                         .fill(
@@ -248,8 +249,10 @@ struct LessonPathNode: View {
                                 stops: [
                                     .init(color: Color.auAccent.opacity(0.8), location: 0),
                                     .init(color: Color.auAccent.opacity(0.9), location: 0.52),
+                                    // accent-800 (#643312) — the authored stop is
+                                    // the deep *amber*, not the sage ramp.
                                     .init(
-                                        color: Color.auAccent2Ramp(800).opacity(0.92),
+                                        color: Color.auAccentRamp(800).opacity(0.92),
                                         location: 1),
                                 ],
                                 startPoint: .top, endPoint: .bottom
@@ -269,7 +272,6 @@ struct LessonPathNode: View {
                             .foregroundStyle(Color(red: 1, green: 0.965, blue: 0.918))
                         )
                         .frame(width: size, height: size)
-                        .modifier(Breath(enabled: !reduceMotion))
                 case .done:
                     Circle()
                         .fill(

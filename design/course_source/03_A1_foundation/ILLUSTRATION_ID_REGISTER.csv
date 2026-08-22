@@ -1,0 +1,16 @@
+block,owner,first_id,last_id,capacity,next_available,notes
+A1-CHAR,character bible,A1-CHAR-ILL001,A1-CHAR-ILL008,8,A1-CHAR-ILL009,4 model sheets + 4 expression sheets
+A1-MAP,city maps,A1-MAP-ILL001,A1-MAP-ILL004,4,A1-MAP-ILL002,town map + 3 zoom variants for C10
+A1-C01,chapter 1,A1-C01-ILL001,A1-C01-ILL040,40,A1-C01-ILL035,34 used (L01–L04; 6 spare for clinics)
+A1-C02,chapter 2,A1-C02-ILL001,A1-C02-ILL036,36,BLOCK COMPLETE,36/36 used (L01–L04 incl. quiz skins ILL033–036)
+A1-C03,chapter 3,A1-C03-ILL001,A1-C03-ILL036,36,BLOCK COMPLETE,36/36 used (L01–L03 incl. 3 profile cards, mission wall ILL034, quiz skins ILL035–036)
+A1-C04,chapter 4,A1-C04-ILL001,A1-C04-ILL016,16,BLOCK COMPLETE,16/16 used (L01 ×5, L02 ×6, L03 ×5 incl. RP door, checkpoint cover/strip, results ring, Arc-1 finale group scene)
+A1-C05,chapter 5,A1-C05-ILL001,A1-C05-ILL036,36,A1-C05-ILL033,32/36 used (L01: 22 · L02: 's/have/plural cards + 4 D01 storyboards + sound chart)
+A1-C06,chapter 6,A1-C06-ILL001,A1-C06-ILL040,40,A1-C06-ILL001,
+A1-C07,chapter 7,A1-C07-ILL001,A1-C07-ILL040,40,A1-C07-ILL001,
+A1-C08,chapter 8,A1-C08-ILL001,A1-C08-ILL016,16,A1-C08-ILL001,
+A1-C09,chapter 9,A1-C09-ILL001,A1-C09-ILL040,40,A1-C09-ILL001,
+A1-C10,chapter 10,A1-C10-ILL001,A1-C10-ILL044,44,A1-C10-ILL001,
+A1-C11,chapter 11,A1-C11-ILL001,A1-C11-ILL040,40,A1-C11-ILL001,
+A1-C12,chapter 12,A1-C12-ILL001,A1-C12-ILL020,20,A1-C12-ILL001,
+PL,placement stubs,PL-ILL001,PL-ILL008,8,PL-ILL001,reserved for future placement run

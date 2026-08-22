@@ -24,8 +24,14 @@ struct RootView: View {
                 if env.courseLoadFailed {
                     CourseRecoveryView(retry: retryEnvironment)
                 } else {
+                    // The prototype stage is the full 402×874 device rect — the
+                    // status bar and home indicator are absolute overlays over
+                    // it, and every screen's own padding (74 / 70 / 62 top,
+                    // 44 / 32 bottom) is measured from the physical edge. So the
+                    // screen tree must not be inset by the safe area.
                     ScreenHost()
                         .environment(env)
+                        .ignoresSafeArea()
                 }
             } else {
                 Color.auBackground.ignoresSafeArea()
@@ -91,7 +97,7 @@ private struct CourseRecoveryView: View {
                     .padding(.bottom, 10)
                 Text("Your saved progress is safe. Try again in a moment.")
                     .font(.figtree(.regular, size: 14.5))
-                    .lineSpacing(14.5 * 0.45)
+                    .auLine(14.5, 1.45)
                     .foregroundStyle(Color.auText.opacity(0.62))
                     .multilineTextAlignment(.center)
                     .padding(.bottom, 26)
@@ -115,7 +121,7 @@ private struct StoreRecoveredBanner: View {
                 AUIcon(kind: .sparkle, size: 16, color: .auTintText)
                 Text("Your saved progress could not be read and was reset.")
                     .font(.figtree(.semibold, size: 13))
-                    .lineSpacing(13 * 0.45)
+                    .auLine(13, 1.45)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Button {
                     visible = false
@@ -156,10 +162,8 @@ private struct ScreenHost: View {
         switch env.router.screen {
         case .welcome: WelcomeView()
         case .goal: GoalView()
-        case .placement: PlacementView()
         case .commit: CommitView()
         case .plan: PlanView()
-        case .assess: AssessStubView()
         case .login: LoginView()
         case .home: HomeView()
         case .course: CoursePlayerView(startPos: env.router.coursePos, bound: true)
@@ -168,8 +172,6 @@ private struct ScreenHost: View {
         case .streak: StreakView()
         case .leaderboard: LeaderboardView()
         case .stories: StoriesView()
-        case .reader: ReaderStubView()
-        case .hunt: HuntStubView()
         case .scene: SceneView()
         case .speak: SpeakView()
         case .review: ReviewView()
@@ -177,7 +179,7 @@ private struct ScreenHost: View {
         case .profile: ProfileView()
         case .settings: SettingsView()
         case .paywall: PaywallView()
-        case .assessReview: AssessReviewView()
+        case .subscribeAccount: SubscribeAccountView()
         }
     }
 }

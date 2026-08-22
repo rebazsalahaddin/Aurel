@@ -15,13 +15,13 @@ final class AppRouter {
     // MARK: Screens (the authored `screen` values, in flow order)
 
     enum Screen: Equatable {
-        case welcome, goal, placement, commit, plan
-        case assess, assessReview, login
+        case welcome, goal, commit, plan, login
         case home, course, lesson, result
-        case streak, leaderboard, stories, reader, hunt
-        case scene, speak, review, progress, profile, settings, paywall
+        case streak, leaderboard, stories
+        case scene, speak, review
+        case progress, profile, settings, paywall, subscribeAccount
 
-        /// MAIN — the tab bar surfaces (line 1728).
+        /// MAIN — the tab bar surfaces (line 1571).
         var showsTabs: Bool {
             switch self {
             case .home, .stories, .progress, .profile, .leaderboard: true
@@ -34,11 +34,8 @@ final class AppRouter {
             switch raw {
             case "welcome": .welcome
             case "goal": .goal
-            case "placement": .placement
             case "commit": .commit
             case "plan": .plan
-            case "assess": .assess
-            case "assessReview": .assessReview
             case "login": .login
             case "home": .home
             case "course": .course
@@ -47,8 +44,6 @@ final class AppRouter {
             case "streak": .streak
             case "leaderboard": .leaderboard
             case "stories": .stories
-            case "reader": .reader
-            case "hunt": .hunt
             case "scene": .scene
             case "speak": .speak
             case "review": .review
@@ -56,6 +51,7 @@ final class AppRouter {
             case "profile": .profile
             case "settings": .settings
             case "paywall": .paywall
+            case "subscribeAccount": .subscribeAccount
             default: nil
             }
         }
@@ -65,11 +61,8 @@ final class AppRouter {
             switch self {
             case .welcome: "welcome"
             case .goal: "goal"
-            case .placement: "placement"
             case .commit: "commit"
             case .plan: "plan"
-            case .assess: "assess"
-            case .assessReview: "assessReview"
             case .login: "login"
             case .home: "home"
             case .course: "course"
@@ -78,8 +71,6 @@ final class AppRouter {
             case .streak: "streak"
             case .leaderboard: "leaderboard"
             case .stories: "stories"
-            case .reader: "reader"
-            case .hunt: "hunt"
             case .scene: "scene"
             case .speak: "speak"
             case .review: "review"
@@ -87,15 +78,14 @@ final class AppRouter {
             case .profile: "profile"
             case .settings: "settings"
             case .paywall: "paywall"
+            case .subscribeAccount: "subscribeAccount"
             }
         }
     }
 
-    // MARK: Ephemeral state (seedFor base, lines 1732–1746)
+    // MARK: Ephemeral state (seedFor base, lines 1575–1588)
 
     var screen: Screen = .welcome
-    var assessStep = 0
-    var assessAnswers: [Int?] = Array(repeating: nil, count: 6)
     var qi = 0
     var sel: Int? = nil
     var checked = false
@@ -120,8 +110,6 @@ final class AppRouter {
     var boardRules = false
     var dragTray = false
     var selfRate: Int? = nil
-    var huntIdx = 0
-    var huntShot = false
     var sceneRoleB = false
     var invited = false
     var flipped = false
@@ -320,9 +308,7 @@ final class AppRouter {
         profile.swWeekly = sw.weekly
         profile.themeMode = themeMode
         profile.typeStep = typeStep
-        if screen != .welcome && screen != .goal && screen != .placement && screen != .commit
-            && screen != .plan
-        {
+        if screen != .welcome && screen != .goal && screen != .commit && screen != .plan {
             profile.onboardedAt = profile.onboardedAt ?? Date()
         }
         try? modelContext.save()
@@ -379,18 +365,24 @@ final class AppRouter {
 
     // MARK: Simple navigation (the `go` map, line 2027)
 
+    var settingsSource: Screen = .home
+
     func nav(_ to: Screen) {
+        if to == .settings {
+            settingsSource = (screen == .profile || screen == .home) ? screen : .home
+        }
         screen = to
         persist()
     }
 
-    // MARK: Onboarding (toggleGoal / assessPick, lines 1863–1880)
+    func leaveSettings() {
+        screen = settingsSource
+        persist()
+    }
 
-    /// Delayed-transition tasks (S2-002). The authored prototype drives each
-    /// delay with a single `setTimeout`; unstructured `Task { sleep }` stacks
-    /// a second transition on top of the first on rapid taps. One live handle
-    /// per delay — a new interaction supersedes (cancels) the pending one.
-    private var assessPickTask: Task<Void, Never>?
+    // MARK: Onboarding (toggleGoal / finishOnboarding, lines 1705–1710, 2060)
+
+    /// Delayed-transition tasks (S2-002).
     private var sceneReplyTask: Task<Void, Never>?
     private var speakStopTask: Task<Void, Never>?
 
@@ -411,67 +403,12 @@ final class AppRouter {
         return "Two is the limit — tap another to swap."
     }
 
-    func assessPick(_ i: Int) {
-        let k = assessStep - 1
-        guard k >= 0 && k < 6 else { return }
-        assessAnswers[k] = i
-        // 420 ms after a pick: advance, or open the review when all six are
-        // in (lines 1869–1871). A newer pick — or navigating away — supersedes
-        // the pending transition.
-        assessPickTask?.cancel()
-        assessPickTask = Task { @MainActor in
-            do {
-                try await Task.sleep(for: .seconds(0.42))
-            } catch {
-                return  // superseded
-            }
-            if assessAnswers.allSatisfy({ $0 != nil }) {
-                screen = .assessReview
-            } else {
-                assessStep = k + 2
-            }
-        }
-    }
-
-    func skipPlacement() { screen = .plan }
-    func assessBegin() {
-        assessPickTask?.cancel()
+    func finishOnboarding() {
         screen = .plan
-        assessStep = 0
-    }
-    func assessBack() {
-        assessPickTask?.cancel()
-        assessStep = assessStep > 1 ? assessStep - 1 : 0
-    }
-    func assessLast() {
-        assessPickTask?.cancel()
-        screen = .assess
-        assessStep = 6
-    }
-    func assessStopEarly() {
-        assessPickTask?.cancel()
-        assessStep = 6
+        persist()
     }
 
-    /// assessReviewRows (line 2309–2313): one row per PLACEMENT question —
-    /// PLACEMENT is empty by governance, so this is empty exactly as the
-    /// authored projection renders it.
-    struct AssessReviewRow: Equatable {
-        let n: Int
-        let prompt: String
-        let answer: String
-    }
-
-    var assessReviewRows: [AssessReviewRow] {
-        []  // PLACEMENT = [] (DECISIONS.md — placement stubs only until F2)
-    }
-    func assessConfirm() {
-        assessPickTask?.cancel()
-        screen = .plan
-        assessStep = 0
-    }
-
-    // MARK: Login (mock validation, lines 2727–2731)
+    // MARK: Login (mock validation, lines 2504–2509)
 
     func setEmail(_ e: String) { email = e }
     func setPass(_ p: String) { pass = p }
@@ -778,9 +715,40 @@ final class AppRouter {
         persist()
     }
 
-    // MARK: Paywall (line 2791)
+    // MARK: Paywall & Subscriptions (lines 2566–2574)
 
-    func startTrial() {
+    var hasAccount: Bool {
+        !email.isEmpty
+    }
+
+    func startSubscribe() {
+        if hasAccount {
+            pro = true
+            screen = .home
+            persist()
+        } else {
+            screen = .subscribeAccount
+        }
+    }
+
+    func restorePurchase() {
+        if hasAccount {
+            pro = true
+            screen = .home
+            persist()
+        } else {
+            loginErr = "Sign in to restore a purchase."
+            screen = .login
+        }
+    }
+
+    func createAccountAndSubscribe() {
+        let okMail = email.range(of: #".+@.+\..+"#, options: .regularExpression) != nil
+        guard okMail, pass.count >= 6 else {
+            loginErr = "Enter a valid email and a password of at least six characters."
+            return
+        }
+        loginErr = ""
         pro = true
         screen = .home
         persist()

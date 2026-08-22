@@ -264,28 +264,55 @@ enum AUGradients {
         )
     }
 
+    /// A CSS `linear-gradient(<deg>, …)` on a wide panel.
+    ///
+    /// CSS measures the angle clockwise from "to top", and the gradient line
+    /// runs through the box centre with its ends projected onto the corners;
+    /// for the wide, short surfaces this system uses (cards, bars, buttons)
+    /// that puts the endpoints outside the 0…1 unit box, which is why a naive
+    /// `.topLeading → .bottomTrailing` reads far too diagonal.
+    static func angled(_ degrees: Double, stops: [Gradient.Stop], aspect: CGFloat = 354 / 76)
+        -> LinearGradient
+    {
+        let a = degrees * .pi / 180
+        let dx = sin(a)
+        let dy = -cos(a)
+        // Half-length of the gradient line in unit-x terms for the given aspect.
+        let half = (abs(dx) * aspect + abs(dy)) / 2
+        let ux = dx * half / aspect
+        let uy = dy * half
+        return LinearGradient(
+            stops: stops,
+            startPoint: UnitPoint(x: 0.5 - ux, y: 0.5 - uy),
+            endPoint: UnitPoint(x: 0.5 + ux, y: 0.5 + uy)
+        )
+    }
+
     /// `--au-glass` — 158° frosted surface.
     static func glass() -> LinearGradient {
         let top = UIColor.adaptive(
             light: Palette.surfaceLight.alpha(0.94), dark: .white.alpha(0.075))
         let bottom = UIColor.adaptive(
             light: Palette.surfaceLight.alpha(0.68), dark: .white.alpha(0.028))
-        return LinearGradient(
-            colors: [Color(top), Color(bottom)],
-            startPoint: UnitPoint(x: 0.1, y: 0),  // ~158° top-right-ish
-            endPoint: UnitPoint(x: 0.9, y: 1)
-        )
+        return angled(
+            158,
+            stops: [
+                .init(color: Color(top), location: 0),
+                .init(color: Color(bottom), location: 1),
+            ])
     }
 
-    /// `.au-btn-primary` — accent-600 top-lit through accent-700.
+    /// `.au-btn-primary` — accent-600 top-lit through accent-700:
+    /// `linear-gradient(180deg, color-mix(accent-600 93%, #fff) 0%,
+    ///  accent-600 46%, accent-700 100%)`. The first stop is 93 % *accent*,
+    /// i.e. only a 7 % lift toward white — not 93 % white.
     static func primaryButton(dark: Bool) -> LinearGradient {
-        let light = UIColor(hex: 0xb2622d)
-        let mid = UIColor(hex: 0xb2622d)
-        let deep = UIColor(hex: 0x8c491a)
-        let mixBase: CGFloat = dark ? 0.82 : 0.93
+        let mid = UIColor(hex: 0xb2622d)  // accent-600
+        let deep = UIColor(hex: 0x8c491a)  // accent-700
+        let whiteShare: CGFloat = dark ? 0.18 : 0.07
         return LinearGradient(
             stops: [
-                .init(color: Color(light.mixed(with: mixBase, of: .white)), location: 0),
+                .init(color: Color(mid.mixed(with: whiteShare, of: .white)), location: 0),
                 .init(color: Color(mid), location: dark ? 0.48 : 0.46),
                 .init(color: Color(deep), location: 1),
             ],
@@ -297,15 +324,18 @@ enum AUGradients {
 // MARK: Shadows — CSS values approximated (blur÷2 → SwiftUI radius)
 
 extension View {
-    /// `.au-lift` (cards).
+    /// `--au-lift` — `0 1px 2px rgba(74,48,26,.05), 0 10px 22px -16px rgba(74,48,26,.4)`.
+    /// The second layer's **-16px spread** shrinks the shadow shape well inside
+    /// the card, so the visible result is a faint pool a few points below it —
+    /// not the wide halo a plain blur-22 would paint.
     func auLift() -> some View {
-        shadow(color: Color.black.opacity(0.05), radius: 1, y: 1)
-            .shadow(color: Color(UIColor(hex: 0x4a301a)).opacity(0.4), radius: 5, y: 5)
+        shadow(color: Color(UIColor(hex: 0x4a301a)).opacity(0.05), radius: 1, y: 1)
+            .shadow(color: Color(UIColor(hex: 0x4a301a)).opacity(0.09), radius: 5, y: 5)
     }
 
-    /// `--au-soft` (glass panels).
+    /// `--au-soft` — `0 10px 26px -16px rgba(74,48,26,.5)` (glass panels).
     func auSoft() -> some View {
-        shadow(color: Color(UIColor(hex: 0x4a301a)).opacity(0.5), radius: 5, y: 5)
+        shadow(color: Color(UIColor(hex: 0x4a301a)).opacity(0.16), radius: 7, y: 7)
     }
 
     /// `--shadow-sm`.
