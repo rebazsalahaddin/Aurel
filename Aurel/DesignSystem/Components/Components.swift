@@ -830,9 +830,10 @@ struct AURays: View {
 
 // MARK: Illustration placeholder (`.au-ill`)
 
-/// The honest illustration placeholder: candy-stripe accent field, dashed
-/// accent border, the authored `ILL` id as kicker, `alt` as the caption.
-/// (CourseScreen.dc.html line 44 + lines 98–101.)
+/// The honest illustration placeholder (v2, IMPROVEMENT_PLAN.md §2.8):
+/// dusk-paper wash with a faint accent hatch and a hairline inset — the
+/// authored `ILL` id stays the kicker, `alt` stays the caption.
+/// (Honesty contract from CourseScreen.dc.html line 44 + lines 98–101.)
 struct IllustrationPlaceholder: View {
     let ill: IllustrationRef
     var height: CGFloat = 196
@@ -864,47 +865,64 @@ struct IllustrationPlaceholder: View {
         .clipShape(RoundedRectangle(cornerRadius: fullBleed ? 0 : cornerRadius, style: .continuous))
         .overlay(alignment: .bottom) {
             if fullBleed {
-                // `border-left:0;border-right:0;border-top:0` — bottom rule only.
+                // `border-left:0;border-right:0;border-top:0` — bottom rule
+                // only; v2 swaps the dashed wireframe rule for a hairline.
                 Rectangle()
-                    .strokeBorder(
-                        Color.auAccent.opacity(0.34),
-                        style: StrokeStyle(lineWidth: 2, dash: [5, 4])
-                    )
+                    .fill(Color.auAccentRamp(300).opacity(0.55))
                     .frame(height: 1)
+                    .padding(.horizontal, 10)
                     .clipped()
             } else {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(
-                        Color.auAccent.opacity(0.34),
-                        style: StrokeStyle(lineWidth: 1, dash: [5, 4])
-                    )
+                    .strokeBorder(Color.auAccentRamp(300).opacity(0.55), lineWidth: 1)
             }
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Illustration placeholder: \(ill.alt)")
     }
 
-    /// `repeating-linear-gradient(135deg, accent 7% 0–9px, transparent 9–18px)`
-    /// over `accent 5% + au-fill`.
+    /// v2 (IMPROVEMENT_PLAN.md §2.8): the candy-stripe wireframe becomes a
+    /// dusk-paper wash — warm light from the top-leading corner, a
+    /// sun-warm floor, and the stripe's descendant: a fainter 135° accent
+    /// hatch. Theme-adaptive through `auFill`; the washes use the
+    /// theme-fixed art ramps at low opacity so the field reads as authored
+    /// art direction while the commissioned assets are still pending.
     private struct StripeField: View {
         var body: some View {
-            Canvas { context, size in
-                context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(Color.auFill))
-                var stripe = Path()
-                let period: CGFloat = 18
-                let dy = size.width  // 45° projection across the square extent
-                var x0: CGFloat = -dy
-                while x0 < size.width + dy {
-                    stripe.move(to: CGPoint(x: x0, y: 0))
-                    stripe.addLine(to: CGPoint(x: x0 + dy, y: dy))
-                    stripe.addLine(to: CGPoint(x: x0 + dy + 9, y: dy))
-                    stripe.addLine(to: CGPoint(x: x0 + 9, y: 0))
-                    stripe.closeSubpath()
-                    x0 += period
+            ZStack {
+                Color.auFill
+                LinearGradient(
+                    stops: [
+                        .init(color: AUSceneArt.duskCream.opacity(0.55), location: 0),
+                        .init(color: AUSceneArt.duskCream.opacity(0.18), location: 0.45),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .topLeading, endPoint: .bottomTrailing
+                )
+                LinearGradient(
+                    stops: [
+                        .init(color: .clear, location: 0.6),
+                        .init(color: AUSceneArt.sunMid.opacity(0.10), location: 1),
+                    ],
+                    startPoint: .top, endPoint: .bottom
+                )
+                Canvas { context, size in
+                    var hatch = Path()
+                    let period: CGFloat = 26
+                    let dy = size.width  // 45° projection across the square extent
+                    var x0: CGFloat = -dy
+                    while x0 < size.width + dy {
+                        hatch.move(to: CGPoint(x: x0, y: 0))
+                        hatch.addLine(to: CGPoint(x: x0 + dy, y: dy))
+                        hatch.addLine(to: CGPoint(x: x0 + dy + 1.5, y: dy))
+                        hatch.addLine(to: CGPoint(x: x0 + 1.5, y: 0))
+                        hatch.closeSubpath()
+                        x0 += period
+                    }
+                    context.fill(hatch, with: .color(Color.auAccent.opacity(0.07)))
                 }
-                context.fill(stripe, with: .color(Color.auAccent.opacity(0.07)))
+                .allowsHitTesting(false)
             }
-            .allowsHitTesting(false)
         }
     }
 }

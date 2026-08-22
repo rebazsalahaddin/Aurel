@@ -30,6 +30,8 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
 
     func speak(_ text: String, slow: Bool) {
         stop()
+        // Feedback sounds never talk over the voice (IMPROVEMENT_PLAN §2.6).
+        AUSound.shared.isDucked = true
         // Learning takes ≈100–110 wpm; challenge ≈120–130 wpm
         // (AUDIO_STYLE_GUIDE.md) — AVSpeech rate 0.42 ≈ 108 wpm.
         let u = AVSpeechUtterance(string: text)
@@ -46,6 +48,7 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     func stop() {
         synthesizer.stopSpeaking(at: .immediate)
         speaking = false
+        AUSound.shared.isDucked = false
     }
 
     nonisolated func speechSynthesizer(
@@ -53,6 +56,7 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     ) {
         Task { @MainActor in
             self.speaking = false
+            AUSound.shared.isDucked = false
         }
     }
 }

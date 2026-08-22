@@ -264,6 +264,7 @@ final class AppRouter {
             reminder: p.swReminder, sound: p.swSound, haptics: p.swHaptics, weekly: p.swWeekly)
         themeMode = p.themeMode
         typeStep = p.typeStep
+        syncFeedbackGates()  // the persisted Haptics/Sound prefs gate the services
         screen = p.onboardedAt == nil ? .welcome : .home
     }
 
@@ -707,7 +708,16 @@ final class AppRouter {
 
     func toggleSw(_ k: WritableKeyPath<SwitchPrefs, Bool>) {
         sw[keyPath: k].toggle()
+        syncFeedbackGates()
         persist()
+    }
+
+    /// Stage-1 wiring (IMPROVEMENT_PLAN.md §2.6): the Haptics and Sound
+    /// settings gate the feedback services live — they were dead switches
+    /// before (audit B18).
+    func syncFeedbackGates() {
+        AUFeedback.isEnabled = sw.haptics
+        AUSound.shared.isEnabled = sw.sound
     }
 
     func toggleNotif(_ k: WritableKeyPath<NotifPrefs, Bool>) {

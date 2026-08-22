@@ -44,6 +44,7 @@ struct RootView: View {
                 env = AppEnvironment(modelContext: modelContext)
             }
             AUTypeScale.step = typeStep  // S1-001: the persisted text-size step
+            AUSound.shared.activate()  // Stage 1: the feedback-sound audio graph
         }
         // S1-001: the Settings text-size control drives the type scale live.
         .onChange(of: typeStep) { _, step in AUTypeScale.step = step }
