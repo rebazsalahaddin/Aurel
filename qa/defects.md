@@ -33,6 +33,15 @@ Statuses: `open → verified → fixing → fixed → retested-closed | deferred
 
 **S0-001 detail.** Source: authored exam-goal icon `…c0 1.7 2.6 3 5.8 3s5.8-1.3 5.8-3…` (design Aurel.dc.html goal screen glyph). The parser's command switch had `S`/`T` but no lowercase `s`/`t`; the fallback consumed zero tokens, so the scan index never advanced — `path(in:)` spun forever on the main thread during layout. Repro: render any `d` containing lowercase `s`/`t`; AX snapshot or layout triggers it. Also fixed: implicit M-repetition pairs drew as moves instead of lines (e.g. the close icon's `M18 6 6 18` half-X). Regression: `AurelTests/SVGPathShapeTests.swift` (every authored icon path returns; exam icon non-empty; implicit-M pairs draw lines; s/S/t/T parse).
 
+**S0-003 detail (design/transformation Stage 1 → fixed Stage 2).** The Stage-1 `AUSound` feedback service started an `AVAudioEngine` graph at launch (`RootView.task` → `AUSound.activate()` → `mainMixerNode`). When the simulator's audio server wedged mid-run, the IO-node teardown RPC-aborted the process: crash reports `Aurel-2026-08-22-182939.ips` / `-183006.ips` (`AURemoteIO::Cleanup` → `_ReportRPCTimeout` → `abort`), killing every later UI test's launch (test3/4/5 + Smoke cascade on the first ad-hoc run). Fix: engine-free rewrite — sounds synthesize to in-memory WAV and play through data-based `AVAudioPlayer`, constructed lazily on first play, every failure path fails soft, and no audio API is touched at launch (AUSound.swift header documents the evidence). Same failure mode would hit devices on audio-server hiccups — caught by the gate before it could ship.
+
+## Fixed (design/transformation Stage 2)
+
+| ID | Title | Sev | Fix summary | Retest |
+|---|---|---|---|---|
+| S0-003 | AVAudioEngine RPC-abort at launch when audio server wedged (see detail above) | S0 | engine-free `AVAudioPlayer` AUSound; launch-time activation removed | no new crash reports post-fix; unit tests 68/68; UI gate `qa/run-ui-full.sh` |
+| S3-007 | Dormant: quick-practice match-item state (`matchSel`/`matched`/`matchWrong`) declared+reset but never wired — a `.match` QuickItem could never complete | S3 (dormant) | logged, not fixed: `QuickItem.bank` never emits `.match` today; prototype match logic documented at Aurel V4.dc.html:1784–1795 for whoever wires it | n/a — unreachable today |
+
 ## Open (seeded from Phase 0 recon — to be verified/adjudicated in the loop)
 
 | ID | Title | Sev | Agent | Source ref | Status |

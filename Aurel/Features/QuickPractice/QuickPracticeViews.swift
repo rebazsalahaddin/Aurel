@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LessonRunnerView: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         let r = env.router
@@ -37,15 +38,30 @@ struct LessonRunnerView: View {
                 }
             }
 
-            // verdict dock
+            // verdict dock — the verdict slides in over the glass and the
+            // dock stays resident between items (§3.13a): only the banner
+            // content transitions, the container never re-pops.
             VStack(spacing: 0) {
                 if r.checked || r.nudge, let q = list.indices.contains(r.qi) ? list[r.qi] : nil,
                     q.type != .flash
                 {
                     verdict(q: q)
+                        .transition(
+                            reduceMotion
+                                ? .opacity
+                                : .opacity.combined(with: .offset(y: 10))
+                        )
                 }
                 primaryButton(list: list)
             }
+            .animation(
+                AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+                value: r.checked
+            )
+            .animation(
+                AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+                value: r.nudge
+            )
             .padding(.horizontal, 24)
             .padding(.top, 18)
             .padding(.bottom, 30)
@@ -68,6 +84,29 @@ struct LessonRunnerView: View {
             }
         }
         .auScreenEntrance()
+        // Stage-2 feedback (§3.13 / §2.6): the verdict moment fires haptic,
+        // sound, and the VoiceOver announcement together. Misses (both the
+        // first-try nudge and the reveal) ride `wrongShake`; the correct
+        // verdict rides `checked` — guarded so a revealed miss doesn't
+        // double-fire (its miss feedback already came from wrongShake).
+        .onChange(of: r.wrongShake) { _, _ in
+            AUFeedback.miss()
+            AUSound.shared.miss()
+            AUAX.verdict(correct: false)
+        }
+        .onChange(of: r.checked) { _, checked in
+            guard checked else { return }
+            let q = list.indices.contains(r.qi) ? list[r.qi] : nil
+            let ok =
+                q.map {
+                    r.sel == $0.answer
+                        || ($0.type == .order && r.built.joined(separator: " ") == $0.answerText)
+                } ?? false
+            guard ok else { return }
+            AUFeedback.correct()
+            AUSound.shared.correct()
+            AUAX.verdict(correct: true)
+        }
     }
 
     private var bank: [QuickItem] { QuickItem.bank(from: env.course) }
@@ -111,6 +150,11 @@ struct LessonRunnerView: View {
                 }
             }
 
+            if r.reviewMode {
+                // §3.13c: the mistake queue is a different run — say so.
+                ATag(text: "Review — loose ends", variant: .tint)
+                    .fixedSize()
+            }
             Text("\(r.qi + 1) / \(list.count)")
                 .font(.figtree(.regular, size: 11.5))
                 .foregroundStyle(Color.auText.opacity(0.45))
@@ -802,16 +846,20 @@ struct ResultView: View {
                     .frame(maxWidth: 290, alignment: .leading)
                     .padding(.bottom, 30)
 
-                // score strip
+                // score strip — §3.14b: the tiles stagger in as part of the
+                // completion ritual (60 ms apart, the authored stagger).
                 HStack(spacing: 0) {
                     statTile(
                         value: r.wasReview
                             ? "\(r.caught)/\(r.lastTotal)" : "\(r.correctCount)/\(max(1, scored))",
                         label: r.wasReview ? "Caught" : "Correct", tinted: true)
+                        .auStagger(0)
                     statTile(
-                        value: "\(r.wasReview ? r.caught : 12)",
+                        value: "\(r.wasReview ? r.caught : scored)",
                         label: r.wasReview ? "Strengthened" : "Words", tinted: false)
-                    statTile(value: r.wasReview ? "1" : "6", label: "Minutes", tinted: false)
+                        .auStagger(1)
+                    statTile(value: "\(r.sessionMinutes)", label: "Minutes", tinted: false)
+                        .auStagger(2)
                 }
                 .background(
                     RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auFill)
@@ -822,6 +870,13 @@ struct ResultView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
                 .auLift()
                 .padding(.bottom, 22)
+                // §3.14 AX: one summary beats three loose numerals.
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    r.wasReview
+                        ? "Caught \(r.caught) of \(r.lastTotal). \(r.caught) strengthened. \(r.sessionMinutes) minutes."
+                        : "Correct \(r.correctCount) of \(max(1, scored)). \(scored) words. \(r.sessionMinutes) minutes."
+                )
 
                 // streak card
                 ACard(radius: 28) {
@@ -834,7 +889,7 @@ struct ResultView: View {
                             )
                             .font(.caprasimo(size: 18))
                             Spacer()
-                            Text("1")
+                            Text("\(max(r.streak, 0))")
                                 .font(.figtree(.bold, size: 25))
                                 .monospacedDigit()
                                 .tracking(-0.5)
@@ -894,7 +949,8 @@ struct ResultView: View {
             .padding(.horizontal, 24)
             .padding(.top, 74)
             .padding(.bottom, 32)
-            .frame(minHeight: 874, alignment: .top)
+            // §3.13d: the authored 874 pt canvas frame is gone — the column
+            // flows to its content on every device height.
         }
         .background {
             // `.au-rays` + `.au-amb` (two drifting orbs) + `.au-contour`
@@ -907,18 +963,38 @@ struct ResultView: View {
             .ignoresSafeArea()
         }
         .auScreenEntrance()
+        // §3.14 completion moment: the calm ritual fires exactly once per
+        // result — success haptic, the three-note arpeggio, one summary
+        // announcement. No confetti (governance).
+        .onAppear {
+            guard !ritualFired else { return }
+            ritualFired = true
+            AUFeedback.lessonComplete()
+            AUSound.shared.complete()
+            AUAX.announce(
+                r.wasReview
+                    ? "Review finished. \(r.caught) of \(r.lastTotal) caught."
+                    : "Lesson finished. \(r.correctCount) of \(max(1, scored)) correct."
+            )
+        }
     }
+
+    @State private var ritualFired = false
 
     private var bank: [QuickItem] { QuickItem.bank(from: env.course) }
 
     private var resultWeekDots: some View {
-        HStack(spacing: 7) {
+        // §3.14: the strip is real history now — a dot fills when that
+        // day's two halves both landed (`weekCompletedDays`), today
+        // included; days after today stay quiet.
+        let completed = env.router.weekCompletedDays()
+        return HStack(spacing: 7) {
             ForEach(Array(["M", "T", "W", "T", "F", "S", "S"].enumerated()), id: \.offset) {
                 i, label in
                 VStack(spacing: 7) {
                     Capsule()
                         .fill(
-                            i == 0
+                            completed[i]
                                 ? AnyShapeStyle(
                                     LinearGradient(
                                         colors: [
@@ -931,7 +1007,7 @@ struct ResultView: View {
                                 : AnyShapeStyle(Color.auText.opacity(0.10))
                         )
                         .frame(height: 34)
-                        .shadow(color: i == 0 ? Color.auGlow : .clear, radius: 4, y: 3)
+                        .shadow(color: completed[i] ? Color.auGlow : .clear, radius: 4, y: 3)
                     Text(label)
                         .font(.figtree(.regular, size: 10))
                         .foregroundStyle(Color.auText.opacity(0.45))
@@ -939,6 +1015,8 @@ struct ResultView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("This week: \(completed.filter { $0 }.count) of 7 days complete")
     }
 
     private func statTile(value: String, label: String, tinted: Bool) -> some View {

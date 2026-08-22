@@ -40,6 +40,7 @@ struct CoursePlayerView: View {
 /// The close/back + crumb + lesson progress + sid chip header.
 private struct PlayerChrome: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let model: PlayerModel
     let bound: Bool
 
@@ -98,8 +99,24 @@ private struct PlayerChrome: View {
                     .id(model.p)
                     .transition(.opacity.combined(with: .offset(y: 11)))
             }
+
+            // The practice family's docked verdict + CTA (§3.9): the answer
+            // lands at the bottom edge and the CTA lives with it — the thumb
+            // never travels. Other screen families keep their inline CTAs.
+            if model.hasVerdictDock {
+                PlayerVerdictDock(model: model)
+                    .transition(
+                        reduceMotion
+                            ? .opacity
+                            : .move(edge: .bottom).combined(with: .opacity)
+                    )
+            }
         }
         .animation(.easeInOut(duration: 0.3), value: model.p)
+        .animation(
+            AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion),
+            value: model.hasVerdictDock
+        )
     }
 
     private var lessonPct: CGFloat {

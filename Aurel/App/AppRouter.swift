@@ -101,6 +101,9 @@ final class AppRouter {
     var caught = 0
     var wasReview = false
     var lastTotal = 0
+    /// §3.14: when the current run began — Result shows real elapsed
+    /// minutes instead of the fixture "6".
+    var sessionStart: Date? = nil
     var loginErr = ""
     var pending: PendingSpot? = nil
     var sceneTurn = 0
@@ -271,13 +274,7 @@ final class AppRouter {
     /// Write durable fields back to SwiftData.
     func persist() {
         guard let modelContext else { return }
-        let profile =
-            (try? modelContext.fetch(FetchDescriptor<LearnerProfile>()).first)
-            ?? {
-                let p = LearnerProfile()
-                modelContext.insert(p)
-                return p
-            }()
+        let profile = fetchOrCreateProfile()
         profile.goals = goals
         profile.level = level
         profile.email = email
@@ -313,6 +310,18 @@ final class AppRouter {
             profile.onboardedAt = profile.onboardedAt ?? Date()
         }
         try? modelContext.save()
+    }
+
+    /// The profile row persist()/upsertDayLog() write through — fetched,
+    /// created on first sight. (Extracted from persist(), Stage 2.)
+    private func fetchOrCreateProfile() -> LearnerProfile {
+        let existing = modelContext.flatMap { ctx in
+            (try? ctx.fetch(FetchDescriptor<LearnerProfile>()))?.first
+        }
+        if let existing { return existing }
+        let p = LearnerProfile()
+        modelContext?.insert(p)
+        return p
     }
 
     // MARK: Day rollover + streak accounting (S1-009)
@@ -361,6 +370,58 @@ final class AppRouter {
         if dayLesson && dayRecall && !dayCounted {
             dayCounted = true
             streak = dayStartStreak + 1
+        }
+    }
+
+    // MARK: Session + day history (Stage-2 data honesty, §3.14)
+
+    /// Real elapsed minutes of the current run, rounded up, minimum one —
+    /// the honest "Minutes" tile on Result.
+    var sessionMinutes: Int {
+        guard let sessionStart else { return 1 }
+        let secs = Date().timeIntervalSince(sessionStart)
+        return max(1, Int((secs / 60).rounded(.up)))
+    }
+
+    /// The day's halves land in a DayLog row (upsert, one row per day) so
+    /// Result / Streak / Progress render real history instead of fixture
+    /// numbers. Internal (not private) for the Stage-2 regression tests.
+    func upsertDayLog(caughtDelta: Int = 0, now: Date = Date()) {
+        guard let modelContext else { return }
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: now)
+        let logs = (try? modelContext.fetch(FetchDescriptor<DayLog>())) ?? []
+        let log =
+            logs.first { cal.isDate($0.day, inSameDayAs: today) }
+            ?? {
+                let l = DayLog(day: today, learner: fetchOrCreateProfile())
+                modelContext.insert(l)
+                return l
+            }()
+        log.lessonDone = dayLesson
+        log.recallDone = dayRecall
+        if caughtDelta > 0 { log.caught += caughtDelta }
+    }
+
+    /// The current week (Monday…Sunday) as completion booleans — a day
+    /// counts when both halves are done (governance), read from DayLog.
+    /// Days after today stay false.
+    func weekCompletedDays(now: Date = Date()) -> [Bool] {
+        let cal = Calendar.current
+        let logs: [DayLog]
+        if let modelContext, let fetched = try? modelContext.fetch(FetchDescriptor<DayLog>()) {
+            logs = fetched
+        } else {
+            logs = []
+        }
+        let today = cal.startOfDay(for: now)
+        let weekday = (cal.component(.weekday, from: today) + 5) % 7  // Mon = 0
+        return (0..<7).map { offset in
+            guard offset <= weekday,
+                let day = cal.date(byAdding: .day, value: offset - weekday, to: today)
+            else { return false }
+            return logs.first { cal.isDate($0.day, inSameDayAs: day) }
+                .map { $0.lessonDone && $0.recallDone } ?? false
         }
     }
 
@@ -476,6 +537,7 @@ final class AppRouter {
         dayLesson = true
         streak = max(streak, 1)
         dayHalfCompleted()
+        upsertDayLog()  // the course lesson is the day's first half (§3.14)
         lessonsDone = max(lessonsDone, baseLessons + (courseLesson + 1) - basePos)
         screen = .home
         persist()
@@ -495,6 +557,7 @@ final class AppRouter {
     // MARK: Quick practice (resetLesson / advance / check, lines 1903–1947)
 
     func resetLesson() {
+        sessionStart = Date()  // every run starts its own clock (§3.14)
         qi = 0
         sel = nil
         checked = false
@@ -567,6 +630,7 @@ final class AppRouter {
                 wasReview = true
                 dayRecall = true
                 dayHalfCompleted()
+                upsertDayLog(caughtDelta: caught)  // recall is the second half (§3.14)
                 arcs += 1
                 screen = .result
                 persist()
@@ -578,6 +642,7 @@ final class AppRouter {
             lessonsDone = max(lessonsDone, 1)
             dayLesson = true
             dayHalfCompleted()
+            upsertDayLog()  // the quick lesson is the day's first half (§3.14)
             screen = .result
             persist()
             return

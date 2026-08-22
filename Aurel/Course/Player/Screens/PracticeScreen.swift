@@ -7,6 +7,7 @@ import SwiftUI
 
 struct PracticeScreenView: View {
     let m: PlayerModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScreenColumn(topPad: 18, bottomPad: 26) {
@@ -41,21 +42,47 @@ struct PracticeScreenView: View {
 
             if let item = m.item {
                 itemView(item)
+                    // The hint ladder reveals rung-by-rung as misses land
+                    // (§3.9b) — one quick spring, reduced to a fade under
+                    // Reduce Motion.
+                    .animation(
+                        AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+                        value: m.wrong
+                    )
             }
 
             Spacer(minLength: 12)
 
             unlockNote
             pauseCard
-
-            if m.item != nil {
-                let canGo = m.itemCanGo
-                APillButton(
-                    title: m.i + 1 < list.count ? "Next" : "Go on", icon: .arrow, player: true,
-                    disabled: !canGo, aid: "au.player.go-on"
-                ) {
-                    m.advance()
-                }
+            // The Go-on/Next CTA now lives in the chrome's verdict dock
+            // (§3.9a) with the verdict banner — removed from the column.
+        }
+        // Stage-2 feedback (§3.9e / §2.6): color, motion, and haptic fire in
+        // the same frame at the verdict moment. Order items are detected via
+        // the completed assembly; option items via the pick state.
+        .onChange(of: m.wrong) { _, wrong in
+            guard wrong > 0 else { return }
+            AUFeedback.miss()
+            AUSound.shared.miss()
+            AUAX.verdict(correct: false)
+        }
+        .onChange(of: m.done) { _, done in
+            guard done, m.sel != nil, !m.isQuiet, !m.revealed else { return }
+            AUFeedback.correct()
+            AUSound.shared.correct()
+            AUAX.verdict(correct: true)
+        }
+        .onChange(of: m.tileComplete) { wasComplete, isComplete in
+            guard !wasComplete, isComplete else { return }
+            if m.tileCorrect {
+                AUFeedback.correct()
+                AUSound.shared.correct()
+                AUAX.verdict(correct: true)
+            } else {
+                AUFeedback.miss()
+                AUSound.shared.miss()
+                AUAX.verdict(correct: false)
             }
         }
     }
@@ -512,25 +539,8 @@ struct PracticeScreenView: View {
         // digit strip (testlet)
         digitStrip
 
-        // feedback
-        if m.sel != nil && !m.isQuiet {
-            let ok = m.done && !m.revealed && m.isCorrect(item)
-            HStack(alignment: .top, spacing: 10) {
-                AUIcon(kind: .check, size: 18, color: ok ? .auOkText : .auErrText)
-                    .padding(.top, 1)
-                Text(ok ? (item.ok ?? "Correct.") : (item.no ?? "Try again."))
-                    .font(.figtree(.regular, size: 14.5))
-                    .auLine(14.5, 1.45)
-            }
-            .padding(.horizontal, 15)
-            .padding(.vertical, 13)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
-                    ok ? Color.auOkBg : Color.auErrBg)
-            )
-            .foregroundStyle(ok ? Color.auOkText : Color.auErrText)
-            .padding(.bottom, 11)
-        }
+        // The verdict banner now lives in the chrome's dock with the CTA
+        // (§3.9a) — the column keeps only the scaffolded learning supports.
 
         // hint ladder
         if m.wrong > 0, let hints = item.hints, !hints.isEmpty {
@@ -556,6 +566,10 @@ struct PracticeScreenView: View {
                         style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
             )
             .padding(.bottom, 11)
+            // §3.9b: each rung slides in under the quick spring — the
+            // ladder is felt rung by rung; a plain fade under Reduce Motion.
+            .transition(
+                reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 8)))
         }
 
         if m.wrong > 0, let confusable = item.confusable {
@@ -569,6 +583,9 @@ struct PracticeScreenView: View {
             .background(Capsule().fill(Color.auTintBg))
             .foregroundStyle(Color.auTintText)
             .padding(.bottom, 11)
+            // §3.9d: the chip enters with the ladder's same quick spring.
+            .transition(
+                reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 8)))
         }
 
         if case .practice(let pr) = m.cur?.screen.payload, pr.chartChip == true {
@@ -579,6 +596,9 @@ struct PracticeScreenView: View {
                 .background(Capsule().strokeBorder(Color.auEdge, lineWidth: 1))
                 .foregroundStyle(Color.auText.opacity(0.58))
                 .padding(.bottom, 11)
+                // §3.9d: rides the screen-swap transaction on entrance.
+                .transition(
+                    reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 8)))
         }
     }
 
@@ -792,25 +812,8 @@ struct PracticeScreenView: View {
             )
             .padding(.bottom, 14)
 
-            if m.tileComplete {
-                Text(
-                    m.tileCorrect
-                        ? (task.ok.isEmpty ? "Correct." : task.ok)
-                        : (task.no.isEmpty
-                            ? "Not yet — tap a tile again to take it back." : task.no)
-                )
-                .font(.figtree(.regular, size: 14))
-                .auLine(14, 1.45)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 15)
-                .padding(.vertical, 13)
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(m.tileCorrect ? Color.auOkBg : Color.auErrBg)
-                )
-                .foregroundStyle(m.tileCorrect ? Color.auOkText : Color.auErrText)
-                .padding(.bottom, 11)
-            }
+            // The completed-assembly verdict moved to the chrome's dock
+            // (§3.9a); the hint block below stays at the point of need.
 
             // Hint after a wrong ordering (line 1590: `showHint = …
             // (tileComplete && !tileCorrect)` for order items). The prototype's
@@ -839,8 +842,18 @@ struct PracticeScreenView: View {
                             style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
                 )
                 .padding(.bottom, 11)
+                // §3.9c: the wrong-ordering hint slides in with the same
+                // quick spring the option ladder uses (S2-011).
+                .transition(
+                    reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 8)))
             }
         }
+        // The assembly hint appears/leaves on the tileComplete flip, which
+        // the wrong-keyed animation never sees — give it its own key.
+        .animation(
+            AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+            value: m.tileComplete
+        )
     }
 
     // MARK: Options (lines 483–506)

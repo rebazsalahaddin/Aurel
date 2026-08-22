@@ -3,10 +3,18 @@ import AVFoundation
 // MARK: - Feedback sounds (IMPROVEMENT_PLAN.md §2.6)
 //
 // "Soft and sparse" (the Settings copy). Four authored sounds, synthesized
-// on device at runtime — quiet sine partials with soft envelopes. No
-// recorded assets, nothing fabricated: these are UI feedback, not course
-// audio. Gated by Settings → Sound (`SwitchPrefs.sound`) and silenced while
-// the TTS speaker is talking.
+// to in-memory WAV at runtime — quiet sine partials with soft envelopes —
+// played through data-based `AVAudioPlayer`. No recorded assets, nothing
+// fabricated: these are UI feedback, not course audio. Gated by Settings →
+// Sound (`SwitchPrefs.sound`) and silenced while the TTS speaker talks.
+//
+// Deliberately engine-free: an AVAudioEngine graph was tried first and its
+// IO-node teardown can RPC-abort the process when the audio server is
+// wedged (crash reports 2026-08-22 18:29/18:30 — `AURemoteIO::Cleanup` →
+// `_ReportRPCTimeout` → abort, reached from `mainMixerNode` at launch).
+// AVAudioPlayer owns no graph, constructs lazily, and every failure path
+// fails soft (`try?` / a false return), so a bad audio server can cost a
+// sound — never the app. No audio API is touched at launch at all.
 
 @MainActor
 final class AUSound {
@@ -24,7 +32,7 @@ final class AUSound {
     }
 
     /// The Settings gate — AppRouter writes this whenever `sw.sound`
-    /// changes (and once at launch from the persisted preference).
+    /// changes (and once at load from the persisted preference).
     var isEnabled = true
 
     /// Set by `Speaker` while TTS is talking — feedback sounds never
@@ -34,9 +42,11 @@ final class AUSound {
     /// Test-visible: how many sounds passed the gates since launch.
     private(set) var playCount = 0
 
-    private var engine: AVAudioEngine?
-    private var player: AVAudioPlayerNode?
-    private var buffers: [Kind: AVAudioPCMBuffer] = [:]
+    /// One player per kind, built lazily on first play. When construction
+    /// fails (audio server unavailable — unit-test hosts, wedged sims),
+    /// the kind is latched off for the session instead of retrying.
+    private var players: [Kind: AVAudioPlayer] = [:]
+    private var unavailable: Set<Kind> = []
 
     private static let sampleRate: Double = 44_100
 
@@ -45,50 +55,35 @@ final class AUSound {
     func complete() { play(.complete) }
     func milestone() { play(.milestone) }
 
-    /// Starts the audio graph once (from RootView). If audio hardware is
-    /// unavailable — unit tests, some simulators — sounds stay silently off
-    /// and haptics alone carry the feedback; the play decisions are still
-    /// counted so the gates remain testable.
-    func activate() {
-        guard engine == nil else { return }
-        let e = AVAudioEngine()
-        let p = AVAudioPlayerNode()
-        e.attach(p)
-        guard
-            let format = AVAudioFormat(
-                standardFormatWithSampleRate: Self.sampleRate, channels: 1)
-        else { return }
-        e.connect(p, to: e.mainMixerNode, format: format)
-        do {
-            try e.start()
-            p.play()
-            engine = e
-            player = p
-        } catch {
-            // Leave engine nil — decisions still count, audio stays off.
-        }
-    }
-
     private func play(_ kind: Kind) {
         guard isEnabled, !isDucked else { return }
         playCount += 1
-        guard let player, let buffer = buffer(for: kind) else { return }
-        player.scheduleBuffer(buffer, completionHandler: nil)
+        guard let player = player(for: kind) else { return }
+        player.currentTime = 0
+        player.play()
     }
 
-    private func buffer(for kind: Kind) -> AVAudioPCMBuffer? {
-        if let cached = buffers[kind] { return cached }
+    private func player(for kind: Kind) -> AVAudioPlayer? {
+        if let cached = players[kind] { return cached }
+        guard !unavailable.contains(kind) else { return nil }
         guard
-            let format = AVAudioFormat(
-                standardFormatWithSampleRate: Self.sampleRate, channels: 1),
-            let rendered = Self.render(kind, format: format)
-        else { return nil }
-        buffers[kind] = rendered
-        return rendered
+            let data = Self.wavData(for: kind),
+            let player = try? AVAudioPlayer(
+                data: data, fileTypeHint: AVFileType.wav.rawValue)
+        else {
+            unavailable.insert(kind)  // fail soft, once
+            return nil
+        }
+        player.volume = 0.9
+        player.prepareToPlay()
+        players[kind] = player
+        return player
     }
+}
 
-    // MARK: Synthesis — quiet sine partials with soft envelopes.
+// MARK: Synthesis — quiet sine partials with soft envelopes → Int16 WAV.
 
+extension AUSound {
     private struct Note {
         let frequency: Double
         let start: Double
@@ -134,31 +129,52 @@ final class AUSound {
         }
     }
 
-    private static func render(_ kind: Kind, format: AVAudioFormat) -> AVAudioPCMBuffer? {
+    /// Render one kind as mono Int16 PCM inside a canonical 44-byte WAV
+    /// header — directly playable by `AVAudioPlayer(data:)`.
+    private static func wavData(for kind: Kind) -> Data? {
         let (notes, total) = notes(for: kind)
-        let frames = AVAudioFrameCount(total * format.sampleRate)
-        guard frames > 0,
-            let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frames),
-            let channel = buffer.floatChannelData?[0]
-        else { return nil }
-        buffer.frameLength = frames
-        let sr = format.sampleRate
+        let frameCount = Int(total * sampleRate)
+        guard frameCount > 0 else { return nil }
+
+        // Samples
+        var samples = [Int16](repeating: 0, count: frameCount)
         let attack: Double = 0.008
-        for frame in 0..<Int(frames) {
-            let t = Double(frame) / sr
-            var sample: Float = 0
+        for frame in 0..<frameCount {
+            let t = Double(frame) / sampleRate
+            var value: Double = 0
             for note in notes {
                 let local = t - note.start
                 guard local >= 0, local <= note.duration else { continue }
-                // Explicit sub-expressions — the compound form defeats the
-                // type-checker across the Float/Double boundary.
                 let rampUp: Double = min(1, local / attack)
                 let fade: Double = exp(-note.decay * local)
                 let phase: Double = 2 * Double.pi * note.frequency * local
-                sample += note.amplitude * Float(rampUp * fade * sin(phase))
+                value += Double(note.amplitude) * rampUp * fade * sin(phase)
             }
-            channel[frame] = sample
+            samples[frame] = Int16(max(-1, min(1, value)) * Double(Int16.max))
         }
-        return buffer
+
+        // Canonical WAV header (mono, 16-bit, 44.1 kHz).
+        let byteRate = UInt32(sampleRate) * 2
+        let dataLen = UInt32(frameCount * 2)
+        var wav = Data(capacity: 44 + frameCount * 2)
+        func append<T>(_ value: T) {
+            withUnsafeBytes(of: value) { wav.append(contentsOf: $0) }
+        }
+        wav.append(contentsOf: Array("RIFF".utf8))
+        append(UInt32(36 + dataLen))                  // chunk size
+        wav.append(contentsOf: Array("WAVE".utf8))
+        wav.append(contentsOf: Array("fmt ".utf8))
+        append(UInt32(16))                            // fmt chunk size
+        append(UInt16(1))                             // PCM
+        append(UInt16(1))                             // mono
+        append(UInt32(sampleRate))
+        append(byteRate)
+        append(UInt16(2))                             // block align
+        append(UInt16(16))                            // bits per sample
+        wav.append(contentsOf: Array("data".utf8))
+        append(dataLen)
+        samples.withUnsafeBytes { wav.append(contentsOf: $0) }
+        return wav
     }
 }
+

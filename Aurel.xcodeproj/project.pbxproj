@@ -17,6 +17,7 @@
 		206E601D70BC3CFD0A1C2F6A52CD403E /* QuickBank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FDD07A459AF14E6B0ABB52ADA48194 /* QuickBank.swift */; };
 		2437097DABD6D8BFA4BBFEFEE11E20D6 /* AssemblyScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9C297E535AF94479E90F3D74EADE50 /* AssemblyScreens.swift */; };
 		2D3783DD8576188F909AD924B1C2F052 /* CourseModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538833CE0D0B6C831413A67F774503B4 /* CourseModels.swift */; };
+		2D9BFA93A8AFF6BB162F7DAC6E1DCBBD /* PlayerVerdictDock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF5B7483264F4F08A91FB062331F8BFB /* PlayerVerdictDock.swift */; };
 		3439E070C7E68CFB9BEBAC9E00D6E5F5 /* AUAX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4E3C72E4372FA97E2E8DF8A57BE053 /* AUAX.swift */; };
 		367A581AF83E4D6A5EA37E80390F8355 /* ProgressProfileSettingsPaywall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C1D92E0778B74765199C549BE52C10 /* ProgressProfileSettingsPaywall.swift */; };
 		36EA0857E16F3C922EC656A929228FA2 /* course-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B7C3DC99E8E15A98F026D005AB0663D4 /* course-manifest.json */; };
@@ -38,6 +39,7 @@
 		7242BD8322619D646B6321BB72728278 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86DA4CDC85C8791C5428BC7CD78C608 /* LoginView.swift */; };
 		7499843242BAD7212ED22B548B2457B6 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */; };
 		77DBC556690E9A198420D9094A4B83F0 /* MilestoneSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D770124347632C09276F79DB220AE79 /* MilestoneSuite.swift */; };
+		7D0E71FCDDD6EC9C891A99D18B91A8B4 /* Stage2CoreLoopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 420A021EF6B3797A3F66A585BE27CF8D /* Stage2CoreLoopTests.swift */; };
 		7E949D87DCCF235BB508404ACF21D287 /* design-tokens.json in Resources */ = {isa = PBXBuildFile; fileRef = AA63B953F616151E262C391E0E332F41 /* design-tokens.json */; };
 		8110C63B45A232CF95916A8A4D420662 /* Figtree-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A63521FA91725A3E594DFAACBA24F070 /* Figtree-SemiBold.ttf */; };
 		8265BAFB6C0E6FDD6FEEC5531156AA5F /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */; };
@@ -104,6 +106,7 @@
 		2FF95420D3B441BE457F1AB3F8B60498 /* StreakBoardViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakBoardViews.swift; sourceTree = "<group>"; };
 		307FBEBFB78F4741282B48E9FEE8DE2E /* AUIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AUIcon.swift; sourceTree = "<group>"; };
 		399402AEBA1EB7F8C70D7408542B0153 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		420A021EF6B3797A3F66A585BE27CF8D /* Stage2CoreLoopTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage2CoreLoopTests.swift; sourceTree = "<group>"; };
 		44E530909B70A6BEC1FE9CFEF2F0944C /* OFL-Figtree.txt */ = {isa = PBXFileReference; path = "OFL-Figtree.txt"; sourceTree = "<group>"; };
 		45FDD07A459AF14E6B0ABB52ADA48194 /* QuickBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickBank.swift; sourceTree = "<group>"; };
 		4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -148,6 +151,7 @@
 		CF4001F90497175302D4CCD9F83BC039 /* AppDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDatabase.swift; sourceTree = "<group>"; };
 		D7B5188F775D9AAF0CF93A5AA72A6E9C /* CoursePlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursePlayerView.swift; sourceTree = "<group>"; };
 		DB020B48DFB0E9B4211D154C58A6EC56 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DF5B7483264F4F08A91FB062331F8BFB /* PlayerVerdictDock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerVerdictDock.swift; sourceTree = "<group>"; };
 		DFAB7BAEA689D85557BAC25BB91ED072 /* ArcSkyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcSkyView.swift; sourceTree = "<group>"; };
 		DFC4E4637D4BA30372F04F2E96752E7E /* Typography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typography.swift; sourceTree = "<group>"; };
 		E25DFA36A0830D2D54B75F4D3FFB5B70 /* Figtree-Bold.ttf */ = {isa = PBXFileReference; path = "Figtree-Bold.ttf"; sourceTree = "<group>"; };
@@ -242,6 +246,7 @@
 				719BF620D42C590029B403F2ABF49C56 /* PlayerModelTests.swift */,
 				A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */,
 				86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */,
+				420A021EF6B3797A3F66A585BE27CF8D /* Stage2CoreLoopTests.swift */,
 				CED7EDA25646801897D337FBC6D61A5A /* SVGPathShapeTests.swift */,
 			);
 			path = AurelTests;
@@ -372,6 +377,7 @@
 				522FDB23C95E1C1E2FCE123ED83212CB /* Screens */,
 				D7B5188F775D9AAF0CF93A5AA72A6E9C /* CoursePlayerView.swift */,
 				B367F3146D919ABA3DA2BA467EA4DDFF /* PlayerModel.swift */,
+				DF5B7483264F4F08A91FB062331F8BFB /* PlayerVerdictDock.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -600,6 +606,7 @@
 				F3C727EB27483A1E8916A3CA70275ECA /* Models.swift in Sources */,
 				B4F144AF219C59605143A02BF2AE7381 /* OnboardingViews.swift in Sources */,
 				4209B168FC50A5E94045FB4D79A98A8B /* PlayerModel.swift in Sources */,
+				2D9BFA93A8AFF6BB162F7DAC6E1DCBBD /* PlayerVerdictDock.swift in Sources */,
 				FC53BE7B0A428A4F631BBF883A6AC34D /* PracticeHubViews.swift in Sources */,
 				87AA29122BE05705D6106275A86DE488 /* PracticeScreen.swift in Sources */,
 				367A581AF83E4D6A5EA37E80390F8355 /* ProgressProfileSettingsPaywall.swift in Sources */,
@@ -631,6 +638,7 @@
 				534AF064178C699DDDC27F7EB696F633 /* SVGPathShapeTests.swift in Sources */,
 				9F2A60D18FC61D93D3191B4596A1135C /* ServicesTests.swift in Sources */,
 				8265BAFB6C0E6FDD6FEEC5531156AA5F /* SmokeTests.swift in Sources */,
+				7D0E71FCDDD6EC9C891A99D18B91A8B4 /* Stage2CoreLoopTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
