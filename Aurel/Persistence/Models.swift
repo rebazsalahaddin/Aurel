@@ -58,6 +58,10 @@ final class LearnerProfile {
     var themeMode: Int = 0  // 0 system · 1 light · 2 dark
     var typeStep: Int = 2  // text-size index; 2 = standard (of 1…3)
 
+    /// Stage-4 calm milestone moments (§3.15/F9): streak days whose authored
+    /// moment ("Seven quiet days.") has already been shown — once each.
+    var milestonesSeen: [Int] = []
+
     var onboardedAt: Date?
 
     @Relationship(deleteRule: .cascade, inverse: \DayLog.learner)
@@ -75,6 +79,9 @@ final class DayLog {
     var lessonDone: Bool = false
     var recallDone: Bool = false
     var caught: Int = 0  // words caught in review that day
+    /// Stage-4 data honesty (§3.18): practised minutes recorded by run end
+    /// (quick-practice session timing so far — the chart never invents time).
+    var minutes: Int = 0
     var learner: LearnerProfile?
 
     init(day: Date, learner: LearnerProfile? = nil) {

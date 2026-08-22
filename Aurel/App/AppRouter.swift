@@ -101,6 +101,15 @@ final class AppRouter {
     var caught = 0
     var wasReview = false
     var lastTotal = 0
+    /// §3.6: the home path draw-in plays on the first reveal only — the
+    /// flag lives here so it survives navigation within the session.
+    var homePathSeen = false
+    /// §3.15/F9: streak milestones whose moment has already shown (mirror
+    /// of LearnerProfile.milestonesSeen).
+    var milestonesSeen: [Int] = []
+    /// §3.18: when the current course run began — the honest session clock
+    /// for course minutes (the quick runner has its own `sessionStart`).
+    var courseStart: Date? = nil
     /// §3.14: when the current run began — Result shows real elapsed
     /// minutes instead of the fixture "6".
     var sessionStart: Date? = nil
@@ -267,6 +276,7 @@ final class AppRouter {
             reminder: p.swReminder, sound: p.swSound, haptics: p.swHaptics, weekly: p.swWeekly)
         themeMode = p.themeMode
         typeStep = p.typeStep
+        milestonesSeen = p.milestonesSeen
         syncFeedbackGates()  // the persisted Haptics/Sound prefs gate the services
         screen = p.onboardedAt == nil ? .welcome : .home
     }
@@ -306,6 +316,7 @@ final class AppRouter {
         profile.swWeekly = sw.weekly
         profile.themeMode = themeMode
         profile.typeStep = typeStep
+        profile.milestonesSeen = milestonesSeen
         if screen != .welcome && screen != .goal && screen != .commit && screen != .plan {
             profile.onboardedAt = profile.onboardedAt ?? Date()
         }
@@ -386,7 +397,8 @@ final class AppRouter {
     /// The day's halves land in a DayLog row (upsert, one row per day) so
     /// Result / Streak / Progress render real history instead of fixture
     /// numbers. Internal (not private) for the Stage-2 regression tests.
-    func upsertDayLog(caughtDelta: Int = 0, now: Date = Date()) {
+    /// Stage-4 addition: run minutes accrue into the row (§3.18 chart).
+    func upsertDayLog(caughtDelta: Int = 0, minutesDelta: Int = 0, now: Date = Date()) {
         guard let modelContext else { return }
         let cal = Calendar.current
         let today = cal.startOfDay(for: now)
@@ -401,6 +413,7 @@ final class AppRouter {
         log.lessonDone = dayLesson
         log.recallDone = dayRecall
         if caughtDelta > 0 { log.caught += caughtDelta }
+        if minutesDelta > 0 { log.minutes += minutesDelta }
     }
 
     /// The current week (Monday…Sunday) as completion booleans — a day
@@ -423,6 +436,235 @@ final class AppRouter {
             return logs.first { cal.isDate($0.day, inSameDayAs: day) }
                 .map { $0.lessonDone && $0.recallDone } ?? false
         }
+    }
+
+    // MARK: Data honesty (Stage 4 — §3.15/§3.17/§3.18/§3.19)
+
+    /// All DayLog rows, oldest first — the real history Streak/Progress
+    /// render from (F8 aggregation helpers).
+    func dayLogs() -> [DayLog] {
+        guard let modelContext,
+            let logs = try? modelContext.fetch(FetchDescriptor<DayLog>())
+        else { return [] }
+        return logs.sorted { $0.day < $1.day }
+    }
+
+    /// Completed lessons from LessonRecord (real run history), oldest first.
+    func lessonRecords() -> [LessonRecord] {
+        guard let modelContext,
+            let records = try? modelContext.fetch(FetchDescriptor<LessonRecord>())
+        else { return [] }
+        return records.sorted { $0.finishedAt < $1.finishedAt }
+    }
+
+    /// The learner's honest start date — onboarding completion (fallback:
+    /// profile creation). Drives "Since {date}" on Streak/Progress (§3.15/§3.18).
+    func profileStartDate() -> Date? {
+        guard let modelContext,
+            let p = (try? modelContext.fetch(FetchDescriptor<LearnerProfile>()))?.first
+        else { return nil }
+        return p.onboardedAt ?? p.createdAt
+    }
+
+    /// The last day either half of the arc was done — "Last practised …"
+    /// on Progress (§3.18).
+    func lastPractisedDay() -> Date? {
+        dayLogs().last { $0.lessonDone || $0.recallDone }?.day
+    }
+
+    /// Elapsed minutes of the current course run, rounded up, minimum one —
+    /// the honest course-side minutes (§3.18).
+    func courseMinutes() -> Int {
+        guard let courseStart else { return 1 }
+        let secs = Date().timeIntervalSince(courseStart)
+        return max(1, Int((secs / 60).rounded(.up)))
+    }
+
+    /// A completed course lesson lands in LessonRecord (§3.18) — idempotent
+    /// per (chapter, lesson) so re-runs never double-count.
+    func recordLessonCompletion(now: Date = Date()) {
+        guard let modelContext else { return }
+        let existing = (try? modelContext.fetch(FetchDescriptor<LessonRecord>())) ?? []
+        guard !existing.contains(where: { $0.chapterIdx == chapterIdx && $0.lessonIdx == courseLesson })
+        else { return }
+        modelContext.insert(
+            LessonRecord(
+                chapterIdx: chapterIdx, lessonIdx: courseLesson, endPos: coursePos,
+                wasReview: false, learner: fetchOrCreateProfile()))
+    }
+
+    /// Longest run of consecutive complete days over real history — the
+    /// honest "Best" figure on Streak (§3.15). Pure: unit-testable.
+    static func bestStreak(over logs: [DayLog], calendar: Calendar = .current) -> Int {
+        let completeDays = logs.filter { $0.lessonDone && $0.recallDone }.map { $0.day }.sorted()
+        var best = 0
+        var run = 0
+        var prev: Date? = nil
+        for day in completeDays {
+            if let prev, calendar.dateComponents([.day], from: prev, to: day).day == 1 {
+                run += 1
+            } else {
+                run = 1
+            }
+            best = max(best, run)
+            prev = day
+        }
+        return max(best, 0)
+    }
+
+    /// Practised minutes per week for the last 8 weeks (index 0 = oldest
+    /// week, 7 = the current week), from DayLog history — empty weeks are
+    /// zero-height, never invented (§3.18). Pure: unit-testable.
+    static func weeklyMinutes(
+        _ logs: [DayLog], now: Date = Date(), calendar: Calendar = .current
+    ) -> [Int] {
+        let today = calendar.startOfDay(for: now)
+        let weekday = (calendar.component(.weekday, from: today) + 5) % 7  // Mon = 0
+        guard let currentWeekStart = calendar.date(
+            byAdding: .day, value: -weekday, to: today
+        ) else { return Array(repeating: 0, count: 8) }
+        return (0..<8).map { back in
+            let weeksBack = 7 - back
+            guard let weekStart = calendar.date(
+                byAdding: .day, value: -(weeksBack * 7), to: currentWeekStart
+            ) else { return 0 }
+            return logs
+                .filter { $0.day >= weekStart && ($0.day < currentWeekStart || back == 7) }
+                .reduce(0) { $0 + $1.minutes }
+        }
+    }
+
+    /// Total practised minutes over real history (§3.18). Pure.
+    static func totalMinutes(_ logs: [DayLog]) -> Int {
+        logs.reduce(0) { $0 + $1.minutes }
+    }
+
+    /// One month-grid cell state (§3.15): a completed day, a past day that
+    /// did not complete, a future day, or a day outside the month.
+    enum MonthDayState: Equatable { case done, quiet, future, outside }
+
+    /// The current month's grid states, index 0 = the 1st (§3.15). Pure:
+    /// unit-testable.
+    static func monthStates(
+        _ logs: [DayLog], now: Date = Date(), calendar: Calendar = .current
+    ) -> [MonthDayState] {
+        let today = calendar.startOfDay(for: now)
+        let comps = calendar.dateComponents([.year, .month], from: today)
+        guard let monthStart = calendar.date(from: comps) else {
+            return Array(repeating: .outside, count: 31)
+        }
+        let daysInMonth = calendar.range(of: .day, in: .month, for: today)?.count ?? 30
+        return (0..<31).map { i in
+            guard i < daysInMonth,
+                let date = calendar.date(byAdding: .day, value: i, to: monthStart)
+            else { return .outside }
+            if date > today { return .future }
+            return logs.first { calendar.isDate($0.day, inSameDayAs: date) }
+                .map { $0.lessonDone && $0.recallDone ? MonthDayState.done : .quiet } ?? .quiet
+        }
+    }
+
+    // MARK: Mistake ladder persistence (§3.17)
+
+    /// Live MistakeItem rows for the current queue — bankIndex → row. The
+    /// Review screen derives its real due labels from these.
+    func mistakeRows() -> [Int: MistakeItem] {
+        guard let modelContext,
+            let rows = try? modelContext.fetch(FetchDescriptor<MistakeItem>())
+        else { return [:] }
+        return Dictionary(rows.map { ($0.bankIndex, $0) }, uniquingKeysWith: { a, _ in a })
+    }
+
+    /// Real due label for a queue item (§3.17): "Due now", "Due tomorrow",
+    /// or "Due in N days" — from the row's actual next-due date. Items
+    /// without a row (legacy queue entries) fall back to "Due tomorrow",
+    /// the ladder's first rung. Pure: unit-testable.
+    static func dueLabel(
+        for row: MistakeItem?, now: Date = Date(), calendar: Calendar = .current
+    ) -> String {
+        guard let row else { return "Due tomorrow" }
+        let days =
+            calendar.dateComponents(
+                [.day], from: calendar.startOfDay(for: now), to: calendar.startOfDay(for: row.dueAt)
+            ).day ?? 0
+        if row.dueAt <= now { return "Due now" }
+        if days <= 0 { return "Due today" }
+        if days == 1 { return "Due tomorrow" }
+        return "Due in \(days) days"
+    }
+
+    /// Whether a queue item is due (its ladder date has arrived) — the
+    /// urgency tier for the badge styling (§3.17b).
+    static func isDue(_ row: MistakeItem?, now: Date = Date()) -> Bool {
+        guard let row else { return false }
+        return row.dueAt <= now
+    }
+
+    /// Land the run's outcome on the mistake ladder (§3.17): catches widen
+    /// the interval (1 → 3 → 7 → 14 → 30 → leaves the list), misses reset
+    /// to the first rung. `caught`/`missed` are bank indexes. The visible
+    /// queue re-syncs to the live rows (soonest due first).
+    func advanceMistakeLadder(caught: [Int], missed: [Int], now: Date = Date()) {
+        guard let modelContext else { return }
+        let cal = Calendar.current
+        let rows = mistakeRows()
+        for idx in caught {
+            if let row = rows[idx] {
+                if let next = ReviewScheduler.nextInterval(after: row.intervalDays) {
+                    row.intervalDays = next
+                    row.dueAt = cal.date(byAdding: .day, value: next, to: now) ?? now
+                } else {
+                    // The 30-day catch stuck — the item leaves the list.
+                    modelContext.delete(row)
+                }
+            } else {
+                // Caught without a row (a legacy queue entry): the first
+                // catch widens to the second rung and stays.
+                let row = MistakeItem(
+                    bankIndex: idx, word: "", intervalDays: 3,
+                    learner: fetchOrCreateProfile())
+                row.dueAt = cal.date(byAdding: .day, value: 3, to: now) ?? now
+                modelContext.insert(row)
+            }
+        }
+        for idx in missed {
+            if let row = rows[idx] {
+                row.intervalDays = 1
+                row.dueAt = cal.date(byAdding: .day, value: 1, to: now) ?? now
+            } else {
+                modelContext.insert(
+                    MistakeItem(bankIndex: idx, word: "", intervalDays: 1, learner: fetchOrCreateProfile()))
+            }
+        }
+        syncQueueFromRows()
+    }
+
+    /// Re-derive the visible queue from the live MistakeItem rows.
+    private func syncQueueFromRows() {
+        guard let modelContext,
+            let rows = try? modelContext.fetch(FetchDescriptor<MistakeItem>())
+        else { return }
+        mistakes = rows.sorted { $0.dueAt < $1.dueAt }.map { $0.bankIndex }
+    }
+
+    // MARK: Calm milestone moments (§3.15/F9)
+
+    /// Milestone days whose authored moment is due — the streak has reached
+    /// the day and the moment has not been shown yet. 7 / 30 / 100. Pure.
+    static func dueMilestones(streak: Int, seen: [Int]) -> [Int] {
+        [7, 30, 100].filter { streak >= $0 && !seen.contains($0) }
+    }
+
+    /// Show-once bookkeeping: log the milestone to the profile (§3.15).
+    func markMilestoneShown(_ day: Int) {
+        guard let modelContext,
+            let p = (try? modelContext.fetch(FetchDescriptor<LearnerProfile>()))?.first
+        else { return }
+        if !p.milestonesSeen.contains(day) {
+            p.milestonesSeen.append(day)
+            try? modelContext.save()
+        }
+        milestonesSeen = p.milestonesSeen
     }
 
     // MARK: Simple navigation (the `go` map, line 2027)
@@ -508,6 +750,7 @@ final class AppRouter {
             ? course.chapterEndPos(chapterIdx)
             : course.coursePos(chapterIdx: chapterIdx, lessonIdx: i)
         pending = nil
+        courseStart = Date()  // §3.18 session clock
         screen = .course
     }
 
@@ -518,6 +761,7 @@ final class AppRouter {
         starter = false
         reviewMode = false
         pending = nil
+        courseStart = Date()  // §3.18 session clock
     }
 
     var lastCoursePos = 0  // trackCourse(n)
@@ -537,8 +781,14 @@ final class AppRouter {
         dayLesson = true
         streak = max(streak, 1)
         dayHalfCompleted()
-        upsertDayLog()  // the course lesson is the day's first half (§3.14)
+        // §3.18: the course run's real minutes, from its own session clock.
+        let mins = courseMinutes()
+        upsertDayLog(minutesDelta: mins)
+        // §3.18: the completed course lesson lands in LessonRecord — the
+        // Progress aggregates read these.
+        recordLessonCompletion()
         lessonsDone = max(lessonsDone, baseLessons + (courseLesson + 1) - basePos)
+        courseStart = nil
         screen = .home
         persist()
     }
@@ -546,6 +796,7 @@ final class AppRouter {
     func resumePending() {
         coursePos = pending?.pos ?? coursePos
         pending = nil
+        if courseStart == nil { courseStart = Date() }  // resume keeps counting
         screen = .course
     }
 
@@ -619,18 +870,24 @@ final class AppRouter {
         if qi >= list.count - 1 {
             if reviewMode {
                 // Mistakes hold display indexes; map them back to bank indexes.
-                let backIdx =
+                let wrongIdx =
                     mistakes
                     .filter { queue.indices.contains($0) }
                     .map { queue[$0] }
-                caught = queue.count - backIdx.count
+                let caughtIdx = queue.filter { !wrongIdx.contains($0) }
+                caught = caughtIdx.count
                 lastTotal = queue.count
-                mistakes = backIdx
+                // §3.17: land the run on the real ladder — catches widen
+                // (1→3→7→14→30→leaves), misses reset to the first rung.
+                // The visible queue re-syncs from the rows.
+                advanceMistakeLadder(caught: caughtIdx, missed: wrongIdx)
                 reviewMode = false
                 wasReview = true
                 dayRecall = true
                 dayHalfCompleted()
-                upsertDayLog(caughtDelta: caught)  // recall is the second half (§3.14)
+                upsertDayLog(
+                    caughtDelta: caught, minutesDelta: sessionMinutes
+                )  // recall is the second half (§3.14)
                 arcs += 1
                 screen = .result
                 persist()
@@ -642,7 +899,10 @@ final class AppRouter {
             lessonsDone = max(lessonsDone, 1)
             dayLesson = true
             dayHalfCompleted()
-            upsertDayLog()  // the quick lesson is the day's first half (§3.14)
+            // §3.17: the run's misses land on the ladder (display indexes
+            // are bank indexes in a normal run — the list is the bank).
+            advanceMistakeLadder(caught: [], missed: mistakes)
+            upsertDayLog(minutesDelta: sessionMinutes)  // the quick lesson is the day's first half (§3.14)
             screen = .result
             persist()
             return

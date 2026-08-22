@@ -7,9 +7,20 @@ import SwiftUI
 
 struct StreakView: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// §3.15(d): the calm milestone moment, shown once per milestone.
+    @State private var milestone: Int? = nil
+    /// §3.15(c): drives the today-cell ring pulse.
+    @State private var todayRingOn = false
 
     var body: some View {
         let r = env.router
+        let logs = r.dayLogs()
+        let week = r.weekCompletedDays()
+        let month = AppRouter.monthStates(logs)
+        let best = max(AppRouter.bestStreak(over: logs), r.streak)
+
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
@@ -23,13 +34,24 @@ struct StreakView: View {
                     .buttonStyle(.auTap)
                     .accessibilityLabel("Back")
                     Spacer()
-                    Text("Since 15 August")
+                    // §3.15(a): the real start date, from the profile.
+                    Text(sinceText)
                         .font(.figtree(.regular, size: 11))
                         .tracking(1.54)
                         .textCase(.uppercase)
                         .foregroundStyle(Color.auText.opacity(0.45))
                 }
                 .padding(.bottom, 32)
+
+                // §3.15(d): the calm milestone moment — authored line, dawn
+                // wash, warm bell; once per milestone, logged to the profile.
+                if let milestone {
+                    MilestoneMomentCard(day: milestone)
+                        .padding(.bottom, 22)
+                        .transition(
+                            reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 10)))
+                        .onTapGesture { self.milestone = nil }
+                }
 
                 Text("\(max(r.streak, 0))")
                     .font(.caprasimo(size: 96))
@@ -45,7 +67,9 @@ struct StreakView: View {
 
                 HStack(spacing: 18) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(r.baseLessons > 0 ? "47" : "\(max(1, r.streak))")
+                        // §3.15(b): Best from the real DayLog history — never
+                        // a fixture number.
+                        Text("\(best)")
                             .font(.figtree(.bold, size: 17))
                             .monospacedDigit()
                         Text("Best")
@@ -57,12 +81,15 @@ struct StreakView: View {
                     Rectangle().fill(Color.auDivider).frame(width: 1, height: 34)
                     VStack(alignment: .leading, spacing: 4) {
                         HStack(spacing: 5) {
-                            Circle()
-                                .fill(
-                                    r.baseLessons > 0 ? Color.auText.opacity(0.12) : Color.auAccent2
-                                )
-                                .frame(width: 11, height: 11)
-                            Circle().fill(Color.auAccent2).frame(width: 11, height: 11)
+                            // Rest days: the month's two grace tokens, the
+                            // spent ones quiet (real `graceUsed`).
+                            ForEach(0..<2, id: \.self) { i in
+                                Circle()
+                                    .fill(
+                                        i < restDaysLeft ? Color.auAccent2 : Color.auText.opacity(0.12)
+                                    )
+                                    .frame(width: 11, height: 11)
+                            }
                         }
                         .frame(height: 17)
                         Text("Rest days left")
@@ -90,14 +117,16 @@ struct StreakView: View {
                             .textCase(.uppercase)
                             .foregroundStyle(Color.auText.opacity(0.45))
                             .padding(.bottom, 16)
-                        streakWeekDots
+                        // §3.15(c): every cell from real DayLog history; today
+                        // carries the ring pulse even while incomplete.
+                        streakWeekDots(week)
                     }
                     .padding(22)
                 }
                 .padding(.bottom, 16)
 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("August")
+                    Text(monthName)
                         .font(.figtree(.regular, size: 11))
                         .tracking(1.32)
                         .textCase(.uppercase)
@@ -108,11 +137,7 @@ struct StreakView: View {
                         spacing: 7
                     ) {
                         ForEach(0..<31, id: \.self) { i in
-                            Circle()
-                                .fill(monthDotColor(i))
-                                .frame(maxWidth: .infinity)
-                                .aspectRatio(1, contentMode: .fit)
-                                .modifier(PopIn(delay: Double(i) * 0.014))
+                            monthDot(i, state: month.indices.contains(i) ? month[i] : .outside)
                         }
                     }
                 }
@@ -143,29 +168,98 @@ struct StreakView: View {
         }
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
+        // §3.15(d): the milestone moment fires once — the due check is pure,
+        // the show-once bookkeeping lives in the profile.
+        .task {
+            let due = AppRouter.dueMilestones(streak: r.streak, seen: r.milestonesSeen)
+            if let m = due.first {
+                withAnimation(AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion)) {
+                    milestone = m
+                }
+                r.markMilestoneShown(m)
+                AUFeedback.milestone()
+                AUSound.shared.milestone()
+                AUAX.announce(milestoneLine(m))
+            }
+        }
     }
 
-    private var streakWeekDots: some View {
-        HStack(spacing: 7) {
+    // MARK: Real figures (§3.15)
+
+    /// "Since 22 August" — the profile's honest start date.
+    private var sinceText: String {
+        guard let start = env.router.profileStartDate() else { return "Day one" }
+        let f = DateFormatter()
+        f.dateFormat = "d MMMM"
+        return "Since \(f.string(from: start))"
+    }
+
+    /// The current month's real name.
+    private var monthName: String {
+        let f = DateFormatter()
+        f.dateFormat = "MMMM"
+        return f.string(from: Date())
+    }
+
+    /// Grace tokens left this month (two built in, S1-009).
+    private var restDaysLeft: Int {
+        let r = env.router
+        let thisMonth = StreakEngine.monthStamp(Date())
+        let used = r.graceMonth == thisMonth ? r.graceUsed : 0
+        return max(0, StreakEngine.graceDaysPerMonth - used)
+    }
+
+    /// The authored milestone line (§3.15d) — calm, no confetti.
+    private func milestoneLine(_ day: Int) -> String {
+        switch day {
+        case 7: "Seven quiet days."
+        case 30: "Thirty quiet days."
+        default: "A hundred quiet days."
+        }
+    }
+
+    private func streakWeekDots(_ week: [Bool]) -> some View {
+        let cal = Calendar.current
+        let todayIdx = (cal.component(.weekday, from: Date()) + 5) % 7  // Mon = 0
+        return HStack(spacing: 7) {
             ForEach(Array(["M", "T", "W", "T", "F", "S", "S"].enumerated()), id: \.offset) {
                 i, label in
+                let isToday = i == todayIdx
                 VStack(spacing: 8) {
-                    Capsule()
-                        .fill(
-                            i == 0
-                                ? AnyShapeStyle(
-                                    LinearGradient(
-                                        colors: [
-                                            Color.auAccent.mixed(with: 0.26, of: .white),
-                                            Color.auAccent,
-                                        ],
-                                        startPoint: .top, endPoint: .bottom
-                                    )
-                                )
-                                : AnyShapeStyle(Color.auText.opacity(0.10))
-                        )
-                        .frame(height: 34)
-                        .shadow(color: i == 0 ? Color.auGlow : .clear, radius: 4, y: 3)
+                    ZStack {
+                        Capsule()
+                            .fill(
+                                week.indices.contains(i) && week[i]
+                                    ? AnyShapeStyle(
+                                        LinearGradient(
+                                            colors: [
+                                                Color.auAccent.mixed(with: 0.26, of: .white),
+                                                Color.auAccent,
+                                            ],
+                                            startPoint: .top, endPoint: .bottom
+                                        ))
+                                    : AnyShapeStyle(Color.auText.opacity(0.10))
+                            )
+                            .frame(height: 34)
+                            .shadow(
+                                color: week.indices.contains(i) && week[i] ? Color.auGlow : .clear,
+                                radius: 4, y: 3)
+                        // §3.15(c): the today ring — accent hairline that
+                        // quietly pulses while the day is still open.
+                        if isToday {
+                            Capsule()
+                                .strokeBorder(
+                                    Color.auAccent.opacity(todayRingOn ? 0.55 : 0.15),
+                                    lineWidth: todayRingOn ? 2 : 1)
+                                .frame(height: 34)
+                                .onAppear {
+                                    guard !reduceMotion else { return }
+                                    withAnimation(
+                                        .easeInOut(duration: 2.2).repeatForever(autoreverses: true)
+                                    ) { todayRingOn = true }
+                                }
+                        }
+                    }
                     Text(label)
                         .font(.figtree(.regular, size: 10.5))
                         .foregroundStyle(Color.auText.opacity(0.45))
@@ -173,6 +267,26 @@ struct StreakView: View {
                 .frame(maxWidth: .infinity)
             }
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("This week: \(week.filter { $0 }.count) of 7 days complete")
+    }
+
+    private func monthDot(_ i: Int, state: AppRouter.MonthDayState) -> some View {
+        Group {
+            switch state {
+            case .outside:
+                Color.clear
+            case .future:
+                Circle().fill(Color.auText.opacity(0.05))
+            case .quiet:
+                Circle().fill(Color.auText.opacity(0.08))
+            case .done:
+                Circle().fill(Color.auAccent)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .aspectRatio(1, contentMode: .fit)
+        .modifier(PopIn(delay: Double(i) * 0.014))
     }
 
     private var streakNote: String {
@@ -181,15 +295,69 @@ struct StreakView: View {
         if s == 1 { return "One day. The habit underneath is the point, not the number." }
         return "Six weeks of most days. Long enough that it carries itself now."
     }
+}
 
-    private func monthDotColor(_ i: Int) -> Color {
-        let s = env.router.streak
-        if s > 1 {
-            if i < 15 { return (i == 4 || i == 11) ? Color.auText.opacity(0.10) : .auAccent }
-            return Color.auText.opacity(0.05)
+// MARK: Milestone moment (§3.15d / F9)
+
+/// The calm milestone card — an authored line over a dawn-glow wash. No
+/// confetti, no fanfare: one line, a bell, and it never repeats.
+struct MilestoneMomentCard: View {
+    let day: Int
+
+    private var line: String {
+        switch day {
+        case 7: "Seven quiet days."
+        case 30: "Thirty quiet days."
+        default: "A hundred quiet days."
         }
-        if i == 14 && s > 0 { return .auAccent }
-        return i < 14 ? Color.auText.opacity(0.08) : Color.auText.opacity(0.05)
+    }
+
+    private var sub: String {
+        switch day {
+        case 7: "The habit underneath is holding."
+        case 30: "A month of most days — it carries itself now."
+        default: "A hundred days. Extraordinary, quietly."
+        }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("Milestone")
+                .font(.figtree(.bold, size: 10.5))
+                .tracking(1.47)
+                .textCase(.uppercase)
+                .foregroundStyle(Color.auAccentText)
+            Text(line)
+                .font(.caprasimo(size: 22))
+                .auHeadLine(22, 1.25)
+                .foregroundStyle(Color.auText)
+            Text(sub)
+                .font(.figtree(.regular, size: 13))
+                .auLine(13, 1.5)
+                .foregroundStyle(Color.auText.opacity(0.58))
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            ZStack(alignment: .topLeading) {
+                // The dawn-glow wash — the same warm radial the home header
+                // carries, kept soft.
+                RadialGradient(
+                    stops: [
+                        .init(color: Color.auAccent.opacity(0.20), location: 0),
+                        .init(color: .clear, location: 0.9),
+                    ],
+                    center: UnitPoint(x: 0.2, y: 0), startRadius: 0, endRadius: 320
+                )
+                RoundedRectangle(cornerRadius: 26, style: .continuous).fill(Color.auFill)
+            }
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                .strokeBorder(Color.auAccent.opacity(0.24), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -264,6 +432,20 @@ struct LeaderboardView: View {
                         .font(.figtree(.regular, size: 12.5))
                         .foregroundStyle(Color.auText.opacity(0.55))
                         .padding(.bottom, 18)
+
+                    // §3.23(a): the board is a labeled sample until a cohort
+                    // backend exists — the promise stays honest.
+                    HStack(spacing: 7) {
+                        AUIcon(kind: .sparkle, size: 13, color: .auTintText)
+                        Text("Sample group — cohorts arrive with online accounts")
+                            .font(.figtree(.semibold, size: 11))
+                            .auLine(11, 1.4)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(Color.auTintBg))
+                    .foregroundStyle(Color.auTintText)
+                    .padding(.bottom, 18)
 
                     if !r.boardOut {
                         ACard(radius: 24) {
@@ -450,12 +632,18 @@ struct LeaderboardView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .fill(
-                        row.me ? Color.auFill.mixed(with: 0.15, of: Color.auAccent) : Color.auFill)
+                        // §3.23(b): the my-row wash is a step stronger than the
+                        // field — emphasis without shouting.
+                        row.me
+                            ? Color.auFill.mixed(with: 0.22, of: Color.auAccent) : Color.auFill)
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .strokeBorder(
-                        row.me ? Color.auAccent.opacity(0.30) : Color.auEdge, lineWidth: 1)
+                        row.me ? Color.auAccent.opacity(0.38) : Color.auEdge, lineWidth: 1)
             }
         )
         .padding(.bottom, 5)
+        // §3.23(b): VoiceOver hears which row is yours.
+        .accessibilityValue(row.me ? "You" : "")
+        .accessibilityLabel("\(ordinal(row.rank)), \(row.name), \(row.score) words")
     }
 }

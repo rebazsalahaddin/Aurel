@@ -22,37 +22,74 @@ struct ProgressView: View {
     private let mastery = ["Not started", "Seen", "Practised", "Familiar", "Strong", "Mastered"]
     private let mfill: [Double] = [0.03, 0.1, 0.3, 0.52, 0.78, 1]
 
+    /// §3.18(b): skills derive from real LessonRecord aggregates — each
+    /// completed course lesson credits the skills its authored type tag
+    /// carries (V vocabulary · G grammar · C conversation · R reading
+    /// comprehension · M mixed reviews every skill it touches).
     private var skills: [Skill] {
         let r = env.router
-        let raw: [(String, Int, Int)]
-        if r.baseLessons > 0 {
-            raw = [
-                ("Vocabulary", 142, 4), ("Grammar", 96, 3), ("Listening", 38, 2),
-                ("Conversation", 24, 2), ("Speaking", 4, 1),
-            ]
-        } else {
-            raw = [
-                ("Vocabulary", r.lessonsDone * 8, r.lessonsDone > 0 ? 2 : 1),
-                ("Grammar", r.lessonsDone * 4, r.lessonsDone > 0 ? 2 : 1),
-                ("Listening", r.lessonsDone * 3, r.lessonsDone > 0 ? 2 : 1),
-                ("Conversation", 0, 0),
-                ("Speaking", 0, 0),
-            ]
+        let done = r.lessonRecords().filter { !$0.wasReview }
+        var counts: [String: Int] = [
+            "Vocabulary": 0, "Grammar": 0, "Listening": 0, "Conversation": 0, "Speaking": 0,
+        ]
+        for record in done {
+            let tag =
+                course.chapters.indices.contains(record.chapterIdx)
+                ? course.chapters[record.chapterIdx].lessons.indices.contains(record.lessonIdx)
+                    ? course.chapters[record.chapterIdx].lessons[record.lessonIdx].type : ""
+                : ""
+            for letter in tag {
+                switch letter {
+                case "V": counts["Vocabulary", default: 0] += 1
+                case "G": counts["Grammar", default: 0] += 1
+                case "C": counts["Conversation", default: 0] += 1
+                case "R": counts["Listening", default: 0] += 1
+                case "M":
+                    counts["Vocabulary", default: 0] += 1
+                    counts["Grammar", default: 0] += 1
+                    counts["Listening", default: 0] += 1
+                    counts["Conversation", default: 0] += 1
+                default: break
+                }
+            }
         }
-        let sorted = raw.sorted { ($0.2, $0.1) < ($1.2, $1.1) }
+        // "Speaking" carries no authored lesson tag — the speak practice
+        // surface credits it honestly: a real take recorded this run
+        // counts as one.
+        if r.speakTake > 0 { counts["Speaking"] = 1 }
+
+        let order = ["Vocabulary", "Grammar", "Listening", "Conversation", "Speaking"]
+        let raw = order.map { ($0, counts[$0] ?? 0) }
+        let sorted = raw.enumerated()
+            .sorted { ($0.element.1, $0.offset) < ($1.element.1, $1.offset) }
+            .map { $0.element }
         return sorted.enumerated().map { i, k in
             Skill(
                 label: k.0,
-                state: k.2,
+                state: state(for: k.1),
                 items: k.1,
                 meta: i == 0
-                    ? (k.2 == 0 ? "Not started — worth ten minutes" : "Weakest — worth ten minutes")
+                    ? (k.1 == 0 ? "Not started — worth ten minutes" : "Weakest — worth ten minutes")
                     : (k.1 == 0
-                        ? "Nothing recorded yet" : "\(k.1) items \(mastery[k.2].lowercased())"),
+                        ? "Nothing recorded yet" : "\(k.1) lesson\(k.1 == 1 ? "" : "s") \(mastery[state(for: k.1)].lowercased())"),
                 weakest: i == 0
             )
         }
     }
+
+    /// The mastery tier for a completed-lesson count.
+    private func state(for count: Int) -> Int {
+        switch count {
+        case 0: 0
+        case 1: 1
+        case 2: 2
+        case 3: 3
+        case 4...7: 4
+        default: 5
+        }
+    }
+
+    private var course: CourseStore { env.course }
 
     var body: some View {
         let r = env.router
@@ -62,17 +99,17 @@ struct ProgressView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(alignment: .firstTextBaseline) {
-                        Text("Since 15 August")
+                        // §3.18(a): the real start date, from the profile.
+                        Text(sinceText)
                             .font(.figtree(.bold, size: 10.5))
                             .tracking(1.68)
                             .textCase(.uppercase)
                             .foregroundStyle(Color.auAccentText)
                         Spacer()
-                        Text(
-                            r.baseLessons > 0 ? "Last practised Thursday" : "Nothing practised yet"
-                        )
-                        .font(.figtree(.regular, size: 11.5))
-                        .foregroundStyle(Color.auText.opacity(0.55))
+                        // §3.18(a): the real last-practised day, from DayLog.
+                        Text(lastPractisedText)
+                            .font(.figtree(.regular, size: 11.5))
+                            .foregroundStyle(Color.auText.opacity(0.55))
                     }
                     .padding(.bottom, 2)
 
@@ -125,7 +162,7 @@ struct ProgressView: View {
                                 .padding(.vertical, 16)
                             }
                             .buttonStyle(.auTap)
-                            .accessibilityLabel("\(k.label): \(mastery[k.state]), \(k.items) items")
+                            .accessibilityLabel("\(k.label): \(mastery[k.state]), \(k.items) lesson\(k.items == 1 ? "" : "s")")
                             .overlay(alignment: .bottom) { Divider().overlay(Color.auDivider) }
                         }
                     }
@@ -163,14 +200,18 @@ struct ProgressView: View {
 
                         HStack(alignment: .bottom, spacing: 8) {
                             ForEach(Array(bars.enumerated()), id: \.offset) { i, h in
-                                practiceBar(index: i, height: h)
+                                practiceBar(index: i, height: h, hasHistory: hasHistory)
                                     .modifier(GrowBar(delay: Double(i) * 0.06))
                             }
                         }
                         .frame(height: 96)
+                        // §3.18(d): the chart carries one AX line.
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(chartAxSummary)
 
                         HStack {
-                            Text("Jun")
+                            // §3.18(c): the real month at the chart's left edge.
+                            Text(chartStartMonth)
                                 .font(.figtree(.regular, size: 10))
                                 .foregroundStyle(Color.auText.opacity(0.40))
                             Spacer()
@@ -180,7 +221,7 @@ struct ProgressView: View {
                         }
                         .padding(.top, 9)
 
-                        if r.baseLessons == 0 {
+                        if !hasHistory {
                             Text("Eight weeks from now this will say something.")
                                 .font(.figtree(.regular, size: 13.5))
                                 .auLine(13.5, 1.55)
@@ -260,14 +301,59 @@ struct ProgressView: View {
         return r.basePos + (r.lessonsDone - r.baseLessons)
     }
 
-    private var wordsTotal: Int {
-        let r = env.router
-        return r.baseLessons > 0 ? 412 + (r.lessonsDone - r.baseLessons) * 12 : r.lessonsDone * 12
+    /// §3.18(a): "Since 22 August" — the profile's honest start date.
+    private var sinceText: String {
+        guard let start = env.router.profileStartDate() else { return "Day one" }
+        let f = DateFormatter()
+        f.dateFormat = "d MMMM"
+        return "Since \(f.string(from: start))"
     }
 
-    private var minsTotal: Int {
+    /// §3.18(a): "Last practised today / yesterday / on Friday" — the real
+    /// last day either half of the arc was done.
+    private var lastPractisedText: String {
+        guard let last = env.router.lastPractisedDay() else { return "Nothing practised yet" }
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let days = cal.dateComponents([.day], from: last, to: today).day ?? 0
+        if days <= 0 { return "Last practised today" }
+        if days == 1 { return "Last practised yesterday" }
+        if days < 7 {
+            let f = DateFormatter()
+            f.dateFormat = "EEEE"
+            return "Last practised \(f.string(from: last))"
+        }
+        let f = DateFormatter()
+        f.dateFormat = "d MMMM"
+        return "Last practised \(f.string(from: last))"
+    }
+
+    /// §3.18: words the completed lessons actually carry — counted from the
+    /// course's own vocabulary cards (real course data, real records), never
+    /// a per-lesson estimate.
+    private var wordsTotal: Int {
         let r = env.router
-        return r.baseLessons > 0 ? 268 + (r.lessonsDone - r.baseLessons) * 6 : r.lessonsDone * 6
+        let done = Set(
+            r.lessonRecords().filter { !$0.wasReview }.map { "\($0.chapterIdx)-\($0.lessonIdx)" })
+        guard !done.isEmpty else { return 0 }
+        var words = 0
+        for f in env.course.flat {
+            guard done.contains("\(indexOf(ch: f.chapter.id))-\(f.lesson.n - 1)") else { continue }
+            if case .cards(let sc) = f.screen.payload {
+                words += sc.cards?.count ?? 0
+            }
+        }
+        return words
+    }
+
+    /// The chapter's index for a chapter id ("A1-C03" → 2).
+    private func indexOf(ch id: String) -> Int {
+        env.course.chapters.firstIndex { $0.id == id } ?? 0
+    }
+
+    /// §3.18: real minutes over the whole history, from DayLog.
+    private var minsTotal: Int {
+        AppRouter.totalMinutes(env.router.dayLogs())
     }
 
     private var weakestCta: String {
@@ -276,17 +362,44 @@ struct ProgressView: View {
         return "Start a lesson"
     }
 
+    /// §3.18(c): minutes per week from real DayLog history — empty weeks
+    /// render zero-height bars (no invented history).
     private var bars: [Int] {
-        env.router.baseLessons > 0
-            ? [34, 52, 41, 68, 57, 74, 62, 88]
-            : [22, 30, 26, 38, 33, 44, 40, 58]
+        AppRouter.weeklyMinutes(env.router.dayLogs())
     }
 
-    private func practiceBar(index: Int, height: Int) -> some View {
-        let hasProgress = env.router.baseLessons > 0
+    /// The month label at the chart's left edge — the real month 8 weeks back.
+    private var chartStartMonth: String {
+        guard let start = Calendar.current.date(byAdding: .weekOfYear, value: -7, to: Date()) else {
+            return ""
+        }
+        let f = DateFormatter()
+        f.dateFormat = "MMM"
+        return f.string(from: start)
+    }
+
+    /// §3.18(d): the one-line AX summary of the chart.
+    private var chartAxSummary: String {
+        let weeks = bars
+        let total = weeks.reduce(0, +)
+        let busiest = weeks.max() ?? 0
+        return
+            "Time practised, last 8 weeks: \(total) minutes total. Busiest week \(busiest) minutes."
+    }
+
+    /// §3.18(c): whether any real minutes exist — empty history renders the
+    /// quiet dashed scaffold, never invented bars.
+    private var hasHistory: Bool {
+        bars.contains { $0 > 0 }
+    }
+
+    /// Bar heights map real minutes onto the 96 pt track (10 min ≈ full).
+    private func practiceBar(index: Int, height: Int, hasHistory: Bool) -> some View {
         let isToday = index == 7
+        // Empty history: a quiet 6 pt dashed scaffold per week — zero bars.
+        let h = hasHistory ? min(96, CGFloat(height) * 9.6) : 6
         let colors: [Color] = {
-            if hasProgress {
+            if hasHistory {
                 let color = isToday ? Color.auAccent : Color.auAccentRamp(300)
                 return [color, color]
             }
@@ -299,7 +412,7 @@ struct ProgressView: View {
         return RoundedRectangle(cornerRadius: 6, style: .continuous)
             .fill(LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom))
             .overlay {
-                if !hasProgress && !isToday {
+                if !hasHistory && !isToday {
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .strokeBorder(
                             Color.auText.opacity(0.15),
@@ -308,11 +421,12 @@ struct ProgressView: View {
                 }
             }
             .shadow(
-                color: isToday && !hasProgress ? Color.auAccent.opacity(0.28) : .clear, radius: 7,
+                color: isToday && !hasHistory ? Color.auAccent.opacity(0.28) : .clear, radius: 7,
                 y: 6
             )
-            .frame(height: CGFloat(height))
+            .frame(height: h)
             .frame(maxHeight: 96, alignment: .bottom)
+            .accessibilityHidden(true)  // the chart carries one AX line (§3.18d)
     }
 
     private func tagBg(_ s: Int) -> Color {
@@ -391,7 +505,8 @@ struct ProfileView: View {
                             Text("Mira Aldrin")
                                 .font(.caprasimo(size: 26))
                                 .tracking(-0.52)
-                            Text("A1 · Foundation — joined today")
+                            // §3.19: the real join date, from the profile.
+                            Text("A1 · Foundation — \(joinedText)")
                                 .font(.figtree(.regular, size: 13))
                                 .foregroundStyle(Color.auText.opacity(0.52))
                         }
@@ -485,7 +600,7 @@ struct ProfileView: View {
                         .foregroundStyle(Color.auText.opacity(0.50))
                         .padding(.bottom, 12)
 
-                    if r.lessonsDone > 0 {
+                    if !milestones.isEmpty {
                         VStack(spacing: 0) {
                             ForEach(Array(milestones.enumerated()), id: \.offset) { i, m in
                                 HStack(alignment: .top, spacing: 13) {
@@ -591,18 +706,50 @@ struct ProfileView: View {
         .auScreenEntrance()
     }
 
+    /// §3.19: milestones render only from real events — completed chapter
+    /// lessons, the first finished lesson, streak runs — derived from
+    /// LessonRecord/DayLog. Nothing done, no rows (the honest empty state).
     private var milestones: [(label: String, when: String, done: Bool)] {
         let r = env.router
-        let far = r.baseLessons > 0
-        var rows: [(String, String, Bool)] = [
-            ("Greeted someone and given your name.", "Chapter one", far),
-            ("Spelled a name and given a number.", "Chapter two", far),
-            ("Said where you are from and what you do.", "Chapter three", false),
-            ("Seven days, unbroken.", far ? "Streak" : "Seven complete arcs", far && r.streak >= 7),
-            ("Checkpoint Review 1 passed.", "Chapter four — not yet written", false),
+        var rows: [(String, String, Bool)] = []
+
+        // A first lesson really finished.
+        if r.lessonsDone > 0 {
+            rows.append(("A start is a start.", "The first lesson", true))
+        }
+
+        // Completed chapters, from real lesson records.
+        let records = r.lessonRecords().filter { !$0.wasReview }
+        let chapterMilestones: [(Int, String, String)] = [
+            (0, "Greeted someone and given your name.", "Chapter one"),
+            (1, "Spelled a name and given a number.", "Chapter two"),
+            (2, "Said where you are from and what you do.", "Chapter three"),
         ]
-        if !far { rows.insert(("A start is a start.", "Today", r.lessonsDone > 0), at: 0) }
+        for (idx, label, when) in chapterMilestones
+        where records.contains(where: { $0.chapterIdx == idx }) {
+            rows.append((label, when, true))
+        }
+
+        // The seven-day run, from real streak history.
+        let best = max(AppRouter.bestStreak(over: r.dayLogs()), r.streak)
+        if best >= 7 {
+            rows.append(("Seven days, unbroken.", "Streak", true))
+        }
+
         return rows.map { (label: $0.0, when: $0.1, done: $0.2) }
+    }
+
+    /// §3.19: "joined today" / "joined 22 August" — the real profile start.
+    private var joinedText: String {
+        guard let start = env.router.profileStartDate() else { return "joined today" }
+        let cal = Calendar.current
+        let days = cal.dateComponents(
+            [.day], from: cal.startOfDay(for: start), to: cal.startOfDay(for: Date())
+        ).day ?? 0
+        if days <= 0 { return "joined today" }
+        let f = DateFormatter()
+        f.dateFormat = "d MMMM"
+        return "joined \(f.string(from: start))"
     }
 
     private func profileStat(_ value: String, _ label: String) -> some View {

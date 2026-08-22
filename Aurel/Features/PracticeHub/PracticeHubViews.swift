@@ -837,9 +837,15 @@ struct ReviewView: View {
                 .padding(.bottom, 26)
 
                 VStack(spacing: 12) {
+                    // §3.17: due badges come from the ladder's real rows —
+                    // actual next-due dates, never positional guesses.
+                    let rows = r.mistakeRows()
                     ForEach(Array(r.mistakes.enumerated()), id: \.offset) { k, mi in
                         let it = bank.indices.contains(mi) ? bank[mi] : nil
-                        reviewCard(k: k, item: it)
+                        reviewCard(
+                            k: k, item: it,
+                            due: AppRouter.dueLabel(for: rows[mi]),
+                            urgent: AppRouter.isDue(rows[mi]))
                     }
                 }
 
@@ -886,7 +892,7 @@ struct ReviewView: View {
         .auScreenEntrance()
     }
 
-    private func reviewCard(k: Int, item: QuickItem?) -> some View {
+    private func reviewCard(k: Int, item: QuickItem?, due: String, urgent: Bool) -> some View {
         let kind: String = {
             guard let item else { return "Practice" }
             switch item.type {
@@ -913,7 +919,6 @@ struct ReviewView: View {
                     ? $0.hint : (!$0.why.isEmpty ? $0.why : "Held back for another look.")
             } ?? "Held back for another look."
         let src = item?.src ?? ""
-        let due = k == 0 ? "Due tomorrow" : (k == 1 ? "Due in 2 days" : "Due in 4 days")
 
         return ACard(radius: 22, padded: false) {
             VStack(alignment: .leading, spacing: 0) {
@@ -924,9 +929,14 @@ struct ReviewView: View {
                         .textCase(.uppercase)
                         .foregroundStyle(Color.auAccentText)
                     Spacer()
+                    // §3.17(b): the due badge — accent tint when the item is
+                    // due, flat when its ladder date is still ahead.
                     Text(due)
-                        .font(.figtree(.regular, size: 11.5))
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .font(.figtree(.semibold, size: 11))
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 3)
+                        .background(Capsule().fill(urgent ? Color.auTintBg : Color.auFlatBg))
+                        .foregroundStyle(urgent ? Color.auTintText : Color.auFlatText)
                 }
                 .padding(.bottom, 9)
                 Text(label)
@@ -941,6 +951,7 @@ struct ReviewView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 18)
         }
+        .accessibilityElement(children: .combine)
     }
 }
 

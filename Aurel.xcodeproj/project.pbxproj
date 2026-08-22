@@ -33,6 +33,7 @@
 		54F3EC3E8DEB16917290BEA31D142085 /* Router+Chapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2AC33A3E966247C31E45975E4A2BA6 /* Router+Chapters.swift */; };
 		57EB493279C8F07309BDF0B72B49ECB8 /* ContentConformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02485DC4A76A536F04D867DF12412B3B /* ContentConformanceTests.swift */; };
 		5BA477ADE6A74DAD08D7D36F503D434C /* CourseDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */; };
+		60D8972117370C72416C713CA9D5205D /* Stage4DataHonestyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D878867CA9F5F3BF30892C3455528E /* Stage4DataHonestyTests.swift */; };
 		63D9B6DE759E1D2240EDFBD4B4A90E01 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D72008BB451DE64C4F92ED4776869E6 /* Shared.swift */; };
 		651CF039F5AEBA33E4CBD5CE71BE41E2 /* a1-course.json in Resources */ = {isa = PBXBuildFile; fileRef = AD5F6F16628FDE7E581608E1744F8314 /* a1-course.json */; };
 		6ABC37B37BF5D4B83C4DC35BB313E626 /* AUMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DABEFDB5698C1395B353F4BF4AEF7E /* AUMotion.swift */; };
@@ -110,6 +111,7 @@
 		44E530909B70A6BEC1FE9CFEF2F0944C /* OFL-Figtree.txt */ = {isa = PBXFileReference; path = "OFL-Figtree.txt"; sourceTree = "<group>"; };
 		45FDD07A459AF14E6B0ABB52ADA48194 /* QuickBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickBank.swift; sourceTree = "<group>"; };
 		4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		50D878867CA9F5F3BF30892C3455528E /* Stage4DataHonestyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage4DataHonestyTests.swift; sourceTree = "<group>"; };
 		522AF703E3799709C030C8026496D609 /* Aurel.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Aurel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		538833CE0D0B6C831413A67F774503B4 /* CourseModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseModels.swift; sourceTree = "<group>"; };
 		5DE2378615BA4DD6CD955D35998F15B5 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
@@ -247,6 +249,7 @@
 				A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */,
 				86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */,
 				420A021EF6B3797A3F66A585BE27CF8D /* Stage2CoreLoopTests.swift */,
+				50D878867CA9F5F3BF30892C3455528E /* Stage4DataHonestyTests.swift */,
 				CED7EDA25646801897D337FBC6D61A5A /* SVGPathShapeTests.swift */,
 			);
 			path = AurelTests;
@@ -639,6 +642,7 @@
 				9F2A60D18FC61D93D3191B4596A1135C /* ServicesTests.swift in Sources */,
 				8265BAFB6C0E6FDD6FEEC5531156AA5F /* SmokeTests.swift in Sources */,
 				7D0E71FCDDD6EC9C891A99D18B91A8B4 /* Stage2CoreLoopTests.swift in Sources */,
+				60D8972117370C72416C713CA9D5205D /* Stage4DataHonestyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,6 +7,24 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// §3.6(a): the path draw-in plays on the first reveal only.
+    @State private var pathDrawn = false
+    /// §3.6(c): home scroll offset, driving the day-arc sun's travel.
+    @State private var scrollY: CGFloat = 0
+    /// §3.6(d): the locked stop whose explainer is showing (first tap
+    /// explains, second tap opens the paywall).
+    @State private var lockedExplainer: Int? = nil
+
+    /// Scroll-offset preference (§3.6(c)) — measured at the scroll content's
+    /// top edge, reported as positive points scrolled.
+    private struct HomeScrollKey: PreferenceKey {
+        static let defaultValue: CGFloat = 0
+        static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+            value = nextValue()
+        }
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -19,10 +37,22 @@ struct HomeView: View {
                     dayArcCard
                     lessonPath
                 }
+                .padding(.bottom, 160)
                 // Clearance for the floating glass tab (design bottom:26 + bar ~72)
                 // plus enough room that the first locked stop is not buried.
-                .padding(.bottom, 160)
+                .background(
+                    // §3.6(c): measure the content offset inside the scroll
+                    // space so the sun can travel with the finger.
+                    GeometryReader { geo in
+                        Color.clear.preference(
+                            key: HomeScrollKey.self,
+                            value: -geo.frame(in: .named("home.scroll")).minY
+                        )
+                    }
+                )
             }
+            .coordinateSpace(name: "home.scroll")
+            .onPreferenceChange(HomeScrollKey.self) { scrollY = max(0, $0) }
             .ignoresSafeArea(edges: .top)
 
             if !env.connectivity.isOnline {
@@ -179,6 +209,13 @@ struct HomeView: View {
 
     // MARK: Day-arc card (lines 492–528 + 2315–2346)
 
+    /// §3.6(c): the sun's scroll-linked travel — the first ~260 pt of scroll
+    /// advance it up to 30% along its arc. Static under Reduce Motion.
+    private var sunTravel: Double {
+        guard !reduceMotion else { return 0 }
+        return min(1, Double(scrollY) / 260) * 0.3
+    }
+
     private var dayArcCard: some View {
         let r = env.router
         let dueNow = r.mistakes.count
@@ -193,6 +230,7 @@ struct HomeView: View {
             VStack(spacing: 0) {
                 ArcSkyView(
                     state: arc,
+                    sunTravel: sunTravel,
                     dawnDone: r.dayLesson,
                     dawnMeta: dawnMeta,
                     sundownDone: arc.arcT >= 1 && r.dayLesson,
@@ -340,13 +378,19 @@ struct HomeView: View {
                     let cta = env.router.basePos == 0 && pathAt == 0 ? "Begin" : "Resume"
 
                     ZStack(alignment: .topLeading) {
+                        // §3.6(a): the thread draws in over 1.2 s on first
+                        // reveal (easeInOut), then stays drawn — the dotted
+                        // track and the accent leg share the same trim so the
+                        // draw reads as one gesture.
                         WindingPathShape()
+                            .trim(from: 0, to: drawT)
                             .stroke(
                                 Color.auDivider,
                                 style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [3, 9])
                             )
 
                         WindingPathShape(firstLegOnly: true)
+                            .trim(from: 0, to: drawT)
                             .stroke(
                                 Color.auAccent,
                                 style: StrokeStyle(lineWidth: 2.5, lineCap: .round)
@@ -363,6 +407,34 @@ struct HomeView: View {
                                 action: node.action
                             )
                             .position(x: node.x, y: node.y)
+                            // §3.6(a): sequential pop-in, 60 ms stagger —
+                            // first reveal only (never on later visits).
+                            .modifier(
+                                NodePopIn(
+                                    delay: 0.14 + Double(i) * AUMotion.staggerDelay,
+                                    animate: animatePath))
+                        }
+
+                        // §3.6(d): the locked-stop explainer — first tap
+                        // explains, second tap opens the paywall.
+                        if let li = lockedExplainer,
+                            nodes.indices.contains(li),
+                            nodes[li].state == .locked
+                        {
+                            LockedStopCard(
+                                prev:
+                                    ch.lessons.indices.contains(max(0, li - 1))
+                                    ? ch.lessons[max(0, li - 1)] : ""
+                            )
+                            .position(
+                                x: min(max(nodes[li].x, 136), 402 - 136),
+                                y: nodes[li].y + 68
+                            )
+                            .transition(
+                                reduceMotion
+                                    ? .opacity
+                                    : .opacity.combined(with: .scale(scale: 0.94))
+                            )
                         }
 
                         ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
@@ -375,6 +447,10 @@ struct HomeView: View {
                                         node.alignRight ? .trailing : .leading
                                     )
                                     .fixedSize(horizontal: false, vertical: true)
+                                    // §3.6(e): AX sizes may shrink the label
+                                    // slightly rather than collide with the
+                                    // path or the neighbouring stop.
+                                    .minimumScaleFactor(0.82)
                                 Text(node.meta)
                                     .font(.figtree(.regular, size: 12))
                                     .foregroundStyle(Color.auText.opacity(0.52))
@@ -382,6 +458,7 @@ struct HomeView: View {
                                         node.alignRight ? .trailing : .leading
                                     )
                                     .fixedSize(horizontal: false, vertical: true)
+                                    .minimumScaleFactor(0.82)
                             }
                             .frame(
                                 width: node.labelWidth,
@@ -395,6 +472,10 @@ struct HomeView: View {
                                 y: node.labelY
                             )
                             .allowsHitTesting(false)
+                            // §3.6(f): the stop's button carries label +
+                            // state + meta as one AX element — the drawn
+                            // text stays visual only.
+                            .accessibilityHidden(true)
                         }
 
                         Button {
@@ -441,9 +522,43 @@ struct HomeView: View {
                     .scaleEffect(x: scale, y: scale, anchor: .topLeading)
                     .frame(
                         width: geo.size.width, height: 724 * scale, alignment: .topLeading)
+                    .onAppear { beginPathReveal() }
+                    // §3.6(d): the explainer card enters/leaves on the quick
+                    // spring (opacity-only under Reduce Motion).
+                    .animation(
+                        AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+                        value: lockedExplainer)
                 }
             }
             .padding(.top, 16)
+    }
+
+    /// §3.6(a): the path's trim target — 1 when fully drawn. On revisits the
+    /// router flag short-circuits to 1 so the thread never flashes hidden.
+    private var drawT: CGFloat {
+        env.router.homePathSeen ? 1 : (pathDrawn ? 1 : 0)
+    }
+
+    /// §3.6(a): the nodes pop in only on the path's first reveal. The flag
+    /// flips after the reveal has fully played (not at its start), so the
+    /// stagger is never cut short by the re-render.
+    private var animatePath: Bool { !env.router.homePathSeen }
+
+    /// Kick the one-time path reveal (§3.6(a)): a 1.2 s easeInOut draw-in of
+    /// the thread plus the staggered node pop-ins. Under Reduce Motion the
+    /// path simply appears.
+    private func beginPathReveal() {
+        guard !env.router.homePathSeen, !pathDrawn else { return }
+        if reduceMotion {
+            pathDrawn = true
+            env.router.homePathSeen = true
+            return
+        }
+        withAnimation(.easeInOut(duration: 1.2)) { pathDrawn = true }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1.9))  // let the stagger finish
+            env.router.homePathSeen = true
+        }
     }
 
     private struct PathNode {
@@ -477,7 +592,24 @@ struct HomeView: View {
                 + (ch.metas.indices.contains(i) ? ch.metas[i] : "")
         }
         func act(_ i: Int) -> () -> Void {
-            state(i) == .locked ? { r.nav(.paywall) } : { r.goCourse(i) }
+            guard state(i) == .locked else {
+                return {
+                    // Any open explainer steps aside when a playable stop is tapped.
+                    lockedExplainer = nil
+                    r.goCourse(i)
+                }
+            }
+            // §3.6(d): the first tap explains ("Opens after … — Chapter One is
+            // free, later chapters come with Aurel Pro"), the second opens
+            // the paywall.
+            return {
+                if lockedExplainer == i {
+                    r.nav(.paywall)
+                } else {
+                    lockedExplainer = i
+                    AUFeedback.press()
+                }
+            }
         }
 
         // lesson titles: drop the trailing "Chapter complete" entry (index 4)
@@ -504,6 +636,52 @@ struct HomeView: View {
                 x: 136, y: 492, labelX: 200, labelY: 492, labelWidth: 146, alignRight: false,
                 state: state(4), label: "Chapter complete", meta: meta(4), action: act(4)),
         ]
+    }
+}
+
+/// §3.6(a): a path node's entrance — the authored pop, gated to the path's
+/// first reveal. `animate` flips false only after the reveal has fully
+/// played, so the stagger is never cut short by the re-render.
+private struct NodePopIn: ViewModifier {
+    let delay: Double
+    let animate: Bool
+
+    func body(content: Content) -> some View {
+        if animate {
+            content.modifier(PopIn(delay: delay))
+        } else {
+            content
+        }
+    }
+}
+
+/// §3.6(d): the locked-stop explainer — two authored lines under the stop.
+/// The first tap on a locked stop shows it; the second opens the paywall.
+private struct LockedStopCard: View {
+    let prev: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text("Opens after \(prev).")
+                .font(.figtree(.semibold, size: 13))
+                .foregroundStyle(Color.auText)
+            Text("Chapter One is free — later chapters come with Aurel Pro.")
+                .font(.figtree(.regular, size: 12))
+                .auLine(12, 1.4)
+                .foregroundStyle(Color.auText.opacity(0.62))
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
+        .frame(width: 240, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.auFill)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(Color.auEdge, lineWidth: 1)
+        )
+        .auShadowSm()
+        .accessibilityElement(children: .combine)
     }
 }
 

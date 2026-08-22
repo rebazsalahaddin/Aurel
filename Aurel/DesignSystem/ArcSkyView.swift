@@ -40,6 +40,20 @@ struct ArcSkyView: View {
     let state: DayArcState
     var height: CGFloat = 118
 
+    /// §3.6(c): scroll-linked sun travel, 0…0.3 of the arc. The sun drifts
+    /// along its arc as the home screen scrolls (data-driven `arcT` plus
+    /// this travel); the progress stroke stays data-honest at `arcT`.
+    /// Reduce-motion callers pass 0 (static sun).
+    var sunTravel: Double = 0
+
+    /// The sun's effective arc position — data plus scroll travel.
+    private var sunT: Double { min(1, max(0, state.arcT + sunTravel)) }
+
+    /// Sun position in the 354×118 viewBox space at the effective t.
+    private var sunPoint: CGPoint {
+        CGPoint(x: auBezier(sunT, 26, 177, 328), y: auBezier(sunT, 84, -22, 84))
+    }
+
     // Chips: (done, label, meta)
     var dawnDone: Bool = false
     var dawnMeta: String = ""
@@ -78,8 +92,11 @@ struct ArcSkyView: View {
 
                     SunMark()
                         .frame(width: 34, height: 34)
-                        .position(x: state.sunPoint.x, y: state.sunPoint.y)
+                        .position(x: sunPoint.x, y: sunPoint.y)
                         .animation(.easeInOut(duration: 0.9), value: state.arcT)
+                        // §3.6(c): the sun also tracks scroll — follow the
+                        // travel value without re-triggering the data spring.
+                        .animation(.easeInOut(duration: 0.35), value: sunTravel)
                 }
                 .frame(width: 354, height: 118, alignment: .topLeading)
                 .scaleEffect(x: sx, y: sy, anchor: .topLeading)
@@ -221,6 +238,8 @@ struct LessonPathNode: View {
     let action: () -> Void
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// §3.6(b): drives the persistent ring pulse on the open stop.
+    @State private var pingOn = false
 
     /// Disc diameter from mkNode (open 94; done/locked per-stop sizes).
     private var size: CGFloat {
@@ -242,6 +261,21 @@ struct LessonPathNode: View {
                             .frame(width: size + 20, height: size + 20)
                             .modifier(PulseHalo())
                             .allowsHitTesting(false)
+                    }
+                    // §3.6(b): the open stop also carries a persistent ring
+                    // pulse — a stroke that swells and fades, marking
+                    // "you are here" without sound or motion excess.
+                    if !reduceMotion {
+                        Circle()
+                            .strokeBorder(Color.auAccent.opacity(pingOn ? 0 : 0.55), lineWidth: pingOn ? 0.75 : 2.5)
+                            .scaleEffect(pingOn ? 1.22 : 1)
+                            .frame(width: size, height: size)
+                            .allowsHitTesting(false)
+                            .onAppear {
+                                withAnimation(
+                                    .easeOut(duration: 1.9).repeatForever(autoreverses: false)
+                                ) { pingOn = true }
+                            }
                     }
                     Circle()
                         .fill(
@@ -314,9 +348,21 @@ struct LessonPathNode: View {
             .frame(width: size, height: size)
         }
         .buttonStyle(.auTap)
-        .accessibilityLabel("Lesson \(index + 1), \(label)")
+        // §3.6(f): each stop is one AX element — label + state + meta read
+        // together ("Lesson 2, Names. You are here."). The open stop carries
+        // the "You are here" marker (§3.6(b)).
+        .accessibilityLabel("Lesson \(index + 1), \(label). \(axState)")
         .accessibilityHint(meta)
         .accessibilityIdentifier("au.home.node.\(index)")
+    }
+
+    /// The stop's state, spoken as part of its AX label.
+    private var axState: String {
+        switch state {
+        case .open: "You are here"
+        case .done: "Complete"
+        case .locked: "Locked"
+        }
     }
 
     /// auPulse halo on the open node.
