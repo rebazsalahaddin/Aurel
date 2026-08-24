@@ -25,7 +25,7 @@ struct PromiseScreenView: View {
                     Text(p.newTodayLabel?.uppercased() ?? "NEW WORDS TODAY")
                         .font(.figtree(.bold, size: 9.5))
                         .tracking(1.43)
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 8)
 
@@ -52,6 +52,7 @@ struct PromiseScreenView: View {
                     Spacer(minLength: 12)
 
                     Button {
+                        AUFeedback.press()
                         m.goto(m.p + 1)
                     } label: {
                         HStack(spacing: 10) {
@@ -71,7 +72,10 @@ struct PromiseScreenView: View {
             }
         }
         .contentShape(Rectangle())
-        .onTapGesture { m.goto(m.p + 1) }
+        .onTapGesture {
+            AUFeedback.press()
+            m.goto(m.p + 1)
+        }
     }
 }
 
@@ -132,7 +136,7 @@ struct HookScreenView: View {
                         Text("\(h.aud ?? "") · \(h.delivery ?? "") · unscored")
                             .font(.figtree(.regular, size: 12))
                             .auLine(12, 1.45)
-                            .foregroundStyle(Color.auText.opacity(0.52))
+                            .foregroundStyle(Color.auTextSecondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -154,7 +158,7 @@ struct HookScreenView: View {
                     Text(scene)
                         .font(.figtree(.regular, size: 12.5))
                         .auLine(12.5, 1.55)
-                        .foregroundStyle(Color.auText.opacity(0.55))
+                        .foregroundStyle(Color.auTextSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 16)
                 }
@@ -219,7 +223,7 @@ struct HookScreenView: View {
                 )
                 .font(.figtree(.regular, size: 11.5))
                 .auLine(11.5, 1.5)
-                .foregroundStyle(Color.auText.opacity(0.40))
+                .foregroundStyle(Color.auTextTertiary)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.top, 20)
 
@@ -271,7 +275,7 @@ struct OrientationScreenView: View {
                         Text(demo.demo)
                             .font(.figtree(.regular, size: 13.5))
                             .auLine(13.5, 1.55)
-                            .foregroundStyle(Color.auText.opacity(0.55))
+                            .foregroundStyle(Color.auTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 24)
@@ -304,7 +308,7 @@ struct OrientationScreenView: View {
                 Text("Watch, then try once. You cannot get this wrong.")
                     .font(.figtree(.regular, size: 11.5))
                     .auLine(11.5, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.42))
+                    .foregroundStyle(Color.auTextTertiary)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 14)
 
@@ -377,7 +381,7 @@ struct PauseScreenView: View {
 
                     Text("Progress saved automatically.")
                         .font(.figtree(.regular, size: 11.5))
-                        .foregroundStyle(Color.auText.opacity(0.40))
+                        .foregroundStyle(Color.auTextTertiary)
                         .frame(maxWidth: .infinity)
                         .padding(.top, 13)
                 }
@@ -395,7 +399,8 @@ struct CardsScreenView: View {
         ScreenColumn(topPad: 20, bottomPad: 26) {
             let cards = m.cardList
             let card = m.card
-            let kind = m.cur?.screen.kind
+            let isTargetRecording = m.say.recording && m.say.activeTarget == card.main
+            let rec = m.say.record(for: card.main)
 
             // chip + count row
             HStack(spacing: 9) {
@@ -425,7 +430,7 @@ struct CardsScreenView: View {
                 if !cards.isEmpty {
                     Text("\(m.c + 1) / \(cards.count)")
                         .font(.figtree(.semibold, size: 11))
-                        .foregroundStyle(Color.auText.opacity(0.42))
+                        .foregroundStyle(Color.auTextTertiary)
                 }
             }
             .padding(.bottom, 14)
@@ -515,7 +520,7 @@ struct CardsScreenView: View {
                         Text(card.sub)
                             .font(.figtree(.regular, size: 12.3))
                             .auLine(12.3, 1.5)
-                            .foregroundStyle(Color.auText.opacity(0.50))
+                            .foregroundStyle(Color.auTextSecondary)
                             .multilineTextAlignment(.center)
                     }
 
@@ -555,25 +560,30 @@ struct CardsScreenView: View {
                 .buttonStyle(.auTap)
 
                 Button {
-                    m.rec = m.rec >= 2 ? 0 : m.rec + 1
+                    m.say.toggle(target: card.main)
                 } label: {
-                    HStack(spacing: 9) {
-                        AUIcon(kind: .mouth, size: 22)
-                        Text(
-                            m.rec == 0
-                                ? "Say it" : (m.rec == 1 ? "Listening…" : "Recorded — play both"))
+                    ZStack {
+                        if isTargetRecording {
+                            RecordingRing().frame(width: 54, height: 54)
+                        }
+                        HStack(spacing: 9) {
+                            AUIcon(kind: .mouth, size: 22)
+                            Text(
+                                isTargetRecording
+                                    ? "Listening…" : (rec.takes == 0 ? "Say it" : "Recorded"))
+                        }
+                        .font(.figtree(.semibold, size: 14.5))
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: 62)
+                        .background(
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .fill(isTargetRecording ? Color.auAccent2Ramp(600) : Color.auFill)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .strokeBorder(Color.auEdge, lineWidth: 1)
+                        )
                     }
-                    .font(.figtree(.semibold, size: 14.5))
-                    .frame(maxWidth: .infinity)
-                    .frame(minHeight: 62)
-                    .background(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .fill(Color.auFill)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .strokeBorder(Color.auEdge, lineWidth: 1)
-                    )
                 }
                 .buttonStyle(.auTap)
             }
@@ -607,7 +617,7 @@ struct CardsScreenView: View {
                                 .frame(width: 11, height: 11)
                             Text(t)
                                 .font(.figtree(.semibold, size: 11))
-                                .foregroundStyle(Color.auText.opacity(0.52))
+                                .foregroundStyle(Color.auTextSecondary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -669,6 +679,7 @@ struct CardsScreenView: View {
 
 struct AlphabetScreenView: View {
     let m: PlayerModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScreenColumn(topPad: 20, bottomPad: 26, hPad: 20) {
@@ -693,11 +704,15 @@ struct AlphabetScreenView: View {
                     ForEach(names.keys.sorted(), id: \.self) { letter in
                         let flipped = m.flip[letter] ?? false
                         Button {
-                            m.flip[letter, default: false].toggle()
+                            AUFeedback.cardFlip()
+                            withAnimation(reduceMotion ? nil : AUMotion.cardFlip) {
+                                m.flip[letter, default: false].toggle()
+                            }
                         } label: {
                             VStack(spacing: 2) {
                                 Text(flipped ? letter.lowercased() : letter)
                                     .font(.caprasimo(size: 22))
+                                    .rotation3DEffect(.degrees(flipped ? 180 : 0), axis: (x: 0, y: 1, z: 0))
                                 Text(names[letter] ?? "")
                                     .font(.figtree(.regular, size: 8.5))
                                     .opacity(0.6)
@@ -710,9 +725,15 @@ struct AlphabetScreenView: View {
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(
-                                    Color.auEdge, lineWidth: 1)
+                                    flipped ? Color.auAccent.opacity(0.35) : Color.auEdge, lineWidth: 1)
                             )
                             .foregroundStyle(flipped ? Color.auTintText : Color.auText)
+                            .rotation3DEffect(
+                                .degrees(flipped && !reduceMotion ? 180 : 0),
+                                axis: (x: 0, y: 1, z: 0),
+                                perspective: 0.8
+                            )
+                            .shadow(color: Color.black.opacity(flipped ? 0.08 : 0.03), radius: 4, y: 2)
                         }
                         .buttonStyle(.auTap)
                     }
@@ -726,7 +747,7 @@ struct AlphabetScreenView: View {
                             .font(.figtree(.bold, size: 9.5))
                             .tracking(1.24)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.42))
+                            .foregroundStyle(Color.auTextTertiary)
                             .padding(.bottom, 9)
 
                         ForEach(a.families ?? [], id: \.n) { f in
@@ -755,7 +776,7 @@ struct AlphabetScreenView: View {
                     Text(note)
                         .font(.figtree(.regular, size: 11.5))
                         .auLine(11.5, 1.5)
-                        .foregroundStyle(Color.auText.opacity(0.42))
+                        .foregroundStyle(Color.auTextTertiary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 

@@ -10,10 +10,10 @@ import SwiftUI
 struct ATapButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.972 : 1)
-            .opacity(configuration.isPressed ? 0.92 : 1)
-            .animation(
-                .spring(response: 0.22, dampingFraction: 0.7), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? 0.975 : 1.0)
+            .offset(y: configuration.isPressed ? 1.5 : 0)
+            .opacity(configuration.isPressed ? 0.94 : 1.0)
+            .animation(AUMotion.press, value: configuration.isPressed)
     }
 }
 
@@ -49,7 +49,10 @@ struct APillButton: View {
     @Environment(\.colorScheme) private var scheme
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            AUFeedback.press()
+            action()
+        }) {
             HStack(spacing: player ? 9 : 10) {
                 if let icon {
                     AUIcon(kind: icon, size: compact ? 14 : (player ? 17 : 16), color: fgColor)
@@ -72,7 +75,6 @@ struct APillButton: View {
                 color: .black.opacity(shadowSpec.opacity), radius: shadowSpec.radius,
                 y: shadowSpec.y
             )
-            .overlay(alignment: .top) { hiLine }
         }
         .buttonStyle(.auTap)
         .disabled(disabled)
@@ -91,16 +93,23 @@ struct APillButton: View {
                         .strokeBorder(Color.auText.opacity(0.09), lineWidth: 1)
                 )
         case .primary where player:
-            // Flat accent-600 in player
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.auAccentRamp(600))
+                .fill(Color(UIColor(hex: 0xb25f1f)))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2)
+                )
         case .quiet where player:
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .strokeBorder(Color.auDivider, lineWidth: 1)
         case .primary:
-            // .au-btn-primary: flat accent-700 fill (#8c491a), no shadow
-            RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
-                .fill(Color.auAccentRamp(700))
+            // .au-btn-primary: flat 0xb25f1f fill with lighter orange border
+            RoundedRectangle(cornerRadius: compact ? 16 : AURadius.btn, style: .continuous)
+                .fill(Color(UIColor(hex: 0xb25f1f)))
+                .overlay(
+                    RoundedRectangle(cornerRadius: compact ? 16 : AURadius.btn, style: .continuous)
+                        .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2)
+                )
         case .ghost:
             AUGradients.glass()
                 .clipShape(RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous))
@@ -136,12 +145,22 @@ struct APillButton: View {
     }
 
     private var shadowSpec: (radius: CGFloat, y: CGFloat, opacity: Double) {
-        (0, 0, 0)
+        if variant == .primary && !disabled {
+            return (6, 3, 0.12)
+        }
+        return (0, 0, 0)
     }
 
     @ViewBuilder
     private var hiLine: some View {
-        EmptyView()
+        if variant == .primary && !disabled {
+            RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+                .mask(
+                    Rectangle().frame(height: 1.5)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                )
+        }
     }
 }
 
@@ -239,7 +258,10 @@ struct AUKeyButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            AUFeedback.press()
+            action()
+        }) {
             HStack(spacing: 12) {
                 Text(title)
                     .font(.figtree(.bold, size: 16.5))
@@ -259,6 +281,15 @@ struct AUKeyButton: View {
             .padding(.vertical, 7)
             .background(Color.auAccentRamp(700))
             .clipShape(RoundedRectangle(cornerRadius: AURadius.key, style: .continuous))
+            .overlay(alignment: .top) {
+                RoundedRectangle(cornerRadius: AURadius.key, style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
+                    .mask(
+                        Rectangle().frame(height: 1.5)
+                            .frame(maxHeight: .infinity, alignment: .top)
+                    )
+            }
+            .shadow(color: Color.black.opacity(0.14), radius: 8, y: 4)
         }
         .buttonStyle(.auTap)
         .accessibilityIdentifier(aid ?? "au.btn.\(title.auSlug)")
@@ -275,15 +306,25 @@ struct WordSheetView: View {
     let onAudio: () -> Void
     let onClose: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var appeared = false
+
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color.black.opacity(0.42)
+            Color.black.opacity(appeared ? 0.42 : 0)
                 .ignoresSafeArea()
-                .onTapGesture { onClose() }
+                .onTapGesture {
+                    withAnimation(reduceMotion ? nil : AUMotion.flow) {
+                        appeared = false
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + (reduceMotion ? 0 : 0.25)) {
+                        onClose()
+                    }
+                }
 
             VStack(alignment: .leading, spacing: 0) {
                 Capsule()
-                    .fill(Color.auText.opacity(0.14))
+                    .fill(Color.auText.opacity(0.18))
                     .frame(width: 38, height: 4)
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 20)
@@ -309,7 +350,7 @@ struct WordSheetView: View {
                         .foregroundStyle(Color.auText.opacity(0.62))
                     Text(stress)
                         .font(.figtree(.regular, size: 11.5))
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                 }
                 .padding(.bottom, 18)
 
@@ -317,7 +358,7 @@ struct WordSheetView: View {
                     Text("FUNCTION")
                         .font(.figtree(.bold, size: 9.5))
                         .tracking(1.33)
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                     Text(fn)
                         .font(.figtree(.regular, size: 13.5))
                         .auLine(13.5, 1.45)
@@ -336,7 +377,7 @@ struct WordSheetView: View {
                     Text("IN CONTEXT")
                         .font(.figtree(.bold, size: 9.5))
                         .tracking(1.33)
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                     Text(frame)
                         .font(.figtree(.semibold, size: 14))
                         .auLine(14, 1.45)
@@ -356,10 +397,24 @@ struct WordSheetView: View {
                     topTrailingRadius: 32, style: .continuous
                 )
                 .fill(Color.auBackground)
-                .shadow(color: Color(UIColor(hex: 0x18120e)).opacity(0.55), radius: 22, y: -18)
+                .overlay(alignment: .top) {
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 32, bottomLeadingRadius: 0, bottomTrailingRadius: 0,
+                        topTrailingRadius: 32, style: .continuous
+                    )
+                    .strokeBorder(Color.auHi, lineWidth: 1)
+                    .mask(Rectangle().frame(height: 2).frame(maxHeight: .infinity, alignment: .top))
+                }
+                .shadow(color: Color(UIColor(hex: 0x18120e)).opacity(0.45), radius: 24, y: -12)
             )
+            .offset(y: appeared ? 0 : 360)
         }
         .ignoresSafeArea()
+        .onAppear {
+            withAnimation(reduceMotion ? nil : AUMotion.flow) {
+                appeared = true
+            }
+        }
     }
 }
 
@@ -397,6 +452,14 @@ struct ACard<Content: View>: View {
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .strokeBorder(Color.auEdge, lineWidth: 1)
             )
+            .overlay(alignment: .top) {
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .strokeBorder(Color.auHi, lineWidth: 1)
+                    .mask(
+                        Rectangle().frame(height: 1.5)
+                            .frame(maxHeight: .infinity, alignment: .top)
+                    )
+            }
             .auLift()
     }
 }
@@ -458,7 +521,7 @@ struct ScreenEntrance: ViewModifier {
     }
 }
 
-/// `.au-stagger` — children rise in sequence (0.03 s + 0.06 s per index).
+/// `.au-stagger` — children rise in sequence (0.03 s + 0.05 s per index).
 struct StaggerItem: ViewModifier {
     let index: Int
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -478,11 +541,11 @@ struct StaggerItem: ViewModifier {
         func body(content: Content) -> some View {
             content
                 .opacity(revealed ? 1 : 0)
-                .offset(y: revealed ? 0 : 13)
+                .offset(y: revealed ? 0 : 12)
                 .task {
-                    let delay = min(0.03 + Double(index) * 0.06, 0.43)
+                    let delay = min(0.02 + Double(index) * AUMotion.staggerDelay, 0.40)
                     try? await Task.sleep(for: .seconds(delay))
-                    withAnimation(.easeOut(duration: 0.52)) { revealed = true }
+                    withAnimation(AUMotion.quick) { revealed = true }
                 }
         }
     }
@@ -525,6 +588,85 @@ struct PingDot: View {
                     }
                 }
         }
+    }
+}
+
+// MARK: Live waveform (§3.16a — real amplitude, never decorative)
+
+/// The shared renderer for recorded takes (F5): real amplitude history from
+/// `AVAudioRecorder` metering, right-aligned like a tape rolling — shared by
+/// the say-aloud screen and the pronProduce items (§3.11c). Before the first
+/// take every bar sits at its quiet floor: an honest empty state, never a
+/// fake wave. `progress` tints a playback scrub (the native line under TTS,
+/// §3.16e); reduce-motion keeps the bars but drops the spring.
+struct LiveWaveform: View {
+    /// 0…1 amplitude samples, most recent last.
+    let samples: [Double]
+    var tint: Color
+    /// 0…1 playback progress; bars up to it render at full tint.
+    var progress: Double? = nil
+    var barCount = 26
+    var minBar: CGFloat = 3
+    var maxBar: CGFloat = 27
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private func height(_ value: Double) -> CGFloat {
+        minBar + CGFloat(max(0, min(1, value))) * (maxBar - minBar)
+    }
+
+    /// The right-aligned window of the last `barCount` samples (oldest
+    /// first, zero-padded — the tape rolled in from silence).
+    private var window: [Double] {
+        let tail = Array(samples.suffix(barCount))
+        return Array(repeating: 0, count: barCount - tail.count) + tail
+    }
+
+    var body: some View {
+        HStack(spacing: 3) {
+            ForEach(Array(window.enumerated()), id: \.offset) { i, value in
+                Capsule()
+                    .fill(barColor(at: i))
+                    .frame(height: height(value))
+                    .frame(maxHeight: .infinity, alignment: .center)
+                    .animation(
+                        AUMotion.animation(.spring(response: 0.18, dampingFraction: 0.9),
+                            reduceMotion: reduceMotion),
+                        value: value
+                    )
+            }
+        }
+        .accessibilityHidden(true)
+    }
+
+    private func barColor(at index: Int) -> Color {
+        guard let progress else { return tint }
+        let edge = progress * Double(barCount)
+        return Double(index) < edge ? tint : tint.opacity(0.22)
+    }
+}
+
+// MARK: Recording ring (§3.16b — the live-take state)
+
+/// The expanding ring around the mic button while the take window runs —
+/// `--au-recording` = accent-2 ramp 600 (§2.1), a quiet heartbeat at the
+/// recorded-speech state. Static under Reduce Motion.
+struct RecordingRing: View {
+    @State private var phase = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        Circle()
+            .strokeBorder(
+                Color.auAccent2Ramp(600).opacity(phase ? 0 : 0.5), lineWidth: 2)
+            .scaleEffect(phase ? 1.32 : 1.0)
+            .onAppear {
+                guard !reduceMotion else { return }
+                withAnimation(
+                    .easeOut(duration: 1.1).repeatForever(autoreverses: false)
+                ) {
+                    phase = true
+                }
+            }
     }
 }
 
@@ -926,3 +1068,304 @@ struct IllustrationPlaceholder: View {
         }
     }
 }
+
+// MARK: - AUFlipCard (3D Interactive Flashcard)
+
+struct AUFlipCard<Front: View, Back: View>: View {
+    @Binding var isFlipped: Bool
+    @ViewBuilder let front: () -> Front
+    @ViewBuilder let back: () -> Back
+
+    var body: some View {
+        ZStack {
+            front()
+                .modifier(AUFlipCardFace(angle: isFlipped ? 180 : 0, isFront: true))
+            back()
+                .modifier(AUFlipCardFace(angle: isFlipped ? 0 : -180, isFront: false))
+        }
+        .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .onTapGesture {
+            AUFeedback.cardFlip()
+            withAnimation(AUMotion.cardFlip) {
+                isFlipped.toggle()
+            }
+        }
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel(isFlipped ? "Flashcard flipped, showing answer" : "Flashcard front, tap to flip")
+    }
+}
+
+private struct AUFlipCardFace: ViewModifier {
+    let angle: Double
+    let isFront: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .rotation3DEffect(
+                .degrees(angle),
+                axis: (x: 0, y: 1, z: 0),
+                perspective: 0.8
+            )
+            .opacity(abs(angle) < 90 ? 1 : 0)
+            .accessibilityHidden(abs(angle) >= 90)
+    }
+}
+
+// MARK: - AUCounterBadge (Dynamic Onboarding Selection Counter)
+
+struct AUCounterBadge: View {
+    let current: Int
+    let maxCount: Int
+
+    var body: some View {
+        HStack(spacing: 5) {
+            Circle()
+                .fill(current > 0 ? Color.auAccent : Color.auText.opacity(0.2))
+                .frame(width: 7, height: 7)
+            Text("\(current) of \(maxCount) selected")
+                .font(.figtree(.semibold, size: 12))
+                .foregroundStyle(current > 0 ? Color.auAccentText : Color.auText.opacity(0.55))
+        }
+        .padding(.horizontal, 11)
+        .padding(.vertical, 5)
+        .background(
+            Capsule()
+                .fill(current > 0 ? Color.auTintBg : Color.auFill)
+        )
+        .overlay(
+            Capsule()
+                .strokeBorder(current > 0 ? Color.auAccent.opacity(0.35) : Color.auEdge, lineWidth: 1)
+        )
+        .animation(AUMotion.quick, value: current)
+    }
+}
+
+// MARK: - AUEmptyStateView (Warm Editorial Empty State)
+
+struct AUEmptyStateView: View {
+    let title: String
+    let message: String
+    var icon: AUIcon.Kind = .check
+    var actionTitle: String? = nil
+    var action: (() -> Void)? = nil
+
+    var body: some View {
+        VStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(Color.auTintBg)
+                    .frame(width: 64, height: 64)
+                AUIcon(kind: icon, size: 26, color: .auAccent)
+            }
+            .padding(.bottom, 4)
+
+            Text(title)
+                .font(.caprasimo(size: 20))
+                .foregroundStyle(Color.auText)
+
+            Text(message)
+                .font(.figtree(.regular, size: 13.5))
+                .auLine(13.5, 1.55)
+                .foregroundStyle(Color.auTextSecondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: 290)
+
+            if let actionTitle, let action {
+                Button(action: action) {
+                    Text(actionTitle)
+                        .font(.figtree(.semibold, size: 14))
+                        .foregroundStyle(Color.auAccentText)
+                        .padding(.top, 4)
+                }
+                .buttonStyle(.auTap)
+            }
+        }
+        .padding(.vertical, 36)
+        .padding(.horizontal, 24)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(Color.auFill.opacity(0.6))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .strokeBorder(Color.auEdge, style: StrokeStyle(lineWidth: 1, dash: [6, 5]))
+        )
+    }
+}
+
+// MARK: - AUShakeEffect (Credentials & Form Error Feedback)
+
+struct AUShakeEffect: GeometryEffect {
+    var amount: CGFloat = 8
+    var shakesPerUnit: CGFloat = 3
+    var animatableData: CGFloat
+
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        ProjectionTransform(CGAffineTransform(translationX:
+            amount * sin(animatableData * .pi * shakesPerUnit),
+            y: 0))
+    }
+}
+
+// MARK: - AUConfirmDialog (Mid-Lesson Exit Confirmation Modal)
+
+struct AUConfirmDialog: View {
+    let title: String
+    let message: String
+    let confirmTitle: String
+    let cancelTitle: String
+    let onConfirm: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.38)
+                .ignoresSafeArea()
+                .onTapGesture { onCancel() }
+
+            VStack(spacing: 16) {
+                Text(title)
+                    .font(.caprasimo(size: 20))
+                    .foregroundStyle(Color.auText)
+                    .multilineTextAlignment(.center)
+
+                Text(message)
+                    .font(.figtree(.regular, size: 14))
+                    .auLine(14, 1.5)
+                    .foregroundStyle(Color.auText.opacity(0.6))
+                    .multilineTextAlignment(.center)
+
+                VStack(spacing: 8) {
+                    APillButton(title: confirmTitle, variant: .primary) {
+                        onConfirm()
+                    }
+                    Button(action: onCancel) {
+                        Text(cancelTitle)
+                            .font(.figtree(.semibold, size: 14.5))
+                            .foregroundStyle(Color.auText.opacity(0.6))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                    }
+                    .buttonStyle(.auTap)
+                }
+                .padding(.top, 8)
+            }
+            .padding(24)
+            .background(
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .fill(Color.auSurface)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 28, style: .continuous)
+                    .strokeBorder(Color.auEdge, lineWidth: 1)
+            )
+            .auSoft()
+            .padding(.horizontal, 28)
+        }
+        .transition(.opacity.combined(with: .scale(scale: 0.95)))
+    }
+}
+
+// MARK: - Craft-overhaul primitives (qa/CRAFT_IMPROVEMENT_PLAN.md §2.4)
+
+// MARK: Hit target (.auMinHitTarget)
+
+/// Guarantees a 44×44pt hit area (HIG minimum) without enlarging the visual.
+/// The view keeps its own size; an invisible contentShape expands tappability.
+/// Apply to small icon buttons, chips, and text-link CTAs.
+struct AUMinHitTarget: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .frame(minWidth: 44, minHeight: 44)
+            .contentShape(Rectangle())
+    }
+}
+
+extension View {
+    func auMinHitTarget() -> some View {
+        modifier(AUMinHitTarget())
+    }
+}
+
+// MARK: Unified header (AUHeader)
+
+/// One back/close header for every pushed flow — replaces the three ad-hoc
+/// treatments (circled back, bare close, none) and the 70/74pt inset drift.
+/// Inset is safe-area-relative; the button is its own accessible element
+/// (fixes the StepHeader VoiceOver-swallowed Back, DEFECT C1).
+struct AUHeader: View {
+    enum Kind { case back, close }
+    let kind: Kind
+    var title: String? = nil
+    var aid: String? = nil
+    let action: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: {
+                AUFeedback.press()
+                action()
+            }) {
+                AUIcon(kind: kind == .back ? .back : .close, size: 17, color: .auText)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
+            }
+            .buttonStyle(.auTap)
+            .accessibilityLabel(kind == .back ? "Back" : "Close")
+            .accessibilityIdentifier(aid ?? "au.header.\(kind == .back ? "back" : "close")")
+
+            if let title {
+                Text(title)
+                    .font(.figtree(.semibold, size: 12))
+                    .tracking(1.2)
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 12)
+    }
+}
+
+// MARK: Shared banner (AUBanner)
+
+/// Error/info banner with an authored entrance — replaces the hard-cut
+/// insert/remove on Login and Subscribe (DEFECT M9/G21). Animate the
+/// `isPresented` binding with `withAnimation(AUMotion.flow, …)` at the call site.
+struct AUBanner: View {
+    enum Tone { case error, info }
+    let text: String
+    var tone: Tone = .error
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            AUIcon(
+                kind: tone == .error ? .warning : .sparkle, size: 13,
+                color: tone == .error ? .auErrText : .auAccentText
+            )
+            .padding(.top, 2)
+            Text(text)
+                .font(.figtree(.medium, size: 13.5))
+                .auLine(13.5, 1.45)
+                .foregroundStyle(tone == .error ? Color.auErrText : Color.auAccentText)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 13)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(tone == .error ? Color.auErrBg : Color.auTintBg)
+        )
+        .transition(
+            .asymmetric(
+                insertion: .move(edge: .top).combined(with: .opacity),
+                removal: .opacity
+            )
+        )
+        .accessibilityIdentifier("au.banner.\(tone == .error ? "error" : "info")")
+    }
+}
+

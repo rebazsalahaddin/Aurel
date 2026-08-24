@@ -83,7 +83,7 @@ struct ReviewScreenView: View {
                                 Text(a)
                             }
                             .font(.figtree(.regular, size: 11.5))
-                            .foregroundStyle(Color.auText.opacity(0.46))
+                            .foregroundStyle(Color.auTextTertiary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
@@ -240,7 +240,7 @@ struct GrammarScreenView: View {
                                                 .strikethrough()
                                                 .foregroundStyle(Color.auErr.opacity(0.85))
                                             Text(e.count > 1 ? e[1] : "")
-                                                .foregroundStyle(Color.auText.opacity(0.55))
+                                                .foregroundStyle(Color.auTextSecondary)
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                         }
                                         .font(.figtree(.regular, size: 12))
@@ -262,27 +262,33 @@ struct GrammarScreenView: View {
                                 .foregroundStyle(Color.auAccentText)
                                 .padding(.bottom, 8)
                             ForEach(paradigm, id: \.cells) { row in
-                                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                    Text(row.cells.count > 0 ? row.cells[0] : "")
-                                        .font(.figtree(.semibold, size: 11))
-                                        .frame(width: 96, alignment: .leading)
-                                        .foregroundStyle(Color.auText.opacity(0.52))
-                                    Text(row.cells.count > 1 ? row.cells[1] : "")
-                                        .font(.figtree(.regular, size: 12.5))
-                                        .opacity(0.6)
-                                        .frame(width: 52, alignment: .leading)
-                                    Text(row.cells.count > 2 ? row.cells[2] : "")
-                                        .font(.figtree(.semibold, size: 13.5))
-                                        .foregroundStyle(Color.auAccentText)
-                                        .frame(width: 46, alignment: .leading)
-                                    Text(row.cells.count > 3 ? row.cells[3] : "")
-                                        .font(.figtree(.regular, size: 11.5))
-                                        .auLine(11.5, 1.35)
-                                        .foregroundStyle(Color.auText.opacity(0.58))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                Button {
+                                    let spoken = row.cells.joined(separator: " ")
+                                    m.speak(spoken)
+                                } label: {
+                                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                        Text(row.cells.count > 0 ? row.cells[0] : "")
+                                            .font(.figtree(.semibold, size: 11))
+                                            .frame(width: 96, alignment: .leading)
+                                            .foregroundStyle(Color.auTextSecondary)
+                                        Text(row.cells.count > 1 ? row.cells[1] : "")
+                                            .font(.figtree(.regular, size: 12.5))
+                                            .opacity(0.65)
+                                            .frame(width: 52, alignment: .leading)
+                                        Text(row.cells.count > 2 ? row.cells[2] : "")
+                                            .font(.figtree(.semibold, size: 13.5))
+                                            .foregroundStyle(Color.auAccentText)
+                                            .frame(width: 46, alignment: .leading)
+                                        Text(row.cells.count > 3 ? row.cells[3] : "")
+                                            .font(.figtree(.regular, size: 11.5))
+                                            .auLine(11.5, 1.35)
+                                            .foregroundStyle(Color.auTextSecondary)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                    }
+                                    .padding(.vertical, 7)
+                                    .overlay(alignment: .top) { Divider().overlay(Color.auDivider) }
                                 }
-                                .padding(.vertical, 7)
-                                .overlay(alignment: .top) { Divider().overlay(Color.auDivider) }
+                                .buttonStyle(.auTap)
                             }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -316,7 +322,7 @@ struct GrammarScreenView: View {
                     Text(more)
                         .font(.figtree(.regular, size: 12))
                         .auLine(12, 1.5)
-                        .foregroundStyle(Color.auText.opacity(0.52))
+                        .foregroundStyle(Color.auTextSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.bottom, 10)
                 }
@@ -325,7 +331,7 @@ struct GrammarScreenView: View {
                     Text(notYet)
                         .font(.figtree(.regular, size: 11))
                         .auLine(11, 1.5)
-                        .foregroundStyle(Color.auText.opacity(0.42))
+                        .foregroundStyle(Color.auTextTertiary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
@@ -436,101 +442,7 @@ struct PronProduceScreenView: View {
 
                 VStack(spacing: 14) {
                     ForEach(p.items ?? [], id: \.id) { it in
-                        ACard(radius: 22, padded: false) {
-                            VStack(alignment: .leading, spacing: 0) {
-                                Text(it.word)
-                                    .font(.caprasimo(size: 22))
-                                    .tracking(-0.26)
-                                    .padding(.bottom, 14)
-
-                                HStack(spacing: 10) {
-                                    Text("MODEL")
-                                        .font(.figtree(.bold, size: 9))
-                                        .tracking(1)
-                                        .frame(width: 46, alignment: .leading)
-                                        .foregroundStyle(Color.auText.opacity(0.42))
-                                    WaveForm(
-                                        heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent
-                                    )
-                                    .frame(height: 26)
-                                    AUIcon(kind: .play, size: 17, color: .auText.opacity(0.6))
-                                }
-                                .padding(.bottom, 9)
-
-                                HStack(spacing: 10) {
-                                    Text("YOU")
-                                        .font(.figtree(.bold, size: 9))
-                                        .tracking(1)
-                                        .frame(width: 46, alignment: .leading)
-                                        .foregroundStyle(Color.auText.opacity(0.42))
-                                    WaveForm(
-                                        heights: [8, 16, 22, 11, 18, 9, 15, 20],
-                                        color: Color.auText.opacity(0.24)
-                                    )
-                                    .frame(height: 26)
-                                    AUIcon(kind: .play, size: 17, color: .auText.opacity(0.35))
-                                }
-                                .padding(.bottom, 13)
-
-                                HStack(spacing: 11) {
-                                    Button {
-                                        m.rec = m.rec >= 2 ? 0 : m.rec + 1
-                                    } label: {
-                                        HStack(spacing: 9) {
-                                            AUIcon(
-                                                kind: .mic, size: 20, color: .auPrimaryButtonText)
-                                            Text(
-                                                m.rec == 0
-                                                    ? "Record"
-                                                    : (m.rec == 1 ? "Listening…" : "Recorded"))
-                                        }
-                                        .font(.figtree(.semibold, size: 14.5))
-                                        .frame(maxWidth: .infinity)
-                                        .frame(minHeight: 56)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 17, style: .continuous)
-                                                .fill(Color.auAccentRamp(600))
-                                        )
-                                        .foregroundStyle(Color.auPrimaryButtonText)
-                                    }
-                                    .buttonStyle(.auTap)
-
-                                    Button {
-                                        m.goto(m.p + 1)
-                                    } label: {
-                                        Text("Skip")
-                                            .font(.figtree(.semibold, size: 14.5))
-                                            .frame(maxWidth: .infinity)
-                                            .frame(minHeight: 56)
-                                            .background(
-                                                RoundedRectangle(
-                                                    cornerRadius: 17, style: .continuous
-                                                ).fill(Color.auFill)
-                                            )
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 17).strokeBorder(
-                                                    Color.auEdge, lineWidth: 1))
-                                    }
-                                    .buttonStyle(.auTap)
-                                }
-
-                                if let note = it.note {
-                                    Text(note)
-                                        .font(.figtree(.regular, size: 12.5))
-                                        .auLine(12.5, 1.45)
-                                        .padding(.horizontal, 13)
-                                        .padding(.vertical, 11)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 13, style: .continuous)
-                                                .fill(Color.auTintBg)
-                                        )
-                                        .foregroundStyle(Color.auTintText)
-                                        .padding(.top, 12)
-                                }
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(18)
-                        }
+                        PronProduceItemCard(m: m, it: it)
                     }
                 }
 
@@ -539,13 +451,204 @@ struct PronProduceScreenView: View {
                 Text("No accent scoring, ever. One actionable note per recording.")
                     .font(.figtree(.regular, size: 11.5))
                     .auLine(11.5, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.40))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: .infinity)
 
                 GoOnButton(label: "Go on") { m.goto(m.p + 1) }
                     .padding(.top, 12)
             }
         }
+    }
+}
+
+private struct PronProduceItemCard: View {
+    let m: PlayerModel
+    let it: PronProduceItem
+
+    private var isRecording: Bool {
+        m.say.recording && m.say.activeTarget == it.word
+    }
+
+    private var rec: SayCoach.Record {
+        m.say.record(for: it.word)
+    }
+
+    var body: some View {
+        ACard(radius: 22, padded: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(it.word)
+                    .font(.caprasimo(size: 22))
+                    .tracking(-0.26)
+                    .padding(.bottom, 14)
+
+                modelRow
+                youRow
+
+                if m.say.micDenied {
+                    micDeniedNotice
+                }
+
+                actionButtons
+
+                if let verdict = rec.verdict {
+                    verdictBanner(verdict)
+                } else if rec.unavailable {
+                    unavailableNotice
+                }
+
+                if let note = it.note {
+                    noteCard(note)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(18)
+        }
+    }
+
+    private var modelRow: some View {
+        HStack(spacing: 10) {
+            Text("MODEL")
+                .font(.figtree(.bold, size: 9))
+                .tracking(1)
+                .frame(width: 46, alignment: .leading)
+                .foregroundStyle(Color.auTextSecondary)
+            WaveForm(heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent)
+                .frame(height: 26)
+            Button {
+                m.speak(it.word)
+            } label: {
+                AUIcon(kind: .play, size: 17, color: .auAccent)
+            }
+            .buttonStyle(.auTap)
+        }
+        .padding(.bottom, 9)
+    }
+
+    private var youRow: some View {
+        HStack(spacing: 10) {
+            Text("YOU")
+                .font(.figtree(.bold, size: 9))
+                .tracking(1)
+                .frame(width: 46, alignment: .leading)
+                .foregroundStyle(Color.auTextSecondary)
+            if isRecording || rec.takes > 0 {
+                LiveWaveform(
+                    samples: isRecording ? m.say.samples : [0.2, 0.4, 0.6, 0.5, 0.3],
+                    tint: .auAccent2,
+                    barCount: 16
+                )
+                .frame(height: 26)
+            } else {
+                WaveForm(
+                    heights: [8, 16, 22, 11, 18, 9, 15, 20],
+                    color: Color.auText.opacity(0.24)
+                )
+                .frame(height: 26)
+            }
+            AUIcon(kind: .play, size: 17, color: .auText.opacity(0.35))
+        }
+        .padding(.bottom, 13)
+    }
+
+    private var micDeniedNotice: some View {
+        HStack(spacing: 10) {
+            AUIcon(kind: .lock, size: 14, color: .auErrText)
+            Text("Microphone is off. Enable in Settings or skip.")
+                .font(.figtree(.regular, size: 12))
+                .foregroundStyle(Color.auErrText)
+        }
+        .padding(.bottom, 10)
+    }
+
+    private var actionButtons: some View {
+        HStack(spacing: 11) {
+            Button {
+                m.say.toggle(target: it.word)
+            } label: {
+                ZStack {
+                    if isRecording {
+                        RecordingRing().frame(width: 50, height: 50)
+                    }
+                    HStack(spacing: 9) {
+                        AUIcon(kind: .mic, size: 20, color: .auPrimaryButtonText)
+                        Text(isRecording ? "Listening…" : (rec.takes == 0 ? "Record" : "Try again"))
+                    }
+                    .font(.figtree(.semibold, size: 14.5))
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 56)
+                    .background(
+                        RoundedRectangle(cornerRadius: 17, style: .continuous)
+                            .fill(isRecording ? Color.auAccent2Ramp(600) : Color.auAccentRamp(600))
+                    )
+                    .foregroundStyle(Color.auPrimaryButtonText)
+                }
+            }
+            .buttonStyle(.auTap)
+
+            Button {
+                m.goto(m.p + 1)
+            } label: {
+                Text("Skip")
+                    .font(.figtree(.semibold, size: 14.5))
+                    .frame(maxWidth: .infinity)
+                    .frame(minHeight: 56)
+                    .background(
+                        RoundedRectangle(cornerRadius: 17, style: .continuous).fill(Color.auFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 17).strokeBorder(Color.auEdge, lineWidth: 1)
+                    )
+            }
+            .buttonStyle(.auTap)
+        }
+    }
+
+    private func verdictBanner(_ verdict: SpeakVerdict.Tier) -> some View {
+        let isClear = verdict == .clear
+        return HStack(spacing: 8) {
+            AUIcon(
+                kind: isClear ? .check : .warning,
+                size: 14,
+                color: isClear ? .auOkText : .auTintText
+            )
+            Text(
+                isClear
+                    ? "Clear — this is how it sounds."
+                    : (verdict == .near
+                        ? "\(rec.matchedWords) of \(rec.totalWords) words matched. Closer each time."
+                        : "Somewhere quieter — no score recorded.")
+            )
+            .font(.figtree(.regular, size: 12.5))
+            .foregroundStyle(isClear ? Color.auOkText : Color.auTintText)
+        }
+        .padding(.horizontal, 13)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                .fill(isClear ? Color.auOkBg : Color.auTintBg)
+        )
+        .padding(.top, 10)
+    }
+
+    private var unavailableNotice: some View {
+        Text("Clarity check offline — your take stands.")
+            .font(.figtree(.regular, size: 12))
+            .foregroundStyle(Color.auText.opacity(0.65))
+            .padding(.top, 8)
+    }
+
+    private func noteCard(_ note: String) -> some View {
+        Text(note)
+            .font(.figtree(.regular, size: 12.5))
+            .auLine(12.5, 1.45)
+            .padding(.horizontal, 13)
+            .padding(.vertical, 11)
+            .background(
+                RoundedRectangle(cornerRadius: 13, style: .continuous)
+                    .fill(Color.auTintBg)
+            )
+            .foregroundStyle(Color.auTintText)
+            .padding(.top, 12)
     }
 }
 
@@ -567,7 +670,7 @@ struct ConversationScreenView: View {
                 Text(c.scenario ?? "")
                     .font(.figtree(.regular, size: 12.5))
                     .auLine(12.5, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.55))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 14)
 
@@ -615,7 +718,7 @@ struct ConversationScreenView: View {
                             .font(.figtree(.semibold, size: 13.5))
                         Text("Line mode: \(c.lineAud ?? "") — replay any single turn")
                             .font(.figtree(.regular, size: 11.5))
-                            .foregroundStyle(Color.auText.opacity(0.45))
+                            .foregroundStyle(Color.auTextTertiary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -676,7 +779,7 @@ struct ConversationScreenView: View {
                                 .font(.figtree(.bold, size: 9.5))
                                 .tracking(1.3)
                                 .textCase(.uppercase)
-                                .foregroundStyle(Color.auText.opacity(0.42))
+                                .foregroundStyle(Color.auTextTertiary)
                                 .padding(.bottom, 8)
                             ForEach(branch, id: \.self) { t in
                                 HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -700,7 +803,7 @@ struct ConversationScreenView: View {
                         Text(lock)
                     }
                     .font(.figtree(.regular, size: 11.5))
-                    .foregroundStyle(Color.auText.opacity(0.44))
+                    .foregroundStyle(Color.auTextTertiary)
                     .padding(.top, 14)
                 }
 

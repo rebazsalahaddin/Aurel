@@ -9,6 +9,8 @@ import SwiftUI
 
 struct StoriesView: View {
     @Environment(AppEnvironment.self) private var env
+    /// Craft overhaul P7: the locked story whose explainer is showing.
+    @State private var lockedNote: String? = nil
 
     var body: some View {
         let r = env.router
@@ -59,35 +61,65 @@ struct StoriesView: View {
                         Spacer()
                         Text("Authored texts")
                             .font(.figtree(.regular, size: 11.5))
-                            .foregroundStyle(Color.auText.opacity(0.45))
+                            .foregroundStyle(Color.auTextTertiary)
                     }
                     .padding(.bottom, 14)
 
                     // stories list (line 2257) — open the chapter player on the reading screen
                     ForEach(Array(storyRows.enumerated()), id: \.offset) { i, st in
                         storyRow(st) {
-                            st.open?()
+                            // Craft overhaul P7: a locked row used to no-op.
+                            // Now it explains itself with a calm note + haptic.
+                            if st.locked {
+                                AUFeedback.press()
+                                withAnimation(AUMotion.quick) { lockedNote = st.title }
+                            } else {
+                                st.open?()
+                            }
                         }
                         .auStagger(i)
                         .padding(.bottom, 12)
                     }
 
+                    // Craft overhaul P7: the locked-story explainer.
+                    if let lockedNote {
+                        HStack(alignment: .top, spacing: 10) {
+                            AUIcon(kind: .lock, size: 14, color: .auAccentText)
+                                .padding(.top, 1)
+                            Text("“\(lockedNote)” opens as its chapter is written — Chapter 1 comes first.")
+                                .font(.figtree(.regular, size: 12.5))
+                                .auLine(12.5, 1.5)
+                                .foregroundStyle(Color.auTextSecondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 13)
+                        .background(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .fill(Color.auTintBg)
+                        )
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .padding(.bottom, 12)
+                        .onTapGesture {
+                            withAnimation(AUMotion.quick) { self.lockedNote = nil }
+                        }
+                    }
+
                     Text(
-                        "Every text opens in the chapter that authored it — nothing here is invented for the app layer."
+                        // Craft overhaul P6: dropped the meta/engineering footer
+                        // ("nothing here is invented for the app layer") — this
+                        // learner-facing line is all that remains.
+                        "Every text opens in the chapter that authored it."
                     )
                     .font(.figtree(.regular, size: 12))
                     .auLine(12, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.45))
+                    .foregroundStyle(Color.auTextTertiary)
                     .padding(.bottom, 44)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 70)
                 .padding(.bottom, 130)
             }
-
-            AUTabBar(current: .stories)
-                .padding(.horizontal, 14)
-                .padding(.bottom, 26)
         }
         .auScreenEntrance()
     }
@@ -145,7 +177,8 @@ struct StoriesView: View {
                     .font(.caprasimo(size: 26))
                     .frame(width: 74, height: 74)
                     .background(
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        // Craft overhaul P15: nested radius = outer(28) − pad(15).
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
                             .fill(
                                 (st.mark == "II" || st.mark == "IV")
                                     ? Color.auAccent2Ramp(200) : Color.auAccentRamp(200)
@@ -161,14 +194,16 @@ struct StoriesView: View {
                         .auHeadLine(17, 1.2)
                     Text(st.meta)
                         .font(.figtree(.regular, size: 12.5))
-                        .foregroundStyle(Color.auText.opacity(0.52))
+                        .foregroundStyle(Color.auTextSecondary)
                     Text(st.band)
                         .font(.figtree(.regular, size: 10.5))
                         .tracking(0.42)
                         .padding(.horizontal, 9)
                         .padding(.vertical, 3)
-                        .background(Capsule().fill(st.band == "A1" ? Color.auOkBg : Color.auFlatBg))
-                        .foregroundStyle(st.band == "A1" ? Color.auOkQuiet : Color.auFlatText)
+                        // Craft overhaul P14: neutral level chip (was green
+                        // success semantics for A1, grey for the rest).
+                        .background(Capsule().fill(Color.auFlatBg))
+                        .foregroundStyle(Color.auFlatText)
                         .padding(.top, 9)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -203,7 +238,7 @@ struct StoriesView: View {
                     Text(sub)
                         .font(.figtree(.regular, size: 12.5))
                         .auLine(12.5, 1.55)
-                        .foregroundStyle(Color.auText.opacity(0.50))
+                        .foregroundStyle(Color.auTextSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 AUIcon(kind: .chevron, size: 17, color: .auText.opacity(0.4))
@@ -236,7 +271,7 @@ struct StoriesView: View {
                     Text(sub)
                         .font(.figtree(.regular, size: 12.5))
                         .auLine(12.5, 1.55)
-                        .foregroundStyle(Color.auText.opacity(0.52))
+                        .foregroundStyle(Color.auTextSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 AUIcon(kind: .chevron, size: 17, color: .auText.opacity(0.4))
@@ -294,7 +329,7 @@ struct SceneView: View {
                     )
                     .font(.figtree(.regular, size: 12.5))
                     .auLine(12.5, 1.45)
-                    .foregroundStyle(Color.auText.opacity(0.52))
+                    .foregroundStyle(Color.auTextSecondary)
                     .padding(.top, 4)
                     HStack(spacing: 6) {
                         modeChip("On your own", on: !r.sceneRoleB) { r.setSolo() }
@@ -312,7 +347,11 @@ struct SceneView: View {
             // thread
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 12) {
-                    ForEach(0...min(r.sceneTurn, max(0, sc.turns.count - 1)), id: \.self) { i in
+                    // Craft overhaul C4: guard the empty-script case — the old
+                    // `0...min(sceneTurn, max(0, count-1))` became `0...0` and
+                    // indexed `turns[0]`, crashing when turns was empty.
+                    if !sc.turns.isEmpty {
+                        ForEach(0...min(r.sceneTurn, max(0, sc.turns.count - 1)), id: \.self) { i in
                         let turn = sc.turns[i]
                         let partnerShape = UnevenRoundedRectangle(
                             topLeadingRadius: 22, bottomLeadingRadius: 7,
@@ -331,7 +370,7 @@ struct SceneView: View {
                                         .font(.figtree(.bold, size: 9.5))
                                         .tracking(1.33)
                                         .textCase(.uppercase)
-                                        .foregroundStyle(Color.auText.opacity(0.42))
+                                        .foregroundStyle(Color.auTextTertiary)
                                         .padding(.bottom, 5)
                                 }
                                 Text(turn.them)
@@ -391,6 +430,7 @@ struct SceneView: View {
                             }
                         }
                     }
+                    }
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
@@ -405,15 +445,23 @@ struct SceneView: View {
                             .font(.figtree(.bold, size: 10))
                             .tracking(1.4)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.48))
+                            .foregroundStyle(Color.auTextTertiary)
                         Spacer()
                         Button {
+                            // Craft overhaul C3: was an empty Button. Replays
+                            // the partner's current line through the TTS speaker.
+                            let i = min(r.sceneTurn, max(0, sc.turns.count - 1))
+                            if sc.turns.indices.contains(i) {
+                                AUFeedback.press()
+                                env.speaker.speak(sc.turns[i].them, slow: false)
+                            }
                         } label: {
                             Text("Hear that again")
                                 .font(.figtree(.bold, size: 11.5))
                                 .foregroundStyle(Color.auAccentText)
                         }
                         .buttonStyle(.auTap)
+                        .auMinHitTarget()
                     }
                     .padding(.bottom, 11)
 
@@ -479,9 +527,11 @@ struct SceneView: View {
                 .padding(.horizontal, 13)
                 .padding(.vertical, 7)
                 .background(Capsule().fill(on ? Color.auAccent : Color.auText.opacity(0.08)))
-                .foregroundStyle(on ? Color.auBackground : Color.auText.opacity(0.55))
+                .foregroundStyle(on ? Color.auBackground : Color.auTextSecondary)
         }
         .buttonStyle(.auTap)
+        // Craft overhaul P5: chip was ~30pt tall — expand the hit area.
+        .auMinHitTarget()
     }
 }
 
@@ -489,6 +539,7 @@ struct SceneView: View {
 
 struct SpeakView: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.scenePhase) private var scenePhase
 
     /// sayItem — the newest authored chunk frame with a sentence in it.
     private var sayItem: (line: String, ctx: String) {
@@ -502,8 +553,10 @@ struct SpeakView: View {
                             frame.components(separatedBy: " · ").first?.components(
                                 separatedBy: " / "
                             ).first ?? frame
-                        let ctx =
-                            "\(card.fn ?? "") — \(f.chapter.id)-\(f.lesson.id)-\(card.id). Model audio \(f.chapter.id)-\(card.aud ?? "") is a script; no recording exists yet."
+                        // Craft overhaul P3: was engineering jargon
+                        // ("Model audio … is a script; no recording exists yet")
+                        // — now a learner-facing context line.
+                        let ctx = card.fn ?? ""
                         return (line, ctx)
                     }
                 }
@@ -512,17 +565,15 @@ struct SpeakView: View {
         return ("—", "No chunk record is loaded yet.")
     }
 
-    /// The your-take wave heights (line 2507–2516).
-    private var speakWaveHeights: [CGFloat] {
-        let r = env.router
-        return (0..<26).map { i in
-            if r.speaking { return CGFloat(7 + (i * 9) % 26) }
-            if r.speakTake > 0 { return CGFloat(5 + Int(20 * abs(sin(Double(i) * 0.66 + 0.4)))) }
-            return 3
-        }
+    /// The your-take waveform is real metering now (§3.16a) — the samples
+    /// come from `SayCoach`'s recorder; no `sin()` stand-ins remain.
+    private var takeSamples: [Double] {
+        env.router.say.samples
     }
 
-    /// The native wave heights (line 2503–2506).
+    /// The native wave heights (line 2503–2506) — the decorative track for
+    /// model audio that is still script-only; the progress tint (§3.16e)
+    /// fills it while TTS speaks.
     private var nativeWaveHeights: [CGFloat] {
         (0..<26).map { i in
             let scale: Double = i > 20 ? 0.4 : 1
@@ -530,11 +581,41 @@ struct SpeakView: View {
         }
     }
 
+    /// §3.16c: the honest verdict state for the current target — a real
+    /// tier, a real typed comparison, or the honest no-verdict note.
+    private enum VerdictState: Equatable {
+        case none
+        case assessing
+        case tier(SpeakVerdict.Tier, matched: Int, total: Int)
+        case typed(SpeakVerdict.Tier, matched: Int, total: Int)
+        case unavailable
+    }
+
+    private var verdictState: VerdictState {
+        let r = env.router
+        if r.speakTypedCheck, let t = r.speakTypedVerdict {
+            return .typed(t, matched: r.speakTypedWords.matched, total: r.speakTypedWords.total)
+        }
+        if r.speakAssessing { return .assessing }
+        if r.speakUnavailable { return .unavailable }
+        if let t = r.speakVerdict {
+            return .tier(
+                t, matched: r.speakMatchedWords.matched, total: r.speakMatchedWords.total)
+        }
+        return .none
+    }
+
+    private static func isClear(_ v: VerdictState) -> Bool {
+        if case .tier(.clear, _, _) = v { return true }
+        if case .typed(.clear, _, _) = v { return true }
+        return false
+    }
+
     var body: some View {
         let r = env.router
         let item = sayItem
-        let verdictOK = r.speakVerdict == "clear" || r.speakVerdict == "typed"
-        let verdictLow = r.speakVerdict == "low"
+        let verdict = verdictState
+        let verdictOK = Self.isClear(verdict)
 
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
@@ -584,26 +665,37 @@ struct SpeakView: View {
                 Text(item.ctx)
                     .font(.figtree(.regular, size: 13))
                     .auLine(13, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.52))
+                    .foregroundStyle(Color.auTextSecondary)
                     .padding(.bottom, 22)
 
-                // native card
+                // native card — §3.16(e): the play control toggles, and the
+                // track tints along the synthesizer's real utterance progress.
                 ACard(radius: 24, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(spacing: 14) {
                             Button {
-                                env.speaker.speak(item.line, slow: false)
+                                if env.speaker.isSpeaking {
+                                    env.speaker.stop()
+                                } else {
+                                    env.speaker.speak(item.line, slow: false)
+                                }
                             } label: {
-                                AUIcon(kind: .play, size: 18, color: .auPrimaryButtonText)
-                                    .frame(width: 44, height: 44)
-                                    .background(Circle().fill(Color.auAccentRamp(600)))
+                                AUIcon(
+                                    kind: env.speaker.isSpeaking ? .close : .play, size: 18,
+                                    color: .auPrimaryButtonText
+                                )
+                                .frame(width: 44, height: 44)
+                                .background(Circle().fill(Color.auAccentRamp(600)))
                             }
                             .buttonStyle(.auTap)
-                            .accessibilityLabel("Hear the native line")
+                            .accessibilityLabel(
+                                env.speaker.isSpeaking
+                                    ? "Stop the native line" : "Hear the native line")
                             HubWaveform(
                                 heights: nativeWaveHeights,
                                 color: Color.auAccent.opacity(0.55),
-                                animated: false
+                                animated: false,
+                                progress: env.speaker.isSpeaking ? env.speaker.progress : nil
                             )
                             .frame(maxWidth: .infinity)
                             .frame(height: 34)
@@ -612,7 +704,7 @@ struct SpeakView: View {
                             .font(.figtree(.bold, size: 9.5))
                             .tracking(1.4)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.45))
+                            .foregroundStyle(Color.auTextTertiary)
                             .padding(.top, 11)
                     }
                     .padding(.horizontal, 17)
@@ -620,12 +712,17 @@ struct SpeakView: View {
                 }
                 .padding(.bottom, 10)
 
-                // your take
+                // your take — §3.16(a): the bars are the recorder's real
+                // amplitude history, never a decorative wave.
                 ACard(radius: 24, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(spacing: 14) {
+                            // Craft overhaul P1: was a play icon in a filled
+                            // circle that looked tappable but wasn't a Button.
+                            // Now a neutral mic status glyph — a mic reads as
+                            // "recording lives here", not "tap to play".
                             AUIcon(
-                                kind: .play, size: 18,
+                                kind: .mic, size: 18,
                                 color: r.speakTake == 0
                                     ? .auText.opacity(0.32)
                                     : AUSceneArt.onAccent2
@@ -635,45 +732,44 @@ struct SpeakView: View {
                                 Circle().fill(
                                     r.speakTake == 0
                                         ? Color.auText.opacity(0.08) : Color.auAccent2Ramp(600)))
-                            HubWaveform(
-                                heights: speakWaveHeights,
-                                color: Color.auAccent2.opacity(
-                                    r.speaking ? 0.85 : (r.speakTake > 0 ? 0.6 : 0.22)),
-                                animated: r.speaking
+                            .accessibilityHidden(true)
+                            LiveWaveform(
+                                samples: takeSamples,
+                                tint: Color.auAccent2.opacity(
+                                    r.speaking ? 0.85 : (r.speakTake > 0 ? 0.6 : 0.22))
                             )
                             .frame(maxWidth: .infinity)
                             .frame(height: 34)
                         }
-                        Text(
-                            r.speakTake == 0
-                                ? "You — nothing recorded yet" : "You — take \(r.speakTake)"
-                        )
-                        .font(.figtree(.bold, size: 9.5))
-                        .tracking(1.4)
-                        .textCase(.uppercase)
-                        .foregroundStyle(Color.auText.opacity(0.45))
-                        .padding(.top, 11)
+                        Text(takeLabel)
+                            .font(.figtree(.bold, size: 9.5))
+                            .tracking(1.4)
+                            .textCase(.uppercase)
+                            .foregroundStyle(Color.auTextTertiary)
+                            .padding(.top, 11)
                     }
                     .padding(.horizontal, 17)
                     .padding(.vertical, 15)
                 }
                 .padding(.bottom, 14)
 
-                if r.speakScored {
+                // §3.16(c): the honest verdict — a real tier, the real word
+                // count, or the honest no-recognition note. "Near" and
+                // "nothing heard" sit in the calm neutral tier, never error
+                // red (governance).
+                if verdict != .none {
                     HStack(alignment: .top, spacing: 12) {
-                        AUIcon(kind: verdictOK ? .check : .warning, size: 15, color: .white)
+                        AUIcon(kind: verdictOK ? .check : .mouth, size: 15, color: .white)
                             .frame(width: 26, height: 26)
                             .background(
                                 Circle().fill(
                                     verdictOK
-                                        ? Color.auAccent2
-                                        : (verdictLow ? Color.auText.opacity(0.38) : Color.auErr)
-                                )
+                                        ? Color.auAccent2 : Color.auText.opacity(0.38))
                             )
                         VStack(alignment: .leading, spacing: 3) {
-                            Text(speakVerdictTitle)
+                            Text(verdictTitle(verdict))
                                 .font(.figtree(.bold, size: 14.5))
-                            Text(speakVerdictBody)
+                            Text(verdictBody(verdict))
                                 .font(.figtree(.regular, size: 13))
                                 .auLine(13, 1.5)
                                 .opacity(0.9)
@@ -683,17 +779,12 @@ struct SpeakView: View {
                     .padding(.horizontal, 17)
                     .background(
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(
-                                verdictOK
-                                    ? Color.auOkBg
-                                    : (verdictLow ? Color.auText.opacity(0.07) : Color.auErrBg)
-                            )
+                            .fill(verdictOK ? Color.auOkBg : Color.auText.opacity(0.07))
                     )
-                    .foregroundStyle(
-                        verdictOK
-                            ? Color.auOkText : (verdictLow ? Color.auText : Color.auErrText)
-                    )
+                    .foregroundStyle(verdictOK ? Color.auOkText : Color.auText)
                     .padding(.bottom, 4)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("au.speak.verdict")
                 }
 
                 Spacer(minLength: 14)
@@ -706,9 +797,7 @@ struct SpeakView: View {
                     }
                     .padding(.bottom, 12)
                     APillButton(title: "Check what I typed") {
-                        r.speakScored = true
-                        r.speakVerdict = "typed"
-                        r.typing = false
+                        r.checkTyped(target: item.line)
                     }
                     .padding(.bottom, 6)
                     ALinkButton(title: "Use the microphone instead") {
@@ -716,14 +805,54 @@ struct SpeakView: View {
                     }
                 } else {
                     VStack(spacing: 14) {
+                        // §3.16(d): a denial is a state, never an error —
+                        // the recovery card with the Settings deep link.
+                        if r.speakMicDenied {
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack(alignment: .top, spacing: 12) {
+                                    AUIcon(kind: .mic, size: 15, color: .white)
+                                        .frame(width: 26, height: 26)
+                                        .background(Circle().fill(Color.auText.opacity(0.38)))
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text("The microphone is off.")
+                                            .font(.figtree(.bold, size: 14.5))
+                                        Text(
+                                            "Aurel never keeps your voice. Turn the microphone on in Settings — or take the tap path below."
+                                        )
+                                        .font(.figtree(.regular, size: 13))
+                                        .auLine(13, 1.5)
+                                        .opacity(0.9)
+                                    }
+                                }
+                                Button {
+                                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                                        UIApplication.shared.open(url)
+                                    }
+                                } label: {
+                                    Text("Open Settings")
+                                        .font(.figtree(.semibold, size: 13.5))
+                                        .foregroundStyle(Color.auAccentText)
+                                }
+                                .buttonStyle(.auTap)
+                                .accessibilityIdentifier("au.speak.open-settings")
+                            }
+                            .padding(.vertical, 15)
+                            .padding(.horizontal, 17)
+                            .background(
+                                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                    .fill(Color.auText.opacity(0.07))
+                            )
+                            .foregroundStyle(Color.auText)
+                            .accessibilityIdentifier("au.speak.mic-denied")
+                        }
+                        // §3.16(b): the mic button carries the expanding
+                        // recording ring while the take window runs.
                         Button {
-                            r.toggleSpeak()
+                            r.toggleSpeak(target: item.line)
                         } label: {
                             ZStack {
                                 if r.speaking {
-                                    PingRingStroke().frame(width: 84, height: 84)
-                                    PingRingStroke()
-                                        .frame(width: 84, height: 84)
+                                    RecordingRing().frame(width: 96, height: 96)
                                 }
                                 AUIcon(kind: .mic, size: 30, color: .white)
                                     .frame(width: 78, height: 78)
@@ -739,7 +868,7 @@ struct SpeakView: View {
                                 : (r.speakTake == 0 ? "Tap, then say it once" : "Tap to try again")
                         )
                         .font(.figtree(.regular, size: 12.5))
-                        .foregroundStyle(Color.auText.opacity(0.50))
+                        .foregroundStyle(Color.auTextSecondary)
 
                         HStack(spacing: 20) {
                             Button {
@@ -752,17 +881,20 @@ struct SpeakView: View {
                                     .padding(.vertical, 6)
                             }
                             .buttonStyle(.auTap)
+                            // Craft overhaul P4: 26pt text link → 44pt hit area.
+                            .auMinHitTarget()
                             .accessibilityIdentifier("au.link.type-it-instead")
                             Button {
                                 r.nav(.stories)
                             } label: {
                                 Text("Skip for now")
                                     .font(.figtree(.semibold, size: 13))
-                                    .foregroundStyle(Color.auText.opacity(0.52))
+                                    .foregroundStyle(Color.auTextSecondary)
                                     .padding(.horizontal, 2)
                                     .padding(.vertical, 6)
                             }
                             .buttonStyle(.auTap)
+                            .auMinHitTarget()
                             .accessibilityIdentifier("au.link.skip-for-now")
                         }
                     }
@@ -772,31 +904,65 @@ struct SpeakView: View {
             .padding(.horizontal, 24)
             .padding(.top, 70)
             .padding(.bottom, 34)
-            .frame(minHeight: 874, alignment: .top)
+            // Craft overhaul P2: was a hardcoded 874pt canvas (forced scroll
+            // on small devices, broke Dynamic Type) — now flexible.
+            .frame(maxWidth: .infinity, alignment: .top)
         }
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
-    }
-
-    private var speakVerdictTitle: String {
-        switch env.router.speakVerdict {
-        case "clear": "Clear."
-        case "near": "Nearly — one word to fix."
-        case "low": "I couldn't hear that well enough to judge."
-        case "typed": "Read and checked."
-        default: "Clear."
+        // §3.16(d): returning from Settings re-checks the permission — the
+        // denial card leaves the moment access does.
+        .onAppear { env.router.say.refreshPermission() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { env.router.say.refreshPermission() }
+        }
+        // Leaving mid-take ends the take without a verdict (nothing kept).
+        .onDisappear {
+            if env.router.say.recording { env.router.say.reset() }
         }
     }
 
-    private var speakVerdictBody: String {
-        switch env.router.speakVerdict {
-        case "clear": "Rhythm and stress both landed. Nothing to fix — this is how it sounds."
-        case "near":
-            "“studio” came out with the stress on the second syllable. It sits on the first: STU-dio."
-        case "low":
-            "Somewhere quieter, or a little closer to the microphone — no score has been recorded."
-        case "typed": "The sentence is right. Speaking stays optional; nothing here depends on it."
-        default: ""
+    /// The take meter's honest label — "checking" while the transcript runs.
+    private var takeLabel: String {
+        let r = env.router
+        if r.speakAssessing { return "You — checking take \(r.speakTake)" }
+        return r.speakTake == 0 ? "You — nothing recorded yet" : "You — take \(r.speakTake)"
+    }
+
+    private func verdictTitle(_ v: VerdictState) -> String {
+        switch v {
+        case .none: return ""
+        case .assessing: return "Checking the take…"
+        case .tier(.clear, _, _): return "Clear."
+        case .tier(.near, _, _): return "Closer each time."
+        case .tier(.nothingHeard, _, _): return "Nothing came through."
+        case .typed(.clear, _, _): return "Read and checked."
+        case .typed(.near, _, _): return "Closer each time."
+        case .typed(.nothingHeard, _, _): return "Nothing matched."
+        case .unavailable: return "No clarity check here."
+        }
+    }
+
+    private func verdictBody(_ v: VerdictState) -> String {
+        switch v {
+        case .none: return ""
+        case .assessing: return "The check runs on this device — a moment."
+        case .tier(.clear, _, let total):
+            return "All \(total) words came through in order — this is how it sounds."
+        case .tier(.near, let matched, let total):
+            return "\(matched) of \(total) words came through in order. Try again — slower is fine."
+        case .tier(.nothingHeard, _, _):
+            return
+                "Somewhere quieter, or a little closer to the microphone — no score has been recorded."
+        case .typed(.clear, _, _):
+            return "The sentence is right. Speaking stays optional; nothing here depends on it."
+        case .typed(.near, let matched, let total):
+            return "\(matched) of \(total) words are there. Try once more, or use the microphone."
+        case .typed(.nothingHeard, _, _):
+            return "None of the words match the line. Try again, or use the microphone."
+        case .unavailable:
+            return
+                "Speech recognition isn't available on this device, so the take stands as a take — and nothing you said is kept."
         }
     }
 }
@@ -833,7 +999,7 @@ struct ReviewView: View {
                 )
                 .font(.figtree(.regular, size: 13.5))
                 .auLine(13.5, 1.55)
-                .foregroundStyle(Color.auText.opacity(0.55))
+                .foregroundStyle(Color.auTextSecondary)
                 .padding(.bottom, 26)
 
                 VStack(spacing: 12) {
@@ -850,21 +1016,10 @@ struct ReviewView: View {
                 }
 
                 if r.mistakes.isEmpty {
-                    VStack(spacing: 8) {
-                        Text("Nothing loose.")
-                            .font(.caprasimo(size: 19))
-                        Text("Finish a lesson and anything you miss will collect here.")
-                            .font(.figtree(.regular, size: 13.5))
-                            .auLine(13.5, 1.55)
-                            .foregroundStyle(Color.auText.opacity(0.52))
-                    }
-                    .padding(.vertical, 34)
-                    .padding(.horizontal, 24)
-                    .frame(maxWidth: .infinity)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
-                            .strokeBorder(
-                                Color.auDivider, style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                    AUEmptyStateView(
+                        title: "Nothing loose.",
+                        message: "All caught up! Finish a lesson and any words you miss will collect here for spaced review.",
+                        icon: .check
                     )
                 }
 
@@ -886,7 +1041,6 @@ struct ReviewView: View {
             .padding(.horizontal, 24)
             .padding(.top, 70)
             .padding(.bottom, 34)
-            .frame(minHeight: 874, alignment: .top)
         }
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
@@ -945,7 +1099,7 @@ struct ReviewView: View {
                 Text(note)
                     .font(.figtree(.regular, size: 13))
                     .auLine(13, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.55))
+                    .foregroundStyle(Color.auTextSecondary)
                     .padding(.top, 8)
             }
             .padding(.horizontal, 20)
@@ -959,14 +1113,26 @@ private struct HubWaveform: View {
     let heights: [CGFloat]
     let color: Color
     let animated: Bool
+    /// 0…1 playback progress — bars up to it render at full color (§3.16e).
+    var progress: Double? = nil
 
     var body: some View {
         HStack(spacing: 3) {
             ForEach(Array(heights.enumerated()), id: \.offset) { i, height in
-                HubWaveBar(height: height, color: color, animated: animated, index: i)
-                    .frame(maxWidth: .infinity)
+                HubWaveBar(
+                    height: height,
+                    color: barColor(at: i),
+                    animated: animated, index: i
+                )
+                .frame(maxWidth: .infinity)
             }
         }
+    }
+
+    private func barColor(at index: Int) -> Color {
+        guard let progress else { return color }
+        let edge = progress * Double(heights.count)
+        return Double(index) < edge ? color : color.opacity(0.22)
     }
 
     private struct HubWaveBar: View {

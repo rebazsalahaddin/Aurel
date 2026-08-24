@@ -20,6 +20,14 @@ protocol AudioPlaying {
 final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     private(set) var speaking = false
     var isSpeaking: Bool { speaking }
+
+    /// §3.16(e): utterance progress 0…1 (character range / total) — the
+    /// native-line waveform tints along it while TTS speaks. Real data from
+    /// the synthesizer delegate, never an assumed duration.
+    private(set) var progress: Double = 0
+    private var spokenChars: Double = 0
+    private var totalChars: Double = 1
+
     private let synthesizer = AVSpeechSynthesizer()
 
     override init() {
@@ -43,11 +51,15 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
         }
         synthesizer.speak(u)
         speaking = true
+        progress = 0
+        spokenChars = 0
+        totalChars = Double(max(1, text.count))
     }
 
     func stop() {
         synthesizer.stopSpeaking(at: .immediate)
         speaking = false
+        progress = 0
         AUSound.shared.isDucked = false
     }
 
@@ -57,6 +69,20 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
         Task { @MainActor in
             self.speaking = false
             AUSound.shared.isDucked = false
+        }
+    }
+
+    nonisolated func speechSynthesizer(
+        _ synthesizer: AVSpeechSynthesizer,
+        willSpeakRangeOfSpeechString characterRange: NSRange,
+        utterance: AVSpeechUtterance
+    ) {
+        let end = Double(characterRange.location + characterRange.length)
+        let total = Double(max(1, utterance.speechString.count))
+        Task { @MainActor in
+            // Monotonic: out-of-order delegate callbacks must not rewind it.
+            self.spokenChars = max(self.spokenChars, end)
+            self.progress = min(1, self.spokenChars / max(total, self.totalChars, 1))
         }
     }
 }
@@ -235,5 +261,407 @@ final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
         request?.endAudio()
         request = nil
         listening = false
+    }
+
+    /// §3.16(c): transcribe a finished take file — the clarity check runs
+    /// after the take, not as live dictation. On-device whenever the
+    /// recognizer supports it; nil when recognition is unavailable
+    /// (unauthorized, unsupported locale, or recognizer failure — the caller
+    /// renders an honest no-verdict state).
+    func transcribe(url: URL) async -> String? {
+        guard let recognizer, authorized else { return nil }
+        let request = SFSpeechURLRecognitionRequest(url: url)
+        if recognizer.supportsOnDeviceRecognition {
+            request.requiresOnDeviceRecognition = true
+        }
+        return await withCheckedContinuation { cont in
+            var resumed = false
+            let task = recognizer.recognitionTask(with: request) { result, error in
+                guard !resumed else { return }
+                if let result, result.isFinal {
+                    resumed = true
+                    cont.resume(returning: result.bestTranscription.formattedString)
+                } else if error != nil {
+                    resumed = true
+                    cont.resume(returning: nil)
+                }
+                // Partial results keep waiting; a short take resolves fast.
+            }
+            // A wedged recognizer must not hang the take flow forever.
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(4))
+                guard !resumed else { return }
+                task.cancel()
+                resumed = true
+                cont.resume(returning: nil)
+            }
+        }
+    }
+}
+
+// MARK: - Microphone metering + take recording (IMPROVEMENT_PLAN.md §3.16)
+
+/// The mic-permission tri-state (§3.16d) — a denial is a state to render,
+/// never an error.
+enum MicPermission { case granted, denied, undetermined }
+
+/// The recorder seam the say-aloud flow talks to — `MicRecorder` in the app,
+/// an honest fake in unit tests (the coordination is the test target, not
+/// the audio server).
+@MainActor
+protocol TakeRecording: AnyObject {
+    var level: Double { get }
+    var samples: [Double] { get }
+    var isRecording: Bool { get }
+    func start() throws
+    @discardableResult func stop() -> URL?
+    func discardTake(_ url: URL?)
+}
+
+extension MicRecorder: TakeRecording {}
+
+/// Real amplitude metering for the say-aloud take: `AVAudioRecorder` with
+/// metering enabled, sampled onto the main actor while the take window
+/// runs. The take file is a throwaway in the temp directory, handed to the
+/// recognizer and deleted — nothing the learner says is ever kept
+/// (governance). Every failure path fails soft: a wedged audio server can
+/// cost a take, never the app (the Stage-2 S0-003 lesson).
+@MainActor
+@Observable
+final class MicRecorder {
+    /// The live average-power level, normalized 0…1 (−60 dBFS floor).
+    private(set) var level: Double = 0
+    /// The take's sampled amplitude history, most recent last — the bars
+    /// LiveWaveform renders.
+    private(set) var samples: [Double] = []
+    private(set) var isRecording = false
+
+    private var recorder: AVAudioRecorder?
+    private var meterTask: Task<Void, Never>?
+    private var fileURL: URL {
+        URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("aurel-take.m4a")
+    }
+
+    /// The current mic permission (no prompt).
+    static var micPermission: MicPermission {
+        switch AVAudioApplication.shared.recordPermission {
+        case .granted: return .granted
+        case .denied: return .denied
+        case .undetermined: return .undetermined
+        @unknown default: return .undetermined
+        }
+    }
+
+    /// Prompt for mic permission when undetermined.
+    static func requestMicPermission() async -> MicPermission {
+        if micPermission != .undetermined { return micPermission }
+        let granted = await AVAudioApplication.requestRecordPermission()
+        return granted ? .granted : .denied
+    }
+
+    /// Begin a take: records to the temp file and meters amplitude until
+    /// `stop()`. Throws only on construction failures — callers degrade.
+    func start() throws {
+        stop()
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
+        try session.setActive(true)
+        try? FileManager.default.removeItem(at: fileURL)
+        let settings: [String: Any] = [
+            AVFormatIDKey: kAudioFormatMPEG4AAC,
+            AVSampleRateKey: 44100,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue,
+        ]
+        let rec = try AVAudioRecorder(url: fileURL, settings: settings)
+        rec.isMeteringEnabled = true
+        guard rec.record() else {
+            throw NSError(
+                domain: "aurel.mic", code: 1,
+                userInfo: [NSLocalizedDescriptionKey: "recorder failed to start"])
+        }
+        recorder = rec
+        isRecording = true
+        level = 0
+        samples = []
+        meterTask = Task { @MainActor [weak self] in
+            while self?.isRecording == true {
+                guard let self else { return }
+                self.recorder?.updateMeters()
+                let power = self.recorder?.averagePower(forChannel: 0) ?? -120
+                let norm = max(0, min(1, Double(power + 60) / 60))  // −60 dBFS floor
+                self.level = norm
+                self.samples.append(norm)
+                try? await Task.sleep(for: .milliseconds(70))
+            }
+        }
+    }
+
+    /// End the take. Returns the take's file URL (nil when the recorder
+    /// never captured), and discards the recorder. The session returns to
+    /// the standing playback category so TTS and feedback sounds stay
+    /// themselves after a take.
+    @discardableResult
+    func stop() -> URL? {
+        meterTask?.cancel()
+        meterTask = nil
+        let url = recorder?.url
+        let wasRecording = recorder?.isRecording ?? false
+        recorder?.stop()
+        recorder = nil
+        isRecording = false
+        // Restore the Speaker's standing session (playback / spoken audio).
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+        guard wasRecording else { return nil }
+        return url
+    }
+
+    /// The take file is handed to the recognizer, then deleted — nothing
+    /// the learner says is ever kept.
+    func discardTake(_ url: URL?) {
+        guard let url else { return }
+        try? FileManager.default.removeItem(at: url)
+    }
+}
+
+// MARK: - Clarity verdict (§3.16c — clarity-only, never accent scoring)
+
+/// The say-aloud verdict tiers, from a word-level comparison of the take's
+/// transcript with the target line. "Near" is a neutral tier by governance
+/// (rendered calm, never error red); the check is clarity — did the words
+/// come through in order — and nothing about accent.
+enum SpeakVerdict {
+    enum Tier: Equatable { case clear, near, nothingHeard }
+
+    /// Normalize a line to its words: lowercase, punctuation stripped.
+    static func words(_ line: String) -> [String] {
+        line.lowercased()
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+    }
+
+    /// Longest common subsequence length over words — order-aware overlap.
+    static func lcs(_ a: [String], _ b: [String]) -> Int {
+        guard !a.isEmpty, !b.isEmpty else { return 0 }
+        var dp = Array(repeating: Array(repeating: 0, count: b.count + 1), count: a.count + 1)
+        for i in 1...a.count {
+            for j in 1...b.count {
+                dp[i][j] =
+                    a[i - 1] == b[j - 1] ? dp[i - 1][j - 1] + 1 : max(dp[i - 1][j], dp[i][j - 1])
+            }
+        }
+        return dp[a.count][b.count]
+    }
+
+    /// The tier for a transcript against its target: clear (≥ 75% of the
+    /// target's words, in order), near (≥ 30%), or nothing heard.
+    static func evaluate(target: String, transcript: String) -> Tier {
+        let t = words(target)
+        let h = words(transcript)
+        guard !t.isEmpty else { return h.isEmpty ? .nothingHeard : .clear }
+        guard !h.isEmpty else { return .nothingHeard }
+        let match = Double(lcs(t, h)) / Double(t.count)
+        if match >= 0.75 { return .clear }
+        if match >= 0.3 { return .near }
+        return .nothingHeard
+    }
+
+    /// How many of the target's words the transcript kept, in order — the
+    /// honest number the "near" verdict cites.
+    static func wordsInOrder(target: String, transcript: String) -> (matched: Int, total: Int) {
+        let t = words(target)
+        return (min(lcs(t, words(transcript)), t.count), t.count)
+    }
+}
+
+// MARK: - Say coach (§3.16 — the take flow, shared by Speak + pronProduce)
+
+/// The take coordinator: permission gates, the 2.6 s window, real metering,
+/// and the after-take clarity check. One instance is shared by the say-aloud
+/// screen and the player's pronProduce items (§3.11c) — per-target records
+/// keyed by the line/word being said. Every seam is injectable so unit tests
+/// exercise the coordination without an audio server; production wires the
+/// real `MicRecorder` + `SpeechToText`.
+@MainActor
+@Observable
+final class SayCoach {
+    /// One target's honest take record.
+    struct Record: Equatable {
+        var takes = 0
+        var verdict: SpeakVerdict.Tier?
+        /// Recognition was unavailable for the last take — renders the
+        /// no-verdict note, never an invented tier.
+        var unavailable = false
+        var matchedWords = 0
+        var totalWords = 0
+    }
+
+    // MARK: Seams (production defaults; tests inject fakes)
+
+    var recorder: any TakeRecording = MicRecorder()
+    /// Transcribe a finished take (nil → the honest unavailable state).
+    var transcriber: @Sendable (URL) async -> String?
+    /// The current mic permission (no prompt).
+    var micPermissionProbe: () -> MicPermission = { MicRecorder.micPermission }
+    /// Prompt when undetermined (never at launch — the prompt belongs to
+    /// the learner's own tap).
+    var micPermissionRequest: () async -> MicPermission = {
+        await MicRecorder.requestMicPermission()
+    }
+
+    private let speech = SpeechToText()
+
+    // MARK: Live state
+
+    private(set) var recording = false
+    private(set) var assessing = false
+    private(set) var micDenied = false
+    /// Per-target records, keyed by the target text.
+    private(set) var records: [String: Record] = [:]
+    /// The target of the running / last take.
+    private(set) var activeTarget = ""
+    private var stopTask: Task<Void, Never>?
+
+    init() {
+        let speech = self.speech
+        transcriber = { url in await speech.transcribe(url: url) }
+    }
+
+    /// The record for the active target (empty when never attempted).
+    var record: Record { records[activeTarget] ?? Record() }
+
+    /// The record for a specific target word/line.
+    func record(for target: String) -> Record {
+        records[target] ?? Record()
+    }
+
+    /// The live metering the waveform renders.
+    var samples: [Double] { recorder.samples }
+    var level: Double { recorder.level }
+
+    // MARK: Flow
+
+    /// Toggle a take for `target` — start when idle, stop when running.
+    func toggle(target: String) {
+        if recording {
+            finish()
+            return
+        }
+        begin(target: target)
+    }
+
+    private func begin(target: String) {
+        switch micPermissionProbe() {
+        case .denied:
+            micDenied = true
+            return
+        case .undetermined:
+            let probe = micPermissionProbe
+            let request = micPermissionRequest
+            Task { @MainActor in
+                switch await request() {
+                case .granted:
+                    guard probe() != .denied else { micDenied = true; return }
+                    self.begin(target: target)
+                default:
+                    self.micDenied = true
+                }
+            }
+            return
+        case .granted:
+            break
+        }
+        micDenied = false
+        do {
+            try recorder.start()
+        } catch {
+            // Fail soft: a wedged audio server can cost a take, never the app.
+            return
+        }
+        activeTarget = target
+        recording = true
+        // The 2.6 s take window (line 1890): restarting supersedes the
+        // pending auto-stop instead of stacking a second timer.
+        stopTask?.cancel()
+        stopTask = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2.6))
+            guard !Task.isCancelled else { return }
+            self.finish()
+        }
+    }
+
+    /// End the running take (manual tap or the auto-stop) and run the
+    /// clarity check on what was said.
+    func finish() {
+        stopTask?.cancel()
+        stopTask = nil
+        let url = recorder.stop()
+        recording = false
+        guard let url else { return }  // never captured — no take counted
+        var rec = records[activeTarget] ?? Record()
+        rec.takes += 1
+        rec.verdict = nil
+        rec.unavailable = false
+        records[activeTarget] = rec
+
+        let target = activeTarget
+        assessing = true
+        let transcribe = transcriber
+        Task { @MainActor in
+            let transcript = await transcribe(url)
+            recorder.discardTake(url)  // nothing the learner says is kept
+            var rec = records[target] ?? Record()
+            if let transcript {
+                rec.verdict = SpeakVerdict.evaluate(target: target, transcript: transcript)
+                let words = SpeakVerdict.wordsInOrder(target: target, transcript: transcript)
+                rec.matchedWords = words.matched
+                rec.totalWords = words.total
+                rec.unavailable = false
+            } else {
+                rec.verdict = nil
+                rec.unavailable = true
+            }
+            records[target] = rec
+            assessing = false
+            // Paired feedback per §2.6 — calm by governance, never shaming.
+            switch rec.verdict {
+            case .clear:
+                AUFeedback.correct()
+                AUSound.shared.correct()
+            case .near:
+                AUFeedback.press()
+            case .nothingHeard:
+                AUFeedback.miss()
+            case nil:
+                break
+            }
+            switch rec.verdict {
+            case .clear: AUAX.announce("Clear.")
+            case .near: AUAX.announce("Closer each time.")
+            case .nothingHeard: AUAX.announce("Nothing came through.")
+            case nil: break
+            }
+        }
+    }
+
+    /// Leaving the surface: any running take ends without a verdict, and
+    /// nothing the learner said is kept.
+    func reset() {
+        stopTask?.cancel()
+        stopTask = nil
+        if recording {
+            let url = recorder.stop()
+            recorder.discardTake(url)
+        }
+        recording = false
+        assessing = false
+    }
+
+    /// §3.16(d): re-check the permission (on appear / returning from
+    /// Settings) — the denial state leaves the moment access does.
+    func refreshPermission() {
+        if micDenied, micPermissionProbe() == .granted {
+            micDenied = false
+        }
     }
 }

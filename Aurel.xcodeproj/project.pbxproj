@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0671D263F76C2ECA7563CF8E2B539257 /* CoursePlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B5188F775D9AAF0CF93A5AA72A6E9C /* CoursePlayerView.swift */; };
+		08E4B075189BA28645F4C3E6CFA5376E /* Stage6PlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0188159592B747512682ECA0220B4473 /* Stage6PlayerTests.swift */; };
 		0C0B14A4DA7875DFCC1C3E0768261C91 /* QuickPracticeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B1AA8A58DCBE19036DC417E440EE56 /* QuickPracticeViews.swift */; };
 		0FA2390B04864C4C2918086E1CF523A3 /* Figtree-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80593EE278AE9B371F189029707F27D5 /* Figtree-ExtraBold.ttf */; };
 		11E5D01CF1E3197682C1C198F66286A4 /* StreakBoardViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF95420D3B441BE457F1AB3F8B60498 /* StreakBoardViews.swift */; };
@@ -22,6 +23,7 @@
 		367A581AF83E4D6A5EA37E80390F8355 /* ProgressProfileSettingsPaywall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69C1D92E0778B74765199C549BE52C10 /* ProgressProfileSettingsPaywall.swift */; };
 		36EA0857E16F3C922EC656A929228FA2 /* course-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B7C3DC99E8E15A98F026D005AB0663D4 /* course-manifest.json */; };
 		3A52C34D9979DCF61EEC5DDC5C0E511B /* AUIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307FBEBFB78F4741282B48E9FEE8DE2E /* AUIcon.swift */; };
+		3E3C66D5B312BC66FEA525EB4E442FF3 /* Stage5SpeakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4D0E3E5A77B0CDB3314788C22FAF39 /* Stage5SpeakTests.swift */; };
 		4121B64C1C89C26F791987A1CE4F1E46 /* CoreScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0639F37AD456BFA682934CC46D8882EA /* CoreScreens.swift */; };
 		4209B168FC50A5E94045FB4D79A98A8B /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B367F3146D919ABA3DA2BA467EA4DDFF /* PlayerModel.swift */; };
 		4226AC2B2F73C48A69052D8A273FBD60 /* OFL-Caprasimo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D22511BEADDAF97BFC6F325273B442C /* OFL-Caprasimo.txt */; };
@@ -67,6 +69,7 @@
 		E306BF8CB3CDD77FD9429951C0D2409D /* ArcSkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAB7BAEA689D85557BAC25BB91ED072 /* ArcSkyView.swift */; };
 		E4A40EA0192C24D5CBB4707D74E7278E /* AppRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0875CFFAD1B6B622E580B89EE1424284 /* AppRouterTests.swift */; };
 		E5A60EACD0757D3E4A8B491FBF7CBB26 /* FeedbackServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF3250CDE01EB5DD295C7AF67823C4A /* FeedbackServicesTests.swift */; };
+		E669F2A01D6D03147E5D5054CF9FC553 /* Stage7AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F4CA1BE6E51DA98F474AE36BFF169B /* Stage7AccountTests.swift */; };
 		E77BF59C986E4F00C5DF1A275B9AAFBD /* CourseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA9EC2CCC2CF2D55CD8F514C767117 /* CourseStore.swift */; };
 		EE3452188D50B780DD65FF2E0C3624E0 /* PlayerModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719BF620D42C590029B403F2ABF49C56 /* PlayerModelTests.swift */; };
 		F3C727EB27483A1E8916A3CA70275ECA /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23F31C765332124A3C3CD359AF52D52A /* Models.swift */; };
@@ -93,10 +96,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0188159592B747512682ECA0220B4473 /* Stage6PlayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage6PlayerTests.swift; sourceTree = "<group>"; };
 		02485DC4A76A536F04D867DF12412B3B /* ContentConformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentConformanceTests.swift; sourceTree = "<group>"; };
 		0639F37AD456BFA682934CC46D8882EA /* CoreScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreScreens.swift; sourceTree = "<group>"; };
 		0875CFFAD1B6B622E580B89EE1424284 /* AppRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouterTests.swift; sourceTree = "<group>"; };
 		0990748216B0670DE075A105AB65E9BC /* ScreenPayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenPayloads.swift; sourceTree = "<group>"; };
+		0A4D0E3E5A77B0CDB3314788C22FAF39 /* Stage5SpeakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage5SpeakTests.swift; sourceTree = "<group>"; };
 		0CC0044C3C61184624946A128732103A /* AurelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AurelApp.swift; sourceTree = "<group>"; };
 		0CC1CB3101B4E131273BA12DBFA029B5 /* PracticeHubViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeHubViews.swift; sourceTree = "<group>"; };
 		0D72008BB451DE64C4F92ED4776869E6 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
@@ -120,6 +125,7 @@
 		6D0C545AB62127EB46037434F3BBDC21 /* ColorLiteralTripwireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorLiteralTripwireTests.swift; sourceTree = "<group>"; };
 		6D22511BEADDAF97BFC6F325273B442C /* OFL-Caprasimo.txt */ = {isa = PBXFileReference; path = "OFL-Caprasimo.txt"; sourceTree = "<group>"; };
 		719BF620D42C590029B403F2ABF49C56 /* PlayerModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModelTests.swift; sourceTree = "<group>"; };
+		74F4CA1BE6E51DA98F474AE36BFF169B /* Stage7AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage7AccountTests.swift; sourceTree = "<group>"; };
 		77B1AA8A58DCBE19036DC417E440EE56 /* QuickPracticeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPracticeViews.swift; sourceTree = "<group>"; };
 		7A543CC6DED563E5EC66885E39EF424E /* Caprasimo-Regular.ttf */ = {isa = PBXFileReference; path = "Caprasimo-Regular.ttf"; sourceTree = "<group>"; };
 		7D0298E8BEF7B11B1D77167B71F06E6E /* LangScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangScreens.swift; sourceTree = "<group>"; };
@@ -250,6 +256,9 @@
 				86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */,
 				420A021EF6B3797A3F66A585BE27CF8D /* Stage2CoreLoopTests.swift */,
 				50D878867CA9F5F3BF30892C3455528E /* Stage4DataHonestyTests.swift */,
+				0A4D0E3E5A77B0CDB3314788C22FAF39 /* Stage5SpeakTests.swift */,
+				0188159592B747512682ECA0220B4473 /* Stage6PlayerTests.swift */,
+				74F4CA1BE6E51DA98F474AE36BFF169B /* Stage7AccountTests.swift */,
 				CED7EDA25646801897D337FBC6D61A5A /* SVGPathShapeTests.swift */,
 			);
 			path = AurelTests;
@@ -643,6 +652,9 @@
 				8265BAFB6C0E6FDD6FEEC5531156AA5F /* SmokeTests.swift in Sources */,
 				7D0E71FCDDD6EC9C891A99D18B91A8B4 /* Stage2CoreLoopTests.swift in Sources */,
 				60D8972117370C72416C713CA9D5205D /* Stage4DataHonestyTests.swift in Sources */,
+				3E3C66D5B312BC66FEA525EB4E442FF3 /* Stage5SpeakTests.swift in Sources */,
+				08E4B075189BA28645F4C3E6CFA5376E /* Stage6PlayerTests.swift in Sources */,
+				E669F2A01D6D03147E5D5054CF9FC553 /* Stage7AccountTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

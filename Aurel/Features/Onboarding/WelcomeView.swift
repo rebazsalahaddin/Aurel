@@ -10,9 +10,24 @@ struct WelcomeView: View {
             WelcomeDusk()
 
             VStack(spacing: 0) {
-                AUWordmarkRow()
-                    .padding(.top, 70)
-                    .padding(.horizontal, 28)
+                HStack {
+                    AUWordmarkRow()
+                    Spacer()
+                    Button {
+                        env.router.nav(.login)
+                    } label: {
+                        Text("Sign in")
+                            .font(.figtree(.semibold, size: 14))
+                            .foregroundStyle(AUSceneArt.duskCream.opacity(0.85))
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(Capsule().fill(AUSceneArt.duskCream.opacity(0.12)))
+                    }
+                    .buttonStyle(.auTap)
+                    .accessibilityLabel("Sign in with existing account")
+                }
+                .padding(.top, 64)
+                .padding(.horizontal, 24)
 
                 Spacer(minLength: 0)
 
@@ -54,21 +69,22 @@ struct WelcomeView: View {
 
                     AUHeading(
                         text: "English,\nunhurried.",
-                        size: 44, lineHeight: 1.02, tracking: -1.1,
+                        size: 42, lineHeight: 1.02, tracking: -1.1,
                         color: AUSceneArt.duskCream
                     )
-                    .padding(.top, 22)
+                    .auClampText(minScale: 0.85)
+                    .padding(.top, 18)
                     .auStagger(1)
 
                     AUParagraph(
                         text:
                             "One lesson at a time, rebuilt each morning around the words you are about to forget.",
-                        size: 15.5, lineHeight: 1.6,
+                        size: 15, lineHeight: 1.55,
                         color: AUSceneArt.duskCream.opacity(0.76)
                     )
                     .frame(maxWidth: 330, alignment: .leading)
-                    .padding(.top, 14)
-                    .padding(.bottom, 30)
+                    .padding(.top, 12)
+                    .padding(.bottom, 26)
                     .auStagger(2)
 
                     // .au-key — Begin the path
@@ -118,12 +134,12 @@ struct WelcomeView: View {
                         )
                         .frame(height: 1)
                     }
-                    .padding(.top, 24)
+                    .padding(.top, 20)
                     .padding(.horizontal, 2)
                     .auStagger(4)
                 }
-                .padding(.horizontal, 28)
-                .padding(.bottom, 44)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 38)
             }
         }
         .ignoresSafeArea()

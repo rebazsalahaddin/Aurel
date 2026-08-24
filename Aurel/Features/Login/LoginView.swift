@@ -4,16 +4,15 @@ import SwiftUI
 
 struct LoginView: View {
     @Environment(AppEnvironment.self) private var env
+    @State private var showForgotPassword = false
+    @State private var shakeAttempts: CGFloat = 0
+    @FocusState private var passwordFocused: Bool
 
     var body: some View {
         GeometryReader { geo in
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     HStack {
-                        Spacer()
-                    }
-                    .frame(height: 44)
-                    .overlay(alignment: .leading) {
                         Button {
                             env.router.nav(.welcome)
                         } label: {
@@ -23,6 +22,7 @@ struct LoginView: View {
                         }
                         .buttonStyle(.auTap)
                         .accessibilityLabel("Back")
+                        Spacer()
                     }
                     .padding(.bottom, 38)
 
@@ -46,91 +46,84 @@ struct LoginView: View {
                                     get: { env.router.email },
                                     set: { env.router.setEmail($0) }
                                 ), placeholder: "you@example.com", keyboard: .emailAddress,
-                                aid: "au.login.email")
+                                aid: "au.login.email",
+                                contentType: .emailAddress,
+                                submitLabel: .next,
+                                onSubmit: { passwordFocused = true })
                         }
                         AUField(label: "Password") {
                             AUTextField(
                                 text: Binding(
                                     get: { env.router.pass },
                                     set: { env.router.setPass($0) }
-                                ), placeholder: "••••••••", secure: true, aid: "au.login.pass")
+                                ), placeholder: "••••••••", secure: true, aid: "au.login.pass",
+                                contentType: .password,
+                                submitLabel: .go,
+                                onSubmit: { env.router.signIn() },
+                                externalFocus: $passwordFocused)
                         }
                     }
+                    .modifier(AUShakeEffect(animatableData: shakeAttempts))
                     .padding(.bottom, 10)
 
                     HStack {
                         Spacer()
-                        Text("Forgot password")
-                            .font(.figtree(.semibold, size: 12.5))
-                            .foregroundStyle(Color.auAccent)
+                        Button {
+                            showForgotPassword = true
+                        } label: {
+                            Text("Forgot password?")
+                                .font(.figtree(.semibold, size: 13))
+                                .foregroundStyle(Color.auAccentText)
+                        }
+                        .buttonStyle(.auTap)
                     }
                     .padding(.bottom, 22)
 
                     if !env.router.loginErr.isEmpty {
-                        HStack(spacing: 10) {
-                            SVGPathShape(d: "M12 8.5v5M12 17.2h.01")
-                                .stroke(
-                                    Color.auErrText,
-                                    style: StrokeStyle(lineWidth: 3 * 15 / 24, lineCap: .round)
-                                )
-                                .frame(width: 15, height: 15)
-                            Text(env.router.loginErr)
-                                .font(.figtree(.regular, size: 12.5))
-                                .auLine(12.5, 1.4)
-                        }
-                        .padding(.horizontal, 15)
-                        .padding(.vertical, 12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .fill(Color.auErrBg)
-                        )
-                        .foregroundStyle(Color.auErrText)
-                        .padding(.bottom, 12)
+                        // AUBanner carries the authored top+fade entrance
+                        // (craft overhaul M9 — the old banner hard-cut because
+                        // loginErr was mutated outside any animation).
+                        AUBanner(text: env.router.loginErr, tone: .error)
+                            .padding(.bottom, 12)
                     }
 
                     APillButton(title: "Sign in") {
                         env.router.signIn()
+                        if !env.router.loginErr.isEmpty {
+                            AUFeedback.miss()
+                            withAnimation(.default) {
+                                shakeAttempts += 1
+                            }
+                        }
                     }
                     .padding(.bottom, 20)
 
-                    HStack(spacing: 14) {
-                        Rectangle().fill(Color.auDivider).frame(height: 1)
-                        Text("or")
-                            .font(.figtree(.regular, size: 11))
-                            .tracking(1.1)
-                            .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.40))
-                        Rectangle().fill(Color.auDivider).frame(height: 1)
-                    }
-                    .padding(.bottom, 20)
-
-                    LoginGhostButton(title: "Continue with Apple", glyph: .apple) {
-                        env.router.nav(.home)
-                    }
-                    .padding(.bottom, 10)
-
-                    LoginGhostButton(title: "Continue with Google", glyph: .google) {
-                        env.router.nav(.home)
-                    }
+                    // Craft overhaul C2: the fake Apple/Google buttons are
+                    // gone — they navigated straight to .home with no
+                    // credential flow (App Store Guideline 4.8). Social
+                    // sign-in returns when it is real (SignInWithAppleButton).
 
                     Spacer(minLength: 20)
 
                     HStack(spacing: 4) {
                         Text("New here?")
-                            .foregroundStyle(Color.auText.opacity(0.50))
-                        Text("Create an account")
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color.auAccent)
+                            .foregroundStyle(Color.auTextSecondary)
+                        ALinkButton(title: "Create an account") {
+                            env.router.nav(.goal)
+                        }
+                        .fixedSize()
                     }
-                    .font(.figtree(.regular, size: 12.5))
-                    .onTapGesture { env.router.nav(.goal) }
+                    .font(.figtree(.regular, size: 13))
+                    .frame(maxWidth: .infinity)
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 74)
                 .padding(.bottom, 32)
                 .frame(minHeight: geo.size.height, alignment: .top)
             }
+        }
+        .sheet(isPresented: $showForgotPassword) {
+            ForgotPasswordSheet()
         }
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
@@ -160,20 +153,30 @@ struct AUTextField: View {
     var keyboard: UIKeyboardType = .default
     /// UI-test identifier applied to the field itself.
     var aid: String? = nil
+    /// AutoFill/QuickType content type (craft overhaul M8).
+    var contentType: UITextContentType? = nil
+    var submitLabel: SubmitLabel = .return
+    var onSubmit: () -> Void = {}
+    /// Optional external focus (email→password chaining); internal otherwise.
+    var externalFocus: FocusState<Bool>.Binding? = nil
+
+    @FocusState private var internalFocus: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var focused: Bool { externalFocus?.wrappedValue ?? internalFocus }
 
     var body: some View {
         Group {
-            if secure {
-                SecureField(
-                    "", text: $text,
-                    prompt: Text(placeholder).foregroundStyle(Color.auText.opacity(0.35)))
+            if let externalFocus {
+                core.focused(externalFocus)
             } else {
-                TextField(
-                    "", text: $text,
-                    prompt: Text(placeholder).foregroundStyle(Color.auText.opacity(0.35)))
+                core.focused($internalFocus)
             }
         }
         .keyboardType(keyboard)
+        .textContentType(contentType)
+        .submitLabel(submitLabel)
+        .onSubmit(onSubmit)
         .accessibilityIdentifier(aid ?? "au.field")
         .textInputAutocapitalization(.never)
         .font(.figtree(.regular, size: 15))
@@ -186,7 +189,15 @@ struct AUTextField: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .strokeBorder(Color.auEdge, lineWidth: 1)
+                // Craft overhaul M8: focus ring — accent border on focus.
+                .strokeBorder(
+                    focused ? Color.auAccent : Color.auEdge,
+                    lineWidth: focused ? 1.5 : 1
+                )
+                .animation(
+                    AUMotion.animation(AUMotion.instant, reduceMotion: reduceMotion),
+                    value: focused
+                )
         )
         .overlay(alignment: .top) {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -198,42 +209,17 @@ struct AUTextField: View {
         }
         .autocorrectionDisabled()
     }
-}
 
-private struct LoginGhostButton: View {
-    let title: String
-    let glyph: AUBrandMark.Kind
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 10) {
-                AUBrandMark(kind: glyph, size: 18, tint: .auText)
-                Text(title)
-                    .font(.figtree(.semibold, size: 16.5))
-                    .tracking(0.2)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 22)
-            .padding(.vertical, 17)
-            .foregroundStyle(Color.auText)
-            .background(AUGradients.glass())
-            .clipShape(RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
-                    .strokeBorder(Color.auEdge, lineWidth: 1)
-            )
-            .overlay(alignment: .top) {
-                RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
-                    .strokeBorder(Color.auHi, lineWidth: 1)
-                    .mask(
-                        Rectangle().frame(height: 1)
-                            .frame(maxHeight: .infinity, alignment: .top)
-                    )
-            }
-            .auSoft()
+    @ViewBuilder
+    private var core: some View {
+        if secure {
+            SecureField(
+                "", text: $text,
+                prompt: Text(placeholder).foregroundStyle(Color.auTextTertiary))
+        } else {
+            TextField(
+                "", text: $text,
+                prompt: Text(placeholder).foregroundStyle(Color.auTextTertiary))
         }
-        .buttonStyle(.auTap)
-        .accessibilityIdentifier("au.btn.\(title.auSlug)")
     }
 }

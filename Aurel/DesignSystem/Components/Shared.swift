@@ -576,23 +576,28 @@ struct StepHeader: View {
             .buttonStyle(.auTap)
             .accessibilityLabel("Back")
 
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Color.auDivider)
-                    Capsule()
-                        .fill(Color.auAccent)
-                        .frame(width: geo.size.width * CGFloat(step) / CGFloat(total))
-                        .animation(.easeInOut(duration: 0.42), value: step)
+            HStack(spacing: 10) {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(Color.auDivider)
+                        Capsule()
+                            .fill(Color.auAccent)
+                            .frame(width: geo.size.width * CGFloat(step) / CGFloat(total))
+                            .animation(.easeInOut(duration: 0.42), value: step)
+                    }
                 }
-            }
-            .frame(height: 4)
+                .frame(height: 4)
 
-            Text("\(step) of \(total)")
-                .font(.figtree(.regular, size: 11.5))
-                .foregroundStyle(Color.auText.opacity(0.45))
+                Text("\(step) of \(total)")
+                    .font(.figtree(.regular, size: 11.5))
+                    .foregroundStyle(Color.auTextTertiary)
+            }
+            // The meter + count read as one AX element; the Back button above
+            // is deliberately OUTSIDE this group so VoiceOver can reach it
+            // (craft overhaul, DEFECT C1).
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Step \(step) of \(total)")
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Step \(step) of \(total)")
     }
 }
 
@@ -601,6 +606,7 @@ struct StepHeader: View {
 /// The floating glass tab bar: Learn · Practice · Progress · You.
 struct AUTabBar: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let current: AppRouter.Screen
 
     private var selectedIndex: Int {
@@ -621,10 +627,17 @@ struct AUTabBar: View {
             ZStack(alignment: .leading) {
                 // Sliding accent indicator (.au-tab-ind)
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color.auAccentRamp(700))
+                    .fill(Color(UIColor(hex: 0xb25f1f)))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2)
+                    )
                     .frame(width: tabWidth, height: geo.size.height - 14)
                     .offset(x: 7 + CGFloat(selectedIndex) * tabWidth, y: 0)
-                    .animation(.spring(response: 0.42, dampingFraction: 0.86), value: selectedIndex)
+                    .animation(
+                        .spring(response: 0.35, dampingFraction: 0.78),
+                        value: selectedIndex
+                    )
 
                 HStack(spacing: 0) {
                     tab(.home, icon: .learn, label: "Learn", width: tabWidth)
@@ -637,23 +650,18 @@ struct AUTabBar: View {
         }
         .frame(height: 62)
         .background(
-            RoundedRectangle(cornerRadius: 27, style: .continuous)
-                .fill(.ultraThinMaterial.opacity(0.5))
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(.ultraThinMaterial)
         )
-        .background(AUGradients.glass(), in: RoundedRectangle(cornerRadius: 27, style: .continuous))
+        .background(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(Color(UIColor.secondarySystemBackground).opacity(0.12))
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: 27, style: .continuous)
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .strokeBorder(Color.auEdge, lineWidth: 1)
         )
-        .overlay(alignment: .top) {
-            RoundedRectangle(cornerRadius: 27, style: .continuous)
-                .strokeBorder(Color.auHi, lineWidth: 1)
-                .mask(
-                    Rectangle().frame(height: 1)
-                        .frame(maxHeight: .infinity, alignment: .top)
-                )
-        }
-        .auSoft()
+        .shadow(color: Color.black.opacity(0.14), radius: 18, x: 0, y: 8)
     }
 
     private enum TabIcon {
@@ -664,16 +672,23 @@ struct AUTabBar: View {
         -> some View
     {
         let on = screen == current
-        let tint: Color = on ? Color(UIColor(hex: 0xfff6ea)) : Color.auText.opacity(0.62)
+        let tint: Color = on ? Color.white : Color.auText.opacity(0.62)
         return Button {
-            env.router.nav(screen)
+            AUFeedback.selection()
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+                env.router.nav(screen)
+            }
         } label: {
             VStack(spacing: 4) {
                 tabIcon(icon, tint: tint)
                     .frame(width: 21, height: 21)
-                    .scaleEffect(on ? 1.07 : 1.0)
+                    .scaleEffect(on ? 1.08 : 1.0)
                     .offset(y: on ? -1 : 0)
-                    .opacity(on ? 1.0 : 0.92)
+                    .opacity(on ? 1.0 : 0.90)
+                    .animation(
+                        AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+                        value: on
+                    )
                 Text(label)
                     .font(.figtree(.bold, size: 10))
                     .tracking(0.1)
@@ -751,8 +766,13 @@ struct SelectableRow<Leading: View, Content: View>: View {
     @ViewBuilder var content: () -> Content
     var action: () -> Void
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            AUFeedback.selection()
+            action()
+        }) {
             HStack(spacing: 14) {
                 leading()
                 content()
@@ -764,6 +784,13 @@ struct SelectableRow<Leading: View, Content: View>: View {
             .padding(.horizontal, 19)
             .padding(.vertical, vPad + 1)
             .background(rowBackground)
+            // Craft overhaul O4/O5: selection state settles with the quick
+            // spring instead of a hard cut (opacity-only under Reduce Motion).
+            .scaleEffect(selected ? 1.01 : 1.0)
+            .animation(
+                AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+                value: selected
+            )
         }
         .disabled(inert)
         .buttonStyle(.auTap)
@@ -815,3 +842,168 @@ struct AUSelectSurface: View {
         }
     }
 }
+
+// MARK: - LadderSheet (CEFR Curriculum Ladder Modal Sheet)
+
+struct LadderSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("The CEFR Ladder")
+                        .font(.caprasimo(size: 26))
+                        .foregroundStyle(Color.auText)
+                        .padding(.top, 12)
+
+                    Text("Aurel takes you from zero to confident Foundation English (A1), with progressive chapters written for adult learners.")
+                        .font(.figtree(.regular, size: 14))
+                        .auLine(14, 1.5)
+                        .foregroundStyle(Color.auText.opacity(0.6))
+                        .padding(.bottom, 8)
+
+                    VStack(spacing: 0) {
+                        ladderRow(level: "A1", title: "Foundation · 12 Chapters", status: "Active Course", isActive: true)
+                        ladderRow(level: "A2", title: "Elementary", status: "In Development", isActive: false)
+                        ladderRow(level: "B1", title: "Intermediate", status: "Planned", isActive: false)
+                        ladderRow(level: "B2", title: "Upper Intermediate", status: "Planned", isActive: false)
+                        ladderRow(level: "C1", title: "Advanced Mastery", status: "Planned", isActive: false, divider: false)
+                    }
+                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill))
+                    .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1))
+                    .auLift()
+                }
+                .padding(24)
+            }
+            .background(Color.auBackground.ignoresSafeArea())
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                        .font(.figtree(.semibold, size: 15))
+                        .foregroundStyle(Color.auAccentText)
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+
+    private func ladderRow(level: String, title: String, status: String, isActive: Bool, divider: Bool = true) -> some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                Text(level)
+                    .font(.caprasimo(size: 19))
+                    .frame(width: 38, alignment: .leading)
+                    .foregroundStyle(isActive ? Color.auAccent : Color.auText.opacity(0.35))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.figtree(.semibold, size: 14.5))
+                        .foregroundStyle(Color.auText)
+                    Text(status)
+                        .font(.figtree(.regular, size: 12))
+                        .foregroundStyle(isActive ? Color.auAccentText : Color.auText.opacity(0.45))
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                if isActive {
+                    Text("Here")
+                        .font(.figtree(.bold, size: 11))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(Capsule().fill(Color.auAccent))
+                        .foregroundStyle(Color.auBackground)
+                }
+            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 14)
+
+            if divider {
+                Divider().overlay(Color.auDivider)
+            }
+        }
+    }
+}
+
+// MARK: - ForgotPasswordSheet (Password Recovery Modal)
+
+struct ForgotPasswordSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var email: String = ""
+    @State private var sent: Bool = false
+
+    var body: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 18) {
+                if !sent {
+                    Text("Reset your password")
+                        .font(.caprasimo(size: 24))
+                        .foregroundStyle(Color.auText)
+                        .padding(.top, 8)
+
+                    Text("Enter the email associated with your Aurel account and we'll send you a password reset link.")
+                        .font(.figtree(.regular, size: 14))
+                        .auLine(14, 1.5)
+                        .foregroundStyle(Color.auText.opacity(0.6))
+
+                    TextField("you@example.com", text: $email)
+                        .font(.figtree(.medium, size: 15))
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .padding(.horizontal, 18)
+                        .frame(minHeight: 54)
+                        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.auFill))
+                        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(Color.auEdge, lineWidth: 1))
+                        .padding(.top, 4)
+
+                    Spacer()
+
+                    APillButton(title: "Send reset link", disabled: email.trimmingCharacters(in: .whitespaces).isEmpty) {
+                        AUFeedback.correct()
+                        withAnimation { sent = true }
+                    }
+                } else {
+                    VStack(spacing: 14) {
+                        Spacer()
+                        Circle()
+                            .fill(Color.auOkBg)
+                            .frame(width: 64, height: 64)
+                            .overlay {
+                                AUIcon(kind: .check, size: 24, color: .auOkText)
+                            }
+                            .scaleEffect(sent ? 1.0 : 0.4)
+                            .animation(.spring(response: 0.38, dampingFraction: 0.65), value: sent)
+
+                        Text("Reset link sent")
+                            .font(.caprasimo(size: 22))
+
+                        Text("Check your inbox for instructions to reset your password. It may take a minute to arrive.")
+                            .font(.figtree(.regular, size: 14))
+                            .auLine(14, 1.5)
+                            .foregroundStyle(Color.auText.opacity(0.6))
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, 12)
+
+                        Spacer()
+
+                        APillButton(title: "Back to sign in") {
+                            dismiss()
+                        }
+                    }
+                }
+            }
+            .padding(24)
+            .background(Color.auBackground.ignoresSafeArea())
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Close") { dismiss() }
+                        .font(.figtree(.semibold, size: 15))
+                        .foregroundStyle(Color.auText.opacity(0.6))
+                }
+            }
+        }
+        .presentationDetents([.fraction(0.48), .large])
+    }
+}
+

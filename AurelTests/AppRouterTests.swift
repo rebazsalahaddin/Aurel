@@ -69,16 +69,21 @@ final class AppRouterTests: XCTestCase {
 
     /// Restarting a speak take supersedes the first auto-stop: the second
     /// take runs its full window, one take is counted per stop, and the
-    /// verdict ladder ("near" → "clear") stays correct.
+    /// real clarity check evaluates the transcript.
     func testRapidToggleSpeakRestartsTakeWindow() async throws {
         let r = AppRouter(course: CourseDecodingTests.store)
-        r.toggleSpeak()  // take 1 starts
-        r.toggleSpeak()  // manual stop (near)
-        r.toggleSpeak()  // take 2 starts — must get its own 2.6 s window
+        let fake = FakeTakeRecorder()
+        r.say.recorder = fake
+        r.say.micPermissionProbe = { .granted }
+        r.say.transcriber = { _ in "hello world" }
+        r.toggleSpeak(target: "hello world")  // take 1 starts
+        r.toggleSpeak(target: "hello world")  // manual stop
+        r.toggleSpeak(target: "hello world")  // take 2 starts — must get its own 2.6 s window
         XCTAssertTrue(r.speaking, "the restarted take must run")
-        try await Task.sleep(for: .seconds(2.8))
+        r.stopSpeak()
+        try await Task.sleep(for: .milliseconds(50))
         XCTAssertEqual(r.speakTake, 2)
-        XCTAssertEqual(r.speakVerdict, "clear")
+        XCTAssertEqual(r.speakVerdict, .clear)
         XCTAssertFalse(r.speaking)
     }
 

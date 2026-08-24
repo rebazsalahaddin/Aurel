@@ -10,22 +10,27 @@ extension AppRouter {
     // MARK: Setters used by onboarding/settings
 
     func setLevel(_ value: String) {
+        AUFeedback.selection()
         level = value
         persist()
     }
     func setCommitMinutes(_ value: Int) {
+        AUFeedback.selection()
         commit = value
         persist()
     }
     func setRemindAt(_ value: String) {
+        AUFeedback.selection()
         remindAt = value
         persist()
     }
     func setThemeMode(_ value: Int) {
+        AUFeedback.selection()
         themeMode = value
         persist()
     }
     func setTypeStep(_ value: Int) {
+        AUFeedback.selection()
         typeStep = value
         persist()
     }

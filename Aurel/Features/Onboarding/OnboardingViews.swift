@@ -36,20 +36,24 @@ struct GoalView: View {
             step: 1, back: { env.router.nav(.welcome) },
             content: {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Why English?")
-                        .font(.caprasimo(size: 31))
-                        .tracking(-0.62)
-                        .auHeadLine(31, 1.12)
-                        .auStagger(0)
-                    AUParagraph(
-                        text: "Pick up to two — it changes what we put in front of you first.",
-                        size: 14, lineHeight: 1.55, color: Color.auText.opacity(0.55)
-                    )
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    HStack(alignment: .top) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Why English?")
+                                .font(.caprasimo(size: 31))
+                                .tracking(-0.62)
+                                .auHeadLine(31, 1.12)
+                            AUParagraph(
+                                text: "Pick up to two — it customizes what we put in front of you first.",
+                                size: 14, lineHeight: 1.55, color: Color.auText.opacity(0.55)
+                            )
+                        }
+                        Spacer()
+                        AUCounterBadge(current: env.router.goals.count, maxCount: 2)
+                    }
                     .auStagger(0)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 26)
+                .padding(.bottom, 22)
 
                 VStack(spacing: 11) {
                     ForEach(Array(Self.goals.enumerated()), id: \.element.id) { i, goal in
@@ -75,9 +79,14 @@ struct GoalView: View {
                                 Text(goal.sub)
                                     .font(.figtree(.regular, size: 12.5))
                                     .auLine(12.5, 1.55)
-                                    .foregroundStyle(Color.auText.opacity(0.52))
+                                    .foregroundStyle(Color.auTextSecondary)
                             }
                         } action: {
+                            // The router owns the selection haptic (craft
+                            // overhaul M5 — the view used to double-fire it).
+                            if !on && env.router.goals.count >= 2 {
+                                AUFeedback.warning()
+                            }
                             env.router.toggleGoal(goal.id)
                         }
                         .auStagger(i + 1)
@@ -88,14 +97,25 @@ struct GoalView: View {
 
                 Text(env.router.goalHint)
                     .font(.figtree(.regular, size: 12.5))
-                    .foregroundStyle(Color.auText.opacity(0.50))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 10)
 
-                APillButton(title: "Continue", disabled: env.router.goals.isEmpty) {
+                APillButton(
+                    title: continueTitle,
+                    disabled: env.router.goals.isEmpty,
+                    aid: "au.btn.continue"
+                ) {
                     env.router.nav(.commit)
                 }
             })
+    }
+
+    private var continueTitle: String {
+        let count = env.router.goals.count
+        if count == 0 { return "Select at least 1 goal" }
+        if count == 1 { return "Continue with 1 goal" }
+        return "Continue with 2 goals"
     }
 }
 
@@ -104,8 +124,11 @@ struct GoalView: View {
 struct CommitView: View {
     @Environment(AppEnvironment.self) private var env
 
-    private static let remindOpts: [(t: String, l: String)] = [
-        ("07:30", "Morning"), ("12:30", "Midday"), ("19:30", "Evening"), ("", "No reminder"),
+    private static let remindOpts: [(t: String, l: String, icon: AUIcon.Kind)] = [
+        ("07:30", "Dawn / Morning", .sparkle),
+        ("12:30", "Midday", .clock),
+        ("19:30", "Sundown", .star),
+        ("", "No reminder", .close),
     ]
 
     var body: some View {
@@ -121,38 +144,47 @@ struct CommitView: View {
                             "A lesson runs about 20 minutes, with a natural place to stop around the middle. Pause and resume whenever you like — nothing is lost.",
                         size: 14, lineHeight: 1.55
                     )
-                    .foregroundStyle(Color.auText.opacity(0.55))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, 26)
+                .padding(.bottom, 24)
 
-                Text("One reminder, if you like")
+                Text("Daily reminder rhythm")
                     .font(.figtree(.bold, size: 10.5))
                     .tracking(1.47)
                     .textCase(.uppercase)
-                    .foregroundStyle(Color.auText.opacity(0.50))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 12)
 
-                HStack(spacing: 9) {
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                     ForEach(Array(Self.remindOpts.enumerated()), id: \.element.l) { i, opt in
                         let on = env.router.remindAt == opt.t
                         Button {
+                            AUFeedback.selection()
                             env.router.setRemindAt(opt.t)
                         } label: {
-                            VStack(spacing: 2) {
-                                Text(opt.t.isEmpty ? "—" : opt.t)
-                                    .font(.figtree(.bold, size: 15))
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack {
+                                    AUIcon(kind: opt.icon, size: 16, color: on ? .auAccent : .auText.opacity(0.4))
+                                    Spacer()
+                                    if on {
+                                        Circle().fill(Color.auAccent).frame(width: 6, height: 6)
+                                    }
+                                }
+                                Text(opt.t.isEmpty ? "Off" : opt.t)
+                                    .font(.figtree(.bold, size: 16))
                                     .monospacedDigit()
+                                    .foregroundStyle(Color.auText)
                                 Text(opt.l)
-                                    .font(.figtree(.regular, size: 11.5))
-                                    .auLine(11.5, 1.55)
-                                    .opacity(0.62)
+                                    .font(.figtree(.regular, size: 12))
+                                    .auLine(12, 1.4)
+                                    .foregroundStyle(Color.auTextSecondary)
                             }
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 14)
-                            .padding(.horizontal, 8)
+                            .padding(.horizontal, 14)
                             .background(AUSelectSurface(selected: on, radius: 20))
                         }
                         .buttonStyle(.auTap)
@@ -166,7 +198,15 @@ struct CommitView: View {
 
                 Spacer(minLength: 24)
 
-                APillButton(title: "Continue") {
+                Text("One gentle reminder a day. Change or turn off anytime in Settings.")
+                    .font(.figtree(.regular, size: 12))
+                    .auLine(12, 1.45)
+                    .foregroundStyle(Color.auTextTertiary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.bottom, 12)
+
+                APillButton(title: "Save and see your plan", aid: "au.btn.continue") {
                     env.router.finishOnboarding()
                 }
             })
@@ -177,6 +217,7 @@ struct CommitView: View {
 
 struct PlanView: View {
     @Environment(AppEnvironment.self) private var env
+    @State private var showLadderSheet = false
 
     var body: some View {
         ZStack {
@@ -215,7 +256,7 @@ struct PlanView: View {
                                 .foregroundStyle(
                                     AUSceneArt.duskCream.opacity(0.6)
                                 )
-                                .frame(width: 74, alignment: .leading)
+                                .frame(minWidth: 84, alignment: .leading)
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(row.what)
                                     .font(.caprasimo(size: 16))
@@ -253,22 +294,32 @@ struct PlanView: View {
                 }
                 .padding(.bottom, 6)
 
-                ALinkButton(
-                    title: "See the whole ladder",
-                    tint: AUSceneArt.duskCream.opacity(0.78)
-                ) {
-                    env.router.nav(.progress)
+                Button {
+                    showLadderSheet = true
+                } label: {
+                    Text("See the whole ladder")
+                        .font(.figtree(.semibold, size: 14))
+                        .foregroundStyle(AUSceneArt.duskCream.opacity(0.82))
+                        .underline()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
                 }
+                .buttonStyle(.auTap)
             }
             .padding(.top, 74)
             .padding(.horizontal, 24)
             .padding(.bottom, 34)
         }
+        .sheet(isPresented: $showLadderSheet) {
+            LadderSheet()
+        }
         .ignoresSafeArea()
     }
 
     private var planHead: String {
-        "A1 · Foundation."
+        // Data-driven (craft overhaul M6): was hardcoded "A1 · Foundation."
+        let ch = env.router.chapterHeader
+        return "\(ch.level) · \(ch.name)."
     }
 
     private var planRows: [(when: String, what: String, meta: String)] {

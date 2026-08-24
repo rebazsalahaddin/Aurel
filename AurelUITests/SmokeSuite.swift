@@ -79,6 +79,7 @@ final class SmokeSuite: XCTestCase {
     // MARK: 1 — cold launch through onboarding to Home
 
     func test1ColdLaunchOnboardingToHome() {
+        app.launchArguments = ["-AUREL_TEST_START", "welcome"]
         app.launch()
 
         // First launch after install pays registration + store-creation costs.

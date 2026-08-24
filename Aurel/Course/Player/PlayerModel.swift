@@ -14,6 +14,9 @@ final class PlayerModel {
     var p: Int
     var i = 0  // item index within screen
     var c = 0  // card index
+    /// Craft overhaul L7: direction of the last goto (+1 forward, -1 back),
+    /// read by the player to drive direction-aware screen-swap transitions.
+    var lastDelta = 1
     var sel: String? = nil
     var wrong = 0
     var done = false
@@ -31,6 +34,9 @@ final class PlayerModel {
     var showScore = false
     var flip: [String: Bool] = [:]
     var turn = 1  // conversation/roleplay turn
+
+    /// Shared say-aloud take coordinator for pronunciation screens (§3.11c).
+    let say = SayCoach()
 
     let course: CourseStore
     let bound: Bool
@@ -91,6 +97,7 @@ final class PlayerModel {
     // MARK: goto (lines 1178–1187)
 
     func goto(_ newP: Int) {
+        say.reset()
         let f = course.flat
         guard !f.isEmpty else { return }
         let b = bounds
@@ -103,6 +110,9 @@ final class PlayerModel {
             return
         }
         let n = max(b.min, min(b.max, newP))
+        // Craft overhaul L7: remember travel direction so the screen-swap
+        // transition slides the correct way on back navigation.
+        lastDelta = n - p
         onScreen(n)
         p = n
         i = 0
@@ -124,6 +134,13 @@ final class PlayerModel {
         turn = 1
         tk = 0
         teachShut = false
+
+        if let cur {
+            let screens = cur.lesson.screens
+            let pos = (screens.firstIndex(where: { $0.id == cur.screen.id }) ?? 0) + 1
+            let lessonNum = Int(cur.lesson.id.filter { $0.isNumber }) ?? 1
+            AUAX.playerPosition(lesson: lessonNum, screen: pos, total: max(1, screens.count))
+        }
     }
 
     var cur: CourseStore.FlatScreen? {
@@ -460,6 +477,7 @@ final class PlayerModel {
     // MARK: Tile tap (lines 1566–1578)
 
     func toggleTile(_ k: Int) {
+        AUFeedback.tileSnap()
         if let ix = order.firstIndex(of: k) {
             order.remove(at: ix)
         } else {

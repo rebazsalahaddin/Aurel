@@ -374,3 +374,28 @@ enum AUTypeScale {
             .scaledValue(for: size, compatibleWith: traits)
     }
 }
+
+// MARK: - AUTextToken (Apple Design Award Typography Scale)
+
+enum AUTextToken {
+    case displayHero     // 36pt Caprasimo Bold
+    case displayLarge    // 29pt Caprasimo Bold
+    case titleLarge      // 22pt Caprasimo Bold
+    case titleMedium     // 18pt Caprasimo Bold
+    case bodyLead        // 16.5pt Figtree Regular
+    case bodyStandard    // 14.5pt Figtree Regular
+    case bodyMedium      // 14.5pt Figtree Medium
+    case captionBold     // 10.5pt Figtree Bold (Uppercase)
+    case labelSmall      // 12.0pt Figtree SemiBold
+    case statNumber      // 33.0pt Figtree Bold Monospaced
+}
+
+extension View {
+    /// Fluid typographic scale clamp to prevent awkward wrapping on compact screens
+    func auClampText(minScale: CGFloat = 0.85) -> some View {
+        self
+            .minimumScaleFactor(minScale)
+            .lineLimit(nil)
+    }
+}
+

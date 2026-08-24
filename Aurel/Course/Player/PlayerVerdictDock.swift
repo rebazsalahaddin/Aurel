@@ -24,7 +24,10 @@ struct PlayerVerdictDock: View {
                     .transition(
                         reduceMotion
                             ? .opacity
-                            : .opacity.combined(with: .offset(y: 10))
+                            : .asymmetric(
+                                insertion: .scale(scale: 0.96).combined(with: .offset(y: 12)).combined(with: .opacity),
+                                removal: .opacity
+                            )
                     )
             }
             if !hintLadderOpen {
@@ -41,7 +44,7 @@ struct PlayerVerdictDock: View {
         .padding(.bottom, 16)
         .background {
             ZStack {
-                Rectangle().fill(.ultraThinMaterial.opacity(0.5))
+                Rectangle().fill(.ultraThinMaterial.opacity(0.6))
                 AUGradients.glass()
             }
             .clipShape(
@@ -51,17 +54,22 @@ struct PlayerVerdictDock: View {
                 )
             )
             .overlay(alignment: .top) {
-                Rectangle().fill(Color.auEdge).frame(height: 1)
+                UnevenRoundedRectangle(
+                    topLeadingRadius: 30, bottomLeadingRadius: 0, bottomTrailingRadius: 0,
+                    topTrailingRadius: 30, style: .continuous
+                )
+                .strokeBorder(Color.auHi, lineWidth: 1)
+                .mask(Rectangle().frame(height: 1.5).frame(maxHeight: .infinity, alignment: .top))
             }
-            .auSoft()
+            // Craft overhaul L8: theme-aware dock elevation (was hardcoded
+            // black.opacity(0.12) — muddy in dark mode).
+            .auElevDock()
             .ignoresSafeArea(edges: .bottom)
         }
         .animation(
-            AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+            AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion),
             value: verdictKey
         )
-        // The CTA's step-aside/return (§2.7) rides its own key: the reveal
-        // rung can land without the miss copy changing.
         .animation(
             AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
             value: hintLadderOpen
@@ -122,6 +130,7 @@ struct PlayerVerdictDock: View {
                 .font(.figtree(.regular, size: 14.5))
                 .auLine(14.5, 1.45)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                // Craft overhaul L10: banner body scales with Dynamic Type.
         }
         .padding(.horizontal, 15)
         .padding(.vertical, 13)
@@ -137,7 +146,9 @@ struct PlayerVerdictDock: View {
 
     private var cta: some View {
         APillButton(
-            title: model.i + 1 < model.items.count ? "Next" : "Go on",
+            // Craft overhaul L9: one verb for the advance control (was
+            // "Next" mid-lesson / "Go on" at the end — same role, two names).
+            title: "Go on",
             icon: .arrow,
             player: true,
             disabled: !model.itemCanGo,

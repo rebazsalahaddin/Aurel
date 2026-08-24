@@ -39,7 +39,7 @@ struct StreakView: View {
                         .font(.figtree(.regular, size: 11))
                         .tracking(1.54)
                         .textCase(.uppercase)
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                 }
                 .padding(.bottom, 32)
 
@@ -62,7 +62,7 @@ struct StreakView: View {
                     .font(.figtree(.regular, size: 13))
                     .tracking(1.82)
                     .textCase(.uppercase)
-                    .foregroundStyle(Color.auText.opacity(0.50))
+                    .foregroundStyle(Color.auTextSecondary)
                     .padding(.top, 8)
 
                 HStack(spacing: 18) {
@@ -76,7 +76,7 @@ struct StreakView: View {
                             .font(.figtree(.regular, size: 10.5))
                             .tracking(1.05)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.45))
+                            .foregroundStyle(Color.auTextTertiary)
                     }
                     Rectangle().fill(Color.auDivider).frame(width: 1, height: 34)
                     VStack(alignment: .leading, spacing: 4) {
@@ -96,7 +96,7 @@ struct StreakView: View {
                             .font(.figtree(.regular, size: 10.5))
                             .tracking(1.05)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.45))
+                            .foregroundStyle(Color.auTextTertiary)
                     }
                 }
                 .padding(.top, 18)
@@ -115,7 +115,7 @@ struct StreakView: View {
                             .font(.figtree(.regular, size: 11))
                             .tracking(1.32)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.45))
+                            .foregroundStyle(Color.auTextTertiary)
                             .padding(.bottom, 16)
                         // §3.15(c): every cell from real DayLog history; today
                         // carries the ring pulse even while incomplete.
@@ -130,7 +130,7 @@ struct StreakView: View {
                         .font(.figtree(.regular, size: 11))
                         .tracking(1.32)
                         .textCase(.uppercase)
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                         .padding(.bottom, 14)
                     LazyVGrid(
                         columns: Array(repeating: GridItem(.flexible(), spacing: 7), count: 7),
@@ -262,7 +262,7 @@ struct StreakView: View {
                     }
                     Text(label)
                         .font(.figtree(.regular, size: 10.5))
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -304,6 +304,12 @@ struct StreakView: View {
 struct MilestoneMomentCard: View {
     let day: Int
 
+    // Craft overhaul §5.2 "The Ember Count": the number counts up and a
+    // single ember ring expands once behind it — no loop, no repeat.
+    @State private var shown = 0
+    @State private var emberOut = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     private var line: String {
         switch day {
         case 7: "Seven quiet days."
@@ -321,20 +327,40 @@ struct MilestoneMomentCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Milestone")
-                .font(.figtree(.bold, size: 10.5))
-                .tracking(1.47)
-                .textCase(.uppercase)
-                .foregroundStyle(Color.auAccentText)
-            Text(line)
-                .font(.caprasimo(size: 22))
-                .auHeadLine(22, 1.25)
-                .foregroundStyle(Color.auText)
-            Text(sub)
-                .font(.figtree(.regular, size: 13))
-                .auLine(13, 1.5)
-                .foregroundStyle(Color.auText.opacity(0.58))
+        HStack(alignment: .top, spacing: 14) {
+            ZStack {
+                // The single ember ring — expands once, then is gone.
+                Circle()
+                    .strokeBorder(Color.auAccent.opacity(emberOut ? 0 : 0.5), lineWidth: 2)
+                    .frame(width: 44, height: 44)
+                    .scaleEffect(emberOut ? 1.4 : 0.6)
+                Circle().fill(Color.auAccent.opacity(0.15))
+                    .frame(width: 44, height: 44)
+                AUIcon(kind: .star, size: 22, color: .auAccent)
+            }
+            .padding(.top, 2)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Milestone")
+                    .font(.figtree(.bold, size: 10.5))
+                    .tracking(1.47)
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.auAccentText)
+                Text(line)
+                    .font(.caprasimo(size: 22))
+                    .auHeadLine(22, 1.25)
+                    .foregroundStyle(Color.auText)
+                // The count-up — monospaced digits so it never jitters.
+                Text("\(shown) \(shown == 1 ? "day" : "days")")
+                    .font(.figtree(.bold, size: 33))
+                    .monospacedDigit()
+                    .foregroundStyle(Color.auAccent)
+                    .contentTransition(.numericText(value: Double(shown)))
+                Text(sub)
+                    .font(.figtree(.regular, size: 13))
+                    .auLine(13, 1.5)
+                    .foregroundStyle(Color.auTextSecondary)
+            }
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -356,8 +382,17 @@ struct MilestoneMomentCard: View {
             RoundedRectangle(cornerRadius: 26, style: .continuous)
                 .strokeBorder(Color.auAccent.opacity(0.24), lineWidth: 1)
         )
+        .auShimmerBorder(radius: 26)
         .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
         .accessibilityElement(children: .combine)
+        .onAppear {
+            guard !reduceMotion else {
+                shown = day
+                return
+            }
+            withAnimation(.easeOut(duration: 0.7)) { shown = day }
+            withAnimation(AUMotion.celebration) { emberOut = true }
+        }
     }
 }
 
@@ -430,7 +465,7 @@ struct LeaderboardView: View {
 
                     Text("30 learners at A2 · resets Monday")
                         .font(.figtree(.regular, size: 12.5))
-                        .foregroundStyle(Color.auText.opacity(0.55))
+                        .foregroundStyle(Color.auTextSecondary)
                         .padding(.bottom, 18)
 
                     // §3.23(a): the board is a labeled sample until a cohort
@@ -455,7 +490,7 @@ struct LeaderboardView: View {
                                     .auHeadLine(20, 1.28)
                                 Text("Two days left this week")
                                     .font(.figtree(.regular, size: 12.5))
-                                    .foregroundStyle(Color.auText.opacity(0.52))
+                                    .foregroundStyle(Color.auTextSecondary)
                             }
                         }
                         .padding(.bottom, 20)
@@ -470,7 +505,7 @@ struct LeaderboardView: View {
                                         .font(.figtree(.regular, size: 11.5))
                                         .tracking(0.46)
                                 }
-                                .foregroundStyle(Color.auText.opacity(0.40))
+                                .foregroundStyle(Color.auTextTertiary)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 4)
                             }
@@ -495,7 +530,7 @@ struct LeaderboardView: View {
                             )
                             .font(.figtree(.regular, size: 13))
                             .auLine(13, 1.5)
-                            .foregroundStyle(Color.auText.opacity(0.52))
+                            .foregroundStyle(Color.auTextSecondary)
                         }
                         .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -521,7 +556,7 @@ struct LeaderboardView: View {
                                     .frame(width: 14, height: 14)
                                     .rotationEffect(.degrees(r.boardRules ? 180 : 0))
                             }
-                            .foregroundStyle(Color.auText.opacity(0.55))
+                            .foregroundStyle(Color.auTextSecondary)
                             .padding(.top, 16)
                         }
                         .buttonStyle(.auTap)
@@ -570,7 +605,7 @@ struct LeaderboardView: View {
                             )
                             .font(.figtree(.regular, size: 12.5))
                             .auLine(12.5, 1.6)
-                            .foregroundStyle(Color.auText.opacity(0.48))
+                            .foregroundStyle(Color.auTextTertiary)
                             .padding(.top, 12)
                         }
                     }
@@ -581,10 +616,6 @@ struct LeaderboardView: View {
                 .padding(.top, 70)
                 .padding(.bottom, 130)
             }
-
-            AUTabBar(current: .leaderboard)
-                .padding(.horizontal, 14)
-                .padding(.bottom, 26)
         }
         .auScreenEntrance()
     }
@@ -602,20 +633,49 @@ struct LeaderboardView: View {
     }
 
     private func boardRow(_ row: BoardRow) -> some View {
-        HStack(spacing: 13) {
-            Text("\(row.rank)")
-                .font(.figtree(.semibold, size: 13))
-                .monospacedDigit()
-                .frame(width: 24, alignment: .trailing)
-                .foregroundStyle(row.rank <= 3 ? Color.auAccentText : Color.auText.opacity(0.65))
+        let isPodium = row.rank <= 3
+        // Craft overhaul P8: brand-ramp rank colors (were off-palette
+        // gold/silver/bronze hex with failing rank-text contrast).
+        let podiumColor: Color = {
+            switch row.rank {
+            case 1: return .auRankGold
+            case 2: return .auRankSilver
+            case 3: return .auRankBronze
+            default: return .clear
+            }
+        }()
+
+        return HStack(spacing: 13) {
+            ZStack {
+                if isPodium {
+                    Circle()
+                        .fill(podiumColor.opacity(0.18))
+                        .frame(width: 24, height: 24)
+                    Text("\(row.rank)")
+                        .font(.figtree(.bold, size: 12))
+                        .foregroundStyle(podiumColor)
+                } else {
+                    Text("\(row.rank)")
+                        .font(.figtree(.semibold, size: 13))
+                        .monospacedDigit()
+                        .foregroundStyle(Color.auText.opacity(0.65))
+                }
+            }
+            .frame(width: 26, alignment: .trailing)
+
             Text(String(row.name.prefix(1)).uppercased())
                 .font(.caprasimo(size: 15))
                 .frame(width: 36, height: 36)
                 .background(Circle().fill(row.me ? Color.auAccent : Color.auText.opacity(0.09)))
                 .foregroundStyle(row.me ? Color.auBackground : Color.auText)
             VStack(alignment: .leading, spacing: 1) {
-                Text(row.name)
-                    .font(.figtree(.semibold, size: 15))
+                HStack(spacing: 6) {
+                    Text(row.name)
+                        .font(.figtree(.semibold, size: 15))
+                    if isPodium {
+                        AUIcon(kind: .star, size: 11, color: podiumColor)
+                    }
+                }
                 Text(row.sub)
                     .font(.figtree(.regular, size: 12))
                     .opacity(0.6)
@@ -638,7 +698,11 @@ struct LeaderboardView: View {
                             ? Color.auFill.mixed(with: 0.22, of: Color.auAccent) : Color.auFill)
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .strokeBorder(
-                        row.me ? Color.auAccent.opacity(0.38) : Color.auEdge, lineWidth: 1)
+                        row.me
+                            ? Color.auAccent.opacity(0.45)
+                            : (isPodium ? podiumColor.opacity(0.35) : Color.auEdge),
+                        lineWidth: isPodium || row.me ? 1.5 : 1
+                    )
             }
         )
         .padding(.bottom, 5)

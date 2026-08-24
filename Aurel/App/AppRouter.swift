@@ -131,12 +131,29 @@ final class AppRouter {
     var built: [String] = []
     var wrongShake = 0
     var plan = "annual"
-    var speaking = false
-    var speakScored = false
-    var speakTake = 0
-    var speakVerdict = "near"
     var typing = false
     var typed = ""
+    /// The typed-instead check (§3.16): a real word comparison against the
+    /// target line — never an automatic pass.
+    var speakTypedCheck = false
+    var speakTypedVerdict: SpeakVerdict.Tier? = nil
+    var speakTypedWords = (matched: 0, total: 0)
+    /// §3.16: the shared say-aloud take coordinator (mic, window, clarity
+    /// check). Owned here so the Speak screen and the player's pronProduce
+    /// items (§3.11c) share one honest flow.
+    let say = SayCoach()
+
+    // MARK: Say-aloud projections (real data from SayCoach — no mock verdicts)
+
+    var speaking: Bool { say.recording }
+    var speakTake: Int { say.record.takes }
+    var speakVerdict: SpeakVerdict.Tier? { say.record.verdict }
+    var speakUnavailable: Bool { say.record.unavailable }
+    var speakAssessing: Bool { say.assessing }
+    var speakMicDenied: Bool { say.micDenied }
+    var speakMatchedWords: (matched: Int, total: Int) {
+        (say.record.matchedWords, say.record.totalWords)
+    }
 
     struct PendingSpot: Equatable {
         var pos: Int
@@ -688,9 +705,9 @@ final class AppRouter {
 
     /// Delayed-transition tasks (S2-002).
     private var sceneReplyTask: Task<Void, Never>?
-    private var speakStopTask: Task<Void, Never>?
 
     func toggleGoal(_ id: String) {
+        AUFeedback.selection()
         if goals.contains(id) {
             goals = goals.filter { $0 != id }
         } else if goals.count >= 2 {
@@ -715,19 +732,42 @@ final class AppRouter {
     // MARK: Login (mock validation, lines 2504–2509)
 
     func setEmail(_ e: String) { email = e }
+
+    /// Words actually carried by the completed lessons (craft overhaul G7) —
+    /// the same store-derived count Progress shows, so Profile stops
+    /// fabricating `lessonsDone * 12`. Mirrors `wordsTotal` in ProgressView.
+    var wordsLearned: Int {
+        let done = Set(
+            lessonRecords().filter { !$0.wasReview }.map { "\($0.chapterIdx)-\($0.lessonIdx)" })
+        guard !done.isEmpty else { return 0 }
+        var words = 0
+        for f in course.flat {
+            guard done.contains("\(chapterIndex(of: f.chapter.id))-\(f.lesson.n - 1)") else { continue }
+            if case .cards(let sc) = f.screen.payload {
+                words += sc.cards?.count ?? 0
+            }
+        }
+        return words
+    }
+
+    /// The chapter's index for a chapter id ("A1-C03" → 2).
+    private func chapterIndex(of id: String) -> Int {
+        course.chapters.firstIndex { $0.id == id } ?? 0
+    }
     func setPass(_ p: String) { pass = p }
 
     func signIn() {
         let okMail = email.range(of: #".+@.+\..+"#, options: .regularExpression) != nil
+        // Craft overhaul M9: banner state animates (was a hard cut).
         guard okMail else {
-            loginErr = "That email address looks incomplete."
+            withAnimation(AUMotion.flow) { loginErr = "That email address looks incomplete." }
             return
         }
         guard pass.count >= 6 else {
-            loginErr = "Passwords are at least six characters."
+            withAnimation(AUMotion.flow) { loginErr = "Passwords are at least six characters." }
             return
         }
-        loginErr = ""
+        withAnimation(AUMotion.flow) { loginErr = "" }
         screen = .home
         persist()
     }
@@ -997,41 +1037,50 @@ final class AppRouter {
         screen = .stories
     }
 
-    // MARK: Say-aloud mock (lines 1886–1896)
+    // MARK: Say-aloud (§3.16 — the take state; the mic + recognition live in SayCoach)
 
-    func toggleSpeak() {
-        if speaking {
-            stopSpeak()
-            return
-        }
-        speaking = true
-        speakScored = false
-        typing = false
-        // The 2.6 s take window (line 1890): restarting (or an earlier manual
-        // stop) supersedes the pending auto-stop rather than stacking one —
-        // the old code stopped the second take early with the first timer.
-        speakStopTask?.cancel()
-        speakStopTask = Task { @MainActor in
-            do {
-                try await Task.sleep(for: .seconds(2.6))
-            } catch {
-                return  // superseded
-            }
-            stopSpeak()
-        }
+    /// Start/stop a take for `target` (the authored say-aloud line). The
+    /// mock verdict ladder is gone: the tier comes from the take's real
+    /// transcript, or an honest no-verdict state when recognition is
+    /// unavailable.
+    func toggleSpeak(target: String) {
+        speakTypedCheck = false
+        say.toggle(target: target)
     }
 
+    /// Manual/auto stop of the running take (kept for the ported callers).
     func stopSpeak() {
-        speakStopTask?.cancel()
-        speakTake += 1
-        speaking = false
-        speakScored = true
-        speakVerdict = speakTake >= 2 ? "clear" : "near"
+        say.finish()
+    }
+
+    /// The typed-instead path (§3.16): the same clarity comparison, run on
+    /// what the learner typed — a real check, never an automatic pass.
+    func checkTyped(target: String) {
+        speakTypedVerdict = SpeakVerdict.evaluate(target: target, transcript: typed)
+        let words = SpeakVerdict.wordsInOrder(target: target, transcript: typed)
+        speakTypedWords = (words.matched, words.total)
+        speakTypedCheck = true
+        typing = false
+        switch speakTypedVerdict {
+        case .clear:
+            AUFeedback.correct()
+            AUSound.shared.correct()
+            AUAX.announce("Read and checked. The sentence is right.")
+        case .near:
+            AUFeedback.press()
+            AUAX.announce("Closer each time.")
+        case .nothingHeard:
+            AUFeedback.miss()
+            AUAX.announce("Nothing matched.")
+        case nil:
+            break
+        }
     }
 
     // MARK: Settings toggles (lines 1882–1884)
 
     func toggleSw(_ k: WritableKeyPath<SwitchPrefs, Bool>) {
+        AUFeedback.selection()
         sw[keyPath: k].toggle()
         syncFeedbackGates()
         persist()
@@ -1046,6 +1095,7 @@ final class AppRouter {
     }
 
     func toggleNotif(_ k: WritableKeyPath<NotifPrefs, Bool>) {
+        AUFeedback.selection()
         notif[keyPath: k].toggle()
         persist()
     }

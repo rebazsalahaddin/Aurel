@@ -78,4 +78,25 @@ enum AUFeedback {
         fireCount += 1
         notificationGenerator.notificationOccurred(.success)
     }
+
+    /// Tile snap and slot drag insertion.
+    static func tileSnap() {
+        guard isEnabled else { return }
+        fireCount += 1
+        lightGenerator.impactOccurred(intensity: 0.55)
+    }
+
+    /// 3D card rotation flip.
+    static func cardFlip() {
+        guard isEnabled else { return }
+        fireCount += 1
+        selectionGenerator.selectionChanged()
+    }
+
+    /// Boundary or warning haptic (e.g. goal limit reached).
+    static func warning() {
+        guard isEnabled else { return }
+        fireCount += 1
+        notificationGenerator.notificationOccurred(.warning)
+    }
 }

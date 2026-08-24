@@ -24,7 +24,10 @@ struct OrderScreenView: View {
 
                 HStack(spacing: 12) {
                     Button {
-                        m.order = []
+                        AUFeedback.press()
+                        withAnimation(AUMotion.quick) {
+                            m.order = []
+                        }
                     } label: {
                         Text("Undo all")
                             .font(.figtree(.semibold, size: 16.5))
@@ -133,7 +136,7 @@ struct TilesScreenView: View {
                 if m.taskCount > 1 {
                     Text("\(m.tk + 1) / \(m.taskCount)")
                         .font(.figtree(.semibold, size: 10))
-                        .foregroundStyle(Color.auText.opacity(0.42))
+                        .foregroundStyle(Color.auTextTertiary)
                 }
             }
             .padding(.bottom, 14)
@@ -171,7 +174,10 @@ struct TilesScreenView: View {
                 )
                 .padding(.bottom, 16)
 
-            FlowTiles(tiles: task.tiles, taken: Set(m.order), onTap: { m.toggleTile($0) })
+            FlowTiles(
+                tiles: task.tiles, taken: Set(m.order), onTap: { m.toggleTile($0) },
+                aidPrefix: "au.player.tile"
+            )
 
             if m.tileComplete {
                 Text(
@@ -219,7 +225,7 @@ struct TilesScreenView: View {
                 Text(safety)
                     .font(.figtree(.regular, size: 11.5))
                     .auLine(11.5, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.44))
+                    .foregroundStyle(Color.auTextTertiary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
 
@@ -259,7 +265,7 @@ struct SubstitutionScreenView: View {
                 Text("Every line plays before you read it. Tap in, tap out.")
                     .font(.figtree(.regular, size: 12.5))
                     .auLine(12.5, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.50))
+                    .foregroundStyle(Color.auTextSecondary)
                     .padding(.bottom, 16)
 
                 VStack(spacing: 14) {
@@ -268,7 +274,7 @@ struct SubstitutionScreenView: View {
                             Text(sl.slot.uppercased())
                                 .font(.figtree(.bold, size: 9.5))
                                 .tracking(1.3)
-                                .foregroundStyle(Color.auText.opacity(0.42))
+                                .foregroundStyle(Color.auTextTertiary)
                             FlowLayout(spacing: 7) {
                                 ForEach(sl.opts, id: \.self) { opt in
                                     SubOptionChip(
@@ -307,7 +313,7 @@ struct SubstitutionScreenView: View {
                     Text(note)
                         .font(.figtree(.regular, size: 11.5))
                         .auLine(11.5, 1.5)
-                        .foregroundStyle(Color.auText.opacity(0.44))
+                        .foregroundStyle(Color.auTextTertiary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
@@ -383,7 +389,7 @@ struct MissionScreenView: View {
                                         Text(k)
                                             .font(.figtree(.regular, size: 13.5))
                                             .frame(width: 56, alignment: .leading)
-                                            .foregroundStyle(Color.auText.opacity(0.42))
+                                            .foregroundStyle(Color.auTextTertiary)
                                         Text(v)
                                             .font(.figtree(.regular, size: 13.5))
                                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -404,7 +410,7 @@ struct MissionScreenView: View {
                         Text(privacy)
                             .font(.figtree(.regular, size: 11.5))
                             .auLine(11.5, 1.5)
-                            .foregroundStyle(Color.auText.opacity(0.44))
+                            .foregroundStyle(Color.auTextTertiary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom, 14)
                     }
@@ -475,7 +481,7 @@ struct RoleplayScreenView: View {
                             .font(.figtree(.semibold, size: 14.5))
                         Text("\(rp.spec ?? "") · turn limit \(rp.turnLimit ?? 8)")
                             .font(.figtree(.regular, size: 11))
-                            .foregroundStyle(Color.auText.opacity(0.45))
+                            .foregroundStyle(Color.auTextTertiary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -487,6 +493,8 @@ struct RoleplayScreenView: View {
                             .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
                     }
                     .buttonStyle(.auTap)
+                    // Craft overhaul L14: 38pt visual, 44pt hit area.
+                    .auMinHitTarget()
                     .accessibilityLabel("Safe stop")
                 }
                 .padding(.bottom, 14)
@@ -547,7 +555,7 @@ struct RoleplayScreenView: View {
                         .font(.figtree(.bold, size: 9.5))
                         .tracking(1.3)
                         .textCase(.uppercase)
-                        .foregroundStyle(Color.auText.opacity(0.42))
+                        .foregroundStyle(Color.auTextTertiary)
                     ForEach(rp.tileGroups ?? [], id: \.g) { g in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(g.g)

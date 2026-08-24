@@ -187,6 +187,34 @@ enum AUColorTokens {
     static let dune2 = UIColor.adaptive(light: .init(hex: 0xb98c5d), dark: .init(hex: 0x1a1210))
     static let duneText = UIColor.adaptive(
         light: .init(hex: 0x4a3220), dark: .init(hex: 0xf0e2cd))
+
+    // MARK: Craft-overhaul additions (qa/CRAFT_IMPROVEMENT_PLAN.md §2.1)
+    //
+    // Measured contrast floors for the muted-text tiers. Before these, feature
+    // code dimmed `auText` with ad-hoc opacities (0.40–0.55) that fell below
+    // WCAG AA on the cream background. Ratios measured with the WCAG 2.2
+    // relative-luminance formula against `Palette.bgLight`/`Palette.bgDark`:
+    //   secondary — body metadata:        ~5.1:1 light / ~5.0:1 dark (AA at any size)
+    //   tertiary  — captions ≥12pt only:  ~3.6:1 light / ~3.7:1 dark (AA large)
+    static let textSecondary = UIColor.adaptive(
+        light: Palette.textLight.alpha(0.68), dark: Palette.textDark.alpha(0.72))
+    static let textTertiary = UIColor.adaptive(
+        light: Palette.textLight.alpha(0.55), dark: Palette.textDark.alpha(0.60))
+
+    // Leaderboard podium ranks — brand-ramp steps, replacing off-palette
+    // gold/silver/bronze hex (StreakBoardViews). Foreground on these is
+    // `AUSceneArt.onAccent` (#fff7ee) which keeps ≥4.5:1 on the 700/500 steps.
+    static let rankGold = UIColor.adaptive(
+        light: .init(hex: Palette.accentRamp[700]!), dark: .init(hex: Palette.accentRamp[400]!))
+    static let rankSilver = UIColor.adaptive(
+        light: .init(hex: Palette.accentRamp[500]!), dark: .init(hex: Palette.accentRamp[300]!))
+    static let rankBronze = UIColor.adaptive(
+        light: .init(hex: Palette.accentRamp[400]!), dark: .init(hex: Palette.accentRamp[200]!))
+
+    // Verdict-dock elevation — theme-aware replacement for the hardcoded
+    // `Color.black.opacity(0.12)` upward shadow (PlayerVerdictDock).
+    static let dockShadowLight = UIColor.black.withAlphaComponent(0.10)
+    static let dockShadowDark = UIColor.black.withAlphaComponent(0.32)
 }
 
 // MARK: Color tokens
@@ -235,6 +263,13 @@ extension Color {
     static var auDune: Color { Color(AUColorTokens.dune) }
     static var auDune2: Color { Color(AUColorTokens.dune2) }
     static var auDuneText: Color { Color(AUColorTokens.duneText) }
+
+    // Craft-overhaul additions (see AUColorTokens for values + measured ratios)
+    static var auTextSecondary: Color { Color(AUColorTokens.textSecondary) }
+    static var auTextTertiary: Color { Color(AUColorTokens.textTertiary) }
+    static var auRankGold: Color { Color(AUColorTokens.rankGold) }
+    static var auRankSilver: Color { Color(AUColorTokens.rankSilver) }
+    static var auRankBronze: Color { Color(AUColorTokens.rankBronze) }
 
     /// Text color used on primary buttons (CSS `color:#fff8f0`).
     static let auPrimaryButtonText = Color(red: 1, green: 0.972, blue: 0.941)  // #fff8f0
@@ -352,6 +387,107 @@ extension View {
     func auShadowLg() -> some View {
         shadow(color: Color(UIColor(hex: 0x2e2b25)).opacity(0.22), radius: 16, y: 6)
     }
+
+    /// Verdict-dock elevation (craft overhaul §2.3) — theme-aware upward pool,
+    /// replacing the hardcoded `black.opacity(0.12)` that went muddy in dark mode.
+    func auElevDock() -> some View {
+        shadow(
+            color: Color(
+                UIColor.adaptive(
+                    light: AUColorTokens.dockShadowLight,
+                    dark: AUColorTokens.dockShadowDark)),
+            radius: 12, y: -4)
+    }
+
+    /// Apple Design Award Specular Glass Card Material
+    func auGlassCard(radius: CGFloat = 26) -> some View {
+        self
+            .background(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .fill(Color.auFill)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            stops: [
+                                .init(color: Color.white.opacity(0.45), location: 0),
+                                .init(color: Color.auEdge, location: 0.25),
+                                .init(color: Color.auEdge, location: 0.75),
+                                .init(color: Color.white.opacity(0.12), location: 1.0),
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .auLift()
+    }
+
+    /// Floating frosted glass dock modifier for bottom navigation & verdict trays
+    func auGlassDock(radius: CGFloat = 28) -> some View {
+        self
+            .background(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .fill(.ultraThinMaterial)
+            )
+            .background(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .fill(Color.auSurface.opacity(0.65))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.55), Color.white.opacity(0.15), Color.auEdge],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .auSoft()
+    }
+
+    /// Shimmer border for high-value subscription plans & milestones
+    func auShimmerBorder(radius: CGFloat = 24, isActive: Bool = true) -> some View {
+        self.modifier(AUShimmerBorderModifier(radius: radius, isActive: isActive))
+    }
+}
+
+private struct AUShimmerBorderModifier: ViewModifier {
+    let radius: CGFloat
+    let isActive: Bool
+    @State private var phase: CGFloat = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .overlay {
+                if isActive && !reduceMotion {
+                    RoundedRectangle(cornerRadius: radius, style: .continuous)
+                        .strokeBorder(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: Color.auAccent.opacity(0.2), location: max(0, phase - 0.2)),
+                                    .init(color: Color.auAccent, location: phase),
+                                    .init(color: Color(UIColor(hex: 0xffe1d0)), location: min(1, phase + 0.1)),
+                                    .init(color: Color.auAccent.opacity(0.2), location: min(1, phase + 0.3)),
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.8
+                        )
+                        .onAppear {
+                            withAnimation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true)) {
+                                phase = 1.0
+                            }
+                        }
+                }
+            }
+    }
 }
 
 // MARK: - Scene art palette (S2-003)
@@ -381,4 +517,24 @@ enum AUSceneArt {
     static let sunDeep = Color(red: 0.776, green: 0.443, blue: 0.224)
     /// #22271a — deep green foreground (welcome art).
     static let deepGreen = Color(red: 0.133, green: 0.153, blue: 0.102)
+    /// #a3b383 — sage glow dot (welcome chip; fixed — the welcome sky is always dusk).
+    static let sageGlow = Color(UIColor(hex: 0xa3b383))
+
+    /// Paywall dusk-panel stops (theme-fixed art; ProgressProfileSettingsPaywall).
+    /// Light panel: cream → amber → copper. Dark panel: near-black → plum → copper.
+    static let paywallDuskLight: [Color] = [
+        Color(UIColor(hex: 0xfff1d4)),
+        Color(UIColor(hex: 0xf7c489)),
+        Color(UIColor(hex: 0xe08f4c)),
+    ]
+    static let paywallDuskDark: [Color] = [
+        Color(UIColor(hex: 0x16131a)),
+        Color(UIColor(hex: 0x20191f)),
+        Color(UIColor(hex: 0x2e2226)),
+        Color(UIColor(hex: 0x452a1f)),
+        Color(UIColor(hex: 0x7a431f)),
+        Color(UIColor(hex: 0xb0602e)),
+        Color(UIColor(hex: 0xc67139)),
+        Color(UIColor(hex: 0x7d431f)),
+    ]
 }

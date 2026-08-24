@@ -76,7 +76,7 @@ struct PendingScreenView: View {
                 Text("Source: \(p.source ?? "")")
                     .font(.figtree(.regular, size: 11))
                     .auLine(11, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.40))
+                    .foregroundStyle(Color.auTextTertiary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 14)
 
@@ -212,7 +212,7 @@ struct ResultsScreenView: View {
                             Text(t)
                                 .font(.figtree(.semibold, size: 9.5))
                                 .multilineTextAlignment(.center)
-                                .foregroundStyle(Color.auText.opacity(0.50))
+                                .foregroundStyle(Color.auTextSecondary)
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -244,7 +244,7 @@ struct ResultsScreenView: View {
                             .font(.figtree(.bold, size: 9.5))
                             .tracking(1.3)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.42))
+                            .foregroundStyle(Color.auTextTertiary)
                         Text(r.developing ?? "")
                             .font(.figtree(.regular, size: 15.5))
                             .auLine(15.5, 1.5)
@@ -276,15 +276,17 @@ struct ResultsScreenView: View {
                         .padding(.horizontal, 15)
                         .padding(.vertical, 9)
                         .background(Capsule().strokeBorder(Color.auDivider, lineWidth: 1))
-                        .foregroundStyle(Color.auText.opacity(0.58))
+                        .foregroundStyle(Color.auTextSecondary)
                 }
                 .buttonStyle(.auTap)
+                // Craft overhaul L14: expand the capsule's hit area to 44pt.
+                .auMinHitTarget()
 
                 if m.showScore {
                     Text("\(r.score ?? "") — \(r.gate ?? "")")
                         .font(.figtree(.regular, size: 12.5))
                         .auLine(12.5, 1.55)
-                        .foregroundStyle(Color.auText.opacity(0.55))
+                        .foregroundStyle(Color.auTextSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 11)
                 }
@@ -319,7 +321,7 @@ struct RemediationScreenView: View {
                 Text(r.sub ?? "")
                     .font(.figtree(.regular, size: 13.5))
                     .auLine(13.5, 1.55)
-                    .foregroundStyle(Color.auText.opacity(0.55))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 18)
 
@@ -335,7 +337,7 @@ struct RemediationScreenView: View {
                                 Text(c.benefit)
                                     .font(.figtree(.regular, size: 12.5))
                                     .auLine(12.5, 1.45)
-                                    .foregroundStyle(Color.auText.opacity(0.52))
+                                    .foregroundStyle(Color.auTextSecondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             Text("\(c.n) items")
@@ -387,7 +389,7 @@ struct ReviewPlanScreenView: View {
                 Text(r.sub ?? "")
                     .font(.figtree(.regular, size: 13.5))
                     .auLine(13.5, 1.55)
-                    .foregroundStyle(Color.auText.opacity(0.55))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 18)
 
@@ -426,7 +428,7 @@ struct ReviewPlanScreenView: View {
                             .font(.figtree(.bold, size: 9.5))
                             .tracking(1.3)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.42))
+                            .foregroundStyle(Color.auTextTertiary)
                             .padding(.bottom, 10)
                         ForEach(r.exports ?? [], id: \.self) { e in
                             VStack(alignment: .leading, spacing: 3) {
@@ -436,7 +438,7 @@ struct ReviewPlanScreenView: View {
                                     Text(e[1])
                                         .font(.figtree(.regular, size: 11.5))
                                         .auLine(11.5, 1.45)
-                                        .foregroundStyle(Color.auText.opacity(0.50))
+                                        .foregroundStyle(Color.auTextSecondary)
                                 }
                             }
                             .padding(.vertical, 8)
@@ -465,7 +467,7 @@ struct ReviewPlanScreenView: View {
                         }
                     Text("off")
                         .font(.figtree(.semibold, size: 11.5))
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                 }
                 .padding(.horizontal, 15)
                 .padding(.vertical, 13)
@@ -528,26 +530,31 @@ struct ChapterMapScreenView: View {
                             let locked = state == "locked"
 
                             HStack(spacing: 12) {
-                                Circle()
-                                    .fill(done ? Color.auOkText.opacity(0.10) : Color.clear)
-                                    .overlay(
-                                        Circle().strokeBorder(
-                                            next
-                                                ? Color.auAccent
-                                                : (locked
-                                                    ? Color.auText.opacity(0.28) : Color.clear),
-                                            lineWidth: 1.5
-                                        )
-                                    )
-                                    .frame(width: 26, height: 26)
-                                    .overlay {
-                                        if done {
-                                            AUIcon(kind: .check, size: 13, color: .auOkText)
-                                        } else if locked {
-                                            AUIcon(
-                                                kind: .lock, size: 12, color: .auText.opacity(0.38))
-                                        }
+                                ZStack {
+                                    if next {
+                                        PingRingStroke().frame(width: 32, height: 32)
                                     }
+                                    Circle()
+                                        .fill(done ? Color.auOkText.opacity(0.10) : Color.clear)
+                                        .overlay(
+                                            Circle().strokeBorder(
+                                                next
+                                                    ? Color.auAccent
+                                                    : (locked
+                                                        ? Color.auText.opacity(0.28) : Color.clear),
+                                                lineWidth: 1.5
+                                            )
+                                        )
+                                        .frame(width: 26, height: 26)
+                                        .overlay {
+                                            if done {
+                                                AUIcon(kind: .check, size: 13, color: .auOkText)
+                                            } else if locked {
+                                                AUIcon(
+                                                    kind: .lock, size: 12, color: .auText.opacity(0.38))
+                                            }
+                                        }
+                                }
                                 VStack(alignment: .leading, spacing: 3) {
                                     Text("Chapter \(entry.n)")
                                         .font(.figtree(.bold, size: 9))

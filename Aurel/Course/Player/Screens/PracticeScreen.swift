@@ -26,7 +26,7 @@ struct PracticeScreenView: View {
                 }
                 Text("\(m.i + 1) / \(list.count)")
                     .font(.figtree(.semibold, size: 10))
-                    .foregroundStyle(Color.auText.opacity(0.40))
+                    .foregroundStyle(Color.auTextTertiary)
                     .padding(.leading, 7)
             }
             .padding(.bottom, 16)
@@ -136,7 +136,7 @@ struct PracticeScreenView: View {
                         Text(g.note ?? "")
                             .font(.figtree(.regular, size: 11))
                             .auLine(11, 1.45)
-                            .foregroundStyle(Color.auText.opacity(0.48))
+                            .foregroundStyle(Color.auTextTertiary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .padding(.horizontal, 13)
@@ -270,7 +270,7 @@ struct PracticeScreenView: View {
                             Text(note)
                                 .font(.figtree(.regular, size: 11))
                                 .auLine(11, 1.5)
-                                .foregroundStyle(Color.auText.opacity(0.44))
+                                .foregroundStyle(Color.auTextTertiary)
                                 .padding(.top, 8)
                         }
                     }
@@ -314,7 +314,7 @@ struct PracticeScreenView: View {
                                     Text(p.ill?.alt ?? "")
                                         .font(.figtree(.regular, size: 10.5))
                                         .auLine(10.5, 1.4)
-                                        .foregroundStyle(Color.auText.opacity(0.48))
+                                        .foregroundStyle(Color.auTextTertiary)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             }
@@ -324,7 +324,7 @@ struct PracticeScreenView: View {
                                         .font(.figtree(.bold, size: 8.5))
                                         .tracking(1)
                                         .frame(width: 78, alignment: .leading)
-                                        .foregroundStyle(Color.auText.opacity(0.42))
+                                        .foregroundStyle(Color.auTextTertiary)
                                     Text(row.count > 1 ? row[1] : "")
                                         .font(.figtree(.regular, size: 13.5))
                                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -403,7 +403,7 @@ struct PracticeScreenView: View {
                                 .font(.figtree(.bold, size: 9.5))
                                 .tracking(1)
                                 .frame(width: 64, alignment: .leading)
-                                .foregroundStyle(Color.auText.opacity(0.42))
+                                .foregroundStyle(Color.auTextTertiary)
                             Text(row.count > 1 ? row[1] : "")
                                 .font(.figtree(.regular, size: 15))
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -594,7 +594,7 @@ struct PracticeScreenView: View {
                 .padding(.horizontal, 13)
                 .padding(.vertical, 8)
                 .background(Capsule().strokeBorder(Color.auEdge, lineWidth: 1))
-                .foregroundStyle(Color.auText.opacity(0.58))
+                .foregroundStyle(Color.auTextSecondary)
                 .padding(.bottom, 11)
                 // §3.9d: rides the screen-swap transaction on entrance.
                 .transition(
@@ -658,7 +658,7 @@ struct PracticeScreenView: View {
                 Text(unlock)
                     .font(.figtree(.regular, size: 11.5))
                     .auLine(11.5, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.44))
+                    .foregroundStyle(Color.auTextTertiary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 12)
@@ -752,7 +752,7 @@ struct PracticeScreenView: View {
                 "\(m.rec == 0 ? "Say it" : (m.rec == 1 ? "Listening…" : "Recorded — play both")) · ungraded"
             )
             .font(.figtree(.semibold, size: 12.5))
-            .foregroundStyle(Color.auText.opacity(0.52))
+            .foregroundStyle(Color.auTextSecondary)
             .padding(.top, 12)
         }
         .frame(maxWidth: .infinity)
@@ -1083,6 +1083,7 @@ struct FlowTiles: View {
             ForEach(Array(tiles.enumerated()), id: \.offset) { k, t in
                 let on = taken.contains(k)
                 Button {
+                    AUFeedback.tileSnap()
                     onTap?(k)
                 } label: {
                     Text(t)
@@ -1096,7 +1097,7 @@ struct FlowTiles: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 15, style: .continuous).strokeBorder(
-                                on ? Color.auAccent.opacity(0.34) : Color.auEdge, lineWidth: 1.5)
+                                on ? Color.auAccent.opacity(0.38) : Color.auEdge, lineWidth: 1.5)
                         )
                         .foregroundStyle(on ? Color.auTintText : Color.auText)
                 }

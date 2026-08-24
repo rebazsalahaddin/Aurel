@@ -2,9 +2,16 @@ import SwiftUI
 
 // MARK: - Day arc (Aurel.dc.html lines 492–528 + 2142–2147, 2324–2346)
 //
-// The home card's sky: a quadratic arc the sun travels as the day's two
-// halves complete, over two dune fills. All geometry is authored in a
-// 354×118 viewBox and stretched to width (preserveAspectRatio=none).
+// The home card's sky, drawn as a cinematic pre-dawn scene rather than a
+// flat diagram. Back to front: a tiered dawn sky under a night veil that
+// lifts as the day advances, a twinkling star field with glinting bright
+// stars, a warm band of light pooling on the horizon, a breathing glow that
+// follows the sun, three rim-lit dune ridges for atmospheric depth, a dashed
+// guide arc under a gradient progress arc with a glowing comet tip,
+// Dawn/Sundown milestone nodes at the arc's endpoints, a layered breathing
+// sun that rises from behind the dune on first reveal, and glass status
+// chips resting on the dune. All geometry is authored in a 354×118 viewBox
+// and stretched to width (preserveAspectRatio=none).
 
 /// bez(t, a, b, c) — quadratic bezier at t for endpoints a/c and control b.
 func auBezier(_ t: Double, _ a: Double, _ b: Double, _ c: Double) -> Double {
@@ -34,11 +41,19 @@ struct DayArcState: Equatable, Sendable {
     var arcOffset: Int { 100 - Int((arcT * 100).rounded()) }
 }
 
-/// The sky panel itself — gradients, dunes, arcs, travelling sun, and the
-/// Dawn/Sundown chips that sit on the dune.
+/// The sky panel itself — a cinematic pre-dawn scene rather than a flat
+/// diagram. Back to front: a tiered dawn sky under a night veil that lifts
+/// as the day advances, a twinkling star field with glinting bright stars,
+/// a warm band of light pooling on the horizon, a breathing glow that
+/// follows the sun, three rim-lit dune ridges for atmospheric depth, a
+/// dashed guide arc under a gradient progress arc with a glowing comet tip,
+/// Dawn/Sundown milestone nodes, a layered breathing sun that rises from
+/// behind the dune on first reveal, and glass status chips resting on the
+/// dune. All geometry is authored in a 354×118 viewBox and stretched to
+/// width (preserveAspectRatio=none).
 struct ArcSkyView: View {
     let state: DayArcState
-    var height: CGFloat = 118
+    var height: CGFloat = 126
 
     /// §3.6(c): scroll-linked sun travel, 0…0.3 of the arc. The sun drifts
     /// along its arc as the home screen scrolls (data-driven `arcT` plus
@@ -60,6 +75,59 @@ struct ArcSkyView: View {
     var sundownDone: Bool = false
     var sundownMeta: String = ""
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// First-reveal choreography — the sun rises from behind the dune.
+    @State private var appeared = false
+
+    /// The half of the day that is "now" — the first unfinished half.
+    private var dawnActive: Bool { !dawnDone }
+    private var sundownActive: Bool { dawnDone && !sundownDone }
+
+    /// How much of the night still hangs over the sky: full at dawn, lifting
+    /// as the day advances (a touch faster than the arc itself, so midday
+    /// reads fully lit).
+    private var nightT: Double { max(0, 1 - state.arcT * 1.15) }
+
+    /// The progress arc reads dawn → dusk as a warm ramp.
+    private var arcStroke: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.auAccentRamp(300),
+                Color.auAccentRamp(400),
+                Color.auAccent,
+                Color.auAccentRamp(500),
+            ],
+            startPoint: .leading, endPoint: .trailing
+        )
+    }
+
+    /// Rim light on the dune crests — a warm pool centred under the sun, so
+    /// the ridges catch the light where the day currently stands.
+    private var rimLight: LinearGradient {
+        let fx = min(1, max(0.08, sunPoint.x / 354))
+        return LinearGradient(
+            stops: [
+                .init(color: .clear, location: max(0, fx - 0.32)),
+                .init(color: AUSceneArt.duskHighlight.opacity(0.5), location: fx),
+                .init(color: .clear, location: min(1, fx + 0.32)),
+            ],
+            startPoint: .leading, endPoint: .trailing
+        )
+    }
+
+    /// The day's full path — quietest at its ends, clearest overhead.
+    private var guideStroke: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color.auDuneText.opacity(0.10),
+                Color.auDuneText.opacity(0.30),
+                Color.auDuneText.opacity(0.10),
+            ],
+            startPoint: .leading, endPoint: .trailing
+        )
+    }
+
     var body: some View {
         GeometryReader { geo in
             let w = max(geo.size.width, 1)
@@ -70,69 +138,201 @@ struct ArcSkyView: View {
             ZStack(alignment: .topLeading) {
                 skyBackground
 
-                // Design-space layer (354×118), stretched to the live card width.
+                // Design-space layer (354×118), stretched to the live card
+                // width. Decorative — hidden from accessibility; the chips
+                // below carry the meaning.
                 ZStack(alignment: .topLeading) {
-                    DuneShape()
-                        .fill(Color.auDune)
-                    DuneShape(back: false)
-                        .fill(Color.auDune2)
+                    StarField(visible: 1 - state.arcT, reduceMotion: reduceMotion)
 
+                    // The day's full path — quietest at its ends, clearest
+                    // overhead; drawn behind the dunes so its ends dip into
+                    // the sand and the arc reads as the sun's route, not
+                    // a wire.
                     ArcTrack()
                         .stroke(
-                            Color.auText.opacity(0.15),
-                            style: StrokeStyle(lineWidth: 1.5, lineCap: .round, dash: [2, 7])
+                            guideStroke,
+                            style: StrokeStyle(lineWidth: 1.3, lineCap: .round, dash: [2, 6.5])
                         )
+
+
+                    // Atmospheric depth: the far ridge reads lighter (light
+                    // mode) / darker (dark mode) than the two authored dunes.
+                    DuneShape(variant: .far)
+                        .fill(Color.auDune.opacity(0.35))
+                    DuneShape(variant: .back)
+                        .fill(Color.auDune)
+                        .overlay { DuneShape(variant: .back).stroke(rimLight, lineWidth: 0.8) }
+                    DuneShape(variant: .front)
+                        .fill(Color.auDune2)
+                        .overlay { DuneShape(variant: .front).stroke(rimLight, lineWidth: 0.9) }
+
+                    // Progress arc — a soft under-glow plus the crisp
+                    // gradient stroke, both data-honest at `state.arcT`.
                     ArcTrack()
                         .trim(from: 0, to: state.arcT)
                         .stroke(
-                            Color.auAccent.opacity(0.8),
-                            style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                            Color.auAccent.opacity(0.35),
+                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
                         )
-                        .animation(.easeInOut(duration: 0.9), value: state.arcT)
+                        .blur(radius: 2)
+                        .opacity(0.7)
+                    ArcTrack()
+                        .trim(from: 0, to: state.arcT)
+                        .stroke(arcStroke, style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                        .shadow(color: Color.auAccent.opacity(0.45), radius: 4, x: 0, y: 0)
+                        .animation(
+                            AUMotion.animation(AUMotion.hero, reduceMotion: reduceMotion),
+                            value: state.arcT
+                        )
 
-                    SunMark()
-                        .frame(width: 34, height: 34)
+                    SunMark(reduceMotion: reduceMotion)
+                        .frame(width: 20, height: 20)
+                        // On first reveal the sun rises out of the dune line;
+                        // from then on it tracks the day's progress exactly.
+                        .offset(y: appeared ? 0 : 16)
+                        .opacity(appeared ? 1 : 0)
                         .position(x: sunPoint.x, y: sunPoint.y)
-                        .animation(.easeInOut(duration: 0.9), value: state.arcT)
+                        .animation(
+                            AUMotion.animation(AUMotion.hero, reduceMotion: reduceMotion),
+                            value: state.arcT
+                        )
                         // §3.6(c): the sun also tracks scroll — follow the
                         // travel value without re-triggering the data spring.
                         .animation(.easeInOut(duration: 0.35), value: sunTravel)
+
+                    // A spark rides the leading edge of the day so far —
+                    // the exact point the day has reached.
+                    if state.arcT > 0.02 {
+                        ArcTipGlow()
+                            .frame(width: 26, height: 26)
+                            .position(
+                                x: auBezier(state.arcT, 26, 177, 328),
+                                y: auBezier(state.arcT, 84, -22, 84)
+                            )
+                            .animation(
+                                AUMotion.animation(AUMotion.hero, reduceMotion: reduceMotion),
+                                value: state.arcT
+                            )
+                    }
+
+                    // The night lifting as the day advances — deepest at
+                    // zenith, thinning into the horizon's warmth.
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color.auBackground.opacity(0.60), location: 0),
+                            .init(color: Color.auBackground.opacity(0.28), location: 0.45),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                    .opacity(nightT * 0.55)
+                    .animation(.easeInOut(duration: 1.2), value: state.arcT)
+                    .allowsHitTesting(false)
+
+                    // A quiet vignette keeps the eye inside the frame.
+                    RadialGradient(
+                        stops: [
+                            .init(color: .clear, location: 0.55),
+                            .init(color: Color.black.opacity(0.16), location: 1),
+                        ],
+                        center: .center, startRadius: 8, endRadius: 210
+                    )
+                    .allowsHitTesting(false)
                 }
                 .frame(width: 354, height: 118, alignment: .topLeading)
                 .scaleEffect(x: sx, y: sy, anchor: .topLeading)
                 .frame(width: w, height: h, alignment: .topLeading)
+                .accessibilityHidden(true)
 
-                // Dawn / Sundown chips sit on the live card (not design-scaled text).
-                HStack(alignment: .center) {
-                    chip(done: dawnDone, label: "Dawn", meta: dawnMeta)
-                    Spacer(minLength: 8)
-                    chip(done: sundownDone, label: "Sundown", meta: sundownMeta)
+                // Dawn / Sundown chips sit on the live card with clearance
+                // from the dawn sun endpoint while maximizing text room.
+                HStack(alignment: .center, spacing: 8) {
+                    chip(done: dawnDone, active: dawnActive, label: "Dawn", meta: dawnMeta)
+                        .modifier(ChipEntrance(delay: 0.16))
+                    Spacer(minLength: 6)
+                    chip(
+                        done: sundownDone, active: sundownActive,
+                        label: "Sundown", meta: sundownMeta
+                    )
+                    .modifier(ChipEntrance(delay: 0.28))
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 11)
+                .padding(.leading, 38)
+                .padding(.trailing, 14)
+                .padding(.bottom, 10)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: dawnDone)
+                .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: sundownDone)
+            }
+            .onAppear {
+                guard !reduceMotion, !appeared else { return }
+                withAnimation(.easeOut(duration: 1.1)) { appeared = true }
             }
         }
         .frame(height: height)
         .clipped()
+        .overlay { GrainOverlay(opacity: 0.05) }
+    }
+
+    // MARK: Scene pieces
+
+    /// A milestone node at one end of the arc: a quiet hollow ring while the
+    /// half is pending, a filled glowing disc once it is done. These anchor
+    /// the arc's ends semantically — the sun departs from Dawn and arrives
+    /// at Sundown.
+    @ViewBuilder
+    private func milestone(at point: CGPoint, done: Bool) -> some View {
+        ZStack {
+            if done {
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            stops: [
+                                .init(color: Color.auAccent.opacity(0.40), location: 0),
+                                .init(color: Color.auAccent.opacity(0.14), location: 0.6),
+                                .init(color: .clear, location: 1),
+                            ],
+                            center: .center, startRadius: 0, endRadius: 9
+                        )
+                    )
+                    .frame(width: 20, height: 20)
+                Circle()
+                    .fill(Color.auAccent)
+                    .frame(width: 9.5, height: 9.5)
+                    .overlay(Circle().strokeBorder(AUSceneArt.onAccent.opacity(0.5), lineWidth: 0.8))
+                    .shadow(color: Color.auAccent.opacity(0.55), radius: 3, x: 0, y: 0)
+            } else {
+                Circle()
+                    .fill(Color.auDuneText.opacity(0.10))
+                    .frame(width: 9, height: 9)
+                Circle()
+                    .strokeBorder(Color.auDuneText.opacity(0.35), lineWidth: 1)
+                    .frame(width: 9, height: 9)
+            }
+        }
+        .position(point)
+        .animation(AUMotion.animation(AUMotion.celebration, reduceMotion: reduceMotion), value: done)
     }
 
     /// arcSky gradient tiers (authored values, theme-independent):
-    /// arcs ≥ 100 golden, ≥ 30 mid, else the default sky.
+    /// arcs ≥ 100 golden, ≥ 30 mid, else the default sky. Each tier carries
+    /// an extra lifted mid-sky stop so the zenith reads deeper than the
+    /// authored horizon warmth.
     @ViewBuilder
     private var skyBackground: some View {
         if state.arcsCompleted >= 100 {
             LinearGradient(
                 stops: [
-                    .init(color: Color(UIColor(hex: 0xfdf6e6)), location: 0),
-                    .init(color: Color(UIColor(hex: 0xf6e7c4)), location: 0.46),
+                    .init(color: Color(UIColor(hex: 0xefe6cf)), location: 0),
+                    .init(color: Color(UIColor(hex: 0xfdf6e6)), location: 0.38),
+                    .init(color: Color(UIColor(hex: 0xf6e7c4)), location: 0.72),
                     .init(color: Color(UIColor(hex: 0xe9cfa4)), location: 1),
                 ], startPoint: .top, endPoint: .bottom)
         } else if state.arcsCompleted >= 30 {
             LinearGradient(
                 stops: [
-                    .init(color: Color(UIColor(hex: 0xfbf1e2)), location: 0),
-                    .init(color: Color(UIColor(hex: 0xf6ddc6)), location: 0.5),
+                    .init(color: Color(UIColor(hex: 0xf2e0cd)), location: 0),
+                    .init(color: Color(UIColor(hex: 0xfbf1e2)), location: 0.42),
+                    .init(color: Color(UIColor(hex: 0xf6ddc6)), location: 0.74),
                     .init(color: Color(UIColor(hex: 0xeec7ab)), location: 1),
                 ], startPoint: .top, endPoint: .bottom)
         } else {
@@ -140,45 +340,94 @@ struct ArcSkyView: View {
         }
     }
 
-    private func chip(done: Bool, label: String, meta: String) -> some View {
+    /// A chip is one semantic unit: status mark, half-name, and its meta
+    /// ("done", "nothing due", …). Done reads as settled glass with a check;
+    /// the active half glows gently with the accent and a pinging ring — the
+    /// scene's "now" indicator; a quiet half waits. Reads as one AX element.
+    private func chip(done: Bool, active: Bool, label: String, meta: String) -> some View {
         HStack(spacing: 6) {
             if done {
-                AUIcon(kind: .check, size: 12, color: .auDuneText)
+                AUIcon(kind: .check, size: 10, color: .auDuneText)
             }
+
             Text(label)
                 .font(.figtree(.bold, size: 9.5))
                 .tracking(1.33)
                 .textCase(.uppercase)
-                .opacity(0.85)
+                .opacity(done || active ? 0.95 : 0.6)
+                .fixedSize(horizontal: true, vertical: false)
             Text(meta)
-                .font(.figtree(.regular, size: 11))
-                .opacity(0.7)
+                .font(.figtree(done ? .semibold : .regular, size: 11))
+                .opacity(done || active ? 0.8 : 0.55)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .minimumScaleFactor(0.85)
         }
         .foregroundStyle(Color.auDuneText)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 4.5)
+        .background(
+            Capsule()
+                .fill(.ultraThinMaterial.opacity(0.35))
+        )
+        .background(
+            Capsule()
+                .fill(
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color.white.opacity(0.07), location: 0),
+                            .init(color: Color.white.opacity(0.01), location: 1),
+                        ],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                )
+        )
+        .overlay(
+            Capsule()
+                .strokeBorder(
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color.white.opacity(0.20), location: 0),
+                            .init(color: Color.white.opacity(0.05), location: 1),
+                        ],
+                        startPoint: .top, endPoint: .bottom
+                    ),
+                    lineWidth: 0.6
+                )
+        )
+        .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: done)
+        .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: active)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label): \(done ? "done" : meta)")
     }
 
-    /// `M0 88 Q66 70 130 82 Q196 94 262 76 Q318 62 354 78 V118 H0 Z` (front)
-    /// and `M0 104 Q78 88 148 98 Q214 108 278 92 Q326 80 354 94 V118 H0 Z`.
+    /// `M0 88 Q66 70 130 82 Q196 94 262 76 Q318 62 354 78 V118 H0 Z` (back)
+    /// and `M0 104 Q78 88 148 98 Q214 108 278 92 Q326 80 354 94 V118 H0 Z`
+    /// (front). The far ridge sits above the back dune for depth.
     private struct DuneShape: Shape {
-        var back = true
+        enum Variant { case far, back, front }
+        var variant: Variant = .back
 
         func path(in rect: CGRect) -> Path {
             var p = Path()
-            if back {
+            switch variant {
+            case .far:
+                p.move(to: CGPoint(x: 0, y: 80))
+                p.addQuadCurve(to: CGPoint(x: 160, y: 72), control: CGPoint(x: 80, y: 64))
+                p.addQuadCurve(to: CGPoint(x: 354, y: 66), control: CGPoint(x: 250, y: 82))
+            case .back:
                 p.move(to: CGPoint(x: 0, y: 88))
                 p.addQuadCurve(to: CGPoint(x: 130, y: 82), control: CGPoint(x: 66, y: 70))
                 p.addQuadCurve(to: CGPoint(x: 262, y: 76), control: CGPoint(x: 196, y: 94))
                 p.addQuadCurve(to: CGPoint(x: 354, y: 78), control: CGPoint(x: 318, y: 62))
-                p.addLine(to: CGPoint(x: 354, y: 118))
-                p.addLine(to: CGPoint(x: 0, y: 118))
-            } else {
+            case .front:
                 p.move(to: CGPoint(x: 0, y: 104))
                 p.addQuadCurve(to: CGPoint(x: 148, y: 98), control: CGPoint(x: 78, y: 88))
                 p.addQuadCurve(to: CGPoint(x: 278, y: 92), control: CGPoint(x: 214, y: 108))
                 p.addQuadCurve(to: CGPoint(x: 354, y: 94), control: CGPoint(x: 326, y: 80))
-                p.addLine(to: CGPoint(x: 354, y: 118))
-                p.addLine(to: CGPoint(x: 0, y: 118))
             }
+            p.addLine(to: CGPoint(x: 354, y: 118))
+            p.addLine(to: CGPoint(x: 0, y: 118))
             p.closeSubpath()
             return p
         }
@@ -194,29 +443,284 @@ struct ArcSkyView: View {
         }
     }
 
-    /// The sun: radial gradient with a warm glow.
+    /// The sun: a crisp radial disc with specular lift, sparkle glint, and soft 50% transparent pulsing glow.
     private struct SunMark: View {
+        let reduceMotion: Bool
+        @State private var breathe = false
+        @State private var pingOn = false
+
+        var body: some View {
+            ZStack {
+                // Soft pulse halo behind the globe (50% transparent)
+                if !reduceMotion {
+                    Circle()
+                        .fill(Color(UIColor(hex: 0xb25f1f)).opacity(0.20))
+                        .frame(width: 32, height: 32)
+                        .modifier(PulseHalo())
+                        .allowsHitTesting(false)
+                }
+
+                // Persistent ring pulse marking active globe (50% transparent)
+                if !reduceMotion {
+                    Circle()
+                        .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(pingOn ? 0 : 0.30), lineWidth: pingOn ? 0.5 : 1.2)
+                        .scaleEffect(pingOn ? 1.45 : 1)
+                        .frame(width: 20, height: 20)
+                        .allowsHitTesting(false)
+                        .onAppear {
+                            withAnimation(
+                                .easeOut(duration: 2.2).repeatForever(autoreverses: false)
+                            ) { pingOn = true }
+                        }
+                }
+
+                // Core disc
+                Circle()
+                    .fill(
+                        RadialGradient(
+                            stops: [
+                                .init(color: Color(UIColor(hex: 0xfff6e0)), location: 0),
+                                .init(color: Color(UIColor(hex: 0xf9d29b)), location: 0.34),
+                                .init(color: Color(UIColor(hex: 0xee9d58)), location: 0.66),
+                                .init(color: Color(UIColor(hex: 0xb25f1f)), location: 1.0),
+                            ],
+                            center: UnitPoint(x: 0.5, y: 0.42),
+                            startRadius: 0, endRadius: 10
+                        )
+                    )
+                    .overlay(
+                        Circle().strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.0)
+                    )
+                    .frame(width: 20, height: 20)
+
+                // Glint — a four-point sparkle catching the light, slow drift.
+                if !reduceMotion {
+                    SparkleMark()
+                        .fill(AUSceneArt.onAccent.opacity(0.9))
+                        .frame(width: 5, height: 5)
+                        .offset(x: -3, y: -3)
+                        .scaleEffect(breathe ? 1.25 : 0.7)
+                        .opacity(breathe ? 0.9 : 0.3)
+                }
+            }
+            .onAppear {
+                guard !reduceMotion else { return }
+                withAnimation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true)) {
+                    breathe = true
+                }
+            }
+            .allowsHitTesting(false)
+        }
+    }
+
+    /// A four-point sparkle (north–south–east–west tapered petals).
+    private struct SparkleMark: Shape {
+        func path(in rect: CGRect) -> Path {
+            var p = Path()
+            let c = CGPoint(x: rect.midX, y: rect.midY)
+            let r = min(rect.width, rect.height) / 2
+            let w = r * 0.28
+            p.move(to: CGPoint(x: c.x, y: c.y - r))
+            p.addQuadCurve(to: CGPoint(x: c.x, y: c.y + r), control: CGPoint(x: c.x + w, y: c.y))
+            p.addQuadCurve(to: CGPoint(x: c.x, y: c.y - r), control: CGPoint(x: c.x - w, y: c.y))
+            p.move(to: CGPoint(x: c.x - r, y: c.y))
+            p.addQuadCurve(to: CGPoint(x: c.x + r, y: c.y), control: CGPoint(x: c.x, y: c.y + w))
+            p.addQuadCurve(to: CGPoint(x: c.x - r, y: c.y), control: CGPoint(x: c.x, y: c.y - w))
+            return p
+        }
+    }
+
+    /// A soft spark riding the leading edge of the progress arc — marks the
+    /// exact point the day has reached.
+    private struct ArcTipGlow: View {
         var body: some View {
             ZStack {
                 Circle()
                     .fill(
                         RadialGradient(
                             stops: [
-                                .init(color: Color(UIColor(hex: 0xfff1d4)), location: 0),
-                                .init(color: Color(UIColor(hex: 0xf7c489)), location: 0.38),
-                                .init(color: Color(UIColor(hex: 0xe08f4c)), location: 0.68),
-                                .init(
-                                    color: Color(UIColor(hex: 0xe08f4c)).opacity(0.16),
-                                    location: 0.82),
-                                .init(color: .clear, location: 0.86),
+                                .init(color: Color.auAccent.opacity(0.55), location: 0),
+                                .init(color: Color.auAccent.opacity(0.18), location: 0.5),
+                                .init(color: .clear, location: 1),
                             ],
-                            center: UnitPoint(x: 0.5, y: 0.42),
-                            startRadius: 0, endRadius: 17
+                            center: .center, startRadius: 0, endRadius: 13
                         )
                     )
-                    .shadow(color: Color.auAccent.opacity(0.34), radius: 13, x: 0, y: 0)
+                Circle()
+                    .fill(AUSceneArt.onAccent)
+                    .frame(width: 5, height: 5)
+                    .shadow(color: Color.auAccent.opacity(0.8), radius: 4, x: 0, y: 0)
             }
             .allowsHitTesting(false)
+        }
+    }
+
+    /// A wide, shallow band of light pooling along the horizon line under
+    /// the sun — the atmosphere catching first light. It drifts with the
+    /// sun and breathes very slowly.
+    private struct HorizonBand: View {
+        let center: CGPoint
+        let reduceMotion: Bool
+        @State private var breathe = false
+
+        var body: some View {
+            Ellipse()
+                .fill(
+                    RadialGradient(
+                        stops: [
+                            .init(color: AUSceneArt.duskHighlight.opacity(0.34), location: 0),
+                            .init(color: Color.auAccent.opacity(0.10), location: 0.55),
+                            .init(color: .clear, location: 1),
+                        ],
+                        center: .center, startRadius: 0, endRadius: 95
+                    )
+                )
+                .frame(width: 250, height: 46)
+                .position(x: center.x, y: 74)
+                .scaleEffect(breathe ? 1.06 : 0.98)
+                .opacity(breathe ? 0.85 : 0.6)
+                .onAppear {
+                    guard !reduceMotion else { return }
+                    withAnimation(.easeInOut(duration: 4.4).repeatForever(autoreverses: true)) {
+                        breathe = true
+                    }
+                }
+                .allowsHitTesting(false)
+        }
+    }
+
+    /// A warm pool of light on the horizon that drifts with the sun and
+    /// breathes slowly — the scene's answer to "where is the day now?".
+    private struct HorizonGlow: View {
+        let center: CGPoint
+        let reduceMotion: Bool
+        @State private var breathe = false
+
+        var body: some View {
+            Ellipse()
+                .fill(
+                    RadialGradient(
+                        stops: [
+                            .init(color: Color.auAccent.opacity(0.30), location: 0),
+                            .init(color: Color.auAccent.opacity(0.12), location: 0.5),
+                            .init(color: .clear, location: 1),
+                        ],
+                        center: .center, startRadius: 0, endRadius: 62
+                    )
+                )
+                .frame(width: 170, height: 70)
+                // Hug the horizon line regardless of the sun's height.
+                .position(x: center.x, y: 74)
+                .scaleEffect(breathe ? 1.12 : 0.96)
+                .opacity(breathe ? 0.9 : 0.65)
+                .onAppear {
+                    guard !reduceMotion else { return }
+                    withAnimation(.easeInOut(duration: 3.6).repeatForever(autoreverses: true)) {
+                        breathe = true
+                    }
+                }
+                .allowsHitTesting(false)
+        }
+    }
+    /// Pre-dawn stars. The field's opacity is tied to the day's progress —
+    /// full at dawn (arcT 0), dissolved by midday — and each star twinkles
+    /// on its own staggered, deterministic rhythm. Two bright stars carry a
+    /// four-point glint. Static under Reduce Motion.
+    private struct StarField: View {
+        let visible: Double
+        let reduceMotion: Bool
+        @State private var twinkle = false
+
+        /// (position, size, glint) in the 354×118 design space, authored to
+        /// keep clear of the arc's apex.
+        private let stars: [(point: CGPoint, size: Double, glint: Bool)] = [
+            (CGPoint(x: 52, y: 20), 1.4, false),
+            (CGPoint(x: 96, y: 12), 1.0, false),
+            (CGPoint(x: 148, y: 24), 1.6, true),
+            (CGPoint(x: 205, y: 9), 1.1, false),
+            (CGPoint(x: 246, y: 22), 1.4, false),
+            (CGPoint(x: 292, y: 13), 1.0, false),
+            (CGPoint(x: 322, y: 30), 1.3, false),
+            (CGPoint(x: 74, y: 36), 1.0, false),
+            (CGPoint(x: 178, y: 40), 1.0, false),
+            (CGPoint(x: 268, y: 42), 1.2, false),
+            (CGPoint(x: 40, y: 52), 0.9, false),
+            (CGPoint(x: 128, y: 46), 0.8, false),
+            (CGPoint(x: 224, y: 48), 0.9, false),
+            (CGPoint(x: 306, y: 50), 0.8, false),
+            (CGPoint(x: 116, y: 60), 0.7, false),
+            (CGPoint(x: 250, y: 60), 0.7, false),
+        ]
+
+        var body: some View {
+            ZStack {
+                ForEach(Array(stars.enumerated()), id: \.offset) { i, star in
+                    ZStack {
+                        Circle()
+                            .fill(Color.auDuneText)
+                            .frame(width: star.size, height: star.size)
+                        if star.glint {
+                            SparkleMark()
+                                .fill(Color.auDuneText.opacity(0.8))
+                                .frame(width: star.size * 5, height: star.size * 5)
+                        }
+                    }
+                    .position(star.point)
+                    .opacity(twinkle ? 0.9 : 0.35)
+                    .animation(
+                        reduceMotion
+                            ? nil
+                            : .easeInOut(duration: 2.2 + Double(i % 3) * 0.6)
+                                .repeatForever(autoreverses: true)
+                                .delay(Double(i) * 0.31),
+                        value: twinkle
+                    )
+                }
+            }
+            .opacity(max(0, min(1, visible)) * 0.75)
+            .onAppear { twinkle = true }
+            .allowsHitTesting(false)
+        }
+    }
+
+    /// The active half's dot emits a slow expanding ring — "this is now".
+    private struct PingRing: ViewModifier {
+        @State private var ping = false
+
+        func body(content: Content) -> some View {
+            content
+                .scaleEffect(ping ? 2.6 : 1)
+                .opacity(ping ? 0 : 0.75)
+                .onAppear {
+                    withAnimation(.easeOut(duration: 2.2).repeatForever(autoreverses: false)) {
+                        ping = true
+                    }
+                }
+        }
+    }
+
+    /// Chip entrance — a soft rise from the dune, staggered per chip. Static
+    /// under Reduce Motion.
+    private struct ChipEntrance: ViewModifier {
+        let delay: Double
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+        @State private var shown = false
+
+        func body(content: Content) -> some View {
+            if reduceMotion {
+                content
+            } else {
+                content
+                    .offset(y: shown ? 0 : 10)
+                    .scaleEffect(shown ? 1 : 0.92)
+                    .opacity(shown ? 1 : 0)
+                    .task {
+                        try? await Task.sleep(for: .seconds(delay))
+                        withAnimation(.spring(response: 0.42, dampingFraction: 0.72)) {
+                            shown = true
+                        }
+                    }
+            }
         }
     }
 }
@@ -251,53 +755,41 @@ struct LessonPathNode: View {
     }
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            AUFeedback.press()
+            action()
+        }) {
             ZStack {
                 switch state {
                 case .open:
                     // Halo sits behind the disc (design: absolute sibling, not clipped).
                     if !reduceMotion {
-                        Circle().fill(Color.auAccent)
+                        Circle().fill(Color(UIColor(hex: 0xb25f1f)).opacity(0.35))
                             .frame(width: size + 20, height: size + 20)
                             .modifier(PulseHalo())
                             .allowsHitTesting(false)
                     }
-                    // §3.6(b): the open stop also carries a persistent ring
-                    // pulse — a stroke that swells and fades, marking
-                    // "you are here" without sound or motion excess.
+                    // Persistent ring pulse marking "you are here"
                     if !reduceMotion {
                         Circle()
-                            .strokeBorder(Color.auAccent.opacity(pingOn ? 0 : 0.55), lineWidth: pingOn ? 0.75 : 2.5)
+                            .strokeBorder(Color(UIColor(hex: 0xb25f1f)).opacity(pingOn ? 0 : 0.55), lineWidth: pingOn ? 0.75 : 2.5)
                             .scaleEffect(pingOn ? 1.22 : 1)
                             .frame(width: size, height: size)
                             .allowsHitTesting(false)
                             .onAppear {
                                 withAnimation(
-                                    .easeOut(duration: 1.9).repeatForever(autoreverses: false)
+                                    .easeOut(duration: 2.2).repeatForever(autoreverses: false)
                                 ) { pingOn = true }
                             }
                     }
                     Circle()
-                        .fill(
-                            LinearGradient(
-                                stops: [
-                                    .init(color: Color.auAccent.opacity(0.8), location: 0),
-                                    .init(color: Color.auAccent.opacity(0.9), location: 0.52),
-                                    // accent-800 (#643312) — the authored stop is
-                                    // the deep *amber*, not the sage ramp.
-                                    .init(
-                                        color: Color.auAccentRamp(800).opacity(0.92),
-                                        location: 1),
-                                ],
-                                startPoint: .top, endPoint: .bottom
-                            )
-                        )
-                        .overlay(Circle().strokeBorder(.white.opacity(0.28), lineWidth: 1))
+                        .fill(Color(UIColor(hex: 0xb25f1f)))
+                        .overlay(Circle().strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2))
                         .overlay(
                             VStack(spacing: 2) {
                                 AUIcon(
                                     kind: .play, size: 26,
-                                    color: Color(red: 1, green: 0.965, blue: 0.918))  // #fff6ea
+                                    color: Color(red: 1, green: 0.965, blue: 0.918))
                                 Text(cta)
                                     .font(.figtree(.bold, size: 10))
                                     .tracking(1.2)
@@ -305,6 +797,7 @@ struct LessonPathNode: View {
                             }
                             .foregroundStyle(Color(red: 1, green: 0.965, blue: 0.918))
                         )
+                        .shadow(color: Color(UIColor(hex: 0xb25f1f)).opacity(0.35), radius: 12, y: 6)
                         .frame(width: size, height: size)
                 case .done:
                     Circle()
@@ -316,17 +809,19 @@ struct LessonPathNode: View {
                                             with: 0.26, of: .white), location: 0),
                                     .init(color: Color.auAccent2Ramp(500), location: 0.55),
                                     .init(
-                                        color: Color.auAccent2Ramp(600).opacity(0.8),
+                                        color: Color.auAccent2Ramp(600).opacity(0.85),
                                         location: 1),
                                 ],
                                 startPoint: .top, endPoint: .bottom
                             )
                         )
+                        .overlay(Circle().strokeBorder(Color.white.opacity(0.25), lineWidth: 1))
                         .overlay(
                             AUIcon(
                                 kind: .check, size: min(30, size * 0.4),
-                                color: Color(red: 0.984, green: 0.98, blue: 0.961))  // #fbfaf5
+                                color: Color(red: 0.984, green: 0.98, blue: 0.961))
                         )
+                        .shadow(color: Color.black.opacity(0.08), radius: 6, y: 3)
                         .frame(width: size, height: size)
                 case .locked:
                     Circle()
@@ -343,8 +838,6 @@ struct LessonPathNode: View {
                         .frame(width: size, height: size)
                 }
             }
-            // Keep layout box = disc size so `.position` centers on the stop
-            // (halo paints outside without shifting the layout origin).
             .frame(width: size, height: size)
         }
         .buttonStyle(.auTap)
@@ -364,36 +857,36 @@ struct LessonPathNode: View {
         case .locked: "Locked"
         }
     }
+}
 
-    /// auPulse halo on the open node.
-    private struct PulseHalo: ViewModifier {
-        @State private var on = false
-        func body(content: Content) -> some View {
-            content
-                .scaleEffect(on ? 1.18 : 1)
-                .opacity(on ? 0 : 0.45)
-                .onAppear {
-                    withAnimation(.easeOut(duration: 2.8).repeatForever(autoreverses: false)) {
-                        on = true
-                    }
+/// auPulse halo on active nodes and the sun globe.
+private struct PulseHalo: ViewModifier {
+    @State private var on = false
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(on ? 1.18 : 1)
+            .opacity(on ? 0 : 0.45)
+            .onAppear {
+                withAnimation(.easeOut(duration: 2.8).repeatForever(autoreverses: false)) {
+                    on = true
                 }
-        }
+            }
     }
+}
 
-    /// auBreath on the open node.
-    private struct Breath: ViewModifier {
-        let enabled: Bool
-        @State private var on = false
-        func body(content: Content) -> some View {
-            content
-                .scaleEffect(enabled && on ? 1.04 : 1)
-                .onAppear {
-                    guard enabled else { return }
-                    withAnimation(.easeInOut(duration: 3.8).repeatForever(autoreverses: true)) {
-                        on = true
-                    }
+/// auBreath on the open node.
+private struct Breath: ViewModifier {
+    let enabled: Bool
+    @State private var on = false
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(enabled && on ? 1.04 : 1)
+            .onAppear {
+                guard enabled else { return }
+                withAnimation(.easeInOut(duration: 3.8).repeatForever(autoreverses: true)) {
+                    on = true
                 }
-        }
+            }
     }
 }
 

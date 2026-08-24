@@ -155,10 +155,68 @@ private struct StoreRecoveredBanner: View {
 
 private struct ScreenHost: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @ViewBuilder
+    private var isTabScreen: Bool {
+        switch env.router.screen {
+        case .home, .stories, .progress, .profile, .leaderboard:
+            return true
+        default:
+            return false
+        }
+    }
+
     var body: some View {
-        screenBody
+        ZStack(alignment: .bottom) {
+            screenBody
+                .id(env.router.screen)
+                .transition(transition(for: env.router.screen))
+
+            if isTabScreen {
+                AUTabBar(current: env.router.screen)
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 26)
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                    .zIndex(10)
+            }
+        }
+        .animation(
+            AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion),
+            value: env.router.screen
+        )
+    }
+
+    private func transition(for screen: AppRouter.Screen) -> AnyTransition {
+        guard !reduceMotion else { return .opacity }
+        switch screen {
+        case .course, .paywall, .subscribeAccount:
+            return .asymmetric(
+                insertion: .move(edge: .bottom).combined(with: .opacity),
+                removal: .move(edge: .bottom).combined(with: .opacity)
+            )
+        case .goal, .commit, .plan, .login:
+            return .asymmetric(
+                insertion: .move(edge: .trailing).combined(with: .opacity),
+                removal: .move(edge: .leading).combined(with: .opacity)
+            )
+        case .result, .streak:
+            return .asymmetric(
+                insertion: .scale(scale: 0.94).combined(with: .opacity),
+                removal: .opacity
+            )
+        case .scene, .speak, .review, .settings:
+            return .asymmetric(
+                insertion: .move(edge: .trailing).combined(with: .opacity),
+                removal: .move(edge: .trailing).combined(with: .opacity)
+            )
+        case .home, .stories, .progress, .profile, .leaderboard:
+            return .asymmetric(
+                insertion: .opacity.combined(with: .scale(scale: 0.98)),
+                removal: .opacity
+            )
+        default:
+            return .opacity
+        }
     }
 
     @ViewBuilder
@@ -199,7 +257,7 @@ struct UnbuiltScreen: View {
                 .foregroundStyle(Color.auText)
             Text("This screen is being ported next.")
                 .font(.figtree(.regular, size: 13))
-                .foregroundStyle(Color.auText.opacity(0.5))
+                .foregroundStyle(Color.auTextSecondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.auBackground.ignoresSafeArea())

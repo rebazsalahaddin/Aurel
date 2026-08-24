@@ -31,11 +31,14 @@ struct LessonRunnerView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         if list.indices.contains(r.qi) {
                             itemView(list[r.qi])
+                                .id(r.qi)
+                                .transition(AUMotion.screenSwap(reduceMotion: reduceMotion))
                         }
                     }
                     .padding(.horizontal, 24)
                     .padding(.bottom, 190)
                 }
+                .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: r.qi)
             }
 
             // verdict dock — the verdict slides in over the glass and the
@@ -157,7 +160,7 @@ struct LessonRunnerView: View {
             }
             Text("\(r.qi + 1) / \(list.count)")
                 .font(.figtree(.regular, size: 11.5))
-                .foregroundStyle(Color.auText.opacity(0.45))
+                .foregroundStyle(Color.auTextTertiary)
         }
         .padding(.horizontal, 22)
         .padding(.top, 70)
@@ -194,47 +197,12 @@ struct LessonRunnerView: View {
                 .tracking(-0.38)
                 .padding(.bottom, 22)
 
-            ZStack {
-                if r.flipped {
-                    // back
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(q.back)
-                            .font(.figtree(.semibold, size: 16))
-                            .auLine(16, 1.5)
-                        if !q.ex.isEmpty {
-                            Text(q.ex)
-                                .font(.figtree(.regular, size: 14))
-                                .italic()
-                                .auLine(14, 1.55)
-                                .opacity(0.82)
-                                .padding(.top, 18)
-                                .overlay(alignment: .top) {
-                                    Divider().overlay(
-                                        AUSceneArt.duskHighlight.opacity(0.2)
-                                    ).padding(.top, -9)
-                                }
-                        }
-                        Spacer(minLength: 12)
-                        Text("Tap to hide")
-                            .font(.figtree(.regular, size: 11))
-                            .tracking(1.1)
-                            .textCase(.uppercase)
-                            .opacity(0.7)
-                    }
-                    .padding(26)
-                    .frame(height: 320, alignment: .topLeading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 30, style: .continuous)
-                            .fill(Color.auAccentRamp(600))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 30, style: .continuous)
-                            .strokeBorder(.white.opacity(0.2), lineWidth: 1)
-                    )
-                    .foregroundStyle(Color.auPrimaryButtonText)
-                } else {
-                    // front
+            AUFlipCard(
+                isFlipped: Binding(
+                    get: { r.flipped },
+                    set: { r.flipped = $0 }
+                ),
+                front: {
                     VStack(spacing: 0) {
                         if let ill = q.ill {
                             IllustrationPlaceholder(
@@ -248,29 +216,71 @@ struct LessonRunnerView: View {
                             .tracking(-0.56)
                             .multilineTextAlignment(.center)
                             .padding(.bottom, 16)
-                        Text("Tap to reveal")
-                            .font(.figtree(.regular, size: 11.5))
-                            .tracking(1.15)
-                            .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.38))
+                        HStack(spacing: 6) {
+                            AUIcon(kind: .loop, size: 13, color: .auAccentText)
+                            Text("Tap to reveal")
+                                .font(.figtree(.regular, size: 11.5))
+                                .tracking(1.15)
+                                .textCase(.uppercase)
+                                .foregroundStyle(Color.auAccentText)
+                        }
                     }
                     .padding(26)
                     .frame(height: 320)
                     .frame(maxWidth: .infinity)
                     .background(
-                        RoundedRectangle(cornerRadius: 30, style: .continuous)
-                            .fill(Color.auFill)
+                        RoundedRectangle(cornerRadius: 30, style: .continuous).fill(Color.auFill)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 30, style: .continuous)
                             .strokeBorder(Color.auEdge, lineWidth: 1)
                     )
                     .auLift()
+                },
+                back: {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(q.back)
+                            .font(.figtree(.semibold, size: 16))
+                            .auLine(16, 1.5)
+                        if !q.ex.isEmpty {
+                            Text(q.ex)
+                                .font(.figtree(.regular, size: 14))
+                                .italic()
+                                .auLine(14, 1.55)
+                                .opacity(0.88)
+                                .padding(.top, 18)
+                                .overlay(alignment: .top) {
+                                    Divider().overlay(
+                                        AUSceneArt.duskHighlight.opacity(0.3)
+                                    ).padding(.top, -9)
+                                }
+                        }
+                        Spacer(minLength: 12)
+                        HStack(spacing: 6) {
+                            AUIcon(kind: .loop, size: 13, color: .white.opacity(0.8))
+                            Text("Tap to turn back")
+                                .font(.figtree(.regular, size: 11))
+                                .tracking(1.1)
+                                .textCase(.uppercase)
+                                .opacity(0.8)
+                        }
+                    }
+                    .padding(26)
+                    .frame(height: 320, alignment: .topLeading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 30, style: .continuous)
+                            .fill(Color.auAccentRamp(600))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 30, style: .continuous)
+                            .strokeBorder(.white.opacity(0.2), lineWidth: 1)
+                    )
+                    .foregroundStyle(Color.auPrimaryButtonText)
+                    .auSoft()
                 }
-            }
-            .contentShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-            .onTapGesture { r.flip() }
-            .padding(.bottom, 20)
+            )
+            .padding(.bottom, 24)
 
             HStack(spacing: 9) {
                 Button {
@@ -384,7 +394,7 @@ struct LessonRunnerView: View {
                 Text("Transcript — “\(q.audio)”")
                     .font(.figtree(.regular, size: 13))
                     .auLine(13, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.58))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 20)
             }
@@ -405,7 +415,7 @@ struct LessonRunnerView: View {
                 .padding(.bottom, 6)
             Text("\(q.prompt) Drag them, or tap.")
                 .font(.figtree(.regular, size: 13.5))
-                .foregroundStyle(Color.auText.opacity(0.52))
+                .foregroundStyle(Color.auTextSecondary)
                 .padding(.bottom, 22)
 
             // tray
@@ -487,7 +497,7 @@ struct LessonRunnerView: View {
 
             Text("Tap a phrase, then tap its meaning.")
                 .font(.figtree(.regular, size: 13.5))
-                .foregroundStyle(Color.auText.opacity(0.52))
+                .foregroundStyle(Color.auTextSecondary)
                 .padding(.bottom, 22)
 
             HStack(alignment: .top, spacing: 12) {
@@ -578,7 +588,7 @@ struct LessonRunnerView: View {
 
             Text("All three are correct. No rule yet — just look.")
                 .font(.figtree(.regular, size: 13.5))
-                .foregroundStyle(Color.auText.opacity(0.52))
+                .foregroundStyle(Color.auTextSecondary)
                 .padding(.bottom, 20)
 
             if !q.stem.isEmpty {
@@ -797,6 +807,10 @@ struct LessonRunnerView: View {
 
 struct ResultView: View {
     @Environment(AppEnvironment.self) private var env
+    // Craft overhaul §5.1 "The Dusk Settles": the miniature path draws in
+    // and its sun-dot travels to the horizon once, before the stats land.
+    @State private var duskPathT: CGFloat = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         let r = env.router
@@ -842,9 +856,21 @@ struct ResultView: View {
                 Text(resultBody(scored: scored))
                     .font(.figtree(.regular, size: 14.5))
                     .auLine(14.5, 1.55)
-                    .foregroundStyle(Color.auText.opacity(0.55))
+                    .foregroundStyle(Color.auTextSecondary)
                     .frame(maxWidth: 290, alignment: .leading)
                     .padding(.bottom, 30)
+
+                // §5.1 "The Dusk Settles" — the lesson-complete signature. A
+                // miniature of the home lesson-path draws itself once and its
+                // sun-dot travels to the horizon: the day closes. Opacity-only
+                // under Reduce Motion. No confetti (governance).
+                DuskSettlesMark(drawn: duskPathT)
+                    .frame(height: 54)
+                    .padding(.bottom, 22)
+                    .onAppear {
+                        guard !reduceMotion else { duskPathT = 1; return }
+                        withAnimation(.easeInOut(duration: 0.9)) { duskPathT = 1 }
+                    }
 
                 // score strip — §3.14b: the tiles stagger in as part of the
                 // completion ritual (60 ms apart, the authored stagger).
@@ -916,7 +942,7 @@ struct ResultView: View {
                                 .font(.figtree(.semibold, size: 15))
                                 Text("Review before they settle wrong")
                                     .font(.figtree(.regular, size: 12.5))
-                                    .foregroundStyle(Color.auText.opacity(0.50))
+                                    .foregroundStyle(Color.auTextSecondary)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             AUIcon(kind: .chevron, size: 17, color: .auText.opacity(0.4))
@@ -932,6 +958,28 @@ struct ResultView: View {
                 }
 
                 Spacer(minLength: 16)
+
+                HStack(spacing: 12) {
+                    ShareLink(
+                        item: "I completed today's lesson on Aurel! Streak: \(max(r.streak, 1)) days unhurried English learning.",
+                        preview: SharePreview("Aurel Daily Milestone", image: Image(systemName: "sun.max.fill"))
+                    ) {
+                        HStack(spacing: 8) {
+                            AUIcon(kind: .star, size: 16, color: .auAccentText)
+                            Text("Share milestone")
+                                .font(.figtree(.semibold, size: 14))
+                                .foregroundStyle(Color.auAccentText)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                .strokeBorder(Color.auEdge, lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.auTap)
+                }
+                .padding(.bottom, 10)
 
                 APillButton(
                     title: r.starter
@@ -962,6 +1010,22 @@ struct ResultView: View {
             }
             .ignoresSafeArea()
         }
+        // §5.3 "Dawn" — the first-lesson-ever signature. The Welcome dawn-sky
+        // returns as a full-bleed wash behind the result card, once per user.
+        .overlay {
+            if r.starter && !dawnShown {
+                AUGradients.sky
+                    .opacity(dawnWash)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .onAppear {
+                        guard !reduceMotion else { dawnWash = 0.18; dawnShown = true; return }
+                        withAnimation(.easeInOut(duration: 0.5)) { dawnWash = 0.35 }
+                        withAnimation(.easeInOut(duration: 0.5).delay(0.5)) { dawnWash = 0.18 }
+                        dawnShown = true
+                    }
+            }
+        }
         .auScreenEntrance()
         // §3.14 completion moment: the calm ritual fires exactly once per
         // result — success haptic, the three-note arpeggio, one summary
@@ -980,8 +1044,58 @@ struct ResultView: View {
     }
 
     @State private var ritualFired = false
-
+    // §5.3 state
+    @State private var dawnShown = false
+    @State private var dawnWash: CGFloat = 0
     private var bank: [QuickItem] { QuickItem.bank(from: env.course) }
+
+    /// §5.1 "The Dusk Settles" — the lesson-complete signature mark. A
+    /// miniature of the home lesson-path; `drawn` drives both the thread
+    /// trim and the sun-dot's travel to the horizon in one gesture.
+    private struct DuskSettlesMark: View {
+        var drawn: CGFloat
+
+        var body: some View {
+            GeometryReader { geo in
+                let w = geo.size.width
+                let h = geo.size.height
+                let path = Self.thread(in: CGSize(width: w, height: h))
+                ZStack(alignment: .topLeading) {
+                    path
+                        .trim(from: 0, to: drawn)
+                        .stroke(
+                            Color.auAccent,
+                            style: StrokeStyle(lineWidth: 2, lineCap: .round)
+                        )
+                    // The sun-dot rides the thread to the horizon.
+                    let pt = path.trimmedPath(from: 0, to: max(0.001, drawn)).currentPoint
+                        ?? CGPoint(x: 0, y: h * 0.7)
+                    Circle()
+                        .fill(AUSceneArt.sunMid)
+                        .frame(width: 10, height: 10)
+                        .shadow(color: Color.auAccent.opacity(0.4), radius: 4)
+                        .position(pt)
+                        .opacity(drawn > 0 ? 1 : 0)
+                }
+            }
+            .accessibilityHidden(true)
+        }
+
+        /// A gentle two-curve winding path echoing the home lesson path.
+        private static func thread(in size: CGSize) -> Path {
+            var p = Path()
+            let w = size.width
+            let h = size.height
+            p.move(to: CGPoint(x: 0, y: h * 0.7))
+            p.addQuadCurve(
+                to: CGPoint(x: w * 0.5, y: h * 0.35),
+                control: CGPoint(x: w * 0.25, y: h * 0.05))
+            p.addQuadCurve(
+                to: CGPoint(x: w, y: h * 0.55),
+                control: CGPoint(x: w * 0.75, y: h * 0.65))
+            return p
+        }
+    }
 
     private var resultWeekDots: some View {
         // §3.14: the strip is real history now — a dot fills when that
@@ -1010,7 +1124,7 @@ struct ResultView: View {
                         .shadow(color: completed[i] ? Color.auGlow : .clear, radius: 4, y: 3)
                     Text(label)
                         .font(.figtree(.regular, size: 10))
-                        .foregroundStyle(Color.auText.opacity(0.45))
+                        .foregroundStyle(Color.auTextTertiary)
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -1029,7 +1143,7 @@ struct ResultView: View {
             Text(label.uppercased())
                 .font(.figtree(.semibold, size: 10.5))
                 .tracking(1.05)
-                .foregroundStyle(Color.auText.opacity(0.45))
+                .foregroundStyle(Color.auTextTertiary)
                 .padding(.top, 7)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

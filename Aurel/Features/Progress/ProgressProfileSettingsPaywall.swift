@@ -11,7 +11,9 @@ struct ProgressView: View {
     @Environment(AppEnvironment.self) private var env
 
     private struct Skill: Identifiable {
-        let id = UUID()
+        // Craft overhaul G11: stable identity — a fresh UUID per body
+        // evaluation killed SwiftUI diffing/animations (flicker).
+        var id: String { label }
         let label: String
         let state: Int
         let items: Int
@@ -53,10 +55,9 @@ struct ProgressView: View {
                 }
             }
         }
-        // "Speaking" carries no authored lesson tag — the speak practice
-        // surface credits it honestly: a real take recorded this run
-        // counts as one.
-        if r.speakTake > 0 { counts["Speaking"] = 1 }
+        // Craft overhaul G14: "Speaking" advances from real take history,
+        // not a hardcoded 1 — the count of recorded takes this run.
+        if r.speakTake > 0 { counts["Speaking"] = r.speakTake }
 
         let order = ["Vocabulary", "Grammar", "Listening", "Conversation", "Speaking"]
         let raw = order.map { ($0, counts[$0] ?? 0) }
@@ -109,7 +110,7 @@ struct ProgressView: View {
                         // §3.18(a): the real last-practised day, from DayLog.
                         Text(lastPractisedText)
                             .font(.figtree(.regular, size: 11.5))
-                            .foregroundStyle(Color.auText.opacity(0.55))
+                            .foregroundStyle(Color.auTextSecondary)
                     }
                     .padding(.bottom, 2)
 
@@ -120,14 +121,15 @@ struct ProgressView: View {
 
                     // skills
                     VStack(spacing: 2) {
-                        ForEach(skills) { k in
+                        ForEach(Array(skills.enumerated()), id: \.element.id) { idx, k in
                             Button {
-                                if k.label == "Speaking" {
-                                    r.nav(.speak)
-                                } else if k.label == "Conversation" {
-                                    r.nav(.scene)
-                                } else {
-                                    r.nav(.review)
+                                // Craft overhaul G12: each skill routes to its
+                                // own practice surface (Vocab/Grammar review,
+                                // Listening/Conversation scene, Speaking speak).
+                                switch k.label {
+                                case "Speaking": r.nav(.speak)
+                                case "Listening", "Conversation": r.nav(.scene)
+                                default: r.nav(.review)
                                 }
                             } label: {
                                 VStack(alignment: .leading, spacing: 0) {
@@ -143,6 +145,9 @@ struct ProgressView: View {
                                             .padding(.vertical, 3)
                                             .background(Capsule().fill(tagBg(k.state)))
                                             .foregroundStyle(tagFg(k.state))
+                                        // Craft overhaul G12: the row reads as
+                                        // navigable now (was no affordance).
+                                        AUIcon(kind: .chevron, size: 13, color: .auTextTertiary)
                                     }
                                     .padding(.bottom, 9)
                                     GeometryReader { geo in
@@ -156,14 +161,19 @@ struct ProgressView: View {
                                     .frame(height: 7)
                                     Text(k.meta)
                                         .font(.figtree(.regular, size: 11.5))
-                                        .foregroundStyle(Color.auText.opacity(0.50))
+                                        .foregroundStyle(Color.auTextSecondary)
                                         .padding(.top, 8)
                                 }
                                 .padding(.vertical, 16)
                             }
                             .buttonStyle(.auTap)
                             .accessibilityLabel("\(k.label): \(mastery[k.state]), \(k.items) lesson\(k.items == 1 ? "" : "s")")
-                            .overlay(alignment: .bottom) { Divider().overlay(Color.auDivider) }
+                            // Craft overhaul G18: no stray hairline under the last row.
+                            .overlay(alignment: .bottom) {
+                                if idx < skills.count - 1 {
+                                    Divider().overlay(Color.auDivider)
+                                }
+                            }
                         }
                     }
                     .padding(.bottom, 18)
@@ -195,7 +205,7 @@ struct ProgressView: View {
                             .font(.figtree(.regular, size: 11))
                             .tracking(1.32)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.45))
+                            .foregroundStyle(Color.auTextTertiary)
                             .padding(.bottom, 20)
 
                         HStack(alignment: .bottom, spacing: 8) {
@@ -213,11 +223,11 @@ struct ProgressView: View {
                             // §3.18(c): the real month at the chart's left edge.
                             Text(chartStartMonth)
                                 .font(.figtree(.regular, size: 10))
-                                .foregroundStyle(Color.auText.opacity(0.40))
+                                .foregroundStyle(Color.auTextTertiary)
                             Spacer()
                             Text("Today")
                                 .font(.figtree(.regular, size: 10))
-                                .foregroundStyle(Color.auText.opacity(0.40))
+                                .foregroundStyle(Color.auTextTertiary)
                         }
                         .padding(.top, 9)
 
@@ -225,7 +235,7 @@ struct ProgressView: View {
                             Text("Eight weeks from now this will say something.")
                                 .font(.figtree(.regular, size: 13.5))
                                 .auLine(13.5, 1.55)
-                                .foregroundStyle(Color.auText.opacity(0.48))
+                                .foregroundStyle(Color.auTextTertiary)
                                 .padding(.top, 16)
                         }
                     }
@@ -239,7 +249,7 @@ struct ProgressView: View {
                             .font(.figtree(.bold, size: 10.5))
                             .tracking(1.26)
                             .textCase(.uppercase)
-                            .foregroundStyle(Color.auText.opacity(0.50))
+                            .foregroundStyle(Color.auTextSecondary)
                             .padding(.bottom, 6)
 
                         ForEach(
@@ -288,10 +298,6 @@ struct ProgressView: View {
                 .padding(.top, 70)
                 .padding(.bottom, 130)
             }
-
-            AUTabBar(current: .progress)
-                .padding(.horizontal, 14)
-                .padding(.bottom, 26)
         }
         .auScreenEntrance()
     }
@@ -408,9 +414,19 @@ struct ProgressView: View {
             }
             return [Color.auText.opacity(0.05), .clear]
         }()
+        // Craft overhaul G19: a solid bar uses a flat Color; only genuinely
+        // two-tone bars keep a gradient.
+        let barFill: AnyShapeStyle = {
+            if hasHistory, colors.count == 2, colors[0] == colors[1] {
+                return AnyShapeStyle(colors[0])
+            }
+            return AnyShapeStyle(LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom))
+        }()
 
         return RoundedRectangle(cornerRadius: 6, style: .continuous)
-            .fill(LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom))
+            // Craft overhaul G19: flat fill for solid bars (was a pointless
+            // identical-color gradient wrapper).
+            .fill(barFill)
             .overlay {
                 if !hasHistory && !isToday {
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
@@ -420,8 +436,10 @@ struct ProgressView: View {
                         )
                 }
             }
+            // Craft overhaul G20: no glow on an empty scaffold bar — the
+            // accent pool only appears once today has real minutes.
             .shadow(
-                color: isToday && !hasHistory ? Color.auAccent.opacity(0.28) : .clear, radius: 7,
+                color: isToday && hasHistory ? Color.auAccent.opacity(0.28) : .clear, radius: 7,
                 y: 6
             )
             .frame(height: h)
@@ -456,7 +474,7 @@ struct ProgressView: View {
             Text(label.uppercased())
                 .font(.figtree(.semibold, size: 10.5))
                 .tracking(1.05)
-                .foregroundStyle(Color.auText.opacity(0.50))
+                .foregroundStyle(Color.auTextSecondary)
                 .padding(.top, 9)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -496,19 +514,20 @@ struct ProfileView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 18) {
-                        Text("M")
+                        // Craft overhaul G6: real account state, not "Mira Aldrin".
+                        Text(profileInitial)
                             .font(.caprasimo(size: 30))
                             .frame(width: 76, height: 76)
                             .background(Circle().fill(Color.auAccentRamp(700)))
-                            .foregroundStyle(Color(UIColor(hex: 0xfff8f0)))
+                            .foregroundStyle(AUSceneArt.onAccent)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("Mira Aldrin")
+                            Text(profileName)
                                 .font(.caprasimo(size: 26))
                                 .tracking(-0.52)
                             // §3.19: the real join date, from the profile.
                             Text("A1 · Foundation — \(joinedText)")
                                 .font(.figtree(.regular, size: 13))
-                                .foregroundStyle(Color.auText.opacity(0.52))
+                                .foregroundStyle(Color.auTextSecondary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         Button {
@@ -529,7 +548,8 @@ struct ProfileView: View {
                         profileStat(r.streak > 0 ? "\(r.streak)" : "—", "Streak")
                         Rectangle().fill(Color.auEdge).frame(width: 1)
                         profileStat(
-                            r.lessonsDone > 0 ? "\(r.lessonsDone * 12)" : "—", "Words")
+                            // Craft overhaul G7: real store-derived count.
+                            r.wordsLearned > 0 ? "\(r.wordsLearned)" : "—", "Words")
                         Rectangle().fill(Color.auEdge).frame(width: 1)
                         profileStat(r.lessonsDone > 0 ? "\(r.lessonsDone)" : "—", "Lessons")
                     }
@@ -597,7 +617,7 @@ struct ProfileView: View {
                         .font(.figtree(.bold, size: 10.5))
                         .tracking(1.47)
                         .textCase(.uppercase)
-                        .foregroundStyle(Color.auText.opacity(0.50))
+                        .foregroundStyle(Color.auTextSecondary)
                         .padding(.bottom, 12)
 
                     if !milestones.isEmpty {
@@ -631,7 +651,7 @@ struct ProfileView: View {
                                                 m.done ? Color.auText : Color.auText.opacity(0.52))
                                         Text(m.when)
                                             .font(.figtree(.regular, size: 12))
-                                            .foregroundStyle(Color.auText.opacity(0.48))
+                                            .foregroundStyle(Color.auTextTertiary)
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 }
@@ -661,7 +681,7 @@ struct ProfileView: View {
                         )
                         .font(.figtree(.regular, size: 13))
                         .auLine(13, 1.55)
-                        .foregroundStyle(Color.auText.opacity(0.50))
+                        .foregroundStyle(Color.auTextSecondary)
                         .padding(20)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .overlay(
@@ -677,7 +697,9 @@ struct ProfileView: View {
                     VStack(spacing: 0) {
                         profileRow(
                             "Cedar Group",
-                            r.boardOut ? "Off" : "Rank \(r.streak > 1 ? 6 : 30) of 30"
+                            // Craft overhaul G8: no fabricated rank — the board
+                            // shows state, not an invented position.
+                            r.boardOut ? "Off" : "On the board"
                         ) { r.nav(.leaderboard) }
                         profileRow("Subscription", r.pro ? "Subscribed" : "Free") {
                             r.nav(.paywall)
@@ -698,10 +720,6 @@ struct ProfileView: View {
                 .padding(.top, 70)
                 .padding(.bottom, 130)
             }
-
-            AUTabBar(current: .profile)
-                .padding(.horizontal, 14)
-                .padding(.bottom, 26)
         }
         .auScreenEntrance()
     }
@@ -752,6 +770,20 @@ struct ProfileView: View {
         return "joined \(f.string(from: start))"
     }
 
+    /// Craft overhaul G6: the profile identity derives from the real account —
+    /// the email's local part when signed in, "Guest" otherwise.
+    private var profileName: String {
+        let email = env.router.email
+        guard !email.isEmpty, let local = email.split(separator: "@").first, !local.isEmpty else {
+            return "Guest"
+        }
+        return local.prefix(1).uppercased() + local.dropFirst()
+    }
+
+    private var profileInitial: String {
+        String(profileName.prefix(1)).uppercased()
+    }
+
     private func profileStat(_ value: String, _ label: String) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(value)
@@ -761,7 +793,7 @@ struct ProfileView: View {
             Text(label.uppercased())
                 .font(.figtree(.semibold, size: 10))
                 .tracking(0.9)
-                .foregroundStyle(Color.auText.opacity(0.45))
+                .foregroundStyle(Color.auTextTertiary)
                 .padding(.top, 7)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -779,7 +811,7 @@ struct ProfileView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Text(value)
                     .font(.figtree(.regular, size: 13))
-                    .foregroundStyle(Color.auText.opacity(0.45))
+                    .foregroundStyle(Color.auTextTertiary)
                 AUIcon(kind: .chevron, size: 16, color: .auText.opacity(0.35))
             }
             .padding(.horizontal, 20)
@@ -796,6 +828,8 @@ struct ProfileView: View {
 
 struct SettingsView: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var confirmDelete = false
 
     var body: some View {
         let r = env.router
@@ -873,7 +907,7 @@ struct SettingsView: View {
                         )
                         .font(.figtree(.regular, size: 12.5))
                         .auLine(12.5, 1.5)
-                        .foregroundStyle(Color.auText.opacity(0.50))
+                        .foregroundStyle(Color.auTextSecondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -898,7 +932,7 @@ struct SettingsView: View {
                                 .font(.figtree(.semibold, size: 15))
                             Text("Off hides the group everywhere. Nothing is lost.")
                                 .font(.figtree(.regular, size: 12.5))
-                                .foregroundStyle(Color.auText.opacity(0.50))
+                                .foregroundStyle(Color.auTextSecondary)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         AuthoredSwitch(isOn: !r.boardOut)
@@ -941,23 +975,34 @@ struct SettingsView: View {
                                 .frame(width: 20, height: 20)
                                 .shadow(color: Color.auAccent.opacity(0.20), radius: 4, y: 2)
                                 .offset(x: travel * progress)
+                                // Craft overhaul R5: the knob springs between
+                                // steps instead of hard-snapping.
+                                .animation(
+                                    AUMotion.animation(AUMotion.snap, reduceMotion: reduceMotion),
+                                    value: step
+                                )
                             HStack(spacing: 0) {
                                 ForEach(0..<5, id: \.self) { target in
                                     Button {
+                                        AUFeedback.selection()
                                         r.setTypeStep(target)
                                     } label: {
                                         Color.clear
                                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                                             .contentShape(Rectangle())
                                     }
-                                    .buttonStyle(.plain)
+                                    // Craft overhaul G17: a real pressed state
+                                    // + haptic (was .plain, no feedback).
+                                    .buttonStyle(.auTap)
                                     .accessibilityLabel(typeLabel(for: target))
                                     .accessibilityIdentifier("au.settings.type.\(target)")
                                 }
                             }
                         }
                     }
-                    .frame(height: 30)
+                    // Craft overhaul G17: taller lane so each step target
+                    // clears 44pt (was 30).
+                    .frame(height: 44)
                     Text("Pleased to meet you.")
                         .font(.figtree(.regular, size: typePreview))
                     Text(
@@ -965,7 +1010,7 @@ struct SettingsView: View {
                     )
                     .font(.figtree(.regular, size: 12))
                     .auLine(12, 1.5)
-                    .foregroundStyle(Color.auText.opacity(0.45))
+                    .foregroundStyle(Color.auTextTertiary)
                 }
                 .padding(20)
                 .background(
@@ -981,10 +1026,14 @@ struct SettingsView: View {
                 sectionLabel("Account")
                 VStack(spacing: 0) {
                     accountRow("Subscription", r.pro ? "Subscribed" : "Free") { r.nav(.paywall) }
-                    accountRow("Email", "mira@aldrin.co") {}
+                    // Craft overhaul G9/G6: was a dead row showing a fabricated
+                    // email — now shows the real account email or "Not signed in".
+                    accountRow("Email", r.email.isEmpty ? "Not signed in" : r.email) {}
                     accountRow("Sign out", "", tint: .auAccentText) { r.nav(.welcome) }
                     accountRow("Delete account", "Permanent", tint: .auErr, divider: false) {
-                        r.nav(.welcome)
+                        // Craft overhaul G5: was an immediate destructive nav
+                        // with no confirmation (HIG violation).
+                        confirmDelete = true
                     }
                 }
                 .settingsCard()
@@ -994,6 +1043,18 @@ struct SettingsView: View {
             .padding(.bottom, 34)
         }
         .background(Color.auBackground.ignoresSafeArea())
+        .confirmationDialog(
+            "Delete account permanently?",
+            isPresented: $confirmDelete,
+            titleVisibility: .visible
+        ) {
+            Button("Delete account", role: .destructive) {
+                r.nav(.welcome)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Your local progress, streaks, and settings on this device will be erased. This cannot be undone.")
+        }
         .auScreenEntrance()
     }
 
@@ -1013,7 +1074,7 @@ struct SettingsView: View {
             .font(.figtree(.bold, size: 10.5))
             .tracking(1.47)
             .textCase(.uppercase)
-            .foregroundStyle(Color.auText.opacity(0.50))
+            .foregroundStyle(Color.auTextSecondary)
             .padding(.bottom, 12)
     }
 
@@ -1028,7 +1089,7 @@ struct SettingsView: View {
                         .font(.figtree(.semibold, size: 15))
                     Text(sub)
                         .font(.figtree(.regular, size: 12.5))
-                        .foregroundStyle(Color.auText.opacity(0.50))
+                        .foregroundStyle(Color.auTextSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 AuthoredSwitch(isOn: on)
@@ -1056,7 +1117,7 @@ struct SettingsView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Text(value)
                     .font(.figtree(.regular, size: 13))
-                    .foregroundStyle(Color.auText.opacity(0.45))
+                    .foregroundStyle(Color.auTextTertiary)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 17)
@@ -1070,6 +1131,7 @@ struct SettingsView: View {
 
 private struct AuthoredSwitch: View {
     let isOn: Bool
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Capsule()
@@ -1082,6 +1144,12 @@ private struct AuthoredSwitch: View {
                     .shadow(color: Color.auText.opacity(0.16), radius: 2, y: 1)
                     .padding(3)
             }
+            // Craft overhaul R4: the knob slides + the track cross-fades
+            // (was an instant snap).
+            .animation(
+                AUMotion.animation(AUMotion.snap, reduceMotion: reduceMotion),
+                value: isOn
+            )
             .accessibilityHidden(true)
     }
 }
@@ -1185,15 +1253,17 @@ struct PaywallView: View {
             GeometryReader { geo in
                 ZStack {
                     LinearGradient(
+                        // Craft overhaul G24: dusk stops now come from
+                        // AUSceneArt.paywallDuskDark (were 8 raw hexes).
                         stops: [
-                            .init(color: Color(UIColor(hex: 0x16131a)), location: 0),
-                            .init(color: Color(UIColor(hex: 0x20191f)), location: 0.24),
-                            .init(color: Color(UIColor(hex: 0x2e2226)), location: 0.46),
-                            .init(color: Color(UIColor(hex: 0x452a1f)), location: 0.62),
-                            .init(color: Color(UIColor(hex: 0x7a431f)), location: 0.72),
-                            .init(color: Color(UIColor(hex: 0xb0602e)), location: 0.80),
-                            .init(color: Color(UIColor(hex: 0xc67139)), location: 0.88),
-                            .init(color: Color(UIColor(hex: 0x7d431f)), location: 1),
+                            .init(color: AUSceneArt.paywallDuskDark[0], location: 0),
+                            .init(color: AUSceneArt.paywallDuskDark[1], location: 0.24),
+                            .init(color: AUSceneArt.paywallDuskDark[2], location: 0.46),
+                            .init(color: AUSceneArt.paywallDuskDark[3], location: 0.62),
+                            .init(color: AUSceneArt.paywallDuskDark[4], location: 0.72),
+                            .init(color: AUSceneArt.paywallDuskDark[5], location: 0.80),
+                            .init(color: AUSceneArt.paywallDuskDark[6], location: 0.88),
+                            .init(color: AUSceneArt.paywallDuskDark[7], location: 1),
                         ],
                         startPoint: .top, endPoint: .bottom
                     )
@@ -1244,6 +1314,9 @@ struct PaywallView: View {
             .frame(maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea(edges: .top)
 
+            // Craft overhaul G1: the whole paywall column scrolls now — the
+            // old fixed VStack clipped content on small devices / large type.
+            ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Spacer()
@@ -1269,7 +1342,7 @@ struct PaywallView: View {
                     .font(.figtree(.bold, size: 10.5))
                     .tracking(2.1)
                     .textCase(.uppercase)
-                    .foregroundStyle(Color(UIColor(hex: 0xf0a877)))
+                    .foregroundStyle(AUSceneArt.sunMid)
                     .padding(.bottom, 10)
 
                 Text("Continue with\nChapters 2–4.")
@@ -1290,12 +1363,14 @@ struct PaywallView: View {
 
                 // plans
                 VStack(spacing: 11) {
+                    // Craft overhaul G2: honest price copy until StoreKit is
+                    // wired — no fabricated amounts, no "App Store price" jargon.
                     planRow(
                         id: "annual", name: "Annual", sub: "Billed once a year",
-                        price: "App Store price", badge: "Best value")
+                        price: "Yearly", badge: "Best value")
                     planRow(
                         id: "monthly", name: "Monthly", sub: "Cancel any time",
-                        price: "App Store price", badge: "")
+                        price: "Monthly", badge: "")
                 }
                 .padding(.bottom, 20)
 
@@ -1343,12 +1418,27 @@ struct PaywallView: View {
                 )
                 .font(.figtree(.regular, size: 11.5))
                 .auLine(11.5, 1.5)
-                .foregroundStyle(Color.auText.opacity(0.50))
+                .foregroundStyle(Color.auTextTertiary)
                 .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, 14)
+
+                // Craft overhaul G3: the legal row subscriptions require.
+                HStack(spacing: 22) {
+                    Link(destination: URL(string: "https://aurel.app/terms")!) {
+                        Text("Terms of Use")
+                    }
+                    Link(destination: URL(string: "https://aurel.app/privacy")!) {
+                        Text("Privacy Policy")
+                    }
+                }
+                .font(.figtree(.semibold, size: 12))
+                .foregroundStyle(Color.auAccentText)
                 .frame(maxWidth: .infinity)
             }
             .padding(.horizontal, 24)
             .padding(.bottom, 34)
+            }
         }
         .background(Color.auBackground.ignoresSafeArea())
         .auScreenEntrance()
@@ -1359,6 +1449,7 @@ struct PaywallView: View {
     {
         let on = env.router.plan == id
         return Button {
+            AUFeedback.selection()
             env.router.plan = id
         } label: {
             HStack(spacing: 14) {
@@ -1386,7 +1477,7 @@ struct PaywallView: View {
                     }
                     Text(sub)
                         .font(.figtree(.regular, size: 12.5))
-                        .foregroundStyle(Color.auText.opacity(0.52))
+                        .foregroundStyle(Color.auTextSecondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 Text(price)
@@ -1418,10 +1509,11 @@ struct PaywallView: View {
                 }
             )
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .auShimmerBorder(radius: 24, isActive: on && id == "annual")
+            .auLift()
+            .accessibilityAddTraits(on ? .isSelected : [])
         }
         .buttonStyle(.auTap)
-        .auLift()
-        .accessibilityAddTraits(on ? .isSelected : [])
     }
 }
 
@@ -1430,125 +1522,121 @@ struct PaywallView: View {
 struct SubscribeAccountView: View {
     @Environment(AppEnvironment.self) private var env
 
+    private var formValid: Bool {
+        env.router.email.range(of: #".+@.+\..+"#, options: .regularExpression) != nil
+            && env.router.pass.count >= 6
+    }
+
     var body: some View {
         let r = env.router
         ZStack {
             Color.auBackground.ignoresSafeArea()
             AUPaper().ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    r.nav(.paywall)
-                } label: {
-                    AUIcon(kind: .back, size: 17)
-                        .frame(width: 44, height: 44)
-                        .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
-                }
-                .buttonStyle(.auTap)
-                .accessibilityLabel("Back")
-                .padding(.bottom, 38)
+            // Craft overhaul G4: the old fixed VStack let the keyboard cover
+            // the password field and the CTA — now it scrolls.
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 0) {
+                    AUHeader(kind: .back) { r.nav(.paywall) }
+                        .padding(.horizontal, -24)
+                        .padding(.bottom, 38)
 
-                AUHeading(text: "Create your account.", size: 33, lineHeight: 1.12, tracking: -0.66)
-                    .padding(.bottom, 10)
+                    AUHeading(text: "Create your account.", size: 33, lineHeight: 1.12, tracking: -0.66)
+                        .padding(.bottom, 10)
 
-                AUParagraph(
-                    text:
-                        "Needed to subscribe, and to sync or restore your purchase. Your Chapter 1 progress carries over automatically.",
-                    size: 14, lineHeight: 1.55, color: Color.auText.opacity(0.55)
-                )
-                .padding(.bottom, 30)
+                    AUParagraph(
+                        text:
+                            "Needed to subscribe, and to sync or restore your purchase. Your Chapter 1 progress carries over automatically.",
+                        size: 14, lineHeight: 1.55, color: Color.auTextSecondary
+                    )
+                    .padding(.bottom, 30)
 
-                if !r.loginErr.isEmpty {
-                    Text(r.loginErr)
-                        .font(.figtree(.regular, size: 13))
-                        .foregroundStyle(Color.auErrText)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .fill(Color.auErrBg)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .strokeBorder(Color.auErr, lineWidth: 1)
-                        )
-                        .padding(.bottom, 16)
-                }
-
-                VStack(alignment: .leading, spacing: 14) {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Email")
-                            .font(.figtree(.semibold, size: 12))
-                            .foregroundStyle(Color.auText.opacity(0.60))
-                        TextField(
-                            "you@example.com",
-                            text: Binding(
-                                get: { r.email },
-                                set: { r.setEmail($0) }
-                            )
-                        )
-                        .font(.figtree(.medium, size: 15))
-                        .keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .padding(.horizontal, 18)
-                        .frame(minHeight: 54)
-                        .background(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .fill(Color.auFill)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .strokeBorder(Color.auEdge, lineWidth: 1)
-                        )
+                    if !r.loginErr.isEmpty {
+                        // Craft overhaul G21: authored entrance, not a hard cut.
+                        AUBanner(text: r.loginErr, tone: .error)
+                            .padding(.bottom, 16)
                     }
 
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text("Password")
-                            .font(.figtree(.semibold, size: 12))
-                            .foregroundStyle(Color.auText.opacity(0.60))
-                        SecureField(
-                            "••••••••",
-                            text: Binding(
-                                get: { r.pass },
-                                set: { r.setPass($0) }
+                    VStack(alignment: .leading, spacing: 14) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Email")
+                                .font(.figtree(.semibold, size: 12))
+                                .foregroundStyle(Color.auTextSecondary)
+                            TextField(
+                                "you@example.com",
+                                text: Binding(
+                                    get: { r.email },
+                                    set: { r.setEmail($0) }
+                                )
                             )
-                        )
-                        .font(.figtree(.medium, size: 15))
-                        .padding(.horizontal, 18)
-                        .frame(minHeight: 54)
-                        .background(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .fill(Color.auFill)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .strokeBorder(Color.auEdge, lineWidth: 1)
-                        )
+                            .font(.figtree(.medium, size: 15))
+                            .keyboardType(.emailAddress)
+                            .textContentType(.emailAddress)
+                            .submitLabel(.next)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .padding(.horizontal, 18)
+                            .frame(minHeight: 54)
+                            .background(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .fill(Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .strokeBorder(Color.auEdge, lineWidth: 1)
+                            )
+                        }
+
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Password")
+                                .font(.figtree(.semibold, size: 12))
+                                .foregroundStyle(Color.auTextSecondary)
+                            SecureField(
+                                "••••••••",
+                                text: Binding(
+                                    get: { r.pass },
+                                    set: { r.setPass($0) }
+                                )
+                            )
+                            .font(.figtree(.medium, size: 15))
+                            .textContentType(.newPassword)
+                            .submitLabel(.go)
+                            .onSubmit { if formValid { r.createAccountAndSubscribe() } }
+                            .padding(.horizontal, 18)
+                            .frame(minHeight: 54)
+                            .background(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .fill(Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                    .strokeBorder(Color.auEdge, lineWidth: 1)
+                            )
+                        }
                     }
+                    .padding(.bottom, 20)
+
+                    Spacer(minLength: 24)
+
+                    // Craft overhaul G22: disabled until the form is valid.
+                    APillButton(title: "Create account and subscribe", disabled: !formValid) {
+                        r.createAccountAndSubscribe()
+                    }
+                    .padding(.bottom, 12)
+
+                    Text(
+                        "Price, billing period, and renewal terms are set by the App Store at checkout. No free trial — Chapter 1 is the free experience."
+                    )
+                    .font(.figtree(.regular, size: 11.5))
+                    .auLine(11.5, 1.5)
+                    .foregroundStyle(Color.auTextTertiary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.bottom, 20)
-
-                Spacer(minLength: 24)
-
-                APillButton(title: "Create account and subscribe") {
-                    r.createAccountAndSubscribe()
-                }
-                .padding(.bottom, 12)
-
-                Text(
-                    "Price, billing period, and renewal terms are set by the App Store at checkout. No free trial — Chapter 1 is the free experience."
-                )
-                .font(.figtree(.regular, size: 11.5))
-                .auLine(11.5, 1.5)
-                .foregroundStyle(Color.auText.opacity(0.50))
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 32)
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 74)
-            .padding(.bottom, 32)
+            .scrollDismissesKeyboard(.interactively)
         }
         .auScreenEntrance()
     }

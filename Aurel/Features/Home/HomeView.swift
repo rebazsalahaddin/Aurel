@@ -64,11 +64,6 @@ struct HomeView: View {
                 .padding(.top, 104)
                 .zIndex(5)
             }
-
-            AUTabBar(current: .home)
-                .padding(.horizontal, 14)
-                .padding(.bottom, 26)  // design: bottom:26px above home indicator
-                .zIndex(6)
         }
         .auScreenEntrance()
     }
@@ -109,7 +104,7 @@ struct HomeView: View {
                     .lineLimit(2)
                 Text("\(ch.level) — \(inChapter) of \(ch.count) lessons")
                     .font(.figtree(.regular, size: 13))
-                    .foregroundStyle(Color.auText.opacity(0.55))
+                    .foregroundStyle(Color.auTextSecondary)
                     .padding(.top, 7)
                 AUParagraph(
                     text:
@@ -178,7 +173,7 @@ struct HomeView: View {
                     Text("You left \(pending.title) at screen \(pending.at) of \(pending.of).")
                         .font(.figtree(.regular, size: 12.5))
                         .auLine(12.5, 1.45)
-                        .foregroundStyle(Color.auText.opacity(0.52))
+                        .foregroundStyle(Color.auTextSecondary)
                     HStack(spacing: 9) {
                         APillButton(title: "Resume", compact: true, aid: "au.home.resume") {
                             env.router.resumePending()
@@ -194,7 +189,7 @@ struct HomeView: View {
                                     RoundedRectangle(cornerRadius: 19, style: .continuous)
                                         .strokeBorder(Color.auEdge, lineWidth: 1)
                                 )
-                                .foregroundStyle(Color.auText.opacity(0.58))
+                                .foregroundStyle(Color.auTextSecondary)
                         }
                         .buttonStyle(.auTap)
                         .accessibilityIdentifier("au.home.start-over")
@@ -226,99 +221,147 @@ struct HomeView: View {
             arcsCompleted: r.arcs
         )
 
-        return ACard(radius: 28, padded: false) {
-            VStack(spacing: 0) {
-                ArcSkyView(
-                    state: arc,
-                    sunTravel: sunTravel,
-                    dawnDone: r.dayLesson,
-                    dawnMeta: dawnMeta,
-                    sundownDone: arc.arcT >= 1 && r.dayLesson,
-                    sundownMeta: sundownMeta
-                )
+        return VStack(spacing: 0) {
+            ArcSkyView(
+                state: arc,
+                sunTravel: sunTravel,
+                dawnDone: r.dayLesson,
+                dawnMeta: dawnMeta,
+                sundownDone: arc.arcT >= 1 && r.dayLesson,
+                sundownMeta: sundownMeta
+            )
 
-                VStack(spacing: 0) {
-                    // Streak row
-                    Button {
-                        r.nav(.streak)
-                    } label: {
-                        HStack(alignment: .firstTextBaseline, spacing: 8) {
-                            Text(r.streak > 0 ? "\(r.streak)" : "Day one")
-                                .font(.figtree(.bold, size: 19))
-                                .monospacedDigit()
-                                .tracking(-0.38)
-                                .foregroundStyle(Color.auAccentText)
+            VStack(spacing: 0) {
+                // Streak headline — the day's count set as display type,
+                // a small ember/spark mark, and the authored explainer.
+                Button {
+                    r.nav(.streak)
+                } label: {
+                    HStack(alignment: .center, spacing: 12) {
+                        // Ember mark — a lit flame once the streak has
+                        // begun, a quiet spark on day one.
+                        ZStack {
+                            Circle()
+                                .fill(Color.auAccent.opacity(r.streak > 0 ? 0.16 : 0.10))
+                                .frame(width: 40, height: 40)
+                            Circle()
+                                .strokeBorder(Color.auAccent.opacity(0.22), lineWidth: 1)
+                                .frame(width: 40, height: 40)
+                            AUIcon(
+                                kind: r.streak > 0 ? .flame : .sparkle,
+                                size: 17,
+                                color: r.streak > 0 ? .auAccent : .auAccentText
+                            )
+                        }
+                        .accessibilityHidden(true)
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                Text(r.streak > 0 ? "\(r.streak)" : "Day one")
+                                    .font(.caprasimo(size: 27))
+                                    .monospacedDigit()
+                                    .tracking(-0.54)
+                                    .foregroundStyle(Color.auAccentText)
+                                if r.streak > 0 {
+                                    Text(r.streak == 1 ? "day" : "days")
+                                        .font(.figtree(.semibold, size: 14))
+                                        .foregroundStyle(Color.auText)
+                                }
+                            }
                             Text(
                                 r.streak > 0
-                                    ? (r.streak == 1
-                                        ? "day. A day counts when both halves are done."
-                                        : "days. A day counts when both halves are done.")
+                                    ? "A day counts when both halves are done."
                                     : "A lesson, then the words due back — both halves make a day."
                             )
                             .font(.figtree(.regular, size: 11.5))
                             .auLine(11.5, 1.4)
-                            .foregroundStyle(Color.auText.opacity(0.52))
+                            .foregroundStyle(Color.auTextSecondary)
                             .fixedSize(horizontal: false, vertical: true)
-                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                    }
-                    .buttonStyle(.auTap)
-                    .padding(.bottom, 9)
-
-                    if arc.arcT < 1 {
-                        APillButton(title: arcLabel, aid: "au.home.today") {
-                            if !r.dayLesson {
-                                r.goCourse(min(pathAt, 3))
-                            } else {
-                                r.reviewRun()
-                            }
-                        }
-                    } else {
-                        HStack(spacing: 11) {
-                            AUIcon(kind: .check, size: 17, color: .auOkText)
-                            Text(
-                                dueNow == 0 && r.dayLesson && !r.dayRecall
-                                    ? "Today is complete — nothing was due. Tomorrow, a new lesson."
-                                    : "Today is complete. Tomorrow, these come back one interval wider."
-                            )
-                            .font(.figtree(.regular, size: 13.5))
-                            .auLine(13.5, 1.45)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .fill(Color.auOkBg)
-                        )
-                        .foregroundStyle(Color.auOkText)
-
-                        Button {
-                            r.goCourse(min(pathAt, 3))
-                        } label: {
-                            Text("One more, for the pleasure of it")
-                                .font(.figtree(.bold, size: 13.5))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 13)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 19, style: .continuous)
-                                        .strokeBorder(
-                                            Color.auText.opacity(0.2),
-                                            style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                                )
-                                .foregroundStyle(Color.auText.opacity(0.62))
-                        }
-                        .buttonStyle(.auTap)
-                        .accessibilityIdentifier("au.home.one-more")
-                        .padding(.top, 10)
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 14)
-                .padding(.bottom, 16)
+                .buttonStyle(.auTap)
+                .padding(.bottom, 13)
+
+                // A quiet hairline separates "the day so far" from the act.
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.auDivider.opacity(0),
+                                Color.auDivider,
+                                Color.auDivider.opacity(0),
+                            ],
+                            startPoint: .leading, endPoint: .trailing
+                        )
+                    )
+                    .frame(height: 1)
+                    .padding(.bottom, 13)
+
+                if arc.arcT < 1 {
+                    DayArcCTA(title: arcLabel, aid: "au.home.today") {
+                        if !r.dayLesson {
+                            r.goCourse(min(pathAt, 3))
+                        } else {
+                            r.reviewRun()
+                        }
+                    }
+                } else {
+                    HStack(spacing: 11) {
+                        AUIcon(kind: .check, size: 17, color: .auOkText)
+                        Text(
+                            dueNow == 0 && r.dayLesson && !r.dayRecall
+                                ? "Today is complete — nothing was due. Tomorrow, a new lesson."
+                                : "Today is complete. Tomorrow, these come back one interval wider."
+                        )
+                        .font(.figtree(.regular, size: 13.5))
+                        .auLine(13.5, 1.45)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .fill(Color.auOkBg)
+                    )
+                    .foregroundStyle(Color.auOkText)
+
+                    Button {
+                        r.goCourse(min(pathAt, 3))
+                    } label: {
+                        Text("One more, for the pleasure of it")
+                            .font(.figtree(.bold, size: 13.5))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 13)
+                            .background(
+                                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                                    .strokeBorder(
+                                        Color.auText.opacity(0.2),
+                                        style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+                            )
+                            .foregroundStyle(Color.auText.opacity(0.62))
+                    }
+                    .buttonStyle(.auTap)
+                    .accessibilityIdentifier("au.home.one-more")
+                    .padding(.top, 10)
+                }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+            .padding(.horizontal, 16)
+            .padding(.top, 14)
+            .padding(.bottom, 16)
         }
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .background(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(Color(UIColor.secondarySystemBackground).opacity(0.16))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .strokeBorder(Color.white.opacity(0.12), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .shadow(color: Color.black.opacity(0.10), radius: 16, y: 6)
         .padding(.horizontal, 24)
         .padding(.top, 14)
     }
@@ -453,7 +496,7 @@ struct HomeView: View {
                                     .minimumScaleFactor(0.82)
                                 Text(node.meta)
                                     .font(.figtree(.regular, size: 12))
-                                    .foregroundStyle(Color.auText.opacity(0.52))
+                                    .foregroundStyle(Color.auTextSecondary)
                                     .multilineTextAlignment(
                                         node.alignRight ? .trailing : .leading
                                     )
@@ -487,7 +530,7 @@ struct HomeView: View {
                                         .font(.caprasimo(size: 15))
                                     Text(ch.nextName)
                                         .font(.figtree(.regular, size: 12))
-                                        .foregroundStyle(Color.auText.opacity(0.48))
+                                        .foregroundStyle(Color.auTextTertiary)
                                 }
                                 Spacer(minLength: 8)
                                 Text(env.router.pro ? "Open" : "Opens with Pro")
@@ -659,9 +702,10 @@ private struct NodePopIn: ViewModifier {
 /// The first tap on a locked stop shows it; the second opens the paywall.
 private struct LockedStopCard: View {
     let prev: String
+    var onUnlock: (() -> Void)? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 5) {
             Text("Opens after \(prev).")
                 .font(.figtree(.semibold, size: 13))
                 .foregroundStyle(Color.auText)
@@ -669,15 +713,28 @@ private struct LockedStopCard: View {
                 .font(.figtree(.regular, size: 12))
                 .auLine(12, 1.4)
                 .foregroundStyle(Color.auText.opacity(0.62))
+
+            if let onUnlock {
+                Button(action: onUnlock) {
+                    HStack(spacing: 4) {
+                        Text("Unlock with Pro")
+                            .font(.figtree(.bold, size: 12))
+                        AUIcon(kind: .chevron, size: 12, color: .auAccentText)
+                    }
+                    .foregroundStyle(Color.auAccentText)
+                    .padding(.top, 4)
+                }
+                .buttonStyle(.auTap)
+            }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 11)
-        .frame(width: 240, alignment: .leading)
+        .padding(.horizontal, 15)
+        .padding(.vertical, 12)
+        .frame(width: 248, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.auFill)
+            RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auFill)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .strokeBorder(Color.auEdge, lineWidth: 1)
         )
         .auShadowSm()
@@ -685,11 +742,48 @@ private struct LockedStopCard: View {
     }
 }
 
+/// The day-arc's hero action — a modern, flat, elegant accent pill.
+private struct DayArcCTA: View {
+    let title: String
+    var aid: String? = nil
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: {
+            AUFeedback.press()
+            action()
+        }) {
+            HStack(spacing: 8) {
+                Text(title)
+                    .font(.figtree(.bold, size: 16))
+                    .tracking(0.2)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                AUIcon(kind: .chevron, size: 12, color: Color.auPrimaryButtonText.opacity(0.9))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+            .padding(.horizontal, 20)
+            .foregroundStyle(Color.auPrimaryButtonText)
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color(UIColor(hex: 0xb25f1f)))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2)
+            )
+            .shadow(color: Color(UIColor(hex: 0xb25f1f)).opacity(0.32), radius: 8, x: 0, y: 3)
+        }
+        .buttonStyle(.auTap)
+        .accessibilityIdentifier(aid ?? "au.btn.\(title.auSlug)")
+    }
+}
+
 /// The serpentine thread (line 532). First leg (line 533) is the accent
 /// overlay once the path has begun.
 struct WindingPathShape: Shape {
     var firstLegOnly = false
-
     func path(in rect: CGRect) -> Path {
         var p = Path()
         p.move(to: CGPoint(x: 132, y: 46))
