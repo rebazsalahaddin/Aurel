@@ -11,30 +11,30 @@ struct PromiseScreenView: View {
     let m: PlayerModel
 
     var body: some View {
-        ScreenColumn(topPad: 0, hPad: 0) {
+        ScreenColumn(topPad: 0, bottomPad: 28, hPad: 0) {
             if case .promise(let p) = m.cur?.screen.payload {
                 IllustrationPlaceholder(
                     ill: p.ill ?? IllustrationRef(id: "", alt: ""),
-                    height: 392,
+                    aspectRatio: 16.0 / 9.0,
                     kickerSize: 9,
                     captionSize: 12.5,
                     fullBleed: true
                 )
 
-                ScreenColumn(topPad: 26, bottomPad: 30) {
+                VStack(alignment: .leading, spacing: 0) {
                     Text(p.newTodayLabel?.uppercased() ?? "NEW WORDS TODAY")
                         .font(.figtree(.bold, size: 9.5))
                         .tracking(1.43)
                         .foregroundStyle(Color.auTextTertiary)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 8)
+                        .padding(.bottom, 6)
 
                     Text(p.newToday ?? "")
                         .font(.caprasimo(size: 22))
                         .auHeadLine(22, 1.35)
                         .tracking(-0.22)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom, 26)
+                        .padding(.bottom, 22)
 
                     ForEach(Array((p.canDos ?? []).enumerated()), id: \.offset) { i, t in
                         HStack(spacing: 14) {
@@ -45,11 +45,9 @@ struct PromiseScreenView: View {
                                 .font(.figtree(.regular, size: 16.5))
                                 .auLine(16.5, 1.4)
                         }
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 14)
                         .auStagger(i)
                     }
-
-                    Spacer(minLength: 12)
 
                     Button {
                         AUFeedback.press()
@@ -59,16 +57,22 @@ struct PromiseScreenView: View {
                             PingDot()
                             Text("Tap anywhere to go on")
                                 .font(.figtree(.semibold, size: 13.5))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.9)
                         }
+                        .frame(maxWidth: .infinity)
                         .foregroundStyle(Color.auAccentText)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
                     }
                     .buttonStyle(.auTap)
-                    // align-self: center
                     .frame(maxWidth: .infinity)
+                    .padding(.top, 2)
                     .accessibilityIdentifier("au.player.go-on")
                 }
+                .padding(.horizontal, 22)
+                .padding(.top, 24)
+                .frame(maxHeight: .infinity, alignment: .topLeading)
             }
         }
         .contentShape(Rectangle())
@@ -336,10 +340,13 @@ struct PauseScreenView: View {
         ScreenColumn(topPad: 0, bottomPad: 30, hPad: 0) {
             if case .pause(let p) = m.cur?.screen.payload {
                 IllustrationPlaceholder(
-                    ill: p.ill ?? IllustrationRef(id: "", alt: ""), height: 300, captionSize: 12,
-                    fullBleed: true)
+                    ill: p.ill ?? IllustrationRef(id: "", alt: ""),
+                    height: 300,
+                    captionSize: 12,
+                    fullBleed: true
+                )
 
-                ScreenColumn(topPad: 28) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 9) {
                         ForEach(
                             m.rings(p.rings ?? 3, p.ringsFilled ?? 0).enumerated(), id: \.offset
@@ -356,7 +363,7 @@ struct PauseScreenView: View {
                                 .frame(width: 22, height: 22)
                         }
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 18)
 
                     Text(p.head ?? "")
                         .font(.caprasimo(size: 27))
@@ -370,7 +377,7 @@ struct PauseScreenView: View {
                         .foregroundStyle(Color.auText.opacity(0.62))
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Spacer(minLength: 12)
+                    Spacer(minLength: 16)
 
                     HStack(spacing: 12) {
                         APillButton(title: "Take a break", variant: .quiet, player: true) {
@@ -385,6 +392,9 @@ struct PauseScreenView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.top, 13)
                 }
+                .padding(.horizontal, 22)
+                .padding(.top, 24)
+                .frame(maxHeight: .infinity, alignment: .topLeading)
             }
         }
     }

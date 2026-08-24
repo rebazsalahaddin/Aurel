@@ -17,10 +17,10 @@ struct CoursePlayerView: View {
             if let model {
                 PlayerChrome(model: model, bound: bound)
             } else {
-                Color.auBackground.ignoresSafeArea()
+                AUElegantBackground(subdued: true).ignoresSafeArea()
             }
         }
-        .background(Color.auBackground.ignoresSafeArea())
+        .background(AUElegantBackground(subdued: true).ignoresSafeArea())
         .task(id: startPos) {
             guard model == nil || model?.p != startPos else { return }
             let m = PlayerModel(
@@ -106,15 +106,18 @@ private struct PlayerChrome: View {
                 .padding(.horizontal, 20)
             }
 
-            ScrollView(showsIndicators: false) {
-                screenBody
-                    .id(model.p)
-                    .transition(
-                        // Craft overhaul L7: slide with the actual travel
-                        // direction (was hardcoded forward: true).
-                        AUMotion.screenSwap(
-                            reduceMotion: reduceMotion, forward: model.lastDelta >= 0)
-                    )
+            GeometryReader { geo in
+                ScrollView(showsIndicators: false) {
+                    screenBody
+                        .frame(minHeight: geo.size.height)
+                        .id(model.p)
+                        .transition(
+                            // Craft overhaul L7: slide with the actual travel
+                            // direction (was hardcoded forward: true).
+                            AUMotion.screenSwap(
+                                reduceMotion: reduceMotion, forward: model.lastDelta >= 0)
+                        )
+                }
             }
 
             // The practice family's docked verdict + CTA (§3.9): the answer
@@ -220,11 +223,9 @@ struct ScreenColumn<Content: View>: View {
         VStack(alignment: alignment, spacing: 0) {
             content
         }
-        // The authored player body is 790 points including its insets. Put the
-        // flexible height inside the padding so nested Spacers receive it.
         .frame(
             maxWidth: .infinity,
-            minHeight: max(0, 790 - topPad - bottomPad),
+            maxHeight: .infinity,
             alignment: alignment == .center ? .top : .topLeading
         )
         .padding(.horizontal, hPad)

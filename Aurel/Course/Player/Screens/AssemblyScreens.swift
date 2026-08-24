@@ -333,10 +333,13 @@ struct MissionScreenView: View {
         ScreenColumn(topPad: 0, bottomPad: 26, hPad: 0) {
             if case .missionBrief(let mb) = m.cur?.screen.payload {
                 IllustrationPlaceholder(
-                    ill: mb.ill ?? IllustrationRef(id: "", alt: ""), height: 250, captionSize: 11.5,
-                    fullBleed: true)
+                    ill: mb.ill ?? IllustrationRef(id: "", alt: ""),
+                    height: 250,
+                    captionSize: 11.5,
+                    fullBleed: true
+                )
 
-                ScreenColumn(topPad: 22) {
+                VStack(alignment: .leading, spacing: 0) {
                     Text(mb.head ?? "")
                         .font(.caprasimo(size: 26))
                         .tracking(-0.52)
@@ -404,7 +407,7 @@ struct MissionScreenView: View {
                         .padding(.bottom, 16)
                     }
 
-                    Spacer(minLength: 12)
+                    Spacer(minLength: 16)
 
                     if let privacy = mb.privacy {
                         Text(privacy)
@@ -420,6 +423,9 @@ struct MissionScreenView: View {
                         APillButton(title: "Tap", icon: .tap, player: true) { m.goto(m.p + 1) }
                     }
                 }
+                .padding(.horizontal, 22)
+                .padding(.top, 22)
+                .frame(maxHeight: .infinity, alignment: .topLeading)
             }
         }
     }

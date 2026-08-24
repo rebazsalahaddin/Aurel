@@ -140,7 +140,7 @@ struct QuizIntroScreenView: View {
         ScreenColumn(topPad: 30, bottomPad: 30, hPad: 26, alignment: .center) {
             if case .quizIntro(let q) = m.cur?.screen.payload {
                 VStack(spacing: 0) {
-                    Spacer(minLength: 40)
+                    Spacer(minLength: 20)
 
                     AUIcon(kind: .check, size: 36, color: .auTintText)
                         .frame(width: 82, height: 82)
@@ -175,12 +175,12 @@ struct QuizIntroScreenView: View {
                             .padding(.bottom, 28)
                     }
 
+                    Spacer(minLength: 20)
+
                     GoOnButton(label: "Start") { m.goto(m.p + 1) }
                         .frame(maxWidth: 280)
-
-                    Spacer(minLength: 40)
                 }
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }

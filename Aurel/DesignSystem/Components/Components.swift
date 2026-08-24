@@ -772,97 +772,240 @@ struct AmbientOrbs: View {
     }
 }
 
-// MARK: `.au-paper` — the warm paper ground (Aurel.dc.html lines 105–108)
+// MARK: `.au-paper` / Modern Minimalist Elegant Background
+//
+// A bespoke, editorial background: fluid hand-drawn fine-line curves,
+// astrolabe celestial arcs, delicate harmonic dashed echoes, and subtle
+// atmospheric ember/sage washes over tactile fine paper grain.
+// Features ultra-smooth, whisper-quiet organic ambient breathing drift.
 
-/// Two corner washes (`::before`) plus the dune/arc line art (`::after`,
-/// a 514×620 SVG pinned `left/right:-56px; bottom:-190px`, radial-masked).
-/// Sits behind the content of goal / placement / commit / assess / lesson.
-struct AUPaper: View {
-    /// The line-art `d` strings with their authored stroke opacities.
-    private static let lines: [(d: String, opacity: Double, dashed: Bool)] = [
-        ("M0 470 C86 452 168 448 254 458 C340 468 430 484 514 470", 0.5, false),
-        ("M0 512 C92 496 176 492 262 500 C348 508 434 522 514 510", 0.34, false),
-        ("M0 556 C96 542 184 538 268 544 C352 550 436 562 514 552", 0.2, false),
-        ("M40 470 A104 104 0 0 1 248 470", 0.3, false),
-        ("M-16 470 A160 160 0 0 1 304 470", 0.22, false),
-        ("M-76 470 A220 220 0 0 1 364 470", 0.16, false),
-        ("M-140 470 A284 284 0 0 1 428 470", 0.11, false),
-        ("M300 128 C336 176 366 236 380 300", 0.26, true),
-        ("M356 96 C398 152 432 222 448 296", 0.16, true),
-    ]
-
+struct AUElegantBackground: View {
     @Environment(\.colorScheme) private var scheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var subdued: Bool = false
+    var showGrain: Bool = true
+    var showAmbientWash: Bool = true
+
+    @State private var phase: CGFloat = 0
 
     var body: some View {
         GeometryReader { geo in
             let w = geo.size.width
             let h = geo.size.height
-            let artW = w + 112  // left:-56 + right:-56
-            let artH: CGFloat = 620
+
+            // Slow, harmonious ambient drift coordinates
+            let driftY1 = reduceMotion ? 0 : sin(phase * .pi * 2) * 4.5
+            let driftY2 = reduceMotion ? 0 : cos(phase * .pi * 2) * 3.5
+            let driftX  = reduceMotion ? 0 : sin(phase * .pi * 2 * 0.6) * 3.0
 
             ZStack {
-                // ::before — accent wash from the top-right, sage from bottom-left.
-                ZStack {
-                    EllipseWash(
-                        stops: [
-                            .init(color: Color.auAccent.opacity(0.11), location: 0),
-                            .init(color: .clear, location: 0.68),
-                        ],
-                        center: UnitPoint(x: 0.92, y: -0.08),
-                        radii: CGSize(width: w * 1.28, height: h * 0.54)
-                    )
-                    EllipseWash(
-                        stops: [
-                            .init(color: Color.auAccent2.opacity(0.10), location: 0),
-                            .init(color: .clear, location: 0.70),
-                        ],
-                        center: UnitPoint(x: -0.12, y: 1.06),
-                        radii: CGSize(width: w * 1.04, height: h * 0.46)
-                    )
-                }
-                .opacity(scheme == .dark ? 0.8 : 1)
+                // Base ground
+                Color.auBackground
 
-                // ::after — the dune / contour line art.
-                ZStack {
-                    ForEach(Array(Self.lines.enumerated()), id: \.offset) { _, line in
-                        SVGPathShape(d: line.d, viewBox: CGSize(width: 514, height: 620))
-                            .stroke(
-                                inkColor.opacity(line.opacity),
-                                style: StrokeStyle(
-                                    lineWidth: 1.15, lineCap: .round, lineJoin: .round,
-                                    dash: line.dashed ? [2, 7] : [])
-                            )
+                // Atmospheric ambient washes
+                if showAmbientWash {
+                    ZStack {
+                        // Top-right warm ember wash
+                        RadialGradient(
+                            colors: [
+                                Color.auAccent.opacity(
+                                    (scheme == .dark ? 0.07 : 0.04) * (subdued ? 0.6 : 1.0)
+                                ),
+                                Color.clear,
+                            ],
+                            center: UnitPoint(
+                                x: 0.95 + Double(driftX * 0.003),
+                                y: 0.04 + Double(driftY1 * 0.003)
+                            ),
+                            startRadius: 0,
+                            endRadius: max(w, h) * 0.62
+                        )
+
+                        // Bottom-left sage/olive whisper
+                        RadialGradient(
+                            colors: [
+                                Color.auAccent2.opacity(
+                                    (scheme == .dark ? 0.055 : 0.03) * (subdued ? 0.6 : 1.0)
+                                ),
+                                Color.clear,
+                            ],
+                            center: UnitPoint(
+                                x: 0.04 - Double(driftX * 0.003),
+                                y: 0.92 - Double(driftY2 * 0.003)
+                            ),
+                            startRadius: 0,
+                            endRadius: max(w, h) * 0.52
+                        )
                     }
                 }
-                .frame(width: artW, height: artH)
-                .mask(
-                    EllipseWash(
-                        stops: [
-                            .init(color: .black, location: 0),
-                            .init(color: .black.opacity(0.5), location: 0.46),
-                            .init(color: .clear, location: 0.78),
-                        ],
-                        center: UnitPoint(x: 0.24, y: 0.96),
-                        radii: CGSize(width: artW * 0.72, height: artH * 0.78)
+
+                // Modern minimalist vector line art
+                Canvas { context, size in
+                    let w = size.width
+                    let h = size.height
+
+                    // In subdued/lesson mode, line opacities are ultra-soft and ethereal
+                    let alphaScale: Double = (subdued ? 0.42 : 1.0)
+
+                    let primaryInk = scheme == .dark
+                        ? Color(UIColor(hex: 0xe8e2d8))
+                        : Color(UIColor(hex: 0x2b221a))
+
+                    let accentInk = scheme == .dark
+                        ? Color(UIColor(hex: 0xf5a56d))
+                        : Color(UIColor(hex: 0xb55a22))
+
+                    // 1. Upper sweeping horizon curve
+                    var p1 = Path()
+                    p1.move(to: CGPoint(x: -20, y: h * 0.16 + driftY1))
+                    p1.addCurve(
+                        to: CGPoint(x: w * 0.52, y: h * 0.23 + driftY2),
+                        control1: CGPoint(x: w * 0.18, y: h * 0.12 + driftY1 * 0.5),
+                        control2: CGPoint(x: w * 0.36, y: h * 0.25 + driftY2 * 0.8)
                     )
-                    .frame(width: artW, height: artH)
-                )
-                .opacity(scheme == .dark ? 0.3 : 0.5)
-                .offset(x: -56, y: h + 190 - artH)
-                .frame(width: w, height: h, alignment: .topLeading)
+                    p1.addCurve(
+                        to: CGPoint(x: w + 20, y: h * 0.18 + driftY1 * 0.7),
+                        control1: CGPoint(x: w * 0.70, y: h * 0.21 + driftY2 * 0.6),
+                        control2: CGPoint(x: w * 0.88, y: h * 0.14 + driftY1 * 0.4)
+                    )
+                    context.stroke(
+                        p1,
+                        with: .color(primaryInk.opacity((scheme == .dark ? 0.12 : 0.075) * alphaScale)),
+                        style: StrokeStyle(lineWidth: 0.9, lineCap: .round)
+                    )
+
+                    // 1b. Harmonic dashed echo
+                    var p1b = Path()
+                    p1b.move(to: CGPoint(x: -20, y: h * 0.185 + driftY1 * 0.9))
+                    p1b.addCurve(
+                        to: CGPoint(x: w * 0.49, y: h * 0.25 + driftY2 * 0.9),
+                        control1: CGPoint(x: w * 0.16, y: h * 0.14 + driftY1 * 0.6),
+                        control2: CGPoint(x: w * 0.34, y: h * 0.27 + driftY2 * 0.7)
+                    )
+                    p1b.addCurve(
+                        to: CGPoint(x: w + 20, y: h * 0.21 + driftY1 * 0.8),
+                        control1: CGPoint(x: w * 0.68, y: h * 0.23 + driftY2 * 0.5),
+                        control2: CGPoint(x: w * 0.86, y: h * 0.17 + driftY1 * 0.5)
+                    )
+                    context.stroke(
+                        p1b,
+                        with: .color(accentInk.opacity((scheme == .dark ? 0.10 : 0.06) * alphaScale)),
+                        style: StrokeStyle(lineWidth: 0.8, lineCap: .round, dash: [2.5, 6.5])
+                    )
+
+                    // 2. Celestial / Astrolabe orbital arc from top right
+                    var p2 = Path()
+                    p2.addArc(
+                        center: CGPoint(x: w * 0.90 + driftX, y: -h * 0.04 + driftY1 * 0.5),
+                        radius: min(w, h) * 0.68,
+                        startAngle: .degrees(45),
+                        endAngle: .degrees(160),
+                        clockwise: false
+                    )
+                    context.stroke(
+                        p2,
+                        with: .color(primaryInk.opacity((scheme == .dark ? 0.10 : 0.06) * alphaScale)),
+                        style: StrokeStyle(lineWidth: 0.85, lineCap: .round)
+                    )
+
+                    // 2b. Concentric micro arc with fine dashed pattern
+                    var p2b = Path()
+                    p2b.addArc(
+                        center: CGPoint(x: w * 0.90 + driftX, y: -h * 0.04 + driftY1 * 0.5),
+                        radius: min(w, h) * 0.82,
+                        startAngle: .degrees(55),
+                        endAngle: .degrees(145),
+                        clockwise: false
+                    )
+                    context.stroke(
+                        p2b,
+                        with: .color(accentInk.opacity((scheme == .dark ? 0.08 : 0.045) * alphaScale)),
+                        style: StrokeStyle(lineWidth: 0.7, lineCap: .round, dash: [1.5, 8.0])
+                    )
+
+                    // 3. Mid-body topographic flow / acoustic wave
+                    var p3 = Path()
+                    p3.move(to: CGPoint(x: -20, y: h * 0.54 + driftY2))
+                    p3.addCurve(
+                        to: CGPoint(x: w * 0.50, y: h * 0.48 + driftY1),
+                        control1: CGPoint(x: w * 0.16, y: h * 0.50 + driftY2 * 0.7),
+                        control2: CGPoint(x: w * 0.34, y: h * 0.46 + driftY1 * 0.8)
+                    )
+                    p3.addCurve(
+                        to: CGPoint(x: w + 20, y: h * 0.58 + driftY2 * 0.6),
+                        control1: CGPoint(x: w * 0.68, y: h * 0.50 + driftY1 * 0.6),
+                        control2: CGPoint(x: w * 0.86, y: h * 0.62 + driftY2 * 0.4)
+                    )
+                    context.stroke(
+                        p3,
+                        with: .color(primaryInk.opacity((scheme == .dark ? 0.11 : 0.07) * alphaScale)),
+                        style: StrokeStyle(lineWidth: 0.9, lineCap: .round)
+                    )
+
+                    // 4. Lower ascending dune contour
+                    var p4 = Path()
+                    p4.move(to: CGPoint(x: -20, y: h * 0.76 + driftY1 * 0.8))
+                    p4.addCurve(
+                        to: CGPoint(x: w * 0.56, y: h * 0.81 + driftY2 * 0.7),
+                        control1: CGPoint(x: w * 0.20, y: h * 0.70 + driftY1 * 0.5),
+                        control2: CGPoint(x: w * 0.40, y: h * 0.83 + driftY2 * 0.6)
+                    )
+                    p4.addCurve(
+                        to: CGPoint(x: w + 20, y: h * 0.73 + driftY1 * 0.6),
+                        control1: CGPoint(x: w * 0.74, y: h * 0.79 + driftY2 * 0.5),
+                        control2: CGPoint(x: w * 0.90, y: h * 0.70 + driftY1 * 0.4)
+                    )
+                    context.stroke(
+                        p4,
+                        with: .color(primaryInk.opacity((scheme == .dark ? 0.12 : 0.08) * alphaScale)),
+                        style: StrokeStyle(lineWidth: 1.0, lineCap: .round)
+                    )
+
+                    // 4b. Secondary dune ridge with subtle dash cadence
+                    var p4b = Path()
+                    p4b.move(to: CGPoint(x: -20, y: h * 0.82 + driftY1 * 0.6))
+                    p4b.addCurve(
+                        to: CGPoint(x: w * 0.60, y: h * 0.86 + driftY2 * 0.5),
+                        control1: CGPoint(x: w * 0.24, y: h * 0.78 + driftY1 * 0.4),
+                        control2: CGPoint(x: w * 0.44, y: h * 0.88 + driftY2 * 0.5)
+                    )
+                    p4b.addCurve(
+                        to: CGPoint(x: w + 20, y: h * 0.80 + driftY1 * 0.5),
+                        control1: CGPoint(x: w * 0.76, y: h * 0.84 + driftY2 * 0.4),
+                        control2: CGPoint(x: w * 0.92, y: h * 0.77 + driftY1 * 0.3)
+                    )
+                    context.stroke(
+                        p4b,
+                        with: .color(accentInk.opacity((scheme == .dark ? 0.09 : 0.05) * alphaScale)),
+                        style: StrokeStyle(lineWidth: 0.8, lineCap: .round, dash: [3, 7])
+                    )
+                }
+
+                // Organic tactile paper grain
+                if showGrain {
+                    GrainOverlay(opacity: (scheme == .dark ? 0.025 : 0.035) * (subdued ? 0.75 : 1.0))
+                }
             }
-            .frame(width: w, height: h)
-            .clipped()
+        }
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(
+                .easeInOut(duration: 16).repeatForever(autoreverses: true)
+            ) {
+                phase = 1.0
+            }
         }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
+}
 
-    /// `stroke='%23231f1c'`; `.aurel-dark` inverts the whole layer.
-    private var inkColor: Color {
-        scheme == .dark
-            ? Color(UIColor(hex: 0xdce0e3))  // invert(1) of #231f1c
-            : Color(UIColor(hex: 0x231f1c))
+/// Backward-compatible wrapper for the warm tactile paper ground.
+struct AUPaper: View {
+    var subdued: Bool = false
+    var body: some View {
+        AUElegantBackground(subdued: subdued)
     }
 }
 
@@ -972,38 +1115,29 @@ struct AURays: View {
 
 // MARK: Illustration placeholder (`.au-ill`)
 
-/// The honest illustration placeholder (v2, IMPROVEMENT_PLAN.md §2.8):
-/// dusk-paper wash with a faint accent hatch and a hairline inset — the
-/// authored `ILL` id stays the kicker, `alt` stays the caption.
-/// (Honesty contract from CourseScreen.dc.html line 44 + lines 98–101.)
+/// Resolves commissioned illustrations by their authored `ILL` id. Briefs
+/// without a matching asset keep the honest dusk-paper placeholder.
 struct IllustrationPlaceholder: View {
     let ill: IllustrationRef
     var height: CGFloat = 196
+    var aspectRatio: CGFloat? = nil
     var cornerRadius: CGFloat = 22
     var kickerSize: CGFloat = 9
     var captionSize: CGFloat = 12
     var fullBleed = false  // the S01 promise treatment: no radius, no side borders
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            StripeField()
-            VStack(alignment: .leading, spacing: fullBleed ? 7 : 6) {
-                Text(ill.id)
-                    .font(.figtree(.bold, size: kickerSize))
-                    .tracking(1.6)
-                    .textCase(.uppercase)
-                    .foregroundStyle(Color.auAccentText)
-                Text(ill.alt)
-                    .font(.figtree(.regular, size: captionSize))
-                    .foregroundStyle(Color.auText.opacity(0.6))
-                    .auLine(captionSize, 1.45)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: 300, alignment: .leading)
+        Group {
+            if let aspectRatio {
+                illustrationBody
+                    .aspectRatio(aspectRatio, contentMode: .fit)
+            } else {
+                illustrationBody
+                    .frame(height: height)
             }
-            .padding(fullBleed ? 20 : 16)
         }
-        .frame(height: height)
         .frame(maxWidth: .infinity)
+        .clipped()
         .clipShape(RoundedRectangle(cornerRadius: fullBleed ? 0 : cornerRadius, style: .continuous))
         .overlay(alignment: .bottom) {
             if fullBleed {
@@ -1019,8 +1153,45 @@ struct IllustrationPlaceholder: View {
                     .strokeBorder(Color.auAccentRamp(300).opacity(0.55), lineWidth: 1)
             }
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Illustration placeholder: \(ill.alt)")
+    }
+
+    @ViewBuilder
+    private var illustrationBody: some View {
+        if let artwork = UIImage(named: ill.id) {
+            ZStack {
+                Image(uiImage: artwork)
+                    .resizable()
+                    .scaledToFill()
+                    .blur(radius: 18)
+                    .opacity(0.42)
+
+                Image(uiImage: artwork)
+                    .resizable()
+                    .scaledToFit()
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(ill.alt)
+        } else {
+            ZStack(alignment: .bottomLeading) {
+                StripeField()
+                VStack(alignment: .leading, spacing: fullBleed ? 7 : 6) {
+                    Text(ill.id)
+                        .font(.figtree(.bold, size: kickerSize))
+                        .tracking(1.6)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auAccentText)
+                    Text(ill.alt)
+                        .font(.figtree(.regular, size: captionSize))
+                        .foregroundStyle(Color.auText.opacity(0.6))
+                        .auLine(captionSize, 1.45)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: 300, alignment: .leading)
+                }
+                .padding(fullBleed ? 20 : 16)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Illustration placeholder: \(ill.alt)")
+        }
     }
 
     /// v2 (IMPROVEMENT_PLAN.md §2.8): the candy-stripe wireframe becomes a
@@ -1368,4 +1539,3 @@ struct AUBanner: View {
         .accessibilityIdentifier("au.banner.\(tone == .error ? "error" : "info")")
     }
 }
-

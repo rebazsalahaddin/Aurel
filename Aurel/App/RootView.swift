@@ -39,6 +39,7 @@ struct RootView: View {
         }
         .tint(.auAccent)
         .preferredColorScheme(colorScheme)
+        .animation(.easeInOut(duration: 0.38), value: colorScheme)
         .task {
             if env == nil {
                 env = AppEnvironment(modelContext: modelContext)
@@ -75,6 +76,10 @@ struct RootView: View {
 
     private var colorScheme: ColorScheme? {
         guard let env else { return nil }
+        // Lesson illustrations are art-directed against the espresso player
+        // chrome, so the course must look identical in light and dark system
+        // appearances. Other app screens still honor the saved theme mode.
+        if env.router.screen == .course { return .dark }
         switch env.router.themeMode {
         case 1: return .light
         case 2: return .dark
