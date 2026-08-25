@@ -7,6 +7,7 @@ struct RootView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var env: AppEnvironment?
     /// S1-003: shown once when the on-disk store was corrupt and got moved
     /// aside (local progress reset) — never blocks the flow.
@@ -24,14 +25,21 @@ struct RootView: View {
                 if env.courseLoadFailed {
                     CourseRecoveryView(retry: retryEnvironment)
                 } else {
-                    // The prototype stage is the full 402×874 device rect — the
-                    // status bar and home indicator are absolute overlays over
-                    // it, and every screen's own padding (74 / 70 / 62 top,
-                    // 44 / 32 bottom) is measured from the physical edge. So the
-                    // screen tree must not be inset by the safe area.
-                    ScreenHost()
-                        .environment(env)
-                        .ignoresSafeArea()
+                    // Course and account controls respect the real device safe
+                    // area so navigation and bottom actions stay clear of system
+                    // chrome. Other full-bleed learning surfaces keep their
+                    // authored physical-stage geometry.
+                    if env.router.screen == .course
+                        || env.router.screen == .paywall
+                        || env.router.screen == .subscribeAccount
+                    {
+                        ScreenHost()
+                            .environment(env)
+                    } else {
+                        ScreenHost()
+                            .environment(env)
+                            .ignoresSafeArea()
+                    }
                 }
             } else {
                 Color.auBackground.ignoresSafeArea()
@@ -39,7 +47,10 @@ struct RootView: View {
         }
         .tint(.auAccent)
         .preferredColorScheme(colorScheme)
-        .animation(.easeInOut(duration: 0.38), value: colorScheme)
+        .animation(
+            AUMotion.animation(.easeInOut(duration: 0.38), reduceMotion: reduceMotion),
+            value: colorScheme
+        )
         .task {
             if env == nil {
                 env = AppEnvironment(modelContext: modelContext)
@@ -59,8 +70,14 @@ struct RootView: View {
         // over when the app comes back — durable day flags never outlive
         // their day.
         .onChange(of: scenePhase) { _, phase in
-            guard phase == .active else { return }
-            env?.router.rolloverDayIfNeeded()
+            if phase == .active {
+                env?.router.rolloverDayIfNeeded()
+            } else {
+                // Phone calls, Siri, Control Centre, and backgrounding must
+                // leave no model line or temporary learner take running.
+                env?.speaker.stop()
+                env?.router.say.reset()
+            }
         }
         .overlay(alignment: .top) {
             if storeRecovered {
@@ -76,10 +93,6 @@ struct RootView: View {
 
     private var colorScheme: ColorScheme? {
         guard let env else { return nil }
-        // Lesson illustrations are art-directed against the espresso player
-        // chrome, so the course must look identical in light and dark system
-        // appearances. Other app screens still honor the saved theme mode.
-        if env.router.screen == .course { return .dark }
         switch env.router.themeMode {
         case 1: return .light
         case 2: return .dark
@@ -174,14 +187,15 @@ private struct ScreenHost: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             screenBody
-                .id(env.router.screen)
                 .transition(transition(for: env.router.screen))
 
             if isTabScreen {
                 AUTabBar(current: env.router.screen)
                     .padding(.horizontal, 14)
                     .padding(.bottom, 26)
-                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+                    .transition(
+                        reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity)
+                    )
                     .zIndex(10)
             }
         }
@@ -199,7 +213,7 @@ private struct ScreenHost: View {
                 insertion: .move(edge: .bottom).combined(with: .opacity),
                 removal: .move(edge: .bottom).combined(with: .opacity)
             )
-        case .goal, .commit, .plan, .login:
+        case .onboardingSample, .onboardingValue, .goal, .commit, .plan, .login:
             return .asymmetric(
                 insertion: .move(edge: .trailing).combined(with: .opacity),
                 removal: .move(edge: .leading).combined(with: .opacity)
@@ -228,6 +242,8 @@ private struct ScreenHost: View {
     private var screenBody: some View {
         switch env.router.screen {
         case .welcome: WelcomeView()
+        case .onboardingSample: OnboardingSampleView()
+        case .onboardingValue: OnboardingValueView()
         case .goal: GoalView()
         case .commit: CommitView()
         case .plan: PlanView()
@@ -248,24 +264,6 @@ private struct ScreenHost: View {
         case .paywall: PaywallView()
         case .subscribeAccount: SubscribeAccountView()
         }
-    }
-}
-
-/// Honest placeholder for screens whose features land in later tasks.
-struct UnbuiltScreen: View {
-    @Environment(AppEnvironment.self) private var env
-
-    var body: some View {
-        VStack(spacing: AUSpace.s3) {
-            Text(String(describing: env.router.screen).capitalized)
-                .font(.caprasimo(size: 27))
-                .foregroundStyle(Color.auText)
-            Text("This screen is being ported next.")
-                .font(.figtree(.regular, size: 13))
-                .foregroundStyle(Color.auTextSecondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.auBackground.ignoresSafeArea())
     }
 }
 

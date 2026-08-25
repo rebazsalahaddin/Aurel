@@ -63,43 +63,60 @@ final class MilestoneSuite: XCTestCase {
     /// practice items, standalone tile/order tasks, and emailAssembly keys
     /// from a1-course.json (bundled with the UI-test target), plus option keys
     /// keyed by item ID.
-    private static let (orderKeys, optionKeys): ([String: [String]], [String: String]) = {
-        guard
-            let url = Bundle(for: MilestoneSuite.self).url(
-                forResource: "a1-course", withExtension: "json"),
-            let data = try? Data(contentsOf: url),
-            let chapters = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]]
-        else { return ([:], [:]) }
-        var oMap: [String: [String]] = [:]
-        var pMap: [String: String] = [:]
-        func addOrder(_ tiles: [String]?, _ key: [String]?) {
-            guard let tiles, let key, !tiles.isEmpty else { return }
-            oMap[tiles.sorted().joined(separator: "\u{1F}")] = key
-        }
-        for ch in chapters {
-            for les in ch["lessons"] as? [[String: Any]] ?? [] {
-                for sc in les["screens"] as? [[String: Any]] ?? [] {
-                    for it in sc["items"] as? [[String: Any]] ?? [] {
-                        addOrder(it["tiles"] as? [String], it["key"] as? [String])
-                        if let id = it["id"] as? String, let key = it["key"] as? String {
+    private static let (orderKeys, optionKeys, lessonCount):
+        (
+            [String: [String]], [String: String], Int
+        ) = {
+            guard
+                let url = Bundle(for: MilestoneSuite.self).url(
+                    forResource: "a1-course", withExtension: "json"),
+                let data = try? Data(contentsOf: url),
+                let chapters = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]]
+            else { return ([:], [:], 0) }
+            var oMap: [String: [String]] = [:]
+            var pMap: [String: String] = [:]
+            var lessonCount = 0
+            func addOrder(_ tiles: [String]?, _ key: [String]?) {
+                guard let tiles, let key, !tiles.isEmpty else { return }
+                oMap[tiles.sorted().joined(separator: "\u{1F}")] = key
+            }
+            func addChoiceAsOrder(_ options: [[String: Any]]?, _ key: String?) {
+                guard let options, let key else { return }
+                let tiles = options.compactMap { $0["t"] as? String }
+                guard
+                    let answer = options.first(where: {
+                        ($0["id"] as? String) == key || ($0["t"] as? String) == key
+                    })?["t"] as? String
+                else { return }
+                addOrder(tiles, [answer])
+            }
+            for ch in chapters {
+                let lessons = ch["lessons"] as? [[String: Any]] ?? []
+                lessonCount += lessons.count
+                for les in lessons {
+                    for sc in les["screens"] as? [[String: Any]] ?? [] {
+                        for it in sc["items"] as? [[String: Any]] ?? [] {
+                            addOrder(it["tiles"] as? [String], it["key"] as? [String])
+                            if let id = it["id"] as? String, let key = it["key"] as? String {
+                                pMap[id] = key
+                            }
+                        }
+                        for t in sc["tasks"] as? [[String: Any]] ?? [] {
+                            addOrder(t["tiles"] as? [String], t["key"] as? [String])
+                            addChoiceAsOrder(t["opts"] as? [[String: Any]], t["key"] as? String)
+                            if let id = t["id"] as? String, let key = t["key"] as? String {
+                                pMap[id] = key
+                            }
+                        }
+                        addOrder(sc["tiles"] as? [String], sc["key"] as? [String])
+                        if let id = sc["id"] as? String, let key = sc["key"] as? String {
                             pMap[id] = key
                         }
-                    }
-                    for t in sc["tasks"] as? [[String: Any]] ?? [] {
-                        addOrder(t["tiles"] as? [String], t["key"] as? [String])
-                        if let id = t["id"] as? String, let key = t["key"] as? String {
-                            pMap[id] = key
-                        }
-                    }
-                    addOrder(sc["tiles"] as? [String], sc["key"] as? [String])
-                    if let id = sc["id"] as? String, let key = sc["key"] as? String {
-                        pMap[id] = key
                     }
                 }
             }
-        }
-        return (oMap, pMap)
-    }()
+            return (oMap, pMap, lessonCount)
+        }()
 
     /// The practice Next/Go-on pill — only when actually tappable (the pill
     /// is rendered disabled at 0.45 opacity until the item is passable).
@@ -124,10 +141,29 @@ final class MilestoneSuite: XCTestCase {
         guard !labels.isEmpty,
             let key = Self.orderKeys[labels.sorted().joined(separator: "\u{1F}")]
         else { return false }
-        guard Set(key).count == key.count else { return false }  // duplicate tiles: skip solving
+        var used: Set<Int> = []
         for word in key {
-            let tile = tiles.matching(NSPredicate(format: "label CONTAINS %@", word)).firstMatch
-            if tile.exists, tile.isHittable { tile.tap() }
+            let exact = (0..<tiles.count).first { index in
+                guard !used.contains(index) else { return false }
+                return tiles.element(boundBy: index).label == word
+            }
+            let flexible = (0..<tiles.count).first { index in
+                guard !used.contains(index) else { return false }
+                let label = tiles.element(boundBy: index).label
+                if label.localizedCaseInsensitiveContains(word) { return true }
+                if word.lowercased().hasSuffix("y") {
+                    return label.lowercased().contains(
+                        String(word.lowercased().dropLast()) + "ies")
+                }
+                return false
+            }
+            let index = exact ?? flexible
+            guard let index else { return false }
+            let tile = tiles.element(boundBy: index)
+            if !tile.isHittable { app.swipeUp() }
+            guard tile.exists, tile.isHittable else { return false }
+            tile.tap()
+            used.insert(index)
         }
         return true
     }
@@ -149,12 +185,83 @@ final class MilestoneSuite: XCTestCase {
         var signature = stateSignature()
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
-            if onHome(timeout: 2) { return advances }
+            // A player screen is the overwhelmingly common state in this
+            // loop. Keep the negative Home probe short so exhaustive course
+            // coverage does not add seconds of idle polling per item.
+            if onHome(timeout: 0.15) { return advances }
 
             // Order items: solved from the authored key (fresh items only).
             if solveOrderItemIfPresent() {
                 advances += 1
-                continue
+            }
+
+            // Tap-only pair and sort activities use deterministic semantic
+            // controls while preserving the learner's actual interaction.
+            for index in 0..<20 {
+                let cue = app.buttons["au.player.match.cue.\(index)"]
+                guard cue.exists else { break }
+                let answer = app.buttons["au.player.match.answer.\(index)"]
+                if !cue.isHittable { app.swipeUp() }
+                if cue.isHittable, answer.exists, answer.isHittable {
+                    cue.tap()
+                    answer.tap()
+                    advances += 2
+                }
+            }
+            for index in 0..<20 {
+                let answer = app.buttons["au.player.sort.correct.\(index)"]
+                guard answer.exists else { break }
+                if !answer.isHittable { app.swipeUp() }
+                if answer.isHittable {
+                    answer.tap()
+                    advances += 1
+                }
+            }
+
+            // Some long practice banks surface a learner-controlled pause
+            // card in place of the item controls. Continue is the bounded
+            // route through the lesson; Break intentionally exits it.
+            let pauseContinue = app.buttons["au.player.pause-card.continue"]
+            if pauseContinue.exists {
+                if !pauseContinue.isHittable { app.swipeUp() }
+                if pauseContinue.exists, pauseContinue.isHittable {
+                    pauseContinue.tap()
+                    advances += 1
+                    continue
+                }
+            }
+
+            // Roleplay: choose one visible reply per guided step. Speaking is
+            // optional pronunciation practice and must never auto-answer.
+            let roleplayExit = app.buttons["au.player.roleplay.safe-stop"]
+            if roleplayExit.exists {
+                for _ in 0..<8 {
+                    let tile = app.buttons.matching(
+                        NSPredicate(
+                            format: "identifier BEGINSWITH 'au.player.roleplay.tile.'")
+                    ).firstMatch
+                    guard tile.exists else { break }
+                    if !tile.isHittable { app.swipeUp() }
+                    if tile.exists, tile.isHittable {
+                        tile.tap()
+                        advances += 1
+                    }
+                }
+
+                let goOn = app.buttons["au.btn.go-on"]
+                if !goOn.isHittable { app.swipeUp() }
+                if goOn.exists, goOn.isHittable {
+                    goOn.tap()
+                    advances += 1
+                    continue
+                }
+
+                if !roleplayExit.isHittable { app.swipeUp() }
+                if roleplayExit.exists, roleplayExit.isHittable {
+                    roleplayExit.tap()
+                    advances += 1
+                    continue
+                }
             }
 
             // Practice options: solve directly from authored key if known, else climb retry ladder
@@ -162,8 +269,18 @@ final class MilestoneSuite: XCTestCase {
                 NSPredicate(format: "identifier BEGINSWITH 'au.player.option.'"))
             if options.firstMatch.exists {
                 var solved = false
-                let texts = app.staticTexts.allElementsBoundByIndex.prefix(6).map(\.label)
-                for id in texts {
+                let fixture = app.descendants(matching: .any).matching(
+                    NSPredicate(format: "identifier BEGINSWITH 'au.player.fixture.item.'")
+                ).firstMatch
+                var candidateIDs: [String] = []
+                if fixture.exists {
+                    candidateIDs.append(
+                        fixture.identifier.replacingOccurrences(
+                            of: "au.player.fixture.item.", with: ""))
+                }
+                candidateIDs.append(
+                    contentsOf: app.staticTexts.allElementsBoundByIndex.prefix(6).map(\.label))
+                for id in candidateIDs {
                     if let key = Self.optionKeys[id] {
                         let optBtn = app.buttons["au.player.option.\(key)"]
                         if optBtn.exists {
@@ -210,7 +327,7 @@ final class MilestoneSuite: XCTestCase {
             }
 
             // The gated pill — only when enabled.
-            if let go = enabledGoOn(timeout: 3) {
+            if let go = enabledGoOn(timeout: 0.25) {
                 if !go.isHittable { app.swipeUp() }
                 go.tap()
                 advances += 1
@@ -235,9 +352,7 @@ final class MilestoneSuite: XCTestCase {
                 tapped = true
                 break
             }
-            if tapped { continue }
-
-            if !options.firstMatch.exists {
+            if !tapped, !options.firstMatch.exists {
                 // A screen type without an exposed control — tap the screen
                 // center (the promise screen's "tap anywhere").
                 app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6)).tap()
@@ -374,21 +489,39 @@ final class MilestoneSuite: XCTestCase {
                     .waitForExistence(timeout: 5)
         )
 
-        // Paywall round trip via the next-chapter card.
+        // A locked chapter is never a dead end: its action opens the
+        // subscription/access route, which remains truthful when commerce is unavailable.
         app.swipeUp()
         let next = app.buttons.matching(identifier: "au.home.next-chapter").firstMatch
         if next.waitForExistence(timeout: 6) {
+            XCTAssertTrue(next.isEnabled, "locked chapter must offer a clear next action")
             next.tap()
             XCTAssertTrue(
-                anyElement("au.btn.create-account-and-subscribe").waitForExistence(timeout: 8)
-                    || anyElement("au.btn.subscribe").waitForExistence(timeout: 8)
-                    || app.buttons.matching(
-                        NSPredicate(
-                            format: "label CONTAINS[c] 'subscribe' OR label CONTAINS[c] 'account'")
-                    )
-                    .firstMatch
-                    .waitForExistence(timeout: 8),
-                "paywall subscribe CTA not found")
+                anyElement("au.capability.chapters-unavailable").waitForExistence(timeout: 8),
+                "Chapter 2 must open its access route")
+        }
+    }
+
+    // MARK: PH-00 — safe capability routes
+
+    func test6Phase00ReleaseSafetySurfaces() {
+        for (screen, rootID) in [
+            ("paywall", "au.capability.chapters-unavailable"),
+            ("subscribeAccount", "au.capability.account-subscription-unavailable"),
+        ] {
+            app.launchArguments = ["-AUREL_TEST_START", screen]
+            app.launch()
+
+            let root = anyElement(rootID)
+            XCTAssertTrue(root.waitForExistence(timeout: 10))
+            let back = wait("\(rootID).back", timeout: 5)
+            let window = app.windows.firstMatch
+            XCTAssertTrue(
+                window.frame.contains(root.frame), "\(screen) content must stay in the window")
+            XCTAssertTrue(
+                window.frame.contains(back.frame), "\(screen) action must clear system chrome")
+            XCTAssertTrue(back.isHittable)
+            app.terminate()
         }
     }
 
@@ -408,5 +541,69 @@ final class MilestoneSuite: XCTestCase {
         let advances = walkLessonToEnd()
         XCTAssertGreaterThan(advances, 10, "L2 (10 screens, 31 items) is a full walk")
         XCTAssertTrue(onHome(), "finishing L2 must return Home")
+    }
+
+    // MARK: PH-01 — every authored lesson has a bounded completion path
+
+    func test7AllAuthoredLessonsCompleteFromDeterministicFixtures() {
+        XCTAssertGreaterThan(Self.lessonCount, 0, "course fixture must contain lessons")
+        for lessonIndex in 0..<Self.lessonCount {
+            app.terminate()
+            app.launchArguments = ["-AUREL_LESSON_INDEX", "\(lessonIndex)"]
+            app.launch()
+            XCTAssertTrue(
+                app.buttons.matching(identifier: "au.player.close").firstMatch
+                    .waitForExistence(timeout: 12),
+                "lesson fixture \(lessonIndex) did not launch")
+            // Dense authored banks reach 67 items; the unchanged-state gate
+            // remains strict while wall-clock allowance scales to the data.
+            let advances = walkLessonToEnd(timeout: 600)
+            XCTAssertGreaterThan(
+                advances, 0, "lesson fixture \(lessonIndex) did not expose a completion path")
+            XCTAssertTrue(onHome(), "lesson fixture \(lessonIndex) did not return Home")
+        }
+    }
+
+    /// Regression for the densest Chapter 1 route: mixed tile variants feed
+    /// a roleplay whose Speak action remains on-screen until Safe stop exits.
+    func test8FourthLessonMixedTilesAndRoleplayComplete() {
+        app.launchArguments = ["-AUREL_LESSON_INDEX", "3"]
+        app.launch()
+        XCTAssertTrue(
+            app.buttons.matching(identifier: "au.player.close").firstMatch
+                .waitForExistence(timeout: 12))
+        let advances = walkLessonToEnd(timeout: 600)
+        XCTAssertGreaterThan(advances, 0)
+        XCTAssertTrue(onHome(), "fourth lesson did not return Home")
+    }
+
+    /// A focused regression for the first Chapter 3 route, whose repeated
+    /// card/practice alternation exercises the walker's choice transitions.
+    func test9NinthLessonCardPracticeSequenceCompletes() {
+        app.launchArguments = ["-AUREL_LESSON_INDEX", "8"]
+        app.launch()
+        XCTAssertTrue(
+            app.buttons.matching(identifier: "au.player.close").firstMatch
+                .waitForExistence(timeout: 12))
+        let advances = walkLessonToEnd(timeout: 600)
+        XCTAssertGreaterThan(advances, 0)
+        XCTAssertTrue(onHome(), "ninth lesson did not return Home")
+    }
+
+    /// Focused tail coverage keeps failures in the later grammar, reading,
+    /// mission, and checkpoint fixtures quick to diagnose.
+    func test10RemainingAuthoredLessonsComplete() {
+        for lessonIndex in 9..<Self.lessonCount {
+            app.terminate()
+            app.launchArguments = ["-AUREL_LESSON_INDEX", "\(lessonIndex)"]
+            app.launch()
+            XCTAssertTrue(
+                app.buttons.matching(identifier: "au.player.close").firstMatch
+                    .waitForExistence(timeout: 12),
+                "lesson fixture \(lessonIndex) did not launch")
+            let advances = walkLessonToEnd(timeout: 600)
+            XCTAssertGreaterThan(advances, 0)
+            XCTAssertTrue(onHome(), "lesson fixture \(lessonIndex) did not return Home")
+        }
     }
 }

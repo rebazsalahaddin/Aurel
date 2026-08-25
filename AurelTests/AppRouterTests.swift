@@ -74,6 +74,7 @@ final class AppRouterTests: XCTestCase {
         let r = AppRouter(course: CourseDecodingTests.store)
         let fake = FakeTakeRecorder()
         r.say.recorder = fake
+        r.say.onDeviceRecognitionProbe = { true }
         r.say.micPermissionProbe = { .granted }
         r.say.transcriber = { _ in "hello world" }
         r.toggleSpeak(target: "hello world")  // take 1 starts
@@ -87,25 +88,26 @@ final class AppRouterTests: XCTestCase {
         XCTAssertFalse(r.speaking)
     }
 
-    /// V4 20-screen routing and subscribeAccount integration.
-    func testSubscribeAccountAndScreenHooks() {
+    /// Legacy verification routes remain nameable, but release capabilities
+    /// cannot turn them into a simulated account or entitlement.
+    func testSubscribeAccountRoutesCannotGrantReleaseEntitlement() {
         let r = AppRouter(course: CourseDecodingTests.store)
         XCTAssertEqual(AppRouter.Screen.named("subscribeAccount"), .subscribeAccount)
         XCTAssertEqual(AppRouter.Screen.subscribeAccount.rawName, "subscribeAccount")
         XCTAssertFalse(AppRouter.Screen.subscribeAccount.showsTabs)
 
-        // Subscribe flow routes to subscribeAccount when no account exists
-        r.email = ""
+        r.screen = .home
         r.startSubscribe()
-        XCTAssertEqual(r.screen, .subscribeAccount)
+        XCTAssertEqual(r.screen, .home)
+        XCTAssertFalse(r.pro)
+        XCTAssertEqual(r.loginErr, "Subscriptions aren't available in this build.")
 
-        // Creating account and subscribing succeeds with valid email/pass
         r.setEmail("learner@example.com")
         r.setPass("secret123")
         r.createAccountAndSubscribe()
-        XCTAssertTrue(r.pro)
+        XCTAssertFalse(r.pro)
         XCTAssertEqual(r.screen, .home)
-        XCTAssertEqual(r.loginErr, "")
+        XCTAssertEqual(r.loginErr, "Account subscriptions aren't available in this build.")
     }
 
     // MARK: S1-009 — day rollover, streak counting, grace

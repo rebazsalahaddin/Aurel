@@ -38,7 +38,7 @@ struct OrderScreenView: View {
                     }
                     .buttonStyle(.auTap)
 
-                    GoOnButton(label: "Go on") { m.taskAdvance() }
+                    GoOnButton(label: "Go on", disabled: !m.tileCorrect) { m.taskAdvance() }
                 }
                 .padding(.top, 16)
             }
@@ -92,6 +92,12 @@ struct OrderScreenView: View {
                 }
                 .buttonStyle(.auTap)
                 .accessibilityIdentifier("au.player.tile.\(k)")
+                .accessibilityLabel(t)
+                .accessibilityValue(
+                    at.map { String(localized: "Position \($0 + 1)") }
+                        ?? String(localized: "Not selected")
+                )
+                .accessibilityAddTraits(at != nil ? .isSelected : [])
             }
         }
 
@@ -134,9 +140,7 @@ struct TilesScreenView: View {
                     .font(.figtree(.semibold, size: 17))
                     .frame(maxWidth: .infinity, alignment: .leading)
                 if m.taskCount > 1 {
-                    Text("\(m.tk + 1) / \(m.taskCount)")
-                        .font(.figtree(.semibold, size: 10))
-                        .foregroundStyle(Color.auTextTertiary)
+                    AUProgressCounter(current: m.tk + 1, total: m.taskCount)
                 }
             }
             .padding(.bottom, 14)
@@ -158,24 +162,30 @@ struct TilesScreenView: View {
                 .padding(.bottom, 14)
             }
 
-            // the build line
-            Text(m.tileLine.isEmpty ? " " : m.tileLine)
-                .font(.caprasimo(size: 21))
-                .tracking(-0.21)
-                .auHeadLine(21, 1.4)
-                .frame(maxWidth: .infinity, minHeight: 74, alignment: .leading)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .strokeBorder(
-                            Color.auAccent.opacity(0.36),
-                            style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
-                )
-                .padding(.bottom, 16)
+            // Keep complete dialogue lines separate; word-order tasks remain inline.
+            if m.usesLineAssembly {
+                OrderedLineAssemblyField(lines: m.orderedTileTexts)
+                    .padding(.bottom, 16)
+            } else {
+                Text(m.tileLine.isEmpty ? " " : m.tileLine)
+                    .font(.caprasimo(size: 21))
+                    .tracking(-0.21)
+                    .auHeadLine(21, 1.4)
+                    .frame(maxWidth: .infinity, minHeight: 74, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .strokeBorder(
+                                Color.auAccent.opacity(0.36),
+                                style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+                    )
+                    .padding(.bottom, 16)
+            }
 
             FlowTiles(
-                tiles: task.tiles, taken: Set(m.order), onTap: { m.toggleTile($0) },
+                tiles: task.tiles, taken: Set(m.order), order: m.order,
+                onTap: { m.toggleTile($0) },
                 aidPrefix: "au.player.tile"
             )
 
@@ -221,7 +231,9 @@ struct TilesScreenView: View {
 
             Spacer(minLength: 12)
 
-            if isEmail, case .emailAssembly(let e) = m.cur?.screen.payload, let safety = e.safety {
+            if isEmail, case .emailAssembly(let e) = m.cur?.screen.payload,
+                let safety = e.safety.learnerFacing
+            {
                 Text(safety)
                     .font(.figtree(.regular, size: 11.5))
                     .auLine(11.5, 1.5)
@@ -242,7 +254,7 @@ struct TilesScreenView: View {
                 }
                 .buttonStyle(.auTap)
 
-                GoOnButton(label: m.taskGoLabel) { m.taskAdvance() }
+                GoOnButton(label: m.taskGoLabel, disabled: !m.tileCorrect) { m.taskAdvance() }
             }
             .padding(.top, 14)
         }
@@ -309,7 +321,7 @@ struct SubstitutionScreenView: View {
 
                 Spacer(minLength: 12)
 
-                if let note = s.note {
+                if let note = s.note.learnerFacing {
                     Text(note)
                         .font(.figtree(.regular, size: 11.5))
                         .auLine(11.5, 1.5)
@@ -335,6 +347,7 @@ struct MissionScreenView: View {
                 IllustrationPlaceholder(
                     ill: mb.ill ?? IllustrationRef(id: "", alt: ""),
                     height: 250,
+                    aspectRatio: m.cur?.chapter.n == 1 ? 16.0 / 9.0 : nil,
                     captionSize: 11.5,
                     fullBleed: true
                 )
@@ -475,6 +488,8 @@ struct RoleplayScreenView: View {
     var body: some View {
         ScreenColumn(topPad: 18, bottomPad: 22, hPad: 20) {
             if case .roleplay(let rp) = m.cur?.screen.payload {
+                let groups = m.roleplayRequiredGroups
+
                 // partner header
                 HStack(spacing: 10) {
                     Text(String((rp.partner ?? " ").prefix(1)))
@@ -485,14 +500,18 @@ struct RoleplayScreenView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         Text(rp.partner ?? "")
                             .font(.figtree(.semibold, size: 14.5))
-                        Text("\(rp.spec ?? "") · turn limit \(rp.turnLimit ?? 8)")
-                            .font(.figtree(.regular, size: 11))
-                            .foregroundStyle(Color.auTextTertiary)
+                        Text(
+                            m.roleplayFinished
+                                ? "Guided roleplay · complete"
+                                : "Guided roleplay · step \(min(m.roleplayProgressCount + 1, max(1, groups.count))) of \(max(1, groups.count))"
+                        )
+                        .font(.figtree(.regular, size: 11))
+                        .foregroundStyle(Color.auTextTertiary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     Button {
-                        m.turn = 1
+                        m.restartRoleplay()
                     } label: {
                         AUIcon(kind: .loop, size: 16)
                             .frame(width: 38, height: 38)
@@ -501,14 +520,14 @@ struct RoleplayScreenView: View {
                     .buttonStyle(.auTap)
                     // Craft overhaul L14: 38pt visual, 44pt hit area.
                     .auMinHitTarget()
-                    .accessibilityLabel("Safe stop")
+                    .accessibilityLabel("Restart roleplay")
                 }
                 .padding(.bottom, 14)
 
                 // checklist chips
                 HStack(spacing: 6) {
-                    ForEach(Array((rp.checklist ?? []).enumerated()), id: \.offset) { k, _ in
-                        let on = k < min(m.turn, (rp.checklist ?? []).count)
+                    ForEach(Array(groups.enumerated()), id: \.offset) { _, group in
+                        let on = m.roleplayUsedGroups.contains(group.g)
                         Capsule()
                             .strokeBorder(
                                 on ? Color.auAccent2Ramp(500) : Color.auText.opacity(0.18),
@@ -523,58 +542,82 @@ struct RoleplayScreenView: View {
 
                 // transcript bubbles
                 VStack(spacing: 10) {
-                    ForEach(Array((rp.transcript ?? []).enumerated()), id: \.offset) { k, c in
-                        let me = c.sp == "YOU"
-                        let on = k < m.turn * 2
-                        if on {
-                            VStack(alignment: me ? .trailing : .leading, spacing: 4) {
-                                Text(c.sp)
-                                    .font(.figtree(.bold, size: 8.5))
-                                    .tracking(1)
-                                    .foregroundStyle(Color.auText.opacity(0.38))
-                                Text(c.t)
-                                    .font(.figtree(.regular, size: 15))
-                                    .auLine(15, 1.45)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 13)
-                                    .frame(maxWidth: 276, alignment: .leading)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 19, style: .continuous)
-                                            .fill(me ? Color.auTintBg : Color.auFill)
-                                    )
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 19, style: .continuous)
-                                            .strokeBorder(Color.auEdge, lineWidth: 1)
-                                    )
-                                    .foregroundStyle(me ? Color.auTintText : Color.auText)
-                            }
-                            .frame(maxWidth: .infinity, alignment: me ? .trailing : .leading)
+                    ForEach(m.roleplayLines) { line in
+                        VStack(alignment: line.learner ? .trailing : .leading, spacing: 4) {
+                            Text(line.speaker)
+                                .font(.figtree(.bold, size: 8.5))
+                                .tracking(1)
+                                .foregroundStyle(Color.auText.opacity(0.38))
+                            Text(line.text)
+                                .font(.figtree(.regular, size: 15))
+                                .auLine(15, 1.45)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 13)
+                                .frame(maxWidth: 276, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 19, style: .continuous)
+                                        .fill(line.learner ? Color.auTintBg : Color.auFill)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 19, style: .continuous)
+                                        .strokeBorder(Color.auEdge, lineWidth: 1)
+                                )
+                                .foregroundStyle(line.learner ? Color.auTintText : Color.auText)
                         }
+                        .frame(
+                            maxWidth: .infinity,
+                            alignment: line.learner ? .trailing : .leading)
                     }
                 }
 
                 Spacer(minLength: 12)
 
-                // your turn tiles
-                VStack(alignment: .leading, spacing: 9) {
-                    Text("Your turn — speak, or tap a tile")
-                        .font(.figtree(.bold, size: 9.5))
-                        .tracking(1.3)
-                        .textCase(.uppercase)
-                        .foregroundStyle(Color.auTextTertiary)
-                    ForEach(rp.tileGroups ?? [], id: \.g) { g in
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(g.g)
-                                .font(.figtree(.semibold, size: 10))
-                                .tracking(0.8)
-                                .foregroundStyle(Color.auAccentText)
-                            CompactFlowChips(tiles: g.t, style: .roleplay)
-                        }
-                    }
-                }
-                .padding(.top, 16)
+                if !m.roleplayFinished, let group = m.roleplayActiveGroup {
+                    // Show only the current guided step so every visible tile
+                    // is a real, unambiguous action.
+                    VStack(alignment: .leading, spacing: 9) {
+                        Text("Your turn — choose one reply")
+                            .font(.figtree(.bold, size: 9.5))
+                            .tracking(1.3)
+                            .textCase(.uppercase)
+                            .foregroundStyle(Color.auTextTertiary)
 
-                if m.turn > 2, let fb = rp.feedback {
+                        Text(group.g)
+                            .font(.figtree(.semibold, size: 10.5))
+                            .tracking(0.8)
+                            .foregroundStyle(Color.auAccentText)
+
+                        FlowLayout(spacing: 9) {
+                            ForEach(Array(group.t.enumerated()), id: \.offset) { index, reply in
+                                Button {
+                                    m.chooseRoleplayReply(reply, group: group.g)
+                                } label: {
+                                    Text(reply)
+                                        .font(.figtree(.semibold, size: 14.5))
+                                        .padding(.horizontal, 15)
+                                        .padding(.vertical, 11)
+                                        .foregroundStyle(Color.auText)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                                .fill(Color.auFill)
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                                .strokeBorder(Color.auEdge, lineWidth: 1)
+                                        )
+                                }
+                                .buttonStyle(.auTap)
+                                .accessibilityIdentifier(
+                                    "au.player.roleplay.tile.\(group.g.auSlug).\(index)")
+                            }
+                        }
+
+                        roleplaySpeechStatus(target: group.t.first ?? "")
+                    }
+                    .padding(.top, 16)
+                }
+
+                if m.roleplayFinished, let fb = rp.feedback {
                     ACard(radius: 18) {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("After the roleplay")
@@ -608,23 +651,87 @@ struct RoleplayScreenView: View {
                     .padding(.top, 12)
                 }
 
-                HStack(spacing: 12) {
-                    Button {
-                        m.goto(m.p + 1)
-                    } label: {
-                        Text("Safe stop")
-                            .font(.figtree(.semibold, size: 16.5))
-                            .frame(width: 104, height: 54)
-                            .background(
-                                RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
-                                    .strokeBorder(Color.auDivider, lineWidth: 1))
-                    }
-                    .buttonStyle(.auTap)
+                if m.roleplayFinished {
+                    HStack(spacing: 12) {
+                        Button {
+                            m.restartRoleplay()
+                        } label: {
+                            Text("Practice again")
+                                .font(.figtree(.semibold, size: 15.5))
+                                .frame(width: 122, height: 54)
+                                .background(
+                                    RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
+                                        .strokeBorder(Color.auDivider, lineWidth: 1))
+                        }
+                        .buttonStyle(.auTap)
+                        .accessibilityIdentifier("au.player.roleplay.practice-again")
 
-                    APillButton(title: "Speak", icon: .mic, player: true) { m.turn += 1 }
+                        APillButton(title: "Go on", icon: .arrow, player: true) {
+                            m.goto(m.p + 1)
+                        }
+                    }
+                    .padding(.top, 14)
+                } else {
+                    HStack(spacing: 12) {
+                        Button {
+                            m.goto(m.p + 1)
+                        } label: {
+                            Text("Safe stop")
+                                .font(.figtree(.semibold, size: 16.5))
+                                .frame(width: 104, height: 54)
+                                .background(
+                                    RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
+                                        .strokeBorder(Color.auDivider, lineWidth: 1))
+                        }
+                        .buttonStyle(.auTap)
+                        .accessibilityIdentifier("au.player.roleplay.safe-stop")
+
+                        let target = m.roleplaySuggestedReply ?? ""
+                        let recording = m.say.recording && m.say.activeTarget == target
+                        APillButton(
+                            title: recording ? "Stop" : "Speak",
+                            icon: .mic,
+                            player: true,
+                            disabled: target.isEmpty || m.say.assessing
+                                || m.say.preparingRecognition
+                        ) {
+                            m.say.toggle(target: target)
+                        }
+                    }
+                    .padding(.top, 14)
                 }
-                .padding(.top, 14)
             }
+        }
+        .onAppear {
+            m.prepareRoleplay()
+            m.say.refreshPermission()
+        }
+        .onDisappear { m.say.reset() }
+    }
+
+    @ViewBuilder
+    private func roleplaySpeechStatus(target: String) -> some View {
+        let record = m.say.record(for: target)
+        if m.say.micDenied {
+            Text("Microphone is off. Tap a reply to continue.")
+                .font(.figtree(.regular, size: 11.5))
+                .foregroundStyle(Color.auErrText)
+        } else if m.say.recording && m.say.activeTarget == target {
+            Text("Listening to one reply…")
+                .font(.figtree(.regular, size: 11.5))
+                .foregroundStyle(Color.auAccentText)
+        } else if m.say.assessing && m.say.activeTarget == target {
+            Text("Checking your take…")
+                .font(.figtree(.regular, size: 11.5))
+                .foregroundStyle(Color.auTextSecondary)
+        } else if record.takes > 0 || record.unavailable {
+            Text("Take recorded — tap the reply you used to continue.")
+                .font(.figtree(.regular, size: 11.5))
+                .foregroundStyle(Color.auTextSecondary)
+        } else {
+            Text("You can practice the first reply aloud, then tap your choice.")
+                .font(.figtree(.regular, size: 11.5))
+                .foregroundStyle(Color.auTextTertiary)
         }
     }
 }

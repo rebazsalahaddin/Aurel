@@ -56,7 +56,7 @@ final class ServicesTests: XCTestCase {
         XCTAssertTrue(bank.contains { $0.type == .order })
         // every item traces to a chapter source
         for item in bank {
-            XCTAssertTrue(item.src.contains("A1-C"), "\(item.id) has no source")
+            XCTAssertTrue(item.debugSource.contains("A1-C"), "\(item.id) has no source")
         }
     }
 

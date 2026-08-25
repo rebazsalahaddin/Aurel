@@ -24,30 +24,127 @@ enum ScreenKind: String, Decodable, Hashable, CaseIterable, Sendable {
         let raw = try decoder.singleValueContainer().decode(String.self)
         self = ScreenKind(rawValue: raw) ?? .unknown
     }
+
+    /// The 29 renderer kinds present in the shipping course bank. `pending`
+    /// is a supported compatibility renderer; `unknown` is a decode guard.
+    static var authoredCases: [ScreenKind] {
+        allCases.filter { $0 != .pending && $0 != .unknown }
+    }
+
+    /// Authoring-only opening pages that do not provide a learning action.
+    /// They remain decodable so older course banks and renderer fixtures stay
+    /// compatible, but normal lesson navigation omits them.
+    var participatesInLessonFlow: Bool {
+        self != .promise && self != .orientation
+    }
+
+    var defaultDisplayTitle: String {
+        switch self {
+        case .promise: String(localized: "Your goal")
+        case .hook: String(localized: "Listen to the story")
+        case .orientation: String(localized: "How practice works")
+        case .cards: String(localized: "Learn the words")
+        case .letterCards: String(localized: "Learn the letters")
+        case .alphabet: String(localized: "The alphabet")
+        case .numbers: String(localized: "Learn the numbers")
+        case .warmup: String(localized: "Warm-up")
+        case .grammarModel: String(localized: "Notice the pattern")
+        case .practice: String(localized: "Practice")
+        case .substitution: String(localized: "Build new sentences")
+        case .testlet: String(localized: "Listening practice")
+        case .tiles: String(localized: "Build the sentence")
+        case .order: String(localized: "Put the conversation in order")
+        case .reading: String(localized: "Reading practice")
+        case .emailAssembly: String(localized: "Build the email")
+        case .conversation: String(localized: "Conversation practice")
+        case .roleplay: String(localized: "Roleplay")
+        case .missionBrief: String(localized: "Your mission")
+        case .pronPerceive: String(localized: "Hear the difference")
+        case .pronProduce: String(localized: "Say it aloud")
+        case .quizIntro: String(localized: "Ready for a check-in?")
+        case .quiz: String(localized: "Knowledge check")
+        case .results: String(localized: "Your results")
+        case .remediation: String(localized: "Practice picks")
+        case .reviewPlan: String(localized: "Your review plan")
+        case .review: String(localized: "Review and reflect")
+        case .chapterMap: String(localized: "Chapter complete")
+        case .pause: String(localized: "Take a pause")
+        case .pending: String(localized: "More course content is needed")
+        case .unknown: String(localized: "Lesson content unavailable")
+        }
+    }
+
+    var rendererFamily: RendererFamily {
+        switch self {
+        case .promise, .hook, .orientation, .pause: .opening
+        case .cards, .letterCards, .alphabet, .numbers: .cards
+        case .warmup, .practice, .testlet, .reading, .quiz: .practice
+        case .grammarModel: .grammar
+        case .substitution, .tiles, .order, .emailAssembly: .assembly
+        case .pronPerceive, .pronProduce: .pronunciation
+        case .conversation: .conversation
+        case .missionBrief, .roleplay: .mission
+        case .quizIntro, .results, .remediation, .reviewPlan, .chapterMap, .pending: .assessment
+        case .review: .review
+        case .unknown: .unknown
+        }
+    }
+}
+
+enum RendererFamily: String, CaseIterable, Sendable {
+    case opening, cards, practice, grammar, assembly, pronunciation
+    case conversation, mission, assessment, review, unknown
+}
+
+struct CourseScreenDebugMetadata: Hashable {
+    let legacyLabel: String?
+    let step: String?
+    let implementationNote: String?
+    let assetIDs: [String]
 }
 
 struct CourseScreen: Decodable, Hashable, Identifiable {
     let id: String  // "S01"
     let kind: ScreenKind
-    let label: String?  // "Can-do promise"
-    let step: String?  // "STEP 1 · 30 sec"
-    let tip: String?  // per-screen UI/UX implementation note (not learner-facing)
-    let assets: [String]?
+    /// New schema fields. Current banks may omit them while the compatibility
+    /// decoder supplies a safe kind-level fallback.
+    let displayTitle: String?
+    let outcome: String?
+    let duration: String?
+    let instruction: String?
+    let debug: CourseScreenDebugMetadata
     let payload: CourseScreenPayload
 
-    private enum CodingKeys: String, CodingKey { case id, type, label, step, tip, assets }
+    private enum CodingKeys: String, CodingKey {
+        case id, type, displayTitle, outcome, duration, instruction
+        case label, step, tip, assets
+    }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(String.self, forKey: .id)
         let rawKind = try c.decode(String.self, forKey: .type)
         kind = ScreenKind(rawValue: rawKind) ?? .unknown
-        label = try c.decodeIfPresent(String.self, forKey: .label)
-        step = try c.decodeIfPresent(String.self, forKey: .step)
-        tip = try c.decodeIfPresent(String.self, forKey: .tip)
-        assets = try c.decodeIfPresent([String].self, forKey: .assets)
+        displayTitle = try c.decodeIfPresent(String.self, forKey: .displayTitle)
+        outcome = try c.decodeIfPresent(String.self, forKey: .outcome)
+        duration = try c.decodeIfPresent(String.self, forKey: .duration)
+        instruction = try c.decodeIfPresent(String.self, forKey: .instruction)
+        debug = CourseScreenDebugMetadata(
+            legacyLabel: try c.decodeIfPresent(String.self, forKey: .label),
+            step: try c.decodeIfPresent(String.self, forKey: .step),
+            implementationNote: try c.decodeIfPresent(String.self, forKey: .tip),
+            assetIDs: try c.decodeIfPresent([String].self, forKey: .assets) ?? []
+        )
         payload = try CourseScreenPayload(from: decoder, kind: kind)
     }
+
+    var learnerTitle: String {
+        CourseTextContract.learnerText(displayTitle) ?? kind.defaultDisplayTitle
+    }
+
+    var learnerOutcome: String? { CourseTextContract.learnerText(outcome) }
+    var learnerDuration: String? { CourseTextContract.learnerText(duration) }
+    var learnerInstruction: String? { CourseTextContract.learnerText(instruction) }
 }
 
 enum CourseScreenPayload: Decodable, Hashable {

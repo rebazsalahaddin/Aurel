@@ -28,6 +28,7 @@
      {
       "id": "S01",
       "type": "promise",
+      "displayTitle": "Can-do promise",
       "label": "Can-do promise",
       "step": "STEP 1 · 30 sec",
       "ill": {
@@ -50,6 +51,7 @@
      {
       "id": "S02",
       "type": "hook",
+      "displayTitle": "Story hook",
       "label": "Story hook",
       "step": "STEP 2 · 30–60 sec",
       "scene": "Sunny morning outside the Aroa Community House. A welcome table with cups. Alex stands at the door; Maya arrives to help.",
@@ -99,6 +101,7 @@
      {
       "id": "S03",
       "type": "orientation",
+      "displayTitle": "First-run orientation",
       "label": "First-run orientation",
       "step": "STEP 3 · 2–3 min",
       "intro": "Teaches the app's five core interactions by demonstration, using only the hook audio and art — zero new language.",
@@ -138,6 +141,7 @@
      {
       "id": "S04",
       "type": "cards",
+      "displayTitle": "Set A cards — open and close",
       "label": "Set A cards — open and close",
       "step": "STEP 4 · ≈5 min",
       "chip": "Set A · greetings and farewells",
@@ -257,6 +261,7 @@
      {
       "id": "S05",
       "type": "practice",
+      "displayTitle": "Micro-practice A",
       "label": "Micro-practice A",
       "step": "STEP 5 · ≈3 min",
       "items": [
@@ -570,6 +575,7 @@
      {
       "id": "S06",
       "type": "pause",
+      "displayTitle": "Pause",
       "label": "Pause",
       "step": "PAUSE · ≈10 min in",
       "head": "Good work! Two new word groups today.",
@@ -588,6 +594,7 @@
      {
       "id": "S07",
       "type": "cards",
+      "displayTitle": "Set B cards — little kind words",
       "label": "Set B cards — little kind words",
       "step": "STEP 6 · ≈5 min",
       "chip": "kind words",
@@ -664,8 +671,8 @@
         "stress": "monosyllable",
         "aud": "AUD015",
         "ill": {
-         "id": "A1-C01-ILL012",
-         "alt": "A smiling person nods yes, head tilted down then up"
+         "id": "A1-C01-ILL035",
+         "alt": "A smiling person nods yes and gives a clear thumbs-up"
         },
         "fn": "answer word (positive)",
         "frame": "Yes + short answer"
@@ -677,8 +684,8 @@
         "stress": "monosyllable",
         "aud": "AUD016",
         "ill": {
-         "id": "A1-C01-ILL012",
-         "alt": "A calm person gently shakes their head no with a soft open-palm gesture"
+         "id": "A1-C01-ILL036",
+         "alt": "A calm person shakes their head no and raises an open refusal hand"
         },
         "fn": "answer word (negative)",
         "frame": "No + short answer"
@@ -688,12 +695,14 @@
       "tip": "Identical pager mechanics as S04 (consistency lowers load); the only difference is a small \"kind words\" chapter chip so the learner senses progress through a second group. Mic still optional.",
       "assets": [
        "A1-C01-AUD010–016",
-       "A1-C01-ILL008–012"
+       "A1-C01-ILL008–011",
+       "A1-C01-ILL035–036"
       ]
      },
      {
       "id": "S08",
       "type": "practice",
+      "displayTitle": "Micro-practice B",
       "label": "Micro-practice B",
       "step": "STEP 6b · ≈2–3 min",
       "items": [
@@ -931,6 +940,7 @@
      {
       "id": "S09",
       "type": "review",
+      "displayTitle": "Blended review + progress",
       "label": "Blended review + progress",
       "step": "STEP 6c · ≈2 min",
       "head": "15 new words!",
@@ -1116,8 +1126,8 @@
         "stress": "monosyllable",
         "aud": "AUD015",
         "ill": {
-         "id": "A1-C01-ILL012",
-         "alt": "A smiling person nods yes, head tilted down then up"
+         "id": "A1-C01-ILL035",
+         "alt": "A smiling person nods yes and gives a clear thumbs-up"
         },
         "fn": "answer word (positive)",
         "frame": "Yes + short answer"
@@ -1129,8 +1139,8 @@
         "stress": "monosyllable",
         "aud": "AUD016",
         "ill": {
-         "id": "A1-C01-ILL012",
-         "alt": "A calm person gently shakes their head no with a soft open-palm gesture"
+         "id": "A1-C01-ILL036",
+         "alt": "A calm person shakes their head no and raises an open refusal hand"
         },
         "fn": "answer word (negative)",
         "frame": "No + short answer"
@@ -1163,6 +1173,7 @@
      {
       "id": "S10",
       "type": "warmup",
+      "displayTitle": "Warm-up retrieval",
       "label": "Warm-up retrieval",
       "step": "STEP 3 · 2–3 min",
       "head": "You know these.",
@@ -1344,8 +1355,8 @@
         "stress": "monosyllable",
         "aud": "AUD015",
         "ill": {
-         "id": "A1-C01-ILL012",
-         "alt": "A smiling person nods yes, head tilted down then up"
+         "id": "A1-C01-ILL035",
+         "alt": "A smiling person nods yes and gives a clear thumbs-up"
         },
         "fn": "answer word (positive)",
         "frame": "Yes + short answer"
@@ -1357,8 +1368,8 @@
         "stress": "monosyllable",
         "aud": "AUD016",
         "ill": {
-         "id": "A1-C01-ILL012",
-         "alt": "A calm person gently shakes their head no with a soft open-palm gesture"
+         "id": "A1-C01-ILL036",
+         "alt": "A calm person shakes their head no and raises an open refusal hand"
         },
         "fn": "answer word (negative)",
         "frame": "No + short answer"
@@ -1442,6 +1453,7 @@
      {
       "id": "S11",
       "type": "cards",
+      "displayTitle": "Set C cards — states",
       "label": "Set C cards — states",
       "step": "STEP 4 · ≈4 min",
       "chip": "how you are",
@@ -1523,6 +1535,7 @@
      {
       "id": "S12",
       "type": "cards",
+      "displayTitle": "Set D cards — names",
       "label": "Set D cards — names",
       "step": "STEP 5 · ≈4 min",
       "chip": "names and badges",
@@ -1623,6 +1636,7 @@
      {
       "id": "S13",
       "type": "grammarModel",
+      "displayTitle": "Grammar model — notice first",
       "label": "Grammar model — notice first",
       "step": "STEP 6 · ≈4 min",
       "notice": [
@@ -1748,6 +1762,7 @@
      {
       "id": "S14",
       "type": "practice",
+      "displayTitle": "Guided grammar",
       "label": "Guided grammar",
       "step": "STEP 6b",
       "dock": "I am → I'm · you are → you're · my name / your name · ask → answer → ask back",
@@ -2705,6 +2720,7 @@
      {
       "id": "S15",
       "type": "cards",
+      "displayTitle": "Set E cards + G003 model",
       "label": "Set E cards + G003 model",
       "step": "STEP 6c · ≈3 min",
       "chip": "ask → answer → ask back",
@@ -2763,6 +2779,7 @@
      {
       "id": "S16",
       "type": "pronPerceive",
+      "displayTitle": "Pronunciation — hear and choose",
       "label": "Pronunciation — hear and choose",
       "step": "STEP 7 · 3–4 min",
       "items": [
@@ -2981,6 +2998,7 @@
      {
       "id": "S17",
       "type": "pronProduce",
+      "displayTitle": "Pronunciation — say and record",
       "label": "Pronunciation — say and record",
       "step": "STEP 7b",
       "items": [
@@ -3008,6 +3026,7 @@
      {
       "id": "S18",
       "type": "practice",
+      "displayTitle": "Practice C/D/E",
       "label": "Practice C/D/E",
       "step": "STEP 8",
       "interleave": true,
@@ -3806,6 +3825,7 @@
      {
       "id": "S19",
       "type": "review",
+      "displayTitle": "Micro-progress",
       "label": "Micro-progress",
       "step": "STEP 9",
       "head": "You can say your name!",
@@ -4028,6 +4048,7 @@
      {
       "id": "S20",
       "type": "conversation",
+      "displayTitle": "Conversation play",
       "label": "Conversation play",
       "step": "STEP 10",
       "pkg": "A1-C01-D01 — First Meeting at the Welcome Table",
@@ -4102,6 +4123,7 @@
      {
       "id": "S21",
       "type": "testlet",
+      "displayTitle": "Gist task",
       "label": "Gist task",
       "step": "STEP 11 · testlet 1",
       "rung": "GIST",
@@ -4232,6 +4254,7 @@
      {
       "id": "S22",
       "type": "testlet",
+      "displayTitle": "Detail task",
       "label": "Detail task",
       "step": "STEP 11 · testlet 2",
       "rung": "DETAIL",
@@ -4387,6 +4410,7 @@
      {
       "id": "S23",
       "type": "testlet",
+      "displayTitle": "Challenge take",
       "label": "Challenge take",
       "step": "STEP 11 · testlet 3",
       "rung": "RESPONSE",
@@ -4747,6 +4771,7 @@
      {
       "id": "S23b",
       "type": "pronPerceive",
+      "displayTitle": "Pronunciation block — stress and intonation",
       "label": "Pronunciation block — stress and intonation",
       "step": "STEP 11 · S23b",
       "items": [
@@ -4821,6 +4846,7 @@
      {
       "id": "S24",
       "type": "order",
+      "displayTitle": "Dialogue order",
       "label": "Dialogue order",
       "step": "STEP 11b",
       "demoWords": [
@@ -4918,6 +4944,7 @@
      {
       "id": "S25",
       "type": "practice",
+      "displayTitle": "Best next line",
       "label": "Best next line",
       "step": "STEP 11c",
       "ids": "PR-CV001, CV002, CV005–CV014",
@@ -5468,6 +5495,7 @@
      {
       "id": "S26",
       "type": "substitution",
+      "displayTitle": "Substitution drill",
       "label": "Substitution drill",
       "step": "STEP 11d",
       "ids": "A1-C01-D01 substitution table",
@@ -5529,6 +5557,7 @@
      {
       "id": "S26b",
       "type": "pronProduce",
+      "displayTitle": "Pronunciation block — say it",
       "label": "Pronunciation block — say it",
       "step": "STEP 11d · S26b",
       "items": [
@@ -5569,6 +5598,7 @@
      {
       "id": "S27",
       "type": "reading",
+      "displayTitle": "Badge reading",
       "label": "Badge reading",
       "step": "STEP 12",
       "kind": "badges",
@@ -5718,6 +5748,7 @@
      {
       "id": "S28",
       "type": "reading",
+      "displayTitle": "Welcome card, greeting board",
       "label": "Welcome card, greeting board",
       "step": "STEP 12b",
       "kind": "card",
@@ -5900,6 +5931,7 @@
      {
       "id": "S29",
       "type": "tiles",
+      "displayTitle": "Tile writing",
       "label": "Tile writing",
       "step": "STEP 12c",
       "ids": "PR-WR001–002",
@@ -5976,6 +6008,7 @@
      {
       "id": "S30",
       "type": "missionBrief",
+      "displayTitle": "Mission brief",
       "label": "Mission brief",
       "step": "STEP 13",
       "head": "Your mission: go to the welcome event.",
@@ -6004,6 +6037,7 @@
      {
       "id": "S31",
       "type": "roleplay",
+      "displayTitle": "AI roleplay",
       "label": "AI roleplay",
       "step": "STEP 13b",
       "spec": "A1-C01-RP001",
@@ -6102,6 +6136,7 @@
      {
       "id": "S32",
       "type": "quizIntro",
+      "displayTitle": "Quiz intro",
       "label": "Quiz intro",
       "step": "STEP 14",
       "head": "22 quick items",
@@ -6116,6 +6151,7 @@
      {
       "id": "S33",
       "type": "quiz",
+      "displayTitle": "Quiz items",
       "label": "Quiz items",
       "step": "STEP 14b",
       "mix": [
@@ -6902,6 +6938,7 @@
      {
       "id": "S34a",
       "type": "tiles",
+      "displayTitle": "Guided writing — consolidation",
       "label": "Guided writing — consolidation",
       "step": "STEP 15 · S34a",
       "ids": "PR-WR003–006",
@@ -7044,6 +7081,7 @@
      {
       "id": "S34",
       "type": "results",
+      "displayTitle": "Results",
       "label": "Results",
       "step": "STEP 15",
       "rings": [
@@ -7064,6 +7102,7 @@
      {
       "id": "S35",
       "type": "remediation",
+      "displayTitle": "Remediation pick",
       "label": "Remediation pick",
       "step": "STEP 15b",
       "head": "Practice picks",
@@ -7112,6 +7151,7 @@
      {
       "id": "S36",
       "type": "reviewPlan",
+      "displayTitle": "Review plan",
       "label": "Review plan",
       "step": "STEP 15c",
       "head": "Your review week",
@@ -7185,6 +7225,7 @@
      {
       "id": "S37",
       "type": "chapterMap",
+      "displayTitle": "Chapter map / next",
       "label": "Chapter map / next",
       "step": "Wrap-up",
       "head": "Chapter 1 complete!",
@@ -7253,6 +7294,7 @@
      {
       "id": "S01",
       "type": "promise",
+      "displayTitle": "Can-do promise",
       "label": "Can-do promise",
       "step": "STEP 1 · 30 sec",
       "ill": {
@@ -7275,6 +7317,7 @@
      {
       "id": "S02",
       "type": "hook",
+      "displayTitle": "Story hook — the check-in desk",
       "label": "Story hook — the check-in desk",
       "step": "STEP 2 · 30–60 sec",
       "scene": "The morning after the welcome event. A small check-in desk with a notebook and blank badges. Nina runs the desk; Alex waves at the door; Maya is registering too.",
@@ -7334,6 +7377,7 @@
      {
       "id": "S03",
       "type": "warmup",
+      "displayTitle": "Carry-over warm-up",
       "label": "Carry-over warm-up",
       "step": "STEP 3 · 2–3 min",
       "head": "Say hello to Nina.",
@@ -7384,6 +7428,7 @@
      {
       "id": "S04",
       "type": "alphabet",
+      "displayTitle": "Letter time — the chart",
       "label": "Letter time — the chart",
       "step": "STEP 4 · ≈1 min",
       "head": "Letter time.",
@@ -7482,6 +7527,7 @@
      {
       "id": "S05",
       "type": "letterCards",
+      "displayTitle": "Alphabet family cards",
       "label": "Alphabet family cards",
       "step": "STEP 4b · ≈5 min",
       "chip": "the alphabet, in families",
@@ -7574,6 +7620,7 @@
      {
       "id": "S06",
       "type": "practice",
+      "displayTitle": "Practice A — hear the letter",
       "label": "Practice A — hear the letter",
       "step": "STEP 5 · ≈3 min",
       "bank": "PR-V001–V009 · items 1–3 use clearly different distractors, 4–6 tighten, 7–8 are the dedicated confusable pairs (B/D, M/N), 9 is the spelling chain · answer positions 6 A / 7 B / 6 C across the lesson",
@@ -7886,6 +7933,7 @@
      {
       "id": "S07",
       "type": "pause",
+      "displayTitle": "Pause",
       "label": "Pause",
       "step": "PAUSE · ≈11 min in",
       "head": "The letters are yours.",
@@ -7904,6 +7952,7 @@
      {
       "id": "S08",
       "type": "numbers",
+      "displayTitle": "Numbers 0–5",
       "label": "Numbers 0–5",
       "step": "STEP 6 · ≈4 min",
       "chip": "numbers 0–5",
@@ -7989,6 +8038,7 @@
      {
       "id": "S09",
       "type": "cards",
+      "displayTitle": "Repair words and chunks",
       "label": "Repair words and chunks",
       "step": "STEP 6b · ≈4 min",
       "chip": "the little repair words",
@@ -8109,6 +8159,7 @@
      {
       "id": "S10",
       "type": "practice",
+      "displayTitle": "Practice B — numbers, words, chunks",
       "label": "Practice B — numbers, words, chunks",
       "step": "STEP 6c",
       "bank": "PR-V010–V020 · number items always show the digit row 0–5 as a bottom reference strip",
@@ -8513,6 +8564,7 @@
      {
       "id": "S11",
       "type": "review",
+      "displayTitle": "Blended review + progress",
       "label": "Blended review + progress",
       "step": "STEP 6d",
       "head": "The letters, the numbers, and the asking words.",
@@ -8655,6 +8707,7 @@
      {
       "id": "S12",
       "type": "warmup",
+      "displayTitle": "Warm-up — alphabet + 0–5",
       "label": "Warm-up — alphabet + 0–5",
       "step": "STEP 3 · ≈3 min",
       "head": "You know these.",
@@ -8704,6 +8757,7 @@
      {
       "id": "S13",
       "type": "numbers",
+      "displayTitle": "Numbers 6–10",
       "label": "Numbers 6–10",
       "step": "STEP 4",
       "pat": "PAT003",
@@ -8759,6 +8813,7 @@
      {
       "id": "S14",
       "type": "numbers",
+      "displayTitle": "Numbers 11–15",
       "label": "Numbers 11–15",
       "step": "STEP 4b",
       "pat": "PAT004",
@@ -8807,6 +8862,7 @@
      {
       "id": "S15",
       "type": "numbers",
+      "displayTitle": "Numbers 16–20",
       "label": "Numbers 16–20",
       "step": "STEP 4c",
       "pat": "PAT005",
@@ -8856,6 +8912,7 @@
      {
       "id": "S16",
       "type": "cards",
+      "displayTitle": "Contact-word cards",
       "label": "Contact-word cards",
       "step": "STEP 5 · ≈5 min",
       "chip": "the register",
@@ -8977,6 +9034,7 @@
      {
       "id": "S17",
       "type": "grammarModel",
+      "displayTitle": "Grammar model — Are you…? / It's…",
       "label": "Grammar model — Are you…? / It's…",
       "step": "STEP 6",
       "notice": [
@@ -9091,6 +9149,7 @@
      {
       "id": "S18",
       "type": "practice",
+      "displayTitle": "Guided grammar",
       "label": "Guided grammar",
       "step": "STEP 6b",
       "dock": "Are you ___? → Yes, I am. / No, I'm not.   ·   What's your ___? → It's ___.   ·   Action word + (please) + !",
@@ -10041,6 +10100,7 @@
      {
       "id": "S19",
       "type": "pronPerceive",
+      "displayTitle": "Pronunciation — confusables",
       "label": "Pronunciation — confusables",
       "step": "STEP 7",
       "items": [
@@ -10124,6 +10184,7 @@
      {
       "id": "S20",
       "type": "practice",
+      "displayTitle": "Mixed practice",
       "label": "Mixed practice",
       "step": "STEP 8",
       "interleave": true,
@@ -10691,6 +10752,7 @@
      {
       "id": "S21",
       "type": "review",
+      "displayTitle": "Micro-progress",
       "label": "Micro-progress",
       "step": "STEP 9",
       "head": "Numbers to twenty, and the register words.",
@@ -10831,6 +10893,7 @@
      {
       "id": "S22",
       "type": "conversation",
+      "displayTitle": "Conversation play — phone version",
       "label": "Conversation play — phone version",
       "step": "STEP 10",
       "pkg": "A1-C02-D01 — The Check-In · Version P (learning take, phone)",
@@ -10922,6 +10985,7 @@
      {
       "id": "S23",
       "type": "testlet",
+      "displayTitle": "Gist task",
       "label": "Gist task",
       "step": "STEP 11 · testlet 1",
       "rung": "GIST",
@@ -11040,6 +11104,7 @@
      {
       "id": "S24",
       "type": "testlet",
+      "displayTitle": "Detail task — Sam checks in",
       "label": "Detail task — Sam checks in",
       "step": "STEP 11b · testlet 2",
       "rung": "DETAIL",
@@ -11213,6 +11278,7 @@
      {
       "id": "S25",
       "type": "testlet",
+      "displayTitle": "Challenge take — email version",
       "label": "Challenge take — email version",
       "step": "STEP 11c · testlet 3",
       "rung": "RESPONSE",
@@ -11584,6 +11650,7 @@
      {
       "id": "S25b",
       "type": "pronPerceive",
+      "displayTitle": "Pronunciation block — letter strings",
       "label": "Pronunciation block — letter strings",
       "step": "STEP 11c · S25b",
       "items": [
@@ -11644,6 +11711,7 @@
      {
       "id": "S26",
       "type": "order",
+      "displayTitle": "Dialogue order",
       "label": "Dialogue order",
       "step": "STEP 11d",
       "demoWords": [
@@ -11713,6 +11781,7 @@
      {
       "id": "S27",
       "type": "practice",
+      "displayTitle": "Best next line",
       "label": "Best next line",
       "step": "STEP 11e",
       "ids": "PR-CV001–CV007, CV010–CV016",
@@ -12233,6 +12302,7 @@
      {
       "id": "S28",
       "type": "reading",
+      "displayTitle": "Form reading",
       "label": "Form reading",
       "step": "STEP 12",
       "kind": "form",
@@ -12392,6 +12462,7 @@
      {
       "id": "S28b",
       "type": "reading",
+      "displayTitle": "Message-card reading",
       "label": "Message-card reading",
       "step": "STEP 12 · text type 2",
       "kind": "card",
@@ -12541,6 +12612,7 @@
      {
       "id": "S29",
       "type": "emailAssembly",
+      "displayTitle": "Email assembly",
       "label": "Email assembly",
       "step": "STEP 12b",
       "id_": "PR-WR001",
@@ -12580,6 +12652,7 @@
      {
       "id": "S30",
       "type": "tiles",
+      "displayTitle": "Tiles — phone details",
       "label": "Tiles — phone details",
       "step": "STEP 12c",
       "ids": "PR-WR002",
@@ -12618,6 +12691,7 @@
      {
       "id": "S31",
       "type": "substitution",
+      "displayTitle": "Substitution drill",
       "label": "Substitution drill",
       "step": "STEP 12d",
       "ids": "A1-C02-D01 substitution table",
@@ -12665,6 +12739,7 @@
      {
       "id": "S31b",
       "type": "pronProduce",
+      "displayTitle": "Pronunciation block — say it",
       "label": "Pronunciation block — say it",
       "step": "STEP 12d · S31b",
       "items": [
@@ -12714,6 +12789,7 @@
      {
       "id": "S32",
       "type": "missionBrief",
+      "displayTitle": "Mission brief",
       "label": "Mission brief",
       "step": "STEP 13",
       "head": "Your mission: check in at Nina's desk.",
@@ -12746,6 +12822,7 @@
      {
       "id": "S33",
       "type": "roleplay",
+      "displayTitle": "AI roleplay",
       "label": "AI roleplay",
       "step": "STEP 13b",
       "spec": "A1-C02-RP001",
@@ -12850,6 +12927,7 @@
      {
       "id": "S34",
       "type": "quizIntro",
+      "displayTitle": "Quiz intro",
       "label": "Quiz intro",
       "step": "STEP 14",
       "head": "26 quick items",
@@ -12864,6 +12942,7 @@
      {
       "id": "S35",
       "type": "quiz",
+      "displayTitle": "Quiz items",
       "label": "Quiz items",
       "step": "STEP 14b",
       "mix": [
@@ -13781,6 +13860,7 @@
      {
       "id": "S36a",
       "type": "tiles",
+      "displayTitle": "Guided writing — bank completion",
       "label": "Guided writing — bank completion",
       "step": "STEP 15 · WR003–006",
       "ids": "PR-WR003–006",
@@ -13897,6 +13977,7 @@
      {
       "id": "S36",
       "type": "results",
+      "displayTitle": "Results",
       "label": "Results",
       "step": "STEP 15",
       "rings": [
@@ -13917,6 +13998,7 @@
      {
       "id": "S37",
       "type": "remediation",
+      "displayTitle": "Remediation pick",
       "label": "Remediation pick",
       "step": "STEP 15b",
       "head": "Practice picks",
@@ -13965,6 +14047,7 @@
      {
       "id": "S38",
       "type": "reviewPlan",
+      "displayTitle": "Review plan",
       "label": "Review plan",
       "step": "STEP 15c",
       "head": "Your review week",
@@ -14038,6 +14121,7 @@
      {
       "id": "S39",
       "type": "chapterMap",
+      "displayTitle": "Chapter map / next",
       "label": "Chapter map / next",
       "step": "Wrap-up",
       "head": "Chapter 2 complete!",
@@ -14110,6 +14194,7 @@
      {
       "id": "S01",
       "type": "hook",
+      "displayTitle": "Story hook — Neighbors Around the World",
       "label": "Story hook — Neighbors Around the World",
       "step": "STEP 1 · 60–90 sec",
       "lead": "This chapter: ask and answer \"Where are you from?\", say your languages, say your job, introduce a friend, and understand short identity profiles.",
@@ -14187,6 +14272,7 @@
      {
       "id": "S02",
       "type": "warmup",
+      "displayTitle": "Warm-up — retrieval only",
       "label": "Warm-up — retrieval only",
       "step": "STEP 2 · ≈2 min",
       "head": "You know these.",
@@ -14233,6 +14319,7 @@
      {
       "id": "S03",
       "type": "cards",
+      "displayTitle": "Set A teach — the origin frame",
       "label": "Set A teach — the origin frame",
       "step": "STEP 3 · ≈3 min",
       "chip": "country · city · from · language · English · speak",
@@ -14325,6 +14412,7 @@
      {
       "id": "S04",
       "type": "practice",
+      "displayTitle": "Set A practice",
       "label": "Set A practice",
       "step": "STEP 3b",
       "bank": "PR-V001–V006 · 6 of 6 authored items shown",
@@ -14517,6 +14605,7 @@
      {
       "id": "S05",
       "type": "cards",
+      "displayTitle": "Set B teach — the cast five countries",
       "label": "Set B teach — the cast five countries",
       "step": "STEP 4 · ≈4 min",
       "chip": "Canada · Mexico · Peru · Egypt · Australia",
@@ -14597,6 +14686,7 @@
      {
       "id": "S06",
       "type": "practice",
+      "displayTitle": "Set B practice + pause",
       "label": "Set B practice + pause",
       "step": "STEP 4b",
       "bank": "PR-V007–V012 · 6 of 6 authored items shown",
@@ -14803,6 +14893,7 @@
      {
       "id": "S07",
       "type": "cards",
+      "displayTitle": "Set C teach — the world five countries",
       "label": "Set C teach — the world five countries",
       "step": "STEP 5 · ≈4 min",
       "chip": "Brazil · Japan · Kenya · Spain · India",
@@ -14882,6 +14973,7 @@
      {
       "id": "S08",
       "type": "practice",
+      "displayTitle": "Set C practice + pronunciation 1",
       "label": "Set C practice + pronunciation 1",
       "step": "STEP 5b",
       "bank": "PR-V013–V017 + PR-P001 · 6 of 6 authored items shown",
@@ -15069,6 +15161,7 @@
      {
       "id": "S09",
       "type": "cards",
+      "displayTitle": "Jobs teach — sets D + E",
       "label": "Jobs teach — sets D + E",
       "step": "STEP 6 · ≈5 min",
       "chip": "nine jobs · set E attached",
@@ -15202,6 +15295,7 @@
      {
       "id": "S10",
       "type": "practice",
+      "displayTitle": "Jobs practice + pronunciation 2",
       "label": "Jobs practice + pronunciation 2",
       "step": "STEP 6b",
       "bank": "PR-V018–V027 + PR-P002 · 11 of 11 authored items shown",
@@ -15550,6 +15644,7 @@
      {
       "id": "S11",
       "type": "cards",
+      "displayTitle": "Chunks teach — sets F + G",
       "label": "Chunks teach — sets F + G",
       "step": "STEP 7 · ≈4 min",
       "chip": "people, introducing, and the two big questions",
@@ -15720,6 +15815,7 @@
      {
       "id": "S12",
       "type": "practice",
+      "displayTitle": "Chunks practice + pronunciation 3–4 + close",
       "label": "Chunks practice + pronunciation 3–4 + close",
       "step": "STEP 7b",
       "bank": "PR-V028–V036 + PR-P003 + PR-P004 · 11 of 11 authored items shown",
@@ -16035,6 +16131,7 @@
      {
       "id": "S13",
       "type": "grammarModel",
+      "displayTitle": "G007 teach 1 — the whole family of be",
       "label": "G007 teach 1 — the whole family of be",
       "step": "STEP 8",
       "ill": {
@@ -16147,6 +16244,7 @@
      {
       "id": "S14",
       "type": "grammarModel",
+      "displayTitle": "G007 teach 2 — isn't, aren't, Is/Are…?",
       "label": "G007 teach 2 — isn't, aren't, Is/Are…?",
       "step": "STEP 8b",
       "ill": {
@@ -16249,6 +16347,7 @@
      {
       "id": "S15",
       "type": "practice",
+      "displayTitle": "G007 practice",
       "label": "G007 practice",
       "step": "STEP 8c",
       "dock": "he/she + is → he's/she's   ·   they/we/you + are → they're/we're   ·   not: isn't / aren't",
@@ -16653,6 +16752,7 @@
      {
       "id": "S16",
       "type": "practice",
+      "displayTitle": "G008 teach + practice — his, her, their, our",
       "label": "G008 teach + practice — his, her, their, our",
       "step": "STEP 9",
       "teach": {
@@ -16959,6 +17059,7 @@
      {
       "id": "S17",
       "type": "practice",
+      "displayTitle": "G009 teach + practice — a or an?",
       "label": "G009 teach + practice — a or an?",
       "step": "STEP 10",
       "teach": {
@@ -17218,6 +17319,7 @@
      {
       "id": "S18",
       "type": "conversation",
+      "displayTitle": "Conversation play — At the Corner Shop",
       "label": "Conversation play — At the Corner Shop",
       "step": "STEP 11",
       "pkg": "A1-C03-D01 — At the Corner Shop · learning take",
@@ -17346,6 +17448,7 @@
      {
       "id": "S19",
       "type": "practice",
+      "displayTitle": "Conversation practice",
       "label": "Conversation practice",
       "step": "STEP 11b",
       "bank": "PR-CV001–CV012 · 12 of 12 authored items shown",
@@ -17671,6 +17774,7 @@
      {
       "id": "S20",
       "type": "testlet",
+      "displayTitle": "Listening ladder",
       "label": "Listening ladder",
       "step": "STEP 11c",
       "rung": "GIST → DETAIL → RESPONSE → TRANSFER",
@@ -18033,6 +18137,7 @@
      {
       "id": "S21",
       "type": "pronPerceive",
+      "displayTitle": "Pronunciation — contractions and question voice",
       "label": "Pronunciation — contractions and question voice",
       "step": "STEP 12",
       "items": [
@@ -18135,6 +18240,7 @@
      {
       "id": "S22",
       "type": "review",
+      "displayTitle": "Lesson close",
       "label": "Lesson close",
       "step": "STEP 12b",
       "head": "You can talk about OTHER people now.",
@@ -18242,6 +18348,7 @@
      {
       "id": "S23",
       "type": "reading",
+      "displayTitle": "Reading — three profile cards + the class roll",
       "label": "Reading — three profile cards + the class roll",
       "step": "STEP 13",
       "kind": "profiles",
@@ -18584,6 +18691,7 @@
      {
       "id": "S24",
       "type": "tiles",
+      "displayTitle": "Guided writing — tiles only",
       "label": "Guided writing — tiles only",
       "step": "STEP 13b",
       "ids": "WR001–WR006",
@@ -18716,6 +18824,7 @@
      {
       "id": "S25",
       "type": "testlet",
+      "displayTitle": "Identity listening",
       "label": "Identity listening",
       "step": "STEP 13c",
       "rung": "DETAIL → TRANSFER",
@@ -18954,6 +19063,7 @@
      {
       "id": "S26",
       "type": "practice",
+      "displayTitle": "Roleplay rehearsal",
       "label": "Roleplay rehearsal",
       "step": "STEP 14",
       "bank": "PR-CV013–016 · 4 of 4 authored items shown",
@@ -19081,6 +19191,7 @@
      {
       "id": "S27",
       "type": "roleplay",
+      "displayTitle": "Roleplay — Welcome Kenji",
       "label": "Roleplay — Welcome Kenji",
       "step": "STEP 14b",
       "spec": "A1-C03-RP001",
@@ -19197,6 +19308,7 @@
      {
       "id": "S28",
       "type": "missionBrief",
+      "displayTitle": "Mission — Your Dot on the Wall",
       "label": "Mission — Your Dot on the Wall",
       "step": "STEP 15",
       "head": "Your mission: put your dot on the wall.",
@@ -19231,6 +19343,7 @@
      {
       "id": "S29",
       "type": "quizIntro",
+      "displayTitle": "Quiz intro",
       "label": "Quiz intro",
       "step": "STEP 16",
       "head": "Chapter quiz, Form A",
@@ -19246,6 +19359,7 @@
      {
       "id": "S29a",
       "type": "quiz",
+      "displayTitle": "Quiz items",
       "label": "Quiz items",
       "step": "STEP 16b",
       "mix": [
@@ -20058,6 +20172,7 @@
      {
       "id": "S30",
       "type": "results",
+      "displayTitle": "Results",
       "label": "Results",
       "step": "STEP 17",
       "rings": [
@@ -20077,6 +20192,7 @@
      {
       "id": "S30a",
       "type": "remediation",
+      "displayTitle": "Remediation pick",
       "label": "Remediation pick",
       "step": "STEP 17b",
       "head": "Practice picks",
@@ -20118,6 +20234,7 @@
      {
       "id": "S31",
       "type": "reviewPlan",
+      "displayTitle": "Review plan",
       "label": "Review plan",
       "step": "STEP 17c",
       "head": "Spaced-review export",
@@ -20146,6 +20263,7 @@
      {
       "id": "S32",
       "type": "chapterMap",
+      "displayTitle": "Chapter map / next",
       "label": "Chapter map / next",
       "step": "Wrap-up",
       "head": "Chapter 3 complete!",
@@ -20219,6 +20337,7 @@
      {
       "id": "S01",
       "type": "hook",
+      "displayTitle": "Mission promise — a second welcome morning",
       "label": "Mission promise — a second welcome morning",
       "step": "STEP 1",
       "lead": "This chapter: retrieve everything from Chapters 1–3, meet two new neighbors, and pass Checkpoint 1 — no new words.",
@@ -20250,6 +20369,7 @@
      {
       "id": "S02",
       "type": "warmup",
+      "displayTitle": "Recap carousel — diagnostic, unscored",
       "label": "Recap carousel — diagnostic, unscored",
       "step": "STEP 2 · ≈3 min",
       "head": "Three memories.",
@@ -20300,6 +20420,7 @@
      {
       "id": "S03",
       "type": "practice",
+      "displayTitle": "Cumulative retrieval — part 1 (Ch1 + Ch2)",
       "label": "Cumulative retrieval — part 1 (Ch1 + Ch2)",
       "step": "STEP 3 · ≈6 min",
       "bank": "A1-C04-RT001–008 · 8 of 8 authored items shown",
@@ -20483,6 +20604,7 @@
      {
       "id": "S04",
       "type": "practice",
+      "displayTitle": "Clinic 1 — be + person-word agreement",
       "label": "Clinic 1 — be + person-word agreement",
       "step": "STEP 4 · ≈5–8 min",
       "bank": "A1-C04-CL1-002–007 · 6 of 7 interactive items shown",
@@ -20641,6 +20763,7 @@
      {
       "id": "S10",
       "type": "hook",
+      "displayTitle": "Story — the morning arrives",
       "label": "Story — the morning arrives",
       "step": "STEP 1",
       "lead": "Today's plan: countries → two doors (from vs a/an) → one long listen → a sheet and a card → your three lines → rehearsal.",
@@ -20672,6 +20795,7 @@
      {
       "id": "S11",
       "type": "practice",
+      "displayTitle": "Cumulative retrieval — part 2 (Ch3)",
       "label": "Cumulative retrieval — part 2 (Ch3)",
       "step": "STEP 2 · ≈6 min",
       "bank": "A1-C04-RT009–016 · 8 of 8 authored items shown",
@@ -20872,6 +20996,7 @@
      {
       "id": "S12",
       "type": "practice",
+      "displayTitle": "Clinic 2 — \"I’m from ___\" vs \"I’m a/an ___\"",
       "label": "Clinic 2 — \"I’m from ___\" vs \"I’m a/an ___\"",
       "step": "STEP 3 · ≈5–8 min",
       "bank": "A1-C04-CL2-002–008 · 7 of 7 interactive items shown",
@@ -21045,6 +21170,7 @@
      {
       "id": "S13",
       "type": "testlet",
+      "displayTitle": "Integrated listening — Amara checks in",
       "label": "Integrated listening — Amara checks in",
       "step": "STEP 4 · one long listen",
       "rung": "GIST → DETAIL → SPEAKER/TRANSFER",
@@ -21194,6 +21320,7 @@
      {
       "id": "S14",
       "type": "reading",
+      "displayTitle": "The day’s sign-in sheet",
       "label": "The day’s sign-in sheet",
       "step": "STEP 5",
       "kind": "card",
@@ -21374,6 +21501,7 @@
      {
       "id": "S20",
       "type": "hook",
+      "displayTitle": "The last door",
       "label": "The last door",
       "step": "STEP 1",
       "lead": "One thing left: the door. A new friend is at the door. Your badge. Your lines. Your mission!",
@@ -21405,6 +21533,7 @@
      {
       "id": "S21",
       "type": "roleplay",
+      "displayTitle": "Roleplay — The Door",
       "label": "Roleplay — The Door",
       "step": "STEP 2",
       "spec": "A1-C04-RP001",
@@ -21549,6 +21678,7 @@
      {
       "id": "S23",
       "type": "quiz",
+      "displayTitle": "Checkpoint 1",
       "label": "Checkpoint 1",
       "step": "STEP 3 · 20–25 min",
       "mix": [
@@ -22288,6 +22418,7 @@
      {
       "id": "S28",
       "type": "results",
+      "displayTitle": "Checkpoint 1 — results",
       "label": "Checkpoint 1 — results",
       "step": "STEP 4",
       "rings": [
@@ -22310,6 +22441,7 @@
      {
       "id": "S29",
       "type": "chapterMap",
+      "displayTitle": "Chapter map / next",
       "label": "Chapter map / next",
       "step": "Wrap-up",
       "head": "Chapter 4 complete — Arc 1 complete!",

@@ -140,12 +140,12 @@ final class DesignTokenTests: @MainActor XCTestCase {
         XCTAssertEqual(Self.document.typeZoom, [0.88, 0.94, 1, 1.18, 1.4])
     }
 
-    // MARK: - 5. WCAG 2.2 AA contrast (diagnostic — recorded, not gating)
+    // MARK: - 5. WCAG 2.2 AA contrast (primary action is a hard gate)
 
-    /// The palette is authored, so violations are owner-register territory:
-    /// the full table is written to qa/evidence/token-contrast.json, attached
-    /// via XCTContext, and never fails this test.
-    func testContrastDiagnosticsAreRecorded() throws {
+    /// The full table remains evidence; the release-critical primary CTA pair
+    /// must pass rather than merely print a diagnostic.
+    @MainActor
+    func testContrastDiagnosticsAndPrimaryActionGate() throws {
         typealias RGBA = (r: Double, g: Double, b: Double, a: Double)
 
         func linearize(_ c: Double) -> Double {
@@ -186,8 +186,8 @@ final class DesignTokenTests: @MainActor XCTestCase {
             let background: String
         }
 
-        let whiteOnAccent600 =
-            "white (#fff8f0) on --color-accent-600 (.au-btn-primary text)"
+        let whiteOnAccent700 =
+            "white (#fff8f0) on --color-accent-700 (.au-btn-primary text)"
         let pairs: [Pair] = [
             Pair(
                 name: "--color-text on --color-bg", foreground: "--color-text",
@@ -217,8 +217,8 @@ final class DesignTokenTests: @MainActor XCTestCase {
                 name: "--au-dune-text on --au-dune", foreground: "--au-dune-text",
                 foregroundLiteral: nil, background: "--au-dune"),
             Pair(
-                name: whiteOnAccent600, foreground: "", foregroundLiteral: UIColor(hex: 0xfff8f0),
-                background: "--color-accent-600"),
+                name: whiteOnAccent700, foreground: "", foregroundLiteral: UIColor(hex: 0xfff8f0),
+                background: "--color-accent-700"),
         ]
 
         struct ContrastReport: Codable {
@@ -267,6 +267,13 @@ final class DesignTokenTests: @MainActor XCTestCase {
             print(
                 "CONTRAST \(result.pair) [\(result.theme)] = \(result.ratio):1 "
                     + "(threshold \(threshold):1) — recorded, not gating")
+        }
+
+        for result in results where result.pair == whiteOnAccent700 {
+            XCTAssertTrue(
+                result.passesThreshold,
+                "Primary CTA contrast is \(result.ratio):1 in \(result.theme); requires \(threshold):1"
+            )
         }
 
         let report = ContrastReport(

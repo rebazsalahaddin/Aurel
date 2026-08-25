@@ -1,5 +1,4 @@
 import AVFoundation
-import Combine
 import Foundation
 import Network
 import Speech
@@ -87,7 +86,7 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     }
 }
 
-// MARK: - Connectivity (NWPathMonitor → Combine → offline banner)
+// MARK: - Connectivity (NWPathMonitor → offline banner)
 
 @MainActor
 @Observable
@@ -96,19 +95,12 @@ final class Connectivity {
 
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "aurel.connectivity")
-    private var cancellables = Set<AnyCancellable>()
-
-    var publisher: AnyPublisher<Bool, Never> {
-        subject.eraseToAnyPublisher()
-    }
-    private let subject = CurrentValueSubject<Bool, Never>(true)
 
     init() {
         monitor.pathUpdateHandler = { [weak self] path in
             let online = path.status == .satisfied
             DispatchQueue.main.async {
                 self?.isOnline = online
-                self?.subject.send(online)
             }
         }
         monitor.start(queue: queue)
@@ -214,15 +206,35 @@ final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
     private var request: SFSpeechAudioBufferRecognitionRequest?
     private var task: SFSpeechRecognitionTask?
 
-    func requestAuthorization() async {
+    var supportsOnDeviceRecognition: Bool {
+        recognizer?.supportsOnDeviceRecognition == true
+    }
+
+    var canRecognizeOnDevice: Bool {
+        Self.permitsCapture(
+            authorized: authorized,
+            supportsOnDeviceRecognition: supportsOnDeviceRecognition
+        )
+    }
+
+    static func permitsCapture(
+        authorized: Bool,
+        supportsOnDeviceRecognition: Bool
+    ) -> Bool {
+        authorized && supportsOnDeviceRecognition
+    }
+
+    @discardableResult
+    func requestAuthorization() async -> Bool {
         let status: SFSpeechRecognizerAuthorizationStatus = await withCheckedContinuation { cont in
             SFSpeechRecognizer.requestAuthorization { cont.resume(returning: $0) }
         }
         authorized = status == .authorized
+        return canRecognizeOnDevice
     }
 
     func start() async throws {
-        guard let recognizer, authorized else { return }
+        guard let recognizer, canRecognizeOnDevice else { return }
         stop()
 
         let session = AVAudioSession.sharedInstance()
@@ -231,9 +243,7 @@ final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
 
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
-        if recognizer.supportsOnDeviceRecognition {
-            request.requiresOnDeviceRecognition = true
-        }
+        request.requiresOnDeviceRecognition = true
         self.request = request
 
         let input = audioEngine.inputNode
@@ -264,16 +274,14 @@ final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
     }
 
     /// §3.16(c): transcribe a finished take file — the clarity check runs
-    /// after the take, not as live dictation. On-device whenever the
-    /// recognizer supports it; nil when recognition is unavailable
+    /// after the take, not as live dictation. On-device recognition is a
+    /// hard precondition; nil when recognition is unavailable
     /// (unauthorized, unsupported locale, or recognizer failure — the caller
     /// renders an honest no-verdict state).
     func transcribe(url: URL) async -> String? {
-        guard let recognizer, authorized else { return nil }
+        guard let recognizer, canRecognizeOnDevice else { return nil }
         let request = SFSpeechURLRecognitionRequest(url: url)
-        if recognizer.supportsOnDeviceRecognition {
-            request.requiresOnDeviceRecognition = true
-        }
+        request.requiresOnDeviceRecognition = true
         return await withCheckedContinuation { cont in
             var resumed = false
             let task = recognizer.recognitionTask(with: request) { result, error in
@@ -501,6 +509,14 @@ final class SayCoach {
     var recorder: any TakeRecording = MicRecorder()
     /// Transcribe a finished take (nil → the honest unavailable state).
     var transcriber: @Sendable (URL) async -> String?
+    /// A take may begin only when recognition is authorized and guaranteed
+    /// on-device. Both seams are injectable for deterministic privacy tests.
+    var onDeviceRecognitionProbe: () -> Bool
+    var onDeviceRecognitionRequest: () async -> Bool
+    /// Stops any model playback before the audio session changes to record.
+    /// The owning environment/player supplies this hook so playback and a
+    /// learner take can never overlap.
+    var onCaptureWillBegin: () -> Void = {}
     /// The current mic permission (no prompt).
     var micPermissionProbe: () -> MicPermission = { MicRecorder.micPermission }
     /// Prompt when undetermined (never at launch — the prompt belongs to
@@ -515,16 +531,20 @@ final class SayCoach {
 
     private(set) var recording = false
     private(set) var assessing = false
+    private(set) var preparingRecognition = false
     private(set) var micDenied = false
     /// Per-target records, keyed by the target text.
     private(set) var records: [String: Record] = [:]
     /// The target of the running / last take.
     private(set) var activeTarget = ""
     private var stopTask: Task<Void, Never>?
+    private var recognitionPreparationGeneration = 0
 
     init() {
         let speech = self.speech
         transcriber = { url in await speech.transcribe(url: url) }
+        onDeviceRecognitionProbe = { speech.canRecognizeOnDevice }
+        onDeviceRecognitionRequest = { await speech.requestAuthorization() }
     }
 
     /// The record for the active target (empty when never attempted).
@@ -551,6 +571,28 @@ final class SayCoach {
     }
 
     private func begin(target: String) {
+        guard !preparingRecognition else { return }
+        guard onDeviceRecognitionProbe() else {
+            preparingRecognition = true
+            recognitionPreparationGeneration += 1
+            let generation = recognitionPreparationGeneration
+            let request = onDeviceRecognitionRequest
+            Task { @MainActor in
+                let available = await request()
+                guard self.recognitionPreparationGeneration == generation else { return }
+                self.preparingRecognition = false
+                guard available else {
+                    self.markRecognitionUnavailable(target: target)
+                    return
+                }
+                self.beginWithMicrophone(target: target)
+            }
+            return
+        }
+        beginWithMicrophone(target: target)
+    }
+
+    private func beginWithMicrophone(target: String) {
         switch micPermissionProbe() {
         case .denied:
             micDenied = true
@@ -561,7 +603,10 @@ final class SayCoach {
             Task { @MainActor in
                 switch await request() {
                 case .granted:
-                    guard probe() != .denied else { micDenied = true; return }
+                    guard probe() != .denied else {
+                        micDenied = true
+                        return
+                    }
                     self.begin(target: target)
                 default:
                     self.micDenied = true
@@ -572,6 +617,7 @@ final class SayCoach {
             break
         }
         micDenied = false
+        onCaptureWillBegin()
         do {
             try recorder.start()
         } catch {
@@ -590,11 +636,20 @@ final class SayCoach {
         }
     }
 
+    private func markRecognitionUnavailable(target: String) {
+        activeTarget = target
+        var rec = records[target] ?? Record()
+        rec.verdict = nil
+        rec.unavailable = true
+        records[target] = rec
+    }
+
     /// End the running take (manual tap or the auto-stop) and run the
     /// clarity check on what was said.
     func finish() {
         stopTask?.cancel()
         stopTask = nil
+        recognitionPreparationGeneration += 1
         let url = recorder.stop()
         recording = false
         guard let url else { return }  // never captured — no take counted
@@ -649,12 +704,14 @@ final class SayCoach {
     func reset() {
         stopTask?.cancel()
         stopTask = nil
+        recognitionPreparationGeneration += 1
         if recording {
             let url = recorder.stop()
             recorder.discardTake(url)
         }
         recording = false
         assessing = false
+        preparingRecognition = false
     }
 
     /// §3.16(d): re-check the permission (on appear / returning from

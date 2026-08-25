@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 // MARK: - Practice screen
@@ -13,24 +14,31 @@ struct PracticeScreenView: View {
         ScreenColumn(topPad: 18, bottomPad: 26) {
             // item progress rail
             let list = m.items
-            HStack(spacing: 5) {
-                ForEach(list.indices, id: \.self) { k in
-                    Capsule()
-                        .fill(
-                            k < m.i
-                                ? Color.auAccent
-                                : (k == m.i
-                                    ? Color.auAccent.opacity(0.55) : Color.auText.opacity(0.12))
-                        )
-                        .frame(height: 4)
+            HStack(spacing: 9) {
+                HStack(spacing: 5) {
+                    ForEach(list.indices, id: \.self) { k in
+                        Capsule()
+                            .fill(
+                                k < m.i
+                                    ? Color.auAccent
+                                    : (k == m.i
+                                        ? Color.auAccent.opacity(0.55) : Color.auText.opacity(0.12))
+                            )
+                            .frame(height: 4)
+                    }
                 }
-                Text("\(m.i + 1) / \(list.count)")
-                    .font(.figtree(.semibold, size: 10))
-                    .foregroundStyle(Color.auTextTertiary)
-                    .padding(.leading, 7)
+                .frame(maxWidth: .infinity)
+
+                AUProgressCounter(current: m.i + 1, total: list.count)
             }
             .padding(.bottom, 16)
-            .animation(.easeInOut(duration: 0.3), value: m.i)
+            .animation(
+                AUMotion.animation(.easeInOut(duration: 0.3), reduceMotion: reduceMotion),
+                value: m.i
+            )
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Practice progress")
+            .accessibilityValue("\(m.i + 1) of \(list.count)")
 
             rungHeader
             groups
@@ -97,8 +105,8 @@ struct PracticeScreenView: View {
                     Text(rung)
                         .font(.figtree(.bold, size: 9.5))
                         .tracking(1.14)
-                    if let support = t.support {
-                        Text(support)
+                    if t.support != nil {
+                        Text(testletGuidance(for: rung))
                             .font(.figtree(.regular, size: 11.5))
                             .auLine(11.5, 1.45)
                     }
@@ -126,14 +134,11 @@ struct PracticeScreenView: View {
                                 .font(.figtree(.bold, size: 9.5))
                                 .tracking(1.05)
                                 .foregroundStyle(Color.auAccentText)
-                            Text(g.stim)
+                            Text("Listen, then answer the questions in this set.")
                                 .font(.figtree(.regular, size: 12))
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(g.ids ?? "")
-                                .font(.figtree(.semibold, size: 9))
-                                .opacity(0.45)
                         }
-                        Text(g.note ?? "")
+                        Text("Each question focuses on a different detail.")
                             .font(.figtree(.regular, size: 11))
                             .auLine(11, 1.45)
                             .foregroundStyle(Color.auTextTertiary)
@@ -183,7 +188,9 @@ struct PracticeScreenView: View {
                     if !m.teachShut {
                         if let ill = teach.ill {
                             IllustrationPlaceholder(
-                                ill: ill, height: 120, cornerRadius: 16, kickerSize: 8.5,
+                                ill: ill, height: 120,
+                                aspectRatio: m.cur?.chapter.n == 1 ? 16.0 / 9.0 : nil,
+                                cornerRadius: 16, kickerSize: 8.5,
                                 captionSize: 10.5
                             )
                             .padding(.bottom, 12)
@@ -196,10 +203,6 @@ struct PracticeScreenView: View {
                                     Text(n.task ?? "")
                                         .font(.figtree(.semibold, size: 13))
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                    Text(n.aud ?? "")
-                                        .font(.figtree(.semibold, size: 9))
-                                        .tracking(0.54)
-                                        .opacity(0.45)
                                 }
                                 ForEach(n.chat ?? [], id: \.t) { c in
                                     HStack(alignment: .top, spacing: 8) {
@@ -232,7 +235,7 @@ struct PracticeScreenView: View {
 
                         ForEach(teach.records ?? [], id: \.id) { r in
                             VStack(alignment: .leading, spacing: 5) {
-                                Text("\(r.id) · \(r.title)")
+                                Text(r.title)
                                     .font(.figtree(.bold, size: 9))
                                     .tracking(1)
                                     .opacity(0.75)
@@ -266,7 +269,8 @@ struct PracticeScreenView: View {
                                 .foregroundStyle(Color.auText.opacity(0.62))
                         }
 
-                        ForEach([teach.notYet].compactMap { $0 }, id: \.self) { note in
+                        ForEach([teach.notYet].compactMap { $0.learnerFacing }, id: \.self) {
+                            note in
                             Text(note)
                                 .font(.figtree(.regular, size: 11))
                                 .auLine(11, 1.5)
@@ -291,8 +295,7 @@ struct PracticeScreenView: View {
                     ACard(radius: 17) {
                         VStack(alignment: .leading, spacing: 9) {
                             HStack(spacing: 10) {
-                                Text(p.ill?.id ?? "")
-                                    .font(.figtree(.bold, size: 7.5))
+                                AUIcon(kind: .speech, size: 18, color: .auAccentText)
                                     .frame(width: 44, height: 44)
                                     .background(
                                         RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -422,22 +425,33 @@ struct PracticeScreenView: View {
 
     @ViewBuilder
     private func itemView(_ item: PlayerModel.PlayerItem) -> some View {
+        let conversation = item.prompt.flatMap {
+            PracticeConversationPrompt(prompt: $0, itemID: item.id)
+        }
+
         // instruction row
         HStack(spacing: 10) {
-            AUIcon(kind: AUIcon.Kind(rawIcon: item.icon) ?? .eye, size: 20, color: .auTintText)
-                .frame(width: 38, height: 38)
-                .background(Circle().fill(Color.auTintBg))
-            Text(item.instr)
+            AUIcon(
+                kind: conversation == nil ? (AUIcon.Kind(rawIcon: item.icon) ?? .eye) : .speech,
+                size: 20,
+                color: .auTintText
+            )
+            .frame(width: 38, height: 38)
+            .background(Circle().fill(Color.auTintBg))
+            Text(conversation == nil ? item.instr : "Complete the conversation")
                 .font(.figtree(.semibold, size: 17))
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Text(item.id)
-                .font(.figtree(.semibold, size: 9.5))
-                .tracking(0.76)
-                .foregroundStyle(Color.auText.opacity(0.34))
+            #if AUREL_VERIFICATION
+                Color.clear
+                    .frame(width: 1, height: 1)
+                    .accessibilityElement()
+                    .accessibilityLabel(item.id)
+                    .accessibilityIdentifier("au.player.fixture.item.\(item.id)")
+            #endif
         }
         .padding(.bottom, 16)
 
-        if let aud = item.aud {
+        if item.aud != nil {
             Button {
                 m.plays += 1
                 m.speak(m.speakTextForItem, slow: m.plays > 1)
@@ -447,10 +461,6 @@ struct PracticeScreenView: View {
                     Text(m.plays == 0 ? "Listen" : (m.plays == 1 ? "Play again" : "Replay used"))
                         .font(.figtree(.semibold, size: 15))
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    Text(aud)
-                        .font(.figtree(.semibold, size: 10))
-                        .tracking(0.6)
-                        .opacity(0.72)
                 }
                 .padding(.horizontal, 17)
                 .padding(.vertical, 15)
@@ -465,8 +475,14 @@ struct PracticeScreenView: View {
         }
 
         if let ill = item.ill {
-            IllustrationPlaceholder(ill: ill, height: 186, cornerRadius: 20, captionSize: 11.5)
-                .padding(.bottom, 14)
+            IllustrationPlaceholder(
+                ill: ill,
+                height: 186,
+                aspectRatio: m.cur?.chapter.n == 1 ? 16.0 / 9.0 : nil,
+                cornerRadius: 20,
+                captionSize: 11.5
+            )
+            .padding(.bottom, 14)
         }
 
         if let digit = item.digit {
@@ -520,7 +536,9 @@ struct PracticeScreenView: View {
             .padding(.bottom, 16)
         }
 
-        if let prompt = item.prompt {
+        if let conversation {
+            conversationPrompt(conversation)
+        } else if let prompt = item.prompt {
             Text(prompt)
                 .font(.figtree(.regular, size: 16))
                 .auLine(16, 1.45)
@@ -532,6 +550,10 @@ struct PracticeScreenView: View {
             speakCard(item)
         } else if item.kind == "order" {
             orderView(item)
+        } else if item.kind == "pairs" {
+            pairsView(item)
+        } else if item.kind == "sort" {
+            sortView(item)
         } else if !item.opts.isEmpty {
             optionsView(item, opts: item.opts)
         }
@@ -602,6 +624,210 @@ struct PracticeScreenView: View {
         }
     }
 
+    private func conversationPrompt(_ conversation: PracticeConversationPrompt) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                AUIcon(kind: .speech, size: 14, color: .auAccentText)
+                Text("CONVERSATION")
+                    .font(.figtree(.bold, size: 9.5))
+                    .tracking(1.25)
+                    .foregroundStyle(Color.auAccentText)
+            }
+
+            Text("Choose the option that completes the highlighted line.")
+                .font(.figtree(.regular, size: 13))
+                .auLine(13, 1.45)
+                .foregroundStyle(Color.auTextSecondary)
+
+            VStack(spacing: 10) {
+                ForEach(conversation.turns) { turn in
+                    HStack(alignment: .top, spacing: 10) {
+                        Text(turn.displaySpeaker)
+                            .font(.figtree(.bold, size: 10))
+                            .tracking(0.45)
+                            .foregroundStyle(
+                                turn.isTarget ? Color.auAccentText : Color.auTextTertiary
+                            )
+                            .frame(width: 66, alignment: .leading)
+                            .padding(.top, 12)
+
+                        conversationLine(turn)
+                            .font(.figtree(.regular, size: 15.5))
+                            .auLine(15.5, 1.45)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .fill(turn.isTarget ? Color.auTintBg : Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .strokeBorder(
+                                        turn.isTarget ? Color.auAccent.opacity(0.65) : Color.auEdge,
+                                        style: turn.isTarget
+                                            ? StrokeStyle(lineWidth: 1.5, dash: [6, 4])
+                                            : StrokeStyle(lineWidth: 1)
+                                    )
+                            )
+                    }
+                }
+            }
+        }
+        .padding(15)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(Color.auFill.opacity(0.45))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(Color.auEdge, lineWidth: 1)
+        )
+        .padding(.bottom, 15)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(conversation.accessibilityLabel)
+    }
+
+    private func conversationLine(_ turn: PracticeConversationPrompt.Turn) -> Text {
+        guard !turn.line.isEmpty else {
+            return Text("Choose the next line")
+                .foregroundColor(.auAccentText)
+                .fontWeight(.semibold)
+        }
+
+        let source = turn.line as NSString
+        let matches = PracticeConversationPrompt.blankExpression.matches(
+            in: turn.line,
+            range: NSRange(location: 0, length: source.length)
+        )
+        guard !matches.isEmpty else { return Text(turn.line) }
+
+        let targetPlaceholder = "[ Choose ]"
+        var rendered = turn.line
+        for (index, match) in matches.enumerated().reversed() {
+            guard let range = Range(match.range, in: rendered) else { continue }
+            rendered.replaceSubrange(
+                range,
+                with: index == turn.targetBlankIndex ? targetPlaceholder : "…"
+            )
+        }
+
+        var attributed = AttributedString(rendered)
+        if let range = attributed.range(of: targetPlaceholder) {
+            attributed[range].foregroundColor = .auAccentText
+            attributed[range].font = .figtree(.semibold, size: 15.5)
+        }
+        return Text(attributed)
+    }
+
+    private func pairsView(_ item: PlayerModel.PlayerItem) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            VStack(spacing: 9) {
+                ForEach(item.matches) { match in
+                    let selected = m.matchSelection == match.id
+                    let complete = m.matched.contains(match.id)
+                    Button {
+                        m.selectMatchCue(match.id)
+                    } label: {
+                        Text(match.cue)
+                            .font(.figtree(.semibold, size: 14))
+                            .frame(maxWidth: .infinity, minHeight: 52)
+                            .padding(.horizontal, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .fill(selected || complete ? Color.auTintBg : Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .strokeBorder(
+                                        selected ? Color.auAccent : Color.auEdge, lineWidth: 1.5))
+                    }
+                    .buttonStyle(.auTap)
+                    .disabled(complete)
+                    .accessibilityIdentifier("au.player.match.cue.\(match.id)")
+                    .accessibilityValue(complete ? "Matched" : (selected ? "Selected" : ""))
+                    .accessibilityAddTraits(selected || complete ? .isSelected : [])
+                }
+            }
+
+            VStack(spacing: 9) {
+                ForEach(Array(item.matches.reversed())) { match in
+                    let complete = m.matched.contains(match.id)
+                    Button {
+                        m.selectMatchAnswer(match.id)
+                    } label: {
+                        Text(match.answer)
+                            .font(.figtree(.regular, size: 14))
+                            .frame(maxWidth: .infinity, minHeight: 52)
+                            .padding(.horizontal, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .fill(complete ? Color.auOkBg : Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .strokeBorder(
+                                        complete ? Color.auOkText.opacity(0.5) : Color.auEdge,
+                                        lineWidth: 1.5))
+                    }
+                    .buttonStyle(.auTap)
+                    .disabled(complete)
+                    .accessibilityIdentifier("au.player.match.answer.\(match.id)")
+                    .accessibilityValue(complete ? "Matched" : "")
+                    .accessibilityAddTraits(complete ? .isSelected : [])
+                }
+            }
+        }
+        .padding(.bottom, 14)
+    }
+
+    private func sortView(_ item: PlayerModel.PlayerItem) -> some View {
+        let answers = Array(Set(item.matches.map(\.answer))).sorted()
+        return VStack(spacing: 10) {
+            ForEach(item.matches) { match in
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(match.cue)
+                        .font(.figtree(.semibold, size: 14.5))
+                    HStack(spacing: 7) {
+                        ForEach(answers, id: \.self) { answer in
+                            Button {
+                                m.assignSortMatch(match.id, answer: answer)
+                            } label: {
+                                Text(answer)
+                                    .font(.figtree(.semibold, size: 12.5))
+                                    .frame(maxWidth: .infinity, minHeight: 44)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                            .fill(
+                                                m.matched.contains(match.id)
+                                                    && answer == match.answer
+                                                    ? Color.auOkBg : Color.auFill))
+                            }
+                            .buttonStyle(.auTap)
+                            .disabled(m.matched.contains(match.id))
+                            .accessibilityIdentifier(sortAnswerID(match: match, answer: answer))
+                            .accessibilityValue(
+                                m.matched.contains(match.id) && answer == match.answer
+                                    ? "Matched" : "")
+                        }
+                    }
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(Color.auEdge, lineWidth: 1))
+            }
+        }
+        .padding(.bottom, 14)
+    }
+
+    private func sortAnswerID(match: PlayerModel.PlayerItem.Match, answer: String) -> String {
+        #if AUREL_VERIFICATION
+            if answer == match.answer { return "au.player.sort.correct.\(match.id)" }
+        #endif
+        return "au.player.sort.answer.\(match.id).\(answer.auSlug)"
+    }
+
     private var digitStrip: some View {
         Group {
             switch m.cur?.screen.payload {
@@ -651,11 +877,11 @@ struct PracticeScreenView: View {
 
     @ViewBuilder
     private var unlockNote: some View {
-        if case .testlet(let t) = m.cur?.screen.payload, let unlock = t.unlock {
+        if case .testlet(let t) = m.cur?.screen.payload, t.unlock != nil {
             HStack(alignment: .top, spacing: 9) {
                 AUIcon(kind: .lock, size: 14, color: .auText.opacity(0.44))
                     .padding(.top, 2)
-                Text(unlock)
+                Text("Complete the activity to reveal the transcript.")
                     .font(.figtree(.regular, size: 11.5))
                     .auLine(11.5, 1.5)
                     .foregroundStyle(Color.auTextTertiary)
@@ -663,6 +889,20 @@ struct PracticeScreenView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 12)
         }
+    }
+
+    private func testletGuidance(for rung: String) -> String {
+        let normalized = rung.uppercased()
+        if normalized.contains("GIST") && !normalized.contains("DETAIL") {
+            return String(localized: "Listen for the main idea.")
+        }
+        if normalized.contains("DETAIL") && !normalized.contains("RESPONSE") {
+            return String(localized: "Listen for names, words, or numbers.")
+        }
+        if normalized.contains("RESPONSE") && !normalized.contains("GIST") {
+            return String(localized: "Listen once, then choose your response.")
+        }
+        return String(localized: "Work from the main idea toward the details.")
     }
 
     @ViewBuilder
@@ -696,6 +936,7 @@ struct PracticeScreenView: View {
                             .foregroundStyle(Color.auPrimaryButtonText)
                     }
                     .buttonStyle(.auTap)
+                    .accessibilityIdentifier("au.player.pause-card.continue")
                     Button {
                         m.onExit()
                     } label: {
@@ -710,6 +951,7 @@ struct PracticeScreenView: View {
                             .foregroundStyle(Color.auTintText)
                     }
                     .buttonStyle(.auTap)
+                    .accessibilityIdentifier("au.player.pause-card.break")
                 }
                 .padding(.top, 11)
             }
@@ -791,23 +1033,29 @@ struct PracticeScreenView: View {
         let task = m.tileTask
 
         return VStack(spacing: 0) {
-            Text(m.tileLine.isEmpty ? " " : m.tileLine)
-                .font(.caprasimo(size: 20))
-                .tracking(-0.2)
-                .auHeadLine(20, 1.4)
-                .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .strokeBorder(
-                            Color.auAccent.opacity(0.36),
-                            style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
-                )
-                .padding(.bottom, 14)
+            if m.usesLineAssembly {
+                OrderedLineAssemblyField(lines: m.orderedTileTexts)
+                    .padding(.bottom, 14)
+            } else {
+                Text(m.tileLine.isEmpty ? " " : m.tileLine)
+                    .font(.caprasimo(size: 20))
+                    .tracking(-0.2)
+                    .auHeadLine(20, 1.4)
+                    .frame(maxWidth: .infinity, minHeight: 64, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .strokeBorder(
+                                Color.auAccent.opacity(0.36),
+                                style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+                    )
+                    .padding(.bottom, 14)
+            }
 
             FlowTiles(
-                tiles: task.tiles, taken: Set(m.order), onTap: { m.toggleTile($0) },
+                tiles: task.tiles, taken: Set(m.order), order: m.order,
+                onTap: { m.toggleTile($0) },
                 aidPrefix: "au.player.tile"
             )
             .padding(.bottom, 14)
@@ -927,26 +1175,14 @@ struct PracticeScreenView: View {
                 } else {
                     HStack(spacing: 12) {
                         if let ill = o.ill {
-                            Text(ill.id)
-                                .font(.figtree(.bold, size: 8.5))
-                                .tracking(0.54)
-                                .minimumScaleFactor(0.5)
-                                .multilineTextAlignment(.center)
-                                .frame(width: 74, height: 52)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                        .fill(Color.auAccent.opacity(0.04))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                        .strokeBorder(
-                                            Color.auAccent.opacity(0.34),
-                                            style: StrokeStyle(lineWidth: 1, dash: [5, 4])
-                                        )
-                                )
-                            Text(ill.alt)
-                                .font(.figtree(.regular, size: 12.5))
-                                .auLine(12.5, 1.45)
+                            Image(ill.id)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 112, height: 76)
+                                .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                                .accessibilityHidden(true)
+                            Text("Picture \(o.id)")
+                                .font(.figtree(.semibold, size: 14))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else if let t = o.text {
                             Text(t)
@@ -977,6 +1213,169 @@ struct PracticeScreenView: View {
         }
         .buttonStyle(.auTap)
         .disabled(m.done && !quiet)
+        .accessibilityLabel(o.text ?? o.ill?.alt ?? String(localized: "Answer option"))
+        .accessibilityValue(optionAccessibilityValue(picked: picked, correct: isKey, quiet: quiet))
+        .accessibilityAddTraits(picked ? .isSelected : [])
+    }
+
+    private func optionAccessibilityValue(
+        picked: Bool, correct: Bool, quiet: Bool
+    ) -> String {
+        guard picked || (m.done && correct && !quiet) else { return "" }
+        if quiet { return String(localized: "Selected") }
+        return correct ? String(localized: "Correct") : String(localized: "Try again")
+    }
+}
+
+// MARK: - Conversation prompt structure
+
+/// Converts legacy, one-line dialogue prompts into learner-facing turns.
+/// The course bank remains compatible while the renderer removes authoring
+/// notes such as "blank two" and makes the actual completion point explicit.
+struct PracticeConversationPrompt {
+    struct Turn: Identifiable {
+        let id: Int
+        let speaker: String
+        let line: String
+        let targetBlankIndex: Int?
+
+        var isTarget: Bool { targetBlankIndex != nil }
+
+        var displaySpeaker: String {
+            switch speaker.uppercased() {
+            case "A": return String(localized: "Speaker A")
+            case "B": return String(localized: "Speaker B")
+            case "YOU": return String(localized: "You")
+            default: return speaker.capitalized
+            }
+        }
+    }
+
+    let turns: [Turn]
+
+    static let blankExpression = try! NSRegularExpression(pattern: #"_+"#)
+
+    var accessibilityLabel: String {
+        let transcript = turns.map { turn in
+            let spokenLine: String
+            if turn.line.isEmpty {
+                spokenLine = String(localized: "blank")
+            } else {
+                spokenLine = turn.line.replacingOccurrences(
+                    of: #"_+"#,
+                    with: String(localized: "blank"),
+                    options: .regularExpression
+                )
+            }
+            return "\(turn.displaySpeaker): \(spokenLine)"
+        }
+        .joined(separator: ". ")
+        return String(
+            localized:
+                "Conversation. Choose the option that completes the highlighted line. \(transcript)"
+        )
+    }
+
+    init?(prompt: String, itemID: String) {
+        let source = prompt as NSString
+        let markerExpression = try! NSRegularExpression(
+            pattern: #"(?:^|[\s…])([A-Za-z][A-Za-z]*):\s*"#
+        )
+        let matches = markerExpression.matches(
+            in: prompt,
+            range: NSRange(location: 0, length: source.length)
+        )
+        let markers: [(range: NSRange, speaker: String)] = matches.compactMap { match in
+            guard match.numberOfRanges > 1 else { return nil }
+            let speaker = source.substring(with: match.range(at: 1))
+            guard Self.isSpeaker(speaker) else { return nil }
+            return (match.range, speaker)
+        }
+        guard markers.count >= 2 else { return nil }
+
+        let rawTurns: [(speaker: String, line: String, blankCount: Int)] = markers.enumerated().map
+        {
+            index, marker in
+            let start = NSMaxRange(marker.range)
+            let end = index + 1 < markers.count ? markers[index + 1].range.location : source.length
+            let range = NSRange(location: start, length: max(0, end - start))
+            let line = Self.cleanLine(source.substring(with: range))
+            let lineSource = line as NSString
+            let blanks = Self.blankExpression.numberOfMatches(
+                in: line,
+                range: NSRange(location: 0, length: lineSource.length)
+            )
+            return (marker.speaker, line, max(blanks, line.isEmpty ? 1 : 0))
+        }
+
+        let blankTotal = rawTurns.reduce(0) { $0 + $1.blankCount }
+        guard blankTotal > 0 else { return nil }
+        let authoredBlank = Self.authoredBlankNumber(from: itemID) ?? 1
+        let target = blankTotal == 1 ? 0 : min(max(0, authoredBlank - 1), blankTotal - 1)
+
+        var blankOffset = 0
+        turns = rawTurns.enumerated().map { index, raw in
+            let localTarget: Int?
+            if target >= blankOffset && target < blankOffset + raw.blankCount {
+                localTarget = target - blankOffset
+            } else {
+                localTarget = nil
+            }
+            blankOffset += raw.blankCount
+            return Turn(
+                id: index,
+                speaker: raw.speaker,
+                line: raw.line,
+                targetBlankIndex: localTarget
+            )
+        }
+    }
+
+    private static func isSpeaker(_ candidate: String) -> Bool {
+        let speakers: Set<String> = [
+            "A", "B", "YOU", "GUIDE", "ALEX", "AMARA", "KENJI", "LEO", "MAYA", "NINA",
+            "RAFAEL", "SAM", "PARTNER", "TEACHER",
+        ]
+        return speakers.contains(candidate.uppercased())
+    }
+
+    private static func authoredBlankNumber(from itemID: String) -> Int? {
+        let lower = itemID.lowercased()
+        let words = ["one": 1, "two": 2, "three": 3, "four": 4]
+        for (word, value) in words where lower.contains("blank \(word)") { return value }
+
+        let expression = try! NSRegularExpression(pattern: #"blank\s+(\d+)"#)
+        let source = lower as NSString
+        guard
+            let match = expression.firstMatch(
+                in: lower,
+                range: NSRange(location: 0, length: source.length)
+            ), match.numberOfRanges > 1
+        else { return nil }
+        return Int(source.substring(with: match.range(at: 1)))
+    }
+
+    private static func cleanLine(_ raw: String) -> String {
+        var line = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        line = line.replacingOccurrences(
+            of: #"\s*[—-]\s*blank\s+(?:one|two|three|four|\d+)\s*:?\s*$"#,
+            with: "",
+            options: [.regularExpression, .caseInsensitive]
+        )
+        line = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        while let first = line.first, first == "…" || first == "—" {
+            line.removeFirst()
+            line = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        let quotePairs: [(Character, Character)] = [("“", "”"), ("‘", "’"), ("\"", "\"")]
+        if line.count >= 2, let first = line.first, let last = line.last,
+            quotePairs.contains(where: { $0.0 == first && $0.1 == last })
+        {
+            line.removeFirst()
+            line.removeLast()
+        }
+        return line.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
@@ -1073,6 +1472,7 @@ struct CompactFlowChips: View {
 struct FlowTiles: View {
     let tiles: [String]
     var taken: Set<Int> = []
+    var order: [Int] = []
     var onTap: ((Int) -> Void)? = nil
     /// UI-test identifier prefix — when set, tiles are `"<prefix>.<index>"`
     /// (mirrors the TilesScreenView rows, `au.player.tile.<k>`).
@@ -1103,8 +1503,92 @@ struct FlowTiles: View {
                 }
                 .buttonStyle(.auTap)
                 .accessibilityIdentifier(aidPrefix.map { "\($0).\(k)" } ?? "")
+                .accessibilityLabel(t)
+                .accessibilityValue(
+                    order.firstIndex(of: k).map { String(localized: "Position \($0 + 1)") }
+                        ?? String(localized: "Not selected")
+                )
+                .accessibilityAddTraits(on ? .isSelected : [])
             }
         }
+    }
+}
+
+/// Keeps full-sentence ordering readable as a script instead of collapsing
+/// the selected turns into one artificial-looking paragraph.
+struct OrderedLineAssemblyField: View {
+    let lines: [String]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("CONVERSATION")
+                .font(.figtree(.bold, size: 10))
+                .tracking(1.25)
+                .foregroundStyle(Color.auAccentText)
+
+            if lines.isEmpty {
+                HStack(spacing: 9) {
+                    Image(systemName: "bubble.left.and.bubble.right")
+                        .font(.system(size: 15, weight: .semibold))
+                    Text("Build the conversation here.")
+                        .font(.figtree(.medium, size: 14))
+                }
+                .foregroundStyle(Color.auTextSecondary)
+                .frame(maxWidth: .infinity, minHeight: 54, alignment: .leading)
+            } else {
+                ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
+                    let turn = Self.turn(from: line, index: index)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(turn.label.uppercased())
+                            .font(.figtree(.bold, size: 9.5))
+                            .tracking(0.8)
+                            .foregroundStyle(Color.auAccentText)
+                        Text(turn.text)
+                            .font(.figtree(.semibold, size: 16))
+                            .auLine(16, 1.35)
+                            .foregroundStyle(Color.auText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(.horizontal, 13)
+                    .padding(.vertical, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .fill(Color.auFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .strokeBorder(Color.auEdge, lineWidth: 1)
+                    )
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 82, alignment: .leading)
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(
+                    Color.auAccent.opacity(0.42),
+                    style: StrokeStyle(lineWidth: 1.5, dash: [6, 5]))
+        )
+        .accessibilityElement(children: .contain)
+    }
+
+    private static func turn(from line: String, index: Int) -> (label: String, text: String) {
+        let parts = line.split(separator: ":", maxSplits: 1, omittingEmptySubsequences: false)
+        if parts.count == 2 {
+            let proposedLabel = parts[0].trimmingCharacters(in: .whitespacesAndNewlines)
+            let isSpeakerLabel =
+                !proposedLabel.isEmpty
+                && proposedLabel.count <= 18
+                && proposedLabel.rangeOfCharacter(from: .letters) != nil
+            if isSpeakerLabel {
+                return (
+                    proposedLabel.capitalized,
+                    parts[1].trimmingCharacters(in: .whitespacesAndNewlines)
+                )
+            }
+        }
+        return ("Turn \(index + 1)", line)
     }
 }
 

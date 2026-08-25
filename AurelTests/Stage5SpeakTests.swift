@@ -7,7 +7,9 @@ final class FakeTakeRecorder: TakeRecording {
     var level: Double = 0.5
     var samples: [Double] = [0.1, 0.3, 0.5]
     var isRecording = false
-    var urlToReturn: URL? = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("fake-take.m4a")
+    var urlToReturn: URL? = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(
+        "fake-take.m4a")
+    var discardedURLs: [URL] = []
 
     func start() throws {
         isRecording = true
@@ -19,7 +21,9 @@ final class FakeTakeRecorder: TakeRecording {
         return urlToReturn
     }
 
-    func discardTake(_ url: URL?) {}
+    func discardTake(_ url: URL?) {
+        if let url { discardedURLs.append(url) }
+    }
 }
 
 /// Stage-5 Speak Honesty tests (IMPROVEMENT_PLAN.md §3.16 / §3.11c):
@@ -45,15 +49,21 @@ final class Stage5SpeakTests: XCTestCase {
         let target = "I am Maya from London"
 
         // Clear: >= 75% match in order
-        XCTAssertEqual(SpeakVerdict.evaluate(target: target, transcript: "I am Maya from London"), .clear)
-        XCTAssertEqual(SpeakVerdict.evaluate(target: target, transcript: "I am Maya London"), .clear) // 4/5 = 80%
+        XCTAssertEqual(
+            SpeakVerdict.evaluate(target: target, transcript: "I am Maya from London"), .clear)
+        // 4/5 = 80%
+        XCTAssertEqual(
+            SpeakVerdict.evaluate(target: target, transcript: "I am Maya London"), .clear)
 
         // Near: >= 30% and < 75%
-        XCTAssertEqual(SpeakVerdict.evaluate(target: target, transcript: "I am Maya"), .near) // 3/5 = 60%
-        XCTAssertEqual(SpeakVerdict.evaluate(target: target, transcript: "Maya London"), .near) // 2/5 = 40%
+        // 3/5 = 60%
+        XCTAssertEqual(SpeakVerdict.evaluate(target: target, transcript: "I am Maya"), .near)
+        // 2/5 = 40%
+        XCTAssertEqual(SpeakVerdict.evaluate(target: target, transcript: "Maya London"), .near)
 
         // Nothing heard / match < 30%
-        XCTAssertEqual(SpeakVerdict.evaluate(target: target, transcript: "Bonjour Paris"), .nothingHeard)
+        XCTAssertEqual(
+            SpeakVerdict.evaluate(target: target, transcript: "Bonjour Paris"), .nothingHeard)
         XCTAssertEqual(SpeakVerdict.evaluate(target: target, transcript: ""), .nothingHeard)
     }
 
@@ -68,6 +78,7 @@ final class Stage5SpeakTests: XCTestCase {
 
     func testSayCoachPermissionDenied() {
         let coach = SayCoach()
+        coach.onDeviceRecognitionProbe = { true }
         coach.micPermissionProbe = { .denied }
 
         coach.toggle(target: "Hello")
@@ -79,6 +90,7 @@ final class Stage5SpeakTests: XCTestCase {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
+        coach.onDeviceRecognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
 
         coach.toggle(target: "Hello")
@@ -86,7 +98,7 @@ final class Stage5SpeakTests: XCTestCase {
         XCTAssertTrue(coach.recording)
         XCTAssertEqual(coach.activeTarget, "Hello")
 
-        coach.toggle(target: "Hello") // manual stop
+        coach.toggle(target: "Hello")  // manual stop
         XCTAssertFalse(coach.recording)
     }
 
@@ -94,6 +106,7 @@ final class Stage5SpeakTests: XCTestCase {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
+        coach.onDeviceRecognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
         coach.transcriber = { _ in "hello world" }
 
@@ -113,8 +126,9 @@ final class Stage5SpeakTests: XCTestCase {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
+        coach.onDeviceRecognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
-        coach.transcriber = { _ in nil } // simulated recognition failure
+        coach.transcriber = { _ in nil }  // simulated recognition failure
 
         coach.toggle(target: "hello world")
         coach.finish()
@@ -124,12 +138,44 @@ final class Stage5SpeakTests: XCTestCase {
         XCTAssertEqual(rec.takes, 1)
         XCTAssertNil(rec.verdict)
         XCTAssertTrue(rec.unavailable)
+        XCTAssertEqual(fake.discardedURLs.count, 1, "failed recognition still deletes the take")
+    }
+
+    func testUnsupportedOnDeviceRecognitionRecordsNoTake() async throws {
+        let coach = SayCoach()
+        let fake = FakeTakeRecorder()
+        coach.recorder = fake
+        coach.onDeviceRecognitionProbe = { false }
+        coach.onDeviceRecognitionRequest = { false }
+        coach.micPermissionProbe = { .granted }
+
+        coach.toggle(target: "hello world")
+        try await Task.sleep(for: .milliseconds(30))
+
+        let rec = coach.record(for: "hello world")
+        XCTAssertFalse(fake.isRecording)
+        XCTAssertFalse(coach.recording)
+        XCTAssertEqual(rec.takes, 0)
+        XCTAssertTrue(rec.unavailable)
+    }
+
+    func testSpeechCaptureContractRequiresAuthorizationAndOnDeviceSupport() {
+        XCTAssertFalse(
+            SpeechToText.permitsCapture(
+                authorized: false, supportsOnDeviceRecognition: true))
+        XCTAssertFalse(
+            SpeechToText.permitsCapture(
+                authorized: true, supportsOnDeviceRecognition: false))
+        XCTAssertTrue(
+            SpeechToText.permitsCapture(
+                authorized: true, supportsOnDeviceRecognition: true))
     }
 
     func testSayCoachResetCancelsRunningTake() {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
+        coach.onDeviceRecognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
 
         coach.toggle(target: "test")
@@ -137,5 +183,6 @@ final class Stage5SpeakTests: XCTestCase {
         coach.reset()
         XCTAssertFalse(coach.recording)
         XCTAssertFalse(coach.assessing)
+        XCTAssertEqual(fake.discardedURLs.count, 1, "leaving deletes a running take")
     }
 }

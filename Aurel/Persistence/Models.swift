@@ -58,6 +58,12 @@ final class LearnerProfile {
     var themeMode: Int = 0  // 0 system · 1 light · 2 dark
     var typeStep: Int = 2  // text-size index; 2 = standard (of 1…3)
 
+    // PH-02 value-first onboarding. The checkpoint restores an unfinished
+    // route without marking the learner onboarded; the sample outcome lets a
+    // completed or skipped no-progress demo survive a relaunch deterministically.
+    var onboardingCheckpoint: String = "welcome"
+    var onboardingSampleOutcome: String = "notTried"
+
     /// Stage-4 calm milestone moments (§3.15/F9): streak days whose authored
     /// moment ("Seven quiet days.") has already been shown — once each.
     var milestonesSeen: [Int] = []

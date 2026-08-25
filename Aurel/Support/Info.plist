@@ -23,9 +23,9 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Aurel uses the microphone only when you choose to speak in a practice. Your voice is processed on your device, is never uploaded, and can be deleted at any time. Speaking is always optional — the tap-the-word path is always available.</string>
+	<string>Aurel uses the microphone only when you choose to speak in a practice. Recognition runs on your device. If on-device recognition is unavailable, Aurel offers the type or skip path instead. Recordings are temporary and deleted after the check.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Aurel checks your spoken practice on your device so you can see how close you were. Recognition never leaves the phone and is never stored. Speaking is optional — the tap path is always available.</string>
+	<string>Aurel checks spoken practice only with on-device recognition. If that is unavailable, no take is recorded and you can type or skip instead. Temporary recordings are deleted after the check.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Caprasimo-Regular.ttf</string>

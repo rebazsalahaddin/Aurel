@@ -1,6 +1,28 @@
 import SwiftData
 import SwiftUI
 
+/// Executable product capabilities for the running build. Release defaults are
+/// deliberately conservative: a surface is enabled only after its service is
+/// actually present and verified.
+struct AppCapabilities: Equatable, Sendable {
+    var accounts: Bool
+    var commerce: Bool
+    var notifications: Bool
+    var weeklyEmail: Bool
+    var widget: Bool
+    var support: Bool
+
+    static let release = AppCapabilities(
+        accounts: false,
+        commerce: false,
+        notifications: false,
+        weeklyEmail: false,
+        widget: false,
+        support: false
+    )
+
+}
+
 /// Dependency container injected at the root; owns the loaded course and the
 /// router. Services (audio, connectivity) attach here in the services task.
 @MainActor
@@ -18,7 +40,7 @@ final class AppEnvironment {
     /// failure must not crash; retry rebuilds the environment).
     private(set) var courseLoadFailed: Bool
 
-    init(modelContext: ModelContext?) {
+    init(modelContext: ModelContext?, capabilities: AppCapabilities = .release) {
         let store: CourseStore
         do {
             store = try CourseStore.load()
@@ -31,10 +53,18 @@ final class AppEnvironment {
             courseLoadFailed = true
         }
         course = store
-        router = AppRouter(course: store, modelContext: modelContext)
+        let playback = Speaker()
+        speaker = playback
+        router = AppRouter(
+            course: store,
+            modelContext: modelContext,
+            capabilities: capabilities
+        )
+        router.say.onCaptureWillBegin = { [weak playback] in
+            playback?.stop()
+        }
         scene = SceneScript.newest(from: store)
         wordSheet = WordRow.words(from: store)
-        speaker = Speaker()
         connectivity = Connectivity()
     }
 }

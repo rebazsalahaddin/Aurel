@@ -21,7 +21,7 @@ struct LessonRunnerView: View {
         ZStack(alignment: .bottom) {
             ZStack {
                 Color.auBackground
-                AUPaper()
+                AUPaper(subdued: true)
             }
             .ignoresSafeArea()
 
@@ -38,7 +38,8 @@ struct LessonRunnerView: View {
                     .padding(.horizontal, 24)
                     .padding(.bottom, 190)
                 }
-                .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: r.qi)
+                .animation(
+                    AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: r.qi)
             }
 
             // verdict dock — the verdict slides in over the glass and the
@@ -152,15 +153,14 @@ struct LessonRunnerView: View {
                     .frame(height: 6)
                 }
             }
+            .frame(maxWidth: .infinity)
 
             if r.reviewMode {
                 // §3.13c: the mistake queue is a different run — say so.
                 ATag(text: "Review — loose ends", variant: .tint)
                     .fixedSize()
             }
-            Text("\(r.qi + 1) / \(list.count)")
-                .font(.figtree(.regular, size: 11.5))
-                .foregroundStyle(Color.auTextTertiary)
+            AUProgressCounter(current: r.qi + 1, total: list.count)
         }
         .padding(.horizontal, 22)
         .padding(.top, 70)
@@ -721,29 +721,39 @@ struct LessonRunnerView: View {
             r.checked
             && (r.sel == q.answer
                 || (q.type == .order && r.built.joined(separator: " ") == q.answerText))
+        let instruction =
+            r.nudge
+            ? (q.hint.isEmpty ? String(localized: "Look at the shape of the sentence.") : q.hint)
+            : (q.why.isEmpty ? q.prompt : q.why)
+        let feedback: AULearningFeedback =
+            q.type == .order
+            ? .order(
+                isCorrect: ok,
+                isRevealed: r.checked && !ok,
+                instruction: instruction,
+                acceptedOrder: q.answerText,
+                authoredPositive: nil,
+                authoredCorrection: nil)
+            : .option(
+                isCorrect: ok,
+                isRevealed: r.checked && !ok,
+                instruction: instruction,
+                acceptedAnswer: q.options.indices.contains(q.answer) ? q.options[q.answer] : nil,
+                authoredPositive: nil,
+                authoredCorrection: nil)
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
-                AUIcon(kind: ok ? .check : .close, size: 16, color: .white)
+                AUIcon(kind: feedback.isCorrect ? .check : .close, size: 16, color: .white)
                     .frame(width: 26, height: 26)
-                    .background(Circle().fill(ok ? Color.auAccent2 : Color.auErr))
+                    .background(Circle().fill(feedback.isCorrect ? Color.auAccent2 : Color.auErr))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(
-                        ok
-                            ? "That’s it."
-                            : (r.nudge
-                                ? "Not quite — one more go."
-                                : (q.type == .order
-                                    ? "Not quite."
-                                    : "Not quite — \(q.options.indices.contains(q.answer) ? q.options[q.answer] : "")"))
-                    )
-                    .font(.figtree(.bold, size: 14.5))
-                    Text(
-                        r.nudge
-                            ? (q.hint.isEmpty ? "Look at the shape of the sentence." : q.hint)
-                            : (q.why.isEmpty ? "Four pairs matched." : q.why)
-                    )
-                    .font(.figtree(.regular, size: 13))
-                    .opacity(0.85)
+                    Text(feedback.title)
+                        .font(.figtree(.bold, size: 14.5))
+                    if !feedback.detail.isEmpty {
+                        Text(feedback.detail)
+                            .font(.figtree(.regular, size: 13))
+                            .opacity(0.85)
+                    }
                     if q.type == .order, r.checked, !ok, !r.built.isEmpty {
                         VStack(alignment: .leading, spacing: 5) {
                             HStack(alignment: .firstTextBaseline, spacing: 9) {
@@ -775,10 +785,13 @@ struct LessonRunnerView: View {
             .padding(.trailing, 2)
             .background(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(ok ? Color.auOkBg : Color.auErrBg)
+                    .fill(feedback.isCorrect ? Color.auOkBg : Color.auErrBg)
             )
-            .foregroundStyle(ok ? Color.auOkText : Color.auErrText)
+            .foregroundStyle(feedback.isCorrect ? Color.auOkText : Color.auErrText)
             .padding(.bottom, 12)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(feedback.accessibilityAnnouncement)
+            .accessibilityIdentifier("au.lesson.feedback.\(feedback.outcome)")
         }
     }
 
@@ -868,7 +881,10 @@ struct ResultView: View {
                     .frame(height: 54)
                     .padding(.bottom, 22)
                     .onAppear {
-                        guard !reduceMotion else { duskPathT = 1; return }
+                        guard !reduceMotion else {
+                            duskPathT = 1
+                            return
+                        }
                         withAnimation(.easeInOut(duration: 0.9)) { duskPathT = 1 }
                     }
 
@@ -878,12 +894,14 @@ struct ResultView: View {
                     statTile(
                         value: r.wasReview
                             ? "\(r.caught)/\(r.lastTotal)" : "\(r.correctCount)/\(max(1, scored))",
-                        label: r.wasReview ? "Caught" : "Correct", tinted: true)
-                        .auStagger(0)
+                        label: r.wasReview ? "Caught" : "Correct", tinted: true
+                    )
+                    .auStagger(0)
                     statTile(
                         value: "\(r.wasReview ? r.caught : scored)",
-                        label: r.wasReview ? "Strengthened" : "Words", tinted: false)
-                        .auStagger(1)
+                        label: r.wasReview ? "Strengthened" : "Words", tinted: false
+                    )
+                    .auStagger(1)
                     statTile(value: "\(r.sessionMinutes)", label: "Minutes", tinted: false)
                         .auStagger(2)
                 }
@@ -961,8 +979,10 @@ struct ResultView: View {
 
                 HStack(spacing: 12) {
                     ShareLink(
-                        item: "I completed today's lesson on Aurel! Streak: \(max(r.streak, 1)) days unhurried English learning.",
-                        preview: SharePreview("Aurel Daily Milestone", image: Image(systemName: "sun.max.fill"))
+                        item:
+                            "I completed today's lesson on Aurel! Streak: \(max(r.streak, 1)) days unhurried English learning.",
+                        preview: SharePreview(
+                            "Aurel Daily Milestone", image: Image(systemName: "sun.max.fill"))
                     ) {
                         HStack(spacing: 8) {
                             AUIcon(kind: .star, size: 16, color: .auAccentText)
@@ -1019,7 +1039,11 @@ struct ResultView: View {
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
                     .onAppear {
-                        guard !reduceMotion else { dawnWash = 0.18; dawnShown = true; return }
+                        guard !reduceMotion else {
+                            dawnWash = 0.18
+                            dawnShown = true
+                            return
+                        }
                         withAnimation(.easeInOut(duration: 0.5)) { dawnWash = 0.35 }
                         withAnimation(.easeInOut(duration: 0.5).delay(0.5)) { dawnWash = 0.18 }
                         dawnShown = true
@@ -1068,7 +1092,8 @@ struct ResultView: View {
                             style: StrokeStyle(lineWidth: 2, lineCap: .round)
                         )
                     // The sun-dot rides the thread to the horizon.
-                    let pt = path.trimmedPath(from: 0, to: max(0.001, drawn)).currentPoint
+                    let pt =
+                        path.trimmedPath(from: 0, to: max(0.001, drawn)).currentPoint
                         ?? CGPoint(x: 0, y: h * 0.7)
                     Circle()
                         .fill(AUSceneArt.sunMid)

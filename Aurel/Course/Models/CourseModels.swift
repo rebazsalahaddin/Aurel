@@ -17,6 +17,11 @@ struct CourseChapter: Decodable, Hashable, Identifiable {
     let canDos: [String]
     let doNotTeach: [String]
     let lessons: [CourseLesson]
+
+    /// Learner-facing chapter copy. Stable identifiers and authoring metadata
+    /// remain available to diagnostics, but views consume these projections.
+    var learnerTitle: String { CourseTextContract.learnerText(title) ?? "Chapter" }
+    var learnerOutcome: String { CourseTextContract.learnerText(mission) ?? learnerTitle }
 }
 
 struct CourseLesson: Decodable, Hashable, Identifiable {
@@ -28,6 +33,54 @@ struct CourseLesson: Decodable, Hashable, Identifiable {
     let pause: String?  // "after Practice A (≈10 min)"
     let src: String?  // authored markdown source
     let screens: [CourseScreen]
+
+    var learnerTitle: String { CourseTextContract.learnerText(title) ?? "Lesson" }
+    var learnerDuration: String { CourseTextContract.learnerText(time) ?? "" }
+}
+
+// MARK: Learner-facing content boundary
+
+/// Release presentation must never fall back to authoring IDs, source paths,
+/// implementation notes, or production-status language. This contract is
+/// intentionally small and deterministic so content imports and UI tests use
+/// the same rule.
+enum CourseTextContract {
+    static let forbiddenFragments = [
+        "dependency graph", "production-ready", "production ready",
+        "screen placeholder", "implementation note", "prototype", "fixture", "authored",
+        "production rule", "every screen",
+    ]
+
+    private static let internalToken = try! NSRegularExpression(
+        pattern:
+            #"\b(?:A1-C\d{2}-)?(?:AUD|ILL|RP|RT|PR|LS|RD|WR|CV)\d{3}(?:\s*[–—-]\s*(?:(?:AUD|ILL|RP|RT|PR|LS|RD|WR|CV))?\d{3})?\b|\bS\d{2}[a-z]?(?:\s*[–—-]\s*S?\d{2}[a-z]?)?\b"#,
+        options: [.caseInsensitive]
+    )
+
+    static func learnerText(_ candidate: String?) -> String? {
+        guard let candidate else { return nil }
+        let source = candidate.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !source.isEmpty else { return nil }
+        let lower = source.lowercased()
+        guard !forbiddenFragments.contains(where: lower.contains) else { return nil }
+        let range = NSRange(source.startIndex..<source.endIndex, in: source)
+        let mutable = NSMutableString(string: source)
+        internalToken.replaceMatches(in: mutable, range: range, withTemplate: "")
+        let text = (mutable as String)
+            .replacingOccurrences(of: #"\(\s*\)"#, with: "", options: .regularExpression)
+            .replacingOccurrences(of: #"[ \t]{2,}"#, with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return nil }
+        return text
+    }
+
+    static func isLearnerFacing(_ candidate: String) -> Bool {
+        learnerText(candidate) == candidate.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
+extension Optional where Wrapped == String {
+    var learnerFacing: String? { CourseTextContract.learnerText(self) }
 }
 
 // MARK: Shared sub-types
@@ -101,10 +154,13 @@ struct PracticeItem: Decodable, Hashable, Identifiable {
     let icon: String?  // ear | eye | choose | mouth
     let kind: String?  // image | speak | order (omitted = plain choice)
     let aud: String?
+    let scene: String?
     let ill: IllustrationRef?
     let prompt: String?
     let word: String?
     let opts: [PracticeOption]?
+    let pairs: [[String]]?
+    let baskets: [PracticeBasket]?
     let tiles: [String]?
     let key: AnswerKey?
     let ok: String?
@@ -114,6 +170,16 @@ struct PracticeItem: Decodable, Hashable, Identifiable {
     let a11y: [String]?
     let big: Bool?  // quiz Form A large-print items
     let note: String?
+}
+
+struct PracticeBasket: Decodable, Hashable {
+    let icon: String
+    let text: String
+
+    private enum CodingKeys: String, CodingKey {
+        case icon
+        case text = "t"
+    }
 }
 
 /// pronunciation produce item — `{id, word, aud, note}`.
@@ -150,6 +216,7 @@ struct TileTask: Decodable, Hashable, Identifiable {
     let id: String
     let instr: String
     let target: String?
+    let opts: [PracticeOption]?
     let tiles: [String]?
     let key: AnswerKey?
     let ok: String?

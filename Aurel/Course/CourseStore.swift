@@ -18,6 +18,23 @@ struct CourseStore: Sendable {
         let screen: CourseScreen
     }
 
+    struct RendererFixture: Sendable, Hashable {
+        let kind: ScreenKind
+        let family: RendererFamily
+        let position: Int
+        let chapterID: String
+        let lessonID: String
+        let screenID: String
+    }
+
+    struct LessonFixture: Sendable, Hashable {
+        let position: Int
+        let chapterID: String
+        let lessonID: String
+        let title: String
+        let screenCount: Int
+    }
+
     // MARK: Loading
 
     static func load(bundle: Bundle = .main) throws -> CourseStore {
@@ -66,6 +83,19 @@ struct CourseStore: Sendable {
         return 0
     }
 
+    /// First learner-facing screen in a lesson. Authoring-only intro and
+    /// demonstration pages stay in the flat bank for compatibility, but a
+    /// learner selecting a lesson starts on meaningful content immediately.
+    func lessonStartPos(chapterIdx: Int, lessonIdx: Int) -> Int {
+        let first = coursePos(chapterIdx: chapterIdx, lessonIdx: lessonIdx)
+        guard chapters.indices.contains(chapterIdx),
+            chapters[chapterIdx].lessons.indices.contains(lessonIdx)
+        else { return first }
+        let lesson = chapters[chapterIdx].lessons[lessonIdx]
+        let offset = lesson.screens.firstIndex { $0.kind.participatesInLessonFlow } ?? 0
+        return first + offset
+    }
+
     /// Which screen of which lesson the player is on — for the resume card.
     func courseSpot(_ pos: Int) -> (title: String, at: Int, of: Int) {
         var n = 0
@@ -89,6 +119,49 @@ struct CourseStore: Sendable {
 
     func screen(at pos: Int) -> FlatScreen? {
         flat.indices.contains(pos) ? flat[pos] : nil
+    }
+
+    /// One deterministic runtime entry point per authored kind. The first
+    /// bank occurrence is stable because the flattened order is authored.
+    var rendererFixtures: [RendererFixture] {
+        ScreenKind.authoredCases.compactMap { kind in
+            guard let position = flat.firstIndex(where: { $0.screen.kind == kind }) else {
+                return nil
+            }
+            let entry = flat[position]
+            return RendererFixture(
+                kind: kind,
+                family: kind.rendererFamily,
+                position: position,
+                chapterID: entry.chapter.id,
+                lessonID: entry.lesson.id,
+                screenID: entry.screen.id
+            )
+        }
+    }
+
+    func rendererFixture(for kind: ScreenKind) -> RendererFixture? {
+        rendererFixtures.first { $0.kind == kind }
+    }
+
+    /// Stable lesson starts for bounded end-to-end walking. Chapter IDs are
+    /// included because lesson IDs intentionally repeat inside each chapter.
+    var lessonFixtures: [LessonFixture] {
+        var fixtures: [LessonFixture] = []
+        for (chapterIndex, chapter) in chapters.enumerated() {
+            for (lessonIndex, lesson) in chapter.lessons.enumerated() {
+                fixtures.append(
+                    LessonFixture(
+                        position: lessonStartPos(
+                            chapterIdx: chapterIndex, lessonIdx: lessonIndex),
+                        chapterID: chapter.id,
+                        lessonID: lesson.id,
+                        title: lesson.learnerTitle,
+                        screenCount: lesson.screens.count
+                    ))
+            }
+        }
+        return fixtures
     }
 
     // MARK: Derived helpers

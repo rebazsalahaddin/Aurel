@@ -13,18 +13,20 @@ struct WelcomeView: View {
                 HStack {
                     AUWordmarkRow()
                     Spacer()
-                    Button {
-                        env.router.nav(.login)
-                    } label: {
-                        Text("Sign in")
-                            .font(.figtree(.semibold, size: 14))
-                            .foregroundStyle(AUSceneArt.duskCream.opacity(0.85))
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                            .background(Capsule().fill(AUSceneArt.duskCream.opacity(0.12)))
+                    if env.router.capabilities.accounts {
+                        Button {
+                            env.router.nav(.login)
+                        } label: {
+                            Text("Sign in")
+                                .font(.figtree(.semibold, size: 14))
+                                .foregroundStyle(AUSceneArt.duskCream.opacity(0.85))
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(Capsule().fill(AUSceneArt.duskCream.opacity(0.12)))
+                        }
+                        .buttonStyle(.auTap)
+                        .accessibilityLabel("Sign in with existing account")
                     }
-                    .buttonStyle(.auTap)
-                    .accessibilityLabel("Sign in with existing account")
                 }
                 .padding(.top, 64)
                 .padding(.horizontal, 24)
@@ -89,54 +91,56 @@ struct WelcomeView: View {
 
                     // .au-key — Begin the path
                     AUKeyButton(title: "Begin the path", aid: "au.btn.begin-the-path") {
-                        env.router.nav(.goal)
+                        env.router.nav(.onboardingSample)
                     }
                     .auStagger(3)
 
-                    // Already learning? · Sign in — keep on one line (design flex row).
-                    HStack(spacing: 15) {
-                        LinearGradient(
-                            colors: [
-                                .clear, AUSceneArt.duskCream.opacity(0.22),
-                            ], startPoint: .leading, endPoint: .trailing
-                        )
-                        .frame(height: 1)
-                        Button {
-                            env.router.nav(.login)
-                        } label: {
-                            HStack(alignment: .firstTextBaseline, spacing: 7) {
-                                Text("Already learning?")
-                                    .font(.figtree(.regular, size: 13.5))
-                                    .tracking(0.14)
-                                    .foregroundStyle(AUSceneArt.duskCream.opacity(0.58))
-                                    .fixedSize()
-                                Text("Sign in")
-                                    .font(.caprasimo(size: 16))
-                                    .tracking(0.19)
-                                    .foregroundStyle(AUSceneArt.duskCream)
-                                    .underline(
-                                        color: AUSceneArt.duskCream.opacity(0.38)
-                                    )
-                                    .fixedSize()
-                                    .padding(.bottom, 2)
+                    if env.router.capabilities.accounts {
+                        // Already learning? · Sign in — keep on one line.
+                        HStack(spacing: 15) {
+                            LinearGradient(
+                                colors: [
+                                    .clear, AUSceneArt.duskCream.opacity(0.22),
+                                ], startPoint: .leading, endPoint: .trailing
+                            )
+                            .frame(height: 1)
+                            Button {
+                                env.router.nav(.login)
+                            } label: {
+                                HStack(alignment: .firstTextBaseline, spacing: 7) {
+                                    Text("Already learning?")
+                                        .font(.figtree(.regular, size: 13.5))
+                                        .tracking(0.14)
+                                        .foregroundStyle(AUSceneArt.duskCream.opacity(0.58))
+                                        .fixedSize()
+                                    Text("Sign in")
+                                        .font(.caprasimo(size: 16))
+                                        .tracking(0.19)
+                                        .foregroundStyle(AUSceneArt.duskCream)
+                                        .underline(
+                                            color: AUSceneArt.duskCream.opacity(0.38)
+                                        )
+                                        .fixedSize()
+                                        .padding(.bottom, 2)
+                                }
+                                .fixedSize()
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 4)
+                                .frame(minHeight: 44)
                             }
-                            .fixedSize()
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 4)
-                            .frame(minHeight: 44)
+                            .buttonStyle(.auTap)
+                            .layoutPriority(1)
+                            LinearGradient(
+                                colors: [
+                                    .clear, AUSceneArt.duskCream.opacity(0.22),
+                                ], startPoint: .trailing, endPoint: .leading
+                            )
+                            .frame(height: 1)
                         }
-                        .buttonStyle(.auTap)
-                        .layoutPriority(1)
-                        LinearGradient(
-                            colors: [
-                                .clear, AUSceneArt.duskCream.opacity(0.22),
-                            ], startPoint: .trailing, endPoint: .leading
-                        )
-                        .frame(height: 1)
+                        .padding(.top, 20)
+                        .padding(.horizontal, 2)
+                        .auStagger(4)
                     }
-                    .padding(.top, 20)
-                    .padding(.horizontal, 2)
-                    .auStagger(4)
                 }
                 .padding(.horizontal, 24)
                 .padding(.bottom, 38)

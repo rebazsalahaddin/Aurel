@@ -561,6 +561,34 @@ struct PlanDusk: View {
 
 // MARK: Step header (onboarding, lines 184–190)
 
+/// A compact, non-wrapping position label for rails and paged content.
+///
+/// Progress rails are deliberately flexible; without an intrinsic, high-priority
+/// counter they can squeeze the number into a one-character-wide column on
+/// smaller phones. Keeping the count in a subtle badge makes both digits and
+/// their relationship readable in every place the pattern appears.
+struct AUProgressCounter: View {
+    let current: Int
+    let total: Int
+
+    var body: some View {
+        Text("\(current) / \(total)")
+            .font(.figtree(.semibold, size: 11.5))
+            .monospacedDigit()
+            .foregroundStyle(Color.auTextSecondary)
+            .lineLimit(1)
+            .fixedSize(horizontal: true, vertical: false)
+            .frame(minWidth: 46)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(Color.auFill))
+            .overlay(Capsule().strokeBorder(Color.auEdge, lineWidth: 1))
+            .layoutPriority(2)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Item \(current) of \(total)")
+    }
+}
+
 struct StepHeader: View {
     let step: Int  // 1-based
     let total: Int
@@ -588,9 +616,7 @@ struct StepHeader: View {
                 }
                 .frame(height: 4)
 
-                Text("\(step) of \(total)")
-                    .font(.figtree(.regular, size: 11.5))
-                    .foregroundStyle(Color.auTextTertiary)
+                AUProgressCounter(current: step, total: total)
             }
             // The meter + count read as one AX element; the Back button above
             // is deliberately OUTSIDE this group so VoiceOver can reach it
@@ -610,12 +636,12 @@ struct AUTabBar: View {
     let current: AppRouter.Screen
 
     private var selectedIndex: Int {
-        switch current {
-        case .home: return 0
-        case .stories: return 1
-        case .progress: return 2
-        case .profile: return 3
-        default: return 0
+        switch AppRouter.topLevelSection(for: current) {
+        case .learn: 0
+        case .practice: 1
+        case .progress: 2
+        case .you: 3
+        case nil: 0
         }
     }
 
@@ -627,15 +653,15 @@ struct AUTabBar: View {
             ZStack(alignment: .leading) {
                 // Sliding accent indicator (.au-tab-ind)
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color(UIColor(hex: 0xb25f1f)))
+                    .fill(Color.auPrimaryButtonFill)
                     .overlay(
                         RoundedRectangle(cornerRadius: 20, style: .continuous)
-                            .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2)
+                            .strokeBorder(Color.auPrimaryButtonBorder.opacity(0.72), lineWidth: 1.2)
                     )
                     .frame(width: tabWidth, height: geo.size.height - 14)
                     .offset(x: 7 + CGFloat(selectedIndex) * tabWidth, y: 0)
                     .animation(
-                        .spring(response: 0.35, dampingFraction: 0.78),
+                        AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion),
                         value: selectedIndex
                     )
 
@@ -671,11 +697,12 @@ struct AUTabBar: View {
     private func tab(_ screen: AppRouter.Screen, icon: TabIcon, label: String, width: CGFloat)
         -> some View
     {
-        let on = screen == current
+        let targetSection = AppRouter.topLevelSection(for: screen)
+        let on = targetSection == AppRouter.topLevelSection(for: current)
         let tint: Color = on ? Color.white : Color.auText.opacity(0.62)
         return Button {
             AUFeedback.selection()
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+            withAnimation(AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion)) {
                 env.router.nav(screen)
             }
         } label: {
@@ -689,7 +716,7 @@ struct AUTabBar: View {
                         AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
                         value: on
                     )
-                Text(label)
+                Text(label.auLocalized)
                     .font(.figtree(.bold, size: 10))
                     .tracking(0.1)
                     .foregroundStyle(tint)
@@ -699,7 +726,8 @@ struct AUTabBar: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(label)
+        .accessibilityLabel(label.auLocalized)
+        .accessibilityHint(targetSection?.purpose.auLocalized ?? "")
         .accessibilityAddTraits(on ? .isSelected : [])
         .accessibilityIdentifier("au.tab.\(label.auSlug)")
     }
@@ -857,21 +885,37 @@ struct LadderSheet: View {
                         .foregroundStyle(Color.auText)
                         .padding(.top, 12)
 
-                    Text("Aurel takes you from zero to confident Foundation English (A1), with progressive chapters written for adult learners.")
-                        .font(.figtree(.regular, size: 14))
-                        .auLine(14, 1.5)
-                        .foregroundStyle(Color.auText.opacity(0.6))
-                        .padding(.bottom, 8)
+                    Text(
+                        "Aurel takes you from zero to confident Foundation English (A1), with progressive chapters written for adult learners."
+                    )
+                    .font(.figtree(.regular, size: 14))
+                    .auLine(14, 1.5)
+                    .foregroundStyle(Color.auText.opacity(0.6))
+                    .padding(.bottom, 8)
 
                     VStack(spacing: 0) {
-                        ladderRow(level: "A1", title: "Foundation · 12 Chapters", status: "Active Course", isActive: true)
-                        ladderRow(level: "A2", title: "Elementary", status: "In Development", isActive: false)
-                        ladderRow(level: "B1", title: "Intermediate", status: "Planned", isActive: false)
-                        ladderRow(level: "B2", title: "Upper Intermediate", status: "Planned", isActive: false)
-                        ladderRow(level: "C1", title: "Advanced Mastery", status: "Planned", isActive: false, divider: false)
+                        ladderRow(
+                            level: "A1", title: "Foundation · 4 chapters", status: "Available",
+                            isActive: true)
+                        ladderRow(
+                            level: "A2", title: "Elementary", status: "Unavailable", isActive: false
+                        )
+                        ladderRow(
+                            level: "B1", title: "Intermediate", status: "Unavailable",
+                            isActive: false)
+                        ladderRow(
+                            level: "B2", title: "Upper Intermediate", status: "Unavailable",
+                            isActive: false)
+                        ladderRow(
+                            level: "C1", title: "Advanced Mastery", status: "Unavailable",
+                            isActive: false, divider: false)
                     }
-                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill))
-                    .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1))
+                    .background(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.auFill)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 22).strokeBorder(Color.auEdge, lineWidth: 1)
+                    )
                     .auLift()
                 }
                 .padding(24)
@@ -888,7 +932,9 @@ struct LadderSheet: View {
         .presentationDetents([.medium, .large])
     }
 
-    private func ladderRow(level: String, title: String, status: String, isActive: Bool, divider: Bool = true) -> some View {
+    private func ladderRow(
+        level: String, title: String, status: String, isActive: Bool, divider: Bool = true
+    ) -> some View {
         VStack(spacing: 0) {
             HStack(spacing: 14) {
                 Text(level)
@@ -897,10 +943,10 @@ struct LadderSheet: View {
                     .foregroundStyle(isActive ? Color.auAccent : Color.auText.opacity(0.35))
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
+                    Text(title.auLocalized)
                         .font(.figtree(.semibold, size: 14.5))
                         .foregroundStyle(Color.auText)
-                    Text(status)
+                    Text(status.auLocalized)
                         .font(.figtree(.regular, size: 12))
                         .foregroundStyle(isActive ? Color.auAccentText : Color.auText.opacity(0.45))
                 }
@@ -941,10 +987,12 @@ struct ForgotPasswordSheet: View {
                         .foregroundStyle(Color.auText)
                         .padding(.top, 8)
 
-                    Text("Enter the email associated with your Aurel account and we'll send you a password reset link.")
-                        .font(.figtree(.regular, size: 14))
-                        .auLine(14, 1.5)
-                        .foregroundStyle(Color.auText.opacity(0.6))
+                    Text(
+                        "Enter the email associated with your Aurel account and we'll send you a password reset link."
+                    )
+                    .font(.figtree(.regular, size: 14))
+                    .auLine(14, 1.5)
+                    .foregroundStyle(Color.auText.opacity(0.6))
 
                     TextField("you@example.com", text: $email)
                         .font(.figtree(.medium, size: 15))
@@ -953,13 +1001,22 @@ struct ForgotPasswordSheet: View {
                         .autocorrectionDisabled()
                         .padding(.horizontal, 18)
                         .frame(minHeight: 54)
-                        .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.auFill))
-                        .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(Color.auEdge, lineWidth: 1))
+                        .background(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous).fill(
+                                Color.auFill)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(
+                                Color.auEdge, lineWidth: 1)
+                        )
                         .padding(.top, 4)
 
                     Spacer()
 
-                    APillButton(title: "Send reset link", disabled: email.trimmingCharacters(in: .whitespaces).isEmpty) {
+                    APillButton(
+                        title: "Send reset link",
+                        disabled: email.trimmingCharacters(in: .whitespaces).isEmpty
+                    ) {
                         AUFeedback.correct()
                         withAnimation { sent = true }
                     }
@@ -978,12 +1035,14 @@ struct ForgotPasswordSheet: View {
                         Text("Reset link sent")
                             .font(.caprasimo(size: 22))
 
-                        Text("Check your inbox for instructions to reset your password. It may take a minute to arrive.")
-                            .font(.figtree(.regular, size: 14))
-                            .auLine(14, 1.5)
-                            .foregroundStyle(Color.auText.opacity(0.6))
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 12)
+                        Text(
+                            "Check your inbox for instructions to reset your password. It may take a minute to arrive."
+                        )
+                        .font(.figtree(.regular, size: 14))
+                        .auLine(14, 1.5)
+                        .foregroundStyle(Color.auText.opacity(0.6))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 12)
 
                         Spacer()
 
@@ -1006,4 +1065,3 @@ struct ForgotPasswordSheet: View {
         .presentationDetents([.fraction(0.48), .large])
     }
 }
-

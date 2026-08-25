@@ -77,10 +77,10 @@ struct ReviewScreenView: View {
 
                 if let auds = r.auds {
                     VStack(spacing: 6) {
-                        ForEach(auds, id: \.self) { a in
+                        ForEach(Array(auds.enumerated()), id: \.offset) { index, _ in
                             HStack(spacing: 9) {
                                 AUIcon(kind: .ear, size: 14, color: .auText.opacity(0.46))
-                                Text(a)
+                                Text("Listening set \(index + 1)")
                             }
                             .font(.figtree(.regular, size: 11.5))
                             .foregroundStyle(Color.auTextTertiary)
@@ -160,10 +160,6 @@ struct GrammarScreenView: View {
                                     Text(n.task ?? "")
                                         .font(.figtree(.semibold, size: 14))
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                    Text(n.aud ?? "")
-                                        .font(.figtree(.semibold, size: 9.5))
-                                        .tracking(0.66)
-                                        .opacity(0.5)
                                 }
                                 ForEach(n.chat ?? [], id: \.t) { c in
                                     HStack(alignment: .top, spacing: 9) {
@@ -216,10 +212,6 @@ struct GrammarScreenView: View {
                             ACard(radius: 18) {
                                 VStack(alignment: .leading, spacing: 9) {
                                     HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                        Text(r.id)
-                                            .font(.figtree(.bold, size: 9.5))
-                                            .tracking(1)
-                                            .foregroundStyle(Color.auAccentText)
                                         Text(r.title)
                                             .font(.caprasimo(size: 17))
                                             .tracking(-0.17)
@@ -352,7 +344,7 @@ struct PronPerceiveScreenView: View {
     var body: some View {
         ScreenColumn(topPad: 22, bottomPad: 26) {
             if case .pronPerceive(let p) = m.cur?.screen.payload {
-                Text(m.cur?.screen.label ?? "")
+                Text(m.cur?.screen.learnerTitle ?? ScreenKind.pronPerceive.defaultDisplayTitle)
                     .font(.caprasimo(size: 25))
                     .tracking(-0.45)
                     .padding(.bottom, 18)
@@ -366,10 +358,6 @@ struct PronPerceiveScreenView: View {
                                     Text(it.instr)
                                         .font(.figtree(.semibold, size: 14.5))
                                         .frame(maxWidth: .infinity, alignment: .leading)
-                                    Text(it.id)
-                                        .font(.figtree(.semibold, size: 9.5))
-                                        .tracking(0.66)
-                                        .opacity(0.45)
                                 }
                                 .padding(.bottom, 11)
 
@@ -397,7 +385,7 @@ struct PronPerceiveScreenView: View {
                                     }
                                 }
 
-                                if let note = it.note {
+                                if let note = it.note.learnerFacing {
                                     Text(note)
                                         .font(.figtree(.regular, size: 11.5))
                                         .auLine(11.5, 1.45)
@@ -496,7 +484,7 @@ private struct PronProduceItemCard: View {
                     unavailableNotice
                 }
 
-                if let note = it.note {
+                if let note = it.note.learnerFacing {
                     noteCard(note)
                 }
             }
@@ -656,16 +644,20 @@ private struct PronProduceItemCard: View {
 
 struct ConversationScreenView: View {
     let m: PlayerModel
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScreenColumn(topPad: 18, bottomPad: 26, hPad: 20) {
             if case .conversation(let c) = m.cur?.screen.payload {
-                Text((c.pkg ?? "").uppercased())
-                    .font(.figtree(.bold, size: 9.5))
-                    .tracking(1.3)
-                    .foregroundStyle(Color.auAccentText)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 6)
+                Text(
+                    m.cur?.screen.learnerTitle.uppercased()
+                        ?? ScreenKind.conversation.defaultDisplayTitle.uppercased()
+                )
+                .font(.figtree(.bold, size: 9.5))
+                .tracking(1.3)
+                .foregroundStyle(Color.auAccentText)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 6)
 
                 Text(c.scenario ?? "")
                     .font(.figtree(.regular, size: 12.5))
@@ -676,8 +668,8 @@ struct ConversationScreenView: View {
 
                 if let panels = c.panels {
                     HStack(spacing: 6) {
-                        ForEach(panels, id: \.self) { p in
-                            Text(p)
+                        ForEach(Array(panels.enumerated()), id: \.offset) { index, _ in
+                            Text("Scene \(index + 1)")
                                 .font(.figtree(.bold, size: 8))
                                 .tracking(0.5)
                                 .frame(height: 52)
@@ -714,9 +706,9 @@ struct ConversationScreenView: View {
                     .buttonStyle(.auTap)
 
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("\(c.aud ?? "") · \(c.delivery ?? "")")
+                        Text("Play the conversation")
                             .font(.figtree(.semibold, size: 13.5))
-                        Text("Line mode: \(c.lineAud ?? "") — replay any single turn")
+                        Text("Replay any single turn when you want another listen.")
                             .font(.figtree(.regular, size: 11.5))
                             .foregroundStyle(Color.auTextTertiary)
                     }
@@ -768,39 +760,36 @@ struct ConversationScreenView: View {
                                     lineWidth: 1)
                         )
                         .opacity(on ? 1 : 0.32)
-                        .animation(.easeInOut(duration: 0.35), value: m.turn)
+                        .animation(
+                            AUMotion.animation(
+                                .easeInOut(duration: 0.35), reduceMotion: reduceMotion),
+                            value: m.turn)
                     }
                 }
 
-                if let branch = c.branch {
+                if c.branch != nil {
                     ACard(radius: 16) {
                         VStack(alignment: .leading, spacing: 0) {
-                            Text("The read-back branches")
+                            Text("Listen for variations")
                                 .font(.figtree(.bold, size: 9.5))
                                 .tracking(1.3)
                                 .textCase(.uppercase)
                                 .foregroundStyle(Color.auTextTertiary)
                                 .padding(.bottom, 8)
-                            ForEach(branch, id: \.self) { t in
-                                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                    Text("→")
-                                        .foregroundStyle(Color.auAccent)
-                                    Text(t)
-                                }
+                            Text("The greeting, reply, or closing may change when you replay.")
                                 .font(.figtree(.regular, size: 12))
                                 .auLine(12, 1.45)
                                 .foregroundStyle(Color.auText.opacity(0.62))
-                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .padding(.top, 14)
                 }
 
-                if let lock = c.lock {
+                if c.lock != nil {
                     HStack(spacing: 9) {
                         AUIcon(kind: .lock, size: 14, color: .auText.opacity(0.44))
-                        Text(lock)
+                        Text("Keep listening to reveal each turn.")
                     }
                     .font(.figtree(.regular, size: 11.5))
                     .foregroundStyle(Color.auTextTertiary)

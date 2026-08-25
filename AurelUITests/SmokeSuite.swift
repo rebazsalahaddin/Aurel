@@ -19,8 +19,10 @@ final class SmokeSuite: XCTestCase {
     /// Distinctive element per screen (see class docs for why not a root marker).
     private enum Screen {
         static let welcome = "au.btn.begin-the-path"
+        static let sample = "au.onboarding.sample.option.0"
+        static let value = "au.onboarding.value.continue"
         static let goal = "au.goal.work"
-        static let commit = "au.remind.0730"
+        static let commit = "au.btn.continue"
         static let plan = "au.btn.start-your-first-lesson"
         static let home = "au.tab.learn"
         static let course = "au.player.close"
@@ -86,6 +88,13 @@ final class SmokeSuite: XCTestCase {
         onScreen(Screen.welcome, timeout: 30)
         tap("au.btn.begin-the-path")
 
+        onScreen(Screen.sample)
+        tap("au.onboarding.sample.option.0")
+        tap("au.onboarding.sample.continue")
+
+        onScreen(Screen.value)
+        tap("au.onboarding.value.continue")
+
         onScreen(Screen.goal)
         tap("au.goal.work")
         tap("au.goal.travel")
@@ -93,7 +102,7 @@ final class SmokeSuite: XCTestCase {
         tap("au.btn.continue")
 
         onScreen(Screen.commit)
-        tap("au.remind.0730")
+        tap("au.pace.20")
         tap("au.btn.continue")
 
         onScreen(Screen.plan)
@@ -132,6 +141,15 @@ final class SmokeSuite: XCTestCase {
                 timeout: 6),
             "Pending-resume card missing after leaving the lesson mid-way")
 
+        tap("au.home.start-over")
+        wait("au.home.restart.confirmation")
+        XCTAssertTrue(app.staticTexts["Restart lesson?"].exists)
+        XCTAssertTrue(app.staticTexts["Today’s lesson progress will be cleared."].exists)
+        tap("au.home.restart.cancel")
+        XCTAssertTrue(
+            app.buttons.matching(identifier: "au.home.resume").firstMatch.exists,
+            "Cancelling restart must preserve the pending lesson")
+
         app.terminate()
         app.launch()
         // Durable state survives the force quit (onboarded → Home, lesson
@@ -147,8 +165,8 @@ final class SmokeSuite: XCTestCase {
     func test3MicDeniedTapPathCompletes() {
         // Precondition (set by qa/run-ui-smoke.sh):
         //   xcrun simctl privacy <device> revoke microphone com.aurel.app
-        // SpeechToText is intentionally unwired today (governance: the tap
-        // path is the equal path); any permission alert here is a defect.
+        // Speech capture is on-device-only and permission-on-action; the type
+        // path is equal and must not trigger a permission prompt.
         var sawSystemAlert = false
         addUIInterruptionMonitor(withDescription: "permission-alert-tripwire") { alert in
             sawSystemAlert = true

@@ -1,102 +1,121 @@
-# Aurel — traceability matrix (Phase 1)
+# Aurel traceability matrix — through PH-02
 
-Sources of truth: `design/` (Aurel.dc.html = app shell; CourseScreen.dc.html = player; course-c1/2/3.js = banks) and `english_course/` (content authority). Statuses: **mapped** (implemented + covered) · **stub-as-authored** (renders the authored honest stub) · **deferred-owner** (outside this run by owner decision) · **open-defect** (ledger ID).
+Sources of truth: `Aurel/Resources/Course/a1-course.json`, the Swift router/player implementation, and `docs/product-audit/03_APP_IMPROVEMENT_PLAN.md`. Counts below are generated from the current shipping course bank and pinned by tests.
 
-## 1. Shell screens — design (24) → app
+Status vocabulary: **runtime-verified** · **unit-verified** · **release-gated** · **deferred-decision**.
 
-| # | `screen` | Design source (Aurel.dc.html) | App view | Status |
-|---|---|---|---|---|
-| 1 | welcome | 125 | `Features/Onboarding/WelcomeView.swift` | mapped (SmokeSuite t1) |
-| 2 | goal | 181 | `Features/Onboarding/OnboardingViews.swift:GoalView` | mapped (SmokeSuite t1) |
-| 3 | placement | 229 | `OnboardingViews.swift:PlacementView` | mapped (SmokeSuite t1) |
-| 4 | assess | 295 | `OnboardingViews.swift:AssessStubView` | stub-as-authored (placement deferred by governance, DECISIONS.md) |
-| 5 | assessReview | 349 | **not dispatched — `UnbuiltScreen` placeholder** (`App/RootView.swift`) | open-defect **S1-002** |
-| 6 | commit | 257 | `OnboardingViews.swift:CommitView` | mapped (SmokeSuite t1) |
-| 7 | plan | 377 | `OnboardingViews.swift:PlanView` | mapped (SmokeSuite t1) |
-| 8 | login | 412 | `Features/Login/LoginView.swift` | mapped |
-| 9 | home | 451 | `Features/Home/HomeView.swift` | mapped (SmokeSuite t1/t2, Milestone t1) |
-| 10 | course | 636 → CourseScreen import | `Course/Player/CoursePlayerView.swift` | mapped (SmokeSuite t2, Milestone t1/t2) |
-| 11 | lesson | 640 | `Features/QuickPractice/QuickPracticeViews.swift:LessonRunnerView` | mapped |
-| 12 | result | 841 | `QuickPracticeViews.swift:ResultView` | mapped |
-| 13 | streak | 887 | `Features/PracticeHub/StreakBoardViews.swift:StreakView` | mapped |
-| 14 | leaderboard | 933 | `StreakBoardViews.swift:LeaderboardView` | mapped |
-| 15 | stories (Practice hub) | 993 | `Features/PracticeHub/PracticeHubViews.swift:StoriesView` | mapped (SmokeSuite t4 tab matrix) |
-| 16 | hunt | 1049 | `PracticeHubViews.swift:HuntStubView` | stub-as-authored |
-| 17 | reader | 1075 | `PracticeHubViews.swift:ReaderStubView` | stub-as-authored |
-| 18 | scene | 1101 | `PracticeHubViews.swift:SceneView` | mapped |
-| 19 | speak | 1154 | `PracticeHubViews.swift:SpeakView` | mapped (SmokeSuite t3) |
-| 20 | review | 1240 | `PracticeHubViews.swift:ReviewView` | mapped |
-| 21 | progress | 1275 | `Features/Progress/…:ProgressView` | mapped (Milestone t4) |
-| 22 | profile | 1337 | `…:ProfileView` | mapped (Milestone t4) |
-| 23 | settings | 1402 | `…:SettingsView` | mapped (SmokeSuite t4, Milestone t3) |
-| 24 | paywall | 1469 | `…:PaywallView` | mapped (Milestone t4) |
+## Phase totals
 
-Overlays/states (not `screen` values): word-detail sheet (`sheetOpen`, 1519–1548) → `PracticeHubViews` word sheet — mapped; tab bar (1550) → `AUTabBar` — mapped; offline banner (453) → `OfflineBanner` — mapped; `course` sub-states starter/reviewMode/pending → `PlayerModel`/`AppRouter.pending` — mapped (SmokeSuite t2); text-size control (1455) → `SettingsView` typeStep — **open-defect S1-001** (control persists but drives nothing).
+| Scope | Current count | Current status |
+|---|---:|---|
+| Shell screens | 20 (`SCR-001`–`SCR-020`) | Existing smoke/milestone coverage passes; semantic tabs/actions and catalog extraction applied |
+| Authored chapters | 4 | Runtime-verified |
+| Authored lessons | 14 | Runtime-verified in one uninterrupted deterministic walk |
+| Authored course screens | 131 | Runtime-verified by the lesson walk |
+| Authored renderer kinds | 29 | 29/29 runtime-verified with render, close, and Home exit |
+| Renderer families | 10 | Representative AX3XL + Increase Contrast + Reduce Motion coverage |
+| Source-localization keys | 465 | Catalog compiles; PH-01 pseudolanguage route and PH-02 source extraction pass |
 
-## 2. Player screen types — design (31, CourseScreen.dc.html dispatch :1339–1346) → app
+## Shell screens
 
-| type | Design line | Renderer (`Course/Player/Screens/`) | Bank usage c1/c2/c3 | Status |
-|---|---|---|---|---|
-| promise | 96 | CoreScreens | 1/1/1 | mapped |
-| hook | 120 | CoreScreens | 1/1/1 | mapped |
-| orientation | 159 | CoreScreens | 1/1/1 | mapped |
-| pause | 178 | CoreScreens | 1/1/1 | mapped |
-| cards (+letterCards/numbers piggyback :1340) | 202 | CoreScreens | 5/6/5 | mapped |
-| alphabet | 266 | CoreScreens | 2/1/1 | mapped |
-| practice (+quiz/testlet/warmup/reading piggyback :1341) | 294 | PracticeScreen | 23/24/19 | mapped |
-| pending | 554 | AssessScreens | 0/0/0 (C3's four replaced by the real quiz — owner decision 2) | mapped (renders authored lock copy) |
-| review | 575 | LangScreens | 1/1/1 | mapped |
-| grammarModel | 607 | LangScreens | 1/2/2 | mapped |
-| pronPerceive | 685 | LangScreens | 1/1/0 | mapped |
-| pronProduce | 722 | LangScreens | 1/1/0 | mapped |
-| conversation | 753 | LangScreens | 1/1/1 | mapped |
-| order | 800 | AssemblyScreens | 1/1/0 | mapped |
-| tiles (+emailAssembly piggyback :1343) | 833 | AssemblyScreens | 2/2/1 | mapped |
-| substitution | 886 | AssemblyScreens | 1/1/0 | mapped |
-| missionBrief | 913 | AssemblyScreens | 1/1/1 | mapped |
-| roleplay | 950 | AssemblyScreens | 1/1/1 | mapped |
-| quizIntro | 1005 | AssessScreens | 1/1/1 (C3 via decision 2) | mapped |
-| results | 1019 | AssessScreens | 1/1/1 (C3 via decision 2) | mapped |
-| remediation | 1053 | AssessScreens | 1/1/1 (C3 via decision 2) | mapped |
-| reviewPlan | 1077 | AssessScreens | 1/1/1 (C3 via decision 2) | mapped |
-| chapterMap | 1108 | AssessScreens | 1/1/1 | mapped |
-| nextLine | 1202 | (handled at :1341) | 0/0/0 — dead branch, no bank instance | backlog **S3-002** |
+| ID | Surface | Primary implementation | PH-01 evidence/status |
+|---|---|---|---|
+| SCR-001 | Welcome/value sample | `Features/Onboarding/WelcomeView.swift`, `Features/Onboarding/OnboardingViews.swift` | PH-02 value-first and progress-free sample journey |
+| SCR-002 | Goal selection | `Features/Onboarding/OnboardingViews.swift` | First goal changes the visible Learn reason; focused unit/UI coverage |
+| SCR-003 | Pace commitment | `Features/Onboarding/OnboardingViews.swift` | 10/20-minute selection changes visible duration; PH-00 reminder gate retained |
+| SCR-004 | Plan/value summary | `Features/Onboarding/OnboardingViews.swift` | Goal reason, pace, duration, and outcome are data-driven |
+| SCR-005 | Login/unavailable account | `Features/Login/LoginView.swift` | Release-gated by PH-00; milestone regression |
+| SCR-006 | Home/learning path | `Features/Home/HomeView.swift` | One reason/duration/outcome recommendation across focused PH-02 states; stable tabs |
+| SCR-007 | Authored player | `Course/Player/CoursePlayerView.swift` | 29 kinds, 14 lessons, 131 screens runtime-verified |
+| SCR-008 | Quick practice | `Features/QuickPractice/QuickPracticeViews.swift` | Smoke/milestone regression; cataloged |
+| SCR-009 | Result | `Features/QuickPractice/QuickPracticeViews.swift` | Milestone regression |
+| SCR-010 | Streak | `Features/PracticeHub/StreakBoardViews.swift` | Existing route coverage retained |
+| SCR-011 | Sample leaderboard | `Features/PracticeHub/StreakBoardViews.swift` | Tab/milestone regression |
+| SCR-012 | Practice hub | `Features/PracticeHub/PracticeHubViews.swift` | Distinct learner-chosen job; activity duration/outcome labels; focused tab journey |
+| SCR-013 | Scene | `Features/PracticeHub/PracticeHubViews.swift` | Cataloged learner copy |
+| SCR-014 | Speak | `Features/PracticeHub/PracticeHubViews.swift` | Smoke denial path; PH-00 privacy gate retained |
+| SCR-015 | Review | `Features/PracticeHub/PracticeHubViews.swift` | Cataloged learner copy |
+| SCR-016 | Progress | `Features/Progress/ProgressProfileSettingsPaywall.swift` | Stable completed-lesson evidence levels, learner explanation, and next-improvement action |
+| SCR-017 | Profile/You | `Features/Progress/ProgressProfileSettingsPaywall.swift` | Distinct identity/settings job; valid empty and unavailable-chapter actions |
+| SCR-018 | Settings | `Features/Progress/ProgressProfileSettingsPaywall.swift` | AX/milestone regression; truthful PH-00 capabilities retained |
+| SCR-019 | Unavailable paywall | `Features/Progress/ProgressProfileSettingsPaywall.swift` | PH-00 release-safe geometry/capability gate retained |
+| SCR-020 | Unavailable account/subscription | `Features/Progress/ProgressProfileSettingsPaywall.swift` | PH-00 release-safe geometry/capability gate retained |
 
-Screen totals: 40/43/34 = 117 shipped (CourseDecodingTests pins). `pending` screens in banks: 0 (post decision 2).
+## Authored renderer inventory
 
-## 3. Content units — english_course → data → views
+| Kind | Screens | Family | Verification |
+|---|---:|---|---|
+| `alphabet` | 1 | cards | Runtime-verified |
+| `cards` | 12 | cards | Runtime + representative AX |
+| `chapterMap` | 4 | assessment | Runtime-verified |
+| `conversation` | 3 | conversation | Runtime + representative AX; learner title/scene contract |
+| `emailAssembly` | 1 | assembly | Runtime-verified |
+| `grammarModel` | 4 | grammar | Runtime + representative AX |
+| `hook` | 6 | opening | Runtime-verified |
+| `letterCards` | 1 | cards | Runtime-verified |
+| `missionBrief` | 3 | mission | Runtime + representative AX |
+| `numbers` | 4 | cards | Runtime-verified |
+| `order` | 2 | assembly | Runtime + deterministic key path |
+| `orientation` | 1 | opening | Runtime; learner guidance contract |
+| `pause` | 2 | opening | Runtime + explicit Continue/Break actions |
+| `practice` | 24 | practice | Runtime + selected-state semantics |
+| `promise` | 2 | opening | Runtime + representative AX |
+| `pronPerceive` | 5 | pronunciation | Runtime + representative AX |
+| `pronProduce` | 3 | pronunciation | Runtime-verified |
+| `quiz` | 4 | practice | Runtime-verified |
+| `quizIntro` | 3 | assessment | Runtime-verified |
+| `reading` | 6 | practice | Runtime-verified |
+| `remediation` | 3 | assessment | Runtime-verified |
+| `results` | 4 | assessment | Runtime + representative AX |
+| `review` | 5 | review | Runtime + representative AX; asset IDs replaced by learner set names |
+| `reviewPlan` | 3 | assessment | Runtime-verified |
+| `roleplay` | 4 | mission | Runtime + full lesson journey; stable Safe stop |
+| `substitution` | 2 | assembly | Runtime-verified |
+| `testlet` | 9 | practice | Runtime; learner rung/support/unlock copy |
+| `tiles` | 5 | assembly | Runtime + representative AX + deterministic key paths |
+| `warmup` | 5 | practice | Runtime-verified |
 
-| Unit | english_course source | Data file | Shipped | Status |
-|---|---|---|---|---|
-| A1-C01 L01–L04 (incl. quiz Form A 22) | 04_A1_chapters/A1_C01/* | design/course-c1.js → a1-course.json | 4 lessons · 40 screens | mapped (CourseDecoding + ContentConformance*) |
-| A1-C02 L01–L04 (quiz 26) | A1_C02/* | course-c2.js | 4 lessons · 43 screens | mapped |
-| A1-C03 L01–L03 (quiz 32) | A1_C03/* | course-c3.js + exporter C3-closer step | 3 lessons · 34 screens | mapped (quiz per owner decision 2, `83be99c`) |
-| A1-C04 L01–L03 (Checkpoint 1) | A1_C04/* (complete, QA-passed) | **no design bank** | absent | **deferred-owner** (decision 1) |
-| A1-C05 L01–L02 | A1_C05/* (L03 unauthored upstream) | **no design bank** | absent | **deferred-owner** (decision 1) |
-| C06–C12, F1–F3 | not yet authored upstream | — | — | not defects (pending authoring) |
-| Foundation ledgers (LEXICAL/GRAMMAR/AUDIO/ILL registers, can-do matrix) | 03_A1_foundation/* | projected into banks via authoring | — | referenced by conformance checks |
+Compatibility-only `pending` and forward guard `unknown` are intentionally excluded from the 29 authored kinds.
 
-## 4. Orphans — both directions
+## Content units
 
-**Source-side (specified, not fully shipped):**
-- ILL036 (C2 + C3 blocks marked 36/36 used in ILLUSTRATION_ID_REGISTER.csv) referenced by no bank screen → **S2-005**.
-- Alt-text parity: two bank sites paraphrase authored alt_text (`course-c1.js:21`, `course-c2.js:229`) → **S2-004**.
-- Stale shell copy (Home chapter count, paywall "Twenty-four chapters") → **S2-006 source-staleness** (owner decision 3).
-- Quiz `distractor_rationales` / `rationale` / governance fields: intentionally not projected by design's own projection (documented in the bank headers) — not defects.
-- C3 quiz results strong/developing/next copy: authored in C1/C2 closers only — C3 fields absent by source (flagged in the decision-2 implementation report) — noted, not a defect.
+| Chapter | Lessons | Screens | Status |
+|---|---:|---:|---|
+| `A1-C01` | 4 | 40 | Runtime-verified |
+| `A1-C02` | 4 | 43 | Runtime-verified |
+| `A1-C03` | 3 | 34 | Runtime-verified |
+| `A1-C04` | 3 | 14 | Runtime-verified |
+| **Total** | **14** | **131** | **Runtime-verified** |
 
-**App-side (implemented without a source target):**
-- None found — every screen type and shell surface maps to a design element; `UnbuiltScreen` exists only as the assessReview placeholder (counted as S1-002, not an orphan).
-- `-AUREL_TEST_START` fast path + `SIMCTL_CHILD_AUREL_SCREEN` env hook are test infrastructure, not features.
+## PH-01 recommendation traceability
 
-## 5. Coverage by the harness (post Phase 0.5)
+| Recommendation | Acceptance evidence | Status |
+|---|---|---|
+| REC-006 breadth | Named surface/action roles; non-color selected values/traits; AX3XL, Increase Contrast, Reduce Motion on compact/common/large devices | Complete for PH-01 simulator scope |
+| REC-007 | 29-kind fixture suite; 14-lesson/131-screen continuous walker; bounded unchanged-state failure; focused regression fixtures | Complete |
+| REC-008 | Compatible display/debug schema; all 131 `displayTitle` fields; forbidden-copy contract; visible author-token UI scan; 410-key string catalog; pseudolanguage | Complete, with launch locales deferred to DEC-004 |
+| REC-009 | Ten named renderer families; semantic surfaces/actions/tabs; stable accessibility identifiers; component catalog | Complete for PH-01 |
 
-- **Unit:** course decode/count pins per chapter · position math · services (scheduler/streak/bank/scene/joinTiles) · fonts · **DesignTokenTests** (all three CSS layers, both themes) · **SVGPathShapeTests** (every authored icon path) · **ContentConformanceTests*** (verbatim options/keys/feedback/hints per item vs english_course).
-- **UI:** SmokeSuite 4/4 (cold launch + onboarding walk, force-quit durability, mic-denied tap path, fast-path purity) · MilestoneSuite (lesson e2e, background/resume, AX3XL hittability on 17e/17 Pro Max via `qa/run-ui-ax.sh`, tab/settings/paywall matrix).
-- *ContentConformanceTests landed (commit `18b4875`): 366 practice + 80 quiz + 84 vocab records joined to the shipped JSON; documented-drift registry pins the bank-vs-english_course drift (ledger S1-005/006, S2-007..010).
+## PH-02 recommendation traceability
 
-## 6. Owner decisions register
+| Recommendation | Acceptance evidence | Status |
+|---|---|---|
+| REC-010 | Progress-free task before setup; explicit duration/outcome/free/voice scope; persisted skip/back/relaunch; goal and pace alter visible recommendation; existing learners bypass | Engineering complete; adult-learner comprehension validation remains external |
+| REC-011 | Four distinct tab jobs; shared reason/duration/outcome/action contract; stable evidence-level thresholds and explanation; valid state actions; tab ownership/preservation tests | Engineering complete; UX/learning-design validation remains external |
 
-1. C04 + C05-L1/L2 → **deferred-owner** (design banks intentionally cover C1–C3 per design/README).
-2. C3 quiz pending→authored conflict → **implemented from english_course** (`83be99c`).
-3. Stale copy → **kept verbatim**, logged (S2-006).
+## Automated gates
+
+- `PH01FoundationTests`: generated inventory, family coverage, 14/131 fixtures, schema compatibility, learner-copy rejection, practice normalization, structured completion, deterministic tile paths, and semantic roles.
+- `RendererCoverageSuite`: 29/29 render/close/exit, zero visible author IDs, pseudolanguage navigation, ten representative AX/reduced-motion families, and non-color selected state.
+- `MilestoneSuite`: uninterrupted 14-lesson traversal plus focused mixed-tile/roleplay, structured-practice, remaining-lesson, restoration, AX, navigation, and release-safety checks.
+- `SmokeSuite`: onboarding, durable relaunch, denied microphone alternative, and fixture-route purity.
+- `PH02JourneyTests`: progress-free sample, onboarding restoration/completion, goal/pace effects, recommendation states, evidence derivation, four-tab jobs, and tab-state preservation.
+- `PH02NavigationSuite` plus the updated onboarding smoke journey: focused value-first and four-tab UI traversal.
+- Release build scan: PH-01 fixture environment keys/identifiers are absent from the optimized executable.
+
+## Decision and launch boundaries
+
+- **DEC-004 remains deferred-decision:** English is the source locale; pseudolanguage is a QA route. Additional launch locales and curriculum translation require explicit approval and language review.
+- Simulator semantics do not replace a manual VoiceOver/Voice Control pass or real-device speech/audio review; those remain PH-03 launch gates.
+- PH-02 engineering is complete. Accessibility-inclusive adult-learner comprehension research and independent UX/learning-design approval have not been fabricated and remain validation gates.
+- PH-03 has not started and remains unauthorized.

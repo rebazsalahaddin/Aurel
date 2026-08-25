@@ -21,7 +21,58 @@ extension ButtonStyle where Self == ATapButtonStyle {
     static var auTap: ATapButtonStyle { ATapButtonStyle() }
 }
 
+/// Truthful fallback for a service-backed route that is not executable in
+/// this build. It contains one safe navigation action and no disabled form or
+/// simulated transaction controls.
+struct CapabilityUnavailableView: View {
+    let title: String
+    let message: String
+    let buttonTitle: String
+    let aid: String
+    let action: () -> Void
+
+    var body: some View {
+        GeometryReader { geo in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    AUIcon(kind: .lock, size: 34, color: .auAccentText)
+                        .frame(width: 68, height: 68)
+                        .background(Circle().fill(Color.auTintBg))
+                        .padding(.bottom, 22)
+                    Text(title.auLocalized)
+                        .font(.caprasimo(size: 29))
+                        .tracking(-0.58)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 11)
+                    Text(message.auLocalized)
+                        .font(.figtree(.regular, size: 14.5))
+                        .auLine(14.5, 1.55)
+                        .foregroundStyle(Color.auTextSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 28)
+                    APillButton(title: buttonTitle, aid: "\(aid).back", action: action)
+                }
+                .frame(maxWidth: 342)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 24)
+                .frame(maxWidth: .infinity, minHeight: geo.size.height, alignment: .center)
+            }
+        }
+        .background(Color.auBackground.ignoresSafeArea())
+        .accessibilityIdentifier(aid)
+        .auScreenEntrance()
+    }
+}
+
 // MARK: Buttons
+
+enum AUActionRole: String, CaseIterable, Sendable {
+    case primary, secondary, text, destructive
+}
+
+enum AUSurfaceRole: String, CaseIterable, Sendable {
+    case canvas, section, task, selectedTask, insetInfo, modal
+}
 
 /// `.au-btn` — 17/22 padding, 22 pt radius, Figtree 600 16.5.
 struct APillButton: View {
@@ -34,6 +85,9 @@ struct APillButton: View {
 
     let title: String
     var variant: Variant = .primary
+    /// Named action hierarchy. When omitted, the existing visual variant maps
+    /// to a deterministic semantic role for backward compatibility.
+    var role: AUActionRole? = nil
     var icon: AUIcon.Kind? = nil
     /// A non-icon-set glyph (the Apple / Google marks on the sign-in buttons).
     var glyph: AUBrandMark.Kind? = nil
@@ -60,7 +114,7 @@ struct APillButton: View {
                 if let glyph {
                     AUBrandMark(kind: glyph, size: 18, tint: fgColor)
                 }
-                Text(title)
+                Text(title.auLocalized)
                     .font(.figtree(.semibold, size: compact ? 14.5 : (player ? 16 : 16.5)))
                     .tracking(player ? 0.19 : 0.2)
                     .lineLimit(1)
@@ -94,21 +148,28 @@ struct APillButton: View {
                 )
         case .primary where player:
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color(UIColor(hex: 0xb25f1f)))
+                .fill(Color.auPrimaryButtonFill)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2)
+                        .strokeBorder(Color.auPrimaryButtonBorder.opacity(0.72), lineWidth: 1.2)
                 )
         case .quiet where player:
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .strokeBorder(Color.auDivider, lineWidth: 1)
-        case .primary:
-            // .au-btn-primary: flat 0xb25f1f fill with lighter orange border
+        case .primary where effectiveRole == .destructive:
             RoundedRectangle(cornerRadius: compact ? 16 : AURadius.btn, style: .continuous)
-                .fill(Color(UIColor(hex: 0xb25f1f)))
+                .fill(Color.auErrText)
                 .overlay(
                     RoundedRectangle(cornerRadius: compact ? 16 : AURadius.btn, style: .continuous)
-                        .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2)
+                        .strokeBorder(Color.auErr.opacity(0.72), lineWidth: 1.2)
+                )
+        case .primary:
+            // Accessible copper action role with a lighter ramp border.
+            RoundedRectangle(cornerRadius: compact ? 16 : AURadius.btn, style: .continuous)
+                .fill(Color.auPrimaryButtonFill)
+                .overlay(
+                    RoundedRectangle(cornerRadius: compact ? 16 : AURadius.btn, style: .continuous)
+                        .strokeBorder(Color.auPrimaryButtonBorder.opacity(0.72), lineWidth: 1.2)
                 )
         case .ghost:
             AUGradients.glass()
@@ -144,23 +205,19 @@ struct APillButton: View {
         }
     }
 
+    private var effectiveRole: AUActionRole {
+        if let role { return role }
+        return switch variant {
+        case .primary: .primary
+        case .ghost, .quiet, .dashed: .secondary
+        }
+    }
+
     private var shadowSpec: (radius: CGFloat, y: CGFloat, opacity: Double) {
         if variant == .primary && !disabled {
             return (6, 3, 0.12)
         }
         return (0, 0, 0)
-    }
-
-    @ViewBuilder
-    private var hiLine: some View {
-        if variant == .primary && !disabled {
-            RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
-                .mask(
-                    Rectangle().frame(height: 1.5)
-                        .frame(maxHeight: .infinity, alignment: .top)
-                )
-        }
     }
 }
 
@@ -228,7 +285,7 @@ struct ALinkButton: View {
 
     var body: some View {
         Button(action: action) {
-            Text(title)
+            Text(title.auLocalized)
                 .font(.figtree(.semibold, size: 14.5))
                 .tracking(0.17)
                 .foregroundStyle(tint ?? Color.auAccentText)
@@ -263,7 +320,7 @@ struct AUKeyButton: View {
             action()
         }) {
             HStack(spacing: 12) {
-                Text(title)
+                Text(title.auLocalized)
                     .font(.figtree(.bold, size: 16.5))
                     .tracking(0.08)
                     .foregroundStyle(Color(UIColor(hex: 0xfff7ee)))
@@ -296,128 +353,6 @@ struct AUKeyButton: View {
     }
 }
 
-/// Word sheet bottom drawer (radius 32 top corners, grab handle, Caprasimo 27 word, 40×40 audio, IPA, stress, Function gloss, In-context frame).
-struct WordSheetView: View {
-    let word: String
-    let ipa: String
-    let stress: String
-    let fn: String
-    let frame: String
-    let onAudio: () -> Void
-    let onClose: () -> Void
-
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var appeared = false
-
-    var body: some View {
-        ZStack(alignment: .bottom) {
-            Color.black.opacity(appeared ? 0.42 : 0)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    withAnimation(reduceMotion ? nil : AUMotion.flow) {
-                        appeared = false
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + (reduceMotion ? 0 : 0.25)) {
-                        onClose()
-                    }
-                }
-
-            VStack(alignment: .leading, spacing: 0) {
-                Capsule()
-                    .fill(Color.auText.opacity(0.18))
-                    .frame(width: 38, height: 4)
-                    .frame(maxWidth: .infinity)
-                    .padding(.bottom, 20)
-
-                HStack(alignment: .firstTextBaseline) {
-                    Text(word)
-                        .font(.caprasimo(size: 27))
-                        .tracking(-0.54)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Button(action: onAudio) {
-                        AUIcon(kind: .ear, size: 17, color: .auAccentText)
-                            .frame(width: 40, height: 40)
-                            .background(Circle().strokeBorder(Color.auEdge, lineWidth: 1))
-                    }
-                    .buttonStyle(.auTap)
-                    .accessibilityLabel("Hear this word")
-                }
-                .padding(.bottom, 6)
-
-                HStack(alignment: .firstTextBaseline, spacing: 10) {
-                    Text(ipa)
-                        .font(.caprasimo(size: 15))
-                        .foregroundStyle(Color.auText.opacity(0.62))
-                    Text(stress)
-                        .font(.figtree(.regular, size: 11.5))
-                        .foregroundStyle(Color.auTextTertiary)
-                }
-                .padding(.bottom, 18)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("FUNCTION")
-                        .font(.figtree(.bold, size: 9.5))
-                        .tracking(1.33)
-                        .foregroundStyle(Color.auTextTertiary)
-                    Text(fn)
-                        .font(.figtree(.regular, size: 13.5))
-                        .auLine(13.5, 1.45)
-                }
-                .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 16))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.auFill)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18).strokeBorder(Color.auEdge, lineWidth: 1)
-                )
-                .padding(.bottom, 12)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("IN CONTEXT")
-                        .font(.figtree(.bold, size: 9.5))
-                        .tracking(1.33)
-                        .foregroundStyle(Color.auTextTertiary)
-                    Text(frame)
-                        .font(.figtree(.semibold, size: 14))
-                        .auLine(14, 1.45)
-                }
-                .padding(EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 16))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous).fill(Color.auFill)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18).strokeBorder(Color.auEdge, lineWidth: 1))
-            }
-            .padding(EdgeInsets(top: 10, leading: 24, bottom: 34, trailing: 24))
-            .background(
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 32, bottomLeadingRadius: 0, bottomTrailingRadius: 0,
-                    topTrailingRadius: 32, style: .continuous
-                )
-                .fill(Color.auBackground)
-                .overlay(alignment: .top) {
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 32, bottomLeadingRadius: 0, bottomTrailingRadius: 0,
-                        topTrailingRadius: 32, style: .continuous
-                    )
-                    .strokeBorder(Color.auHi, lineWidth: 1)
-                    .mask(Rectangle().frame(height: 2).frame(maxHeight: .infinity, alignment: .top))
-                }
-                .shadow(color: Color(UIColor(hex: 0x18120e)).opacity(0.45), radius: 24, y: -12)
-            )
-            .offset(y: appeared ? 0 : 360)
-        }
-        .ignoresSafeArea()
-        .onAppear {
-            withAnimation(reduceMotion ? nil : AUMotion.flow) {
-                appeared = true
-            }
-        }
-    }
-}
-
 extension String {
     /// "Begin the path" → "begin-the-path" (for derived UI-test identifiers).
     var auSlug: String {
@@ -435,32 +370,80 @@ extension String {
 struct ACard<Content: View>: View {
     var radius: CGFloat = AURadius.lg
     var padded = true
+    var role: AUSurfaceRole = .task
+    /// Chapter One's lesson cards reuse Home's recommendation glass. Other
+    /// callers retain the established opaque surface.
+    var glass: Bool? = nil
     @ViewBuilder let content: Content
+    @Environment(\.auLessonGlassEnabled) private var lessonGlassEnabled
 
+    private var usesGlass: Bool { glass ?? lessonGlassEnabled }
+
+    @ViewBuilder
     var body: some View {
+        if usesGlass {
+            base
+                .auPracticeGlass(radius: radius)
+                .accessibilityElement(children: .contain)
+                .accessibilityAddTraits(role == .selectedTask ? .isSelected : [])
+                .accessibilityIdentifier("au.surface.\(role.rawValue)")
+        } else {
+            base
+                .background(
+                    RoundedRectangle(cornerRadius: radius, style: .continuous)
+                        .fill(surfaceFill)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: radius, style: .continuous)
+                        .strokeBorder(surfaceBorder, lineWidth: role == .selectedTask ? 1.5 : 1)
+                )
+                .overlay(alignment: .top) {
+                    RoundedRectangle(cornerRadius: radius, style: .continuous)
+                        .strokeBorder(Color.auHi, lineWidth: 1)
+                        .mask(
+                            Rectangle().frame(height: 1.5)
+                                .frame(maxHeight: .infinity, alignment: .top)
+                        )
+                }
+                .shadow(
+                    color: Color(UIColor(hex: 0x4a301a)).opacity(shadowOpacity),
+                    radius: role == .modal ? 14 : 5,
+                    y: role == .modal ? 8 : 5
+                )
+                .accessibilityElement(children: .contain)
+                .accessibilityAddTraits(role == .selectedTask ? .isSelected : [])
+                .accessibilityIdentifier("au.surface.\(role.rawValue)")
+        }
+    }
+
+    private var base: some View {
         content
             // 16/18 padding inside the 1 pt `--au-edge` hairline.
             .padding(
                 padded ? EdgeInsets(top: 17, leading: 19, bottom: 17, trailing: 19) : EdgeInsets()
             )
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(Color.auFill)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .strokeBorder(Color.auEdge, lineWidth: 1)
-            )
-            .overlay(alignment: .top) {
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .strokeBorder(Color.auHi, lineWidth: 1)
-                    .mask(
-                        Rectangle().frame(height: 1.5)
-                            .frame(maxHeight: .infinity, alignment: .top)
-                    )
-            }
-            .auLift()
+    }
+
+    private var surfaceFill: Color {
+        switch role {
+        case .canvas: .auBackground
+        case .section, .task, .modal: .auFill
+        case .selectedTask: .auTintBg
+        case .insetInfo: .auFlatBg
+        }
+    }
+
+    private var surfaceBorder: Color {
+        role == .selectedTask ? .auAccent : .auEdge
+    }
+
+    private var shadowOpacity: Double {
+        switch role {
+        case .task: 0.09
+        case .modal: 0.16
+        case .canvas, .section, .selectedTask, .insetInfo: 0
+        }
     }
 }
 
@@ -473,7 +456,7 @@ struct ATag: View {
     var variant: Variant = .flat
 
     var body: some View {
-        Text(text)
+        Text(text.auLocalized)
             .font(.figtree(.bold, size: 9.5))
             .tracking(1.1)
             .textCase(.uppercase)
@@ -629,7 +612,8 @@ struct LiveWaveform: View {
                     .frame(height: height(value))
                     .frame(maxHeight: .infinity, alignment: .center)
                     .animation(
-                        AUMotion.animation(.spring(response: 0.18, dampingFraction: 0.9),
+                        AUMotion.animation(
+                            .spring(response: 0.18, dampingFraction: 0.9),
                             reduceMotion: reduceMotion),
                         value: value
                     )
@@ -657,7 +641,8 @@ struct RecordingRing: View {
     var body: some View {
         Circle()
             .strokeBorder(
-                Color.auAccent2Ramp(600).opacity(phase ? 0 : 0.5), lineWidth: 2)
+                Color.auAccent2Ramp(600).opacity(phase ? 0 : 0.5), lineWidth: 2
+            )
             .scaleEffect(phase ? 1.32 : 1.0)
             .onAppear {
                 guard !reduceMotion else { return }
@@ -797,7 +782,7 @@ struct AUElegantBackground: View {
             // Slow, harmonious ambient drift coordinates
             let driftY1 = reduceMotion ? 0 : sin(phase * .pi * 2) * 4.5
             let driftY2 = reduceMotion ? 0 : cos(phase * .pi * 2) * 3.5
-            let driftX  = reduceMotion ? 0 : sin(phase * .pi * 2 * 0.6) * 3.0
+            let driftX = reduceMotion ? 0 : sin(phase * .pi * 2 * 0.6) * 3.0
 
             ZStack {
                 // Base ground
@@ -848,11 +833,13 @@ struct AUElegantBackground: View {
                     // In subdued/lesson mode, line opacities are ultra-soft and ethereal
                     let alphaScale: Double = (subdued ? 0.42 : 1.0)
 
-                    let primaryInk = scheme == .dark
+                    let primaryInk =
+                        scheme == .dark
                         ? Color(UIColor(hex: 0xe8e2d8))
                         : Color(UIColor(hex: 0x2b221a))
 
-                    let accentInk = scheme == .dark
+                    let accentInk =
+                        scheme == .dark
                         ? Color(UIColor(hex: 0xf5a56d))
                         : Color(UIColor(hex: 0xb55a22))
 
@@ -871,7 +858,8 @@ struct AUElegantBackground: View {
                     )
                     context.stroke(
                         p1,
-                        with: .color(primaryInk.opacity((scheme == .dark ? 0.12 : 0.075) * alphaScale)),
+                        with: .color(
+                            primaryInk.opacity((scheme == .dark ? 0.12 : 0.075) * alphaScale)),
                         style: StrokeStyle(lineWidth: 0.9, lineCap: .round)
                     )
 
@@ -890,7 +878,8 @@ struct AUElegantBackground: View {
                     )
                     context.stroke(
                         p1b,
-                        with: .color(accentInk.opacity((scheme == .dark ? 0.10 : 0.06) * alphaScale)),
+                        with: .color(
+                            accentInk.opacity((scheme == .dark ? 0.10 : 0.06) * alphaScale)),
                         style: StrokeStyle(lineWidth: 0.8, lineCap: .round, dash: [2.5, 6.5])
                     )
 
@@ -905,7 +894,8 @@ struct AUElegantBackground: View {
                     )
                     context.stroke(
                         p2,
-                        with: .color(primaryInk.opacity((scheme == .dark ? 0.10 : 0.06) * alphaScale)),
+                        with: .color(
+                            primaryInk.opacity((scheme == .dark ? 0.10 : 0.06) * alphaScale)),
                         style: StrokeStyle(lineWidth: 0.85, lineCap: .round)
                     )
 
@@ -920,7 +910,8 @@ struct AUElegantBackground: View {
                     )
                     context.stroke(
                         p2b,
-                        with: .color(accentInk.opacity((scheme == .dark ? 0.08 : 0.045) * alphaScale)),
+                        with: .color(
+                            accentInk.opacity((scheme == .dark ? 0.08 : 0.045) * alphaScale)),
                         style: StrokeStyle(lineWidth: 0.7, lineCap: .round, dash: [1.5, 8.0])
                     )
 
@@ -939,7 +930,8 @@ struct AUElegantBackground: View {
                     )
                     context.stroke(
                         p3,
-                        with: .color(primaryInk.opacity((scheme == .dark ? 0.11 : 0.07) * alphaScale)),
+                        with: .color(
+                            primaryInk.opacity((scheme == .dark ? 0.11 : 0.07) * alphaScale)),
                         style: StrokeStyle(lineWidth: 0.9, lineCap: .round)
                     )
 
@@ -958,7 +950,8 @@ struct AUElegantBackground: View {
                     )
                     context.stroke(
                         p4,
-                        with: .color(primaryInk.opacity((scheme == .dark ? 0.12 : 0.08) * alphaScale)),
+                        with: .color(
+                            primaryInk.opacity((scheme == .dark ? 0.12 : 0.08) * alphaScale)),
                         style: StrokeStyle(lineWidth: 1.0, lineCap: .round)
                     )
 
@@ -977,14 +970,16 @@ struct AUElegantBackground: View {
                     )
                     context.stroke(
                         p4b,
-                        with: .color(accentInk.opacity((scheme == .dark ? 0.09 : 0.05) * alphaScale)),
+                        with: .color(
+                            accentInk.opacity((scheme == .dark ? 0.09 : 0.05) * alphaScale)),
                         style: StrokeStyle(lineWidth: 0.8, lineCap: .round, dash: [3, 7])
                     )
                 }
 
                 // Organic tactile paper grain
                 if showGrain {
-                    GrainOverlay(opacity: (scheme == .dark ? 0.025 : 0.035) * (subdued ? 0.75 : 1.0))
+                    GrainOverlay(
+                        opacity: (scheme == .dark ? 0.025 : 0.035) * (subdued ? 0.75 : 1.0))
                 }
             }
         }
@@ -1126,6 +1121,10 @@ struct IllustrationPlaceholder: View {
     var captionSize: CGFloat = 12
     var fullBleed = false  // the S01 promise treatment: no radius, no side borders
 
+    private var learnerAlt: String {
+        CourseTextContract.learnerText(ill.alt) ?? String(localized: "Illustration")
+    }
+
     var body: some View {
         Group {
             if let aspectRatio {
@@ -1133,6 +1132,7 @@ struct IllustrationPlaceholder: View {
                     .aspectRatio(aspectRatio, contentMode: .fit)
             } else {
                 illustrationBody
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .frame(height: height)
             }
         }
@@ -1159,38 +1159,22 @@ struct IllustrationPlaceholder: View {
     private var illustrationBody: some View {
         if let artwork = UIImage(named: ill.id) {
             ZStack {
-                Image(uiImage: artwork)
-                    .resizable()
-                    .scaledToFill()
-                    .blur(radius: 18)
-                    .opacity(0.42)
+                Color.auFill
 
                 Image(uiImage: artwork)
                     .resizable()
                     .scaledToFit()
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(ill.alt)
+            .accessibilityLabel(learnerAlt)
         } else {
-            ZStack(alignment: .bottomLeading) {
+            ZStack {
                 StripeField()
-                VStack(alignment: .leading, spacing: fullBleed ? 7 : 6) {
-                    Text(ill.id)
-                        .font(.figtree(.bold, size: kickerSize))
-                        .tracking(1.6)
-                        .textCase(.uppercase)
-                        .foregroundStyle(Color.auAccentText)
-                    Text(ill.alt)
-                        .font(.figtree(.regular, size: captionSize))
-                        .foregroundStyle(Color.auText.opacity(0.6))
-                        .auLine(captionSize, 1.45)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .frame(maxWidth: 300, alignment: .leading)
-                }
-                .padding(fullBleed ? 20 : 16)
+                AUIcon(kind: .eye, size: 28, color: .auTextTertiary)
+                    .accessibilityHidden(true)
             }
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("Illustration placeholder: \(ill.alt)")
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(learnerAlt)
         }
     }
 
@@ -1246,23 +1230,33 @@ struct AUFlipCard<Front: View, Back: View>: View {
     @Binding var isFlipped: Bool
     @ViewBuilder let front: () -> Front
     @ViewBuilder let back: () -> Back
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        ZStack {
-            front()
-                .modifier(AUFlipCardFace(angle: isFlipped ? 180 : 0, isFront: true))
-            back()
-                .modifier(AUFlipCardFace(angle: isFlipped ? 0 : -180, isFront: false))
+        Group {
+            if reduceMotion {
+                if isFlipped { back() } else { front() }
+            } else {
+                ZStack {
+                    front()
+                        .modifier(AUFlipCardFace(angle: isFlipped ? 180 : 0, isFront: true))
+                    back()
+                        .modifier(AUFlipCardFace(angle: isFlipped ? 0 : -180, isFront: false))
+                }
+            }
         }
         .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .onTapGesture {
             AUFeedback.cardFlip()
-            withAnimation(AUMotion.cardFlip) {
+            withAnimation(AUMotion.animation(AUMotion.cardFlip, reduceMotion: reduceMotion)) {
                 isFlipped.toggle()
             }
         }
         .accessibilityAddTraits(.isButton)
-        .accessibilityLabel(isFlipped ? "Flashcard flipped, showing answer" : "Flashcard front, tap to flip")
+        .accessibilityLabel(
+            isFlipped ? "Flashcard flipped, showing answer" : "Flashcard front, tap to flip"
+        )
+        .accessibilityValue(isFlipped ? "Answer" : "Question")
     }
 }
 
@@ -1287,6 +1281,7 @@ private struct AUFlipCardFace: ViewModifier {
 struct AUCounterBadge: View {
     let current: Int
     let maxCount: Int
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: 5) {
@@ -1295,7 +1290,10 @@ struct AUCounterBadge: View {
                 .frame(width: 7, height: 7)
             Text("\(current) of \(maxCount) selected")
                 .font(.figtree(.semibold, size: 12))
+                .monospacedDigit()
                 .foregroundStyle(current > 0 ? Color.auAccentText : Color.auText.opacity(0.55))
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
         }
         .padding(.horizontal, 11)
         .padding(.vertical, 5)
@@ -1305,9 +1303,91 @@ struct AUCounterBadge: View {
         )
         .overlay(
             Capsule()
-                .strokeBorder(current > 0 ? Color.auAccent.opacity(0.35) : Color.auEdge, lineWidth: 1)
+                .strokeBorder(
+                    current > 0 ? Color.auAccent.opacity(0.35) : Color.auEdge, lineWidth: 1)
         )
-        .animation(AUMotion.quick, value: current)
+        .layoutPriority(1)
+        .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: current)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Selection count")
+        .accessibilityValue("\(current) of \(maxCount)")
+    }
+}
+
+// MARK: - Recommended next action
+
+/// PH-02's shared answer to “what next and why”. Learn and Progress use the
+/// same compact contract: one action with an explicit reason, duration, and
+/// observable outcome.
+struct AUNextActionCard: View {
+    var eyebrow: String = String(localized: "Recommended next")
+    let title: String
+    let reason: String
+    let duration: String
+    let outcome: String
+    let buttonTitle: String
+    let aid: String
+    var buttonAid: String? = nil
+    let action: () -> Void
+
+    var body: some View {
+        ACard(radius: 26, role: .selectedTask) {
+            VStack(alignment: .leading, spacing: 0) {
+                Text(eyebrow.auLocalized)
+                    .font(.figtree(.bold, size: 10.5))
+                    .tracking(1.47)
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.auAccentText)
+                    .padding(.bottom, 8)
+
+                Text(title.auLocalized)
+                    .font(.caprasimo(size: 21))
+                    .auHeadLine(21, 1.2)
+                    .accessibilityIdentifier("\(aid).title")
+
+                Text(reason.auLocalized)
+                    .font(.figtree(.regular, size: 13))
+                    .auLine(13, 1.5)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.top, 7)
+
+                recommendationDetail(
+                    icon: .clock, label: String(localized: "Duration"), value: duration
+                )
+                .padding(.top, 15)
+                .accessibilityIdentifier("\(aid).duration")
+                recommendationDetail(
+                    icon: .sparkle, label: String(localized: "Outcome"), value: outcome
+                )
+                .padding(.top, 9)
+                .accessibilityIdentifier("\(aid).outcome")
+
+                APillButton(title: buttonTitle, aid: buttonAid ?? "\(aid).button", action: action)
+                    .padding(.top, 17)
+            }
+        }
+    }
+
+    private func recommendationDetail(icon: AUIcon.Kind, label: String, value: String) -> some View
+    {
+        HStack(alignment: .top, spacing: 10) {
+            AUIcon(kind: icon, size: 14, color: .auAccentText)
+                .frame(width: 22, height: 22)
+                .background(Circle().fill(Color.auTintBg))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label.auLocalized)
+                    .font(.figtree(.bold, size: 9.5))
+                    .tracking(1.05)
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.auTextTertiary)
+                Text(value.auLocalized)
+                    .font(.figtree(.medium, size: 12.5))
+                    .auLine(12.5, 1.4)
+                    .foregroundStyle(Color.auText)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 }
 
@@ -1330,11 +1410,11 @@ struct AUEmptyStateView: View {
             }
             .padding(.bottom, 4)
 
-            Text(title)
+            Text(title.auLocalized)
                 .font(.caprasimo(size: 20))
                 .foregroundStyle(Color.auText)
 
-            Text(message)
+            Text(message.auLocalized)
                 .font(.figtree(.regular, size: 13.5))
                 .auLine(13.5, 1.55)
                 .foregroundStyle(Color.auTextSecondary)
@@ -1343,7 +1423,7 @@ struct AUEmptyStateView: View {
 
             if let actionTitle, let action {
                 Button(action: action) {
-                    Text(actionTitle)
+                    Text(actionTitle.auLocalized)
                         .font(.figtree(.semibold, size: 14))
                         .foregroundStyle(Color.auAccentText)
                         .padding(.top, 4)
@@ -1373,9 +1453,11 @@ struct AUShakeEffect: GeometryEffect {
     var animatableData: CGFloat
 
     func effectValue(size: CGSize) -> ProjectionTransform {
-        ProjectionTransform(CGAffineTransform(translationX:
-            amount * sin(animatableData * .pi * shakesPerUnit),
-            y: 0))
+        ProjectionTransform(
+            CGAffineTransform(
+                translationX:
+                    amount * sin(animatableData * .pi * shakesPerUnit),
+                y: 0))
     }
 }
 
@@ -1396,12 +1478,12 @@ struct AUConfirmDialog: View {
                 .onTapGesture { onCancel() }
 
             VStack(spacing: 16) {
-                Text(title)
+                Text(title.auLocalized)
                     .font(.caprasimo(size: 20))
                     .foregroundStyle(Color.auText)
                     .multilineTextAlignment(.center)
 
-                Text(message)
+                Text(message.auLocalized)
                     .font(.figtree(.regular, size: 14))
                     .auLine(14, 1.5)
                     .foregroundStyle(Color.auText.opacity(0.6))
@@ -1412,7 +1494,7 @@ struct AUConfirmDialog: View {
                         onConfirm()
                     }
                     Button(action: onCancel) {
-                        Text(cancelTitle)
+                        Text(cancelTitle.auLocalized)
                             .font(.figtree(.semibold, size: 14.5))
                             .foregroundStyle(Color.auText.opacity(0.6))
                             .frame(maxWidth: .infinity)
@@ -1487,7 +1569,7 @@ struct AUHeader: View {
             .accessibilityIdentifier(aid ?? "au.header.\(kind == .back ? "back" : "close")")
 
             if let title {
-                Text(title)
+                Text(title.auLocalized)
                     .font(.figtree(.semibold, size: 12))
                     .tracking(1.2)
                     .textCase(.uppercase)
@@ -1518,7 +1600,7 @@ struct AUBanner: View {
                 color: tone == .error ? .auErrText : .auAccentText
             )
             .padding(.top, 2)
-            Text(text)
+            Text(text.auLocalized)
                 .font(.figtree(.medium, size: 13.5))
                 .auLine(13.5, 1.45)
                 .foregroundStyle(tone == .error ? Color.auErrText : Color.auAccentText)

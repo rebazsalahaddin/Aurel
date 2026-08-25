@@ -12,20 +12,16 @@ struct PlayerVerdictDock: View {
     let model: PlayerModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    enum Verdict {
-        case ok(String)
-        case miss(String)
-    }
-
     var body: some View {
         VStack(spacing: 12) {
-            if let verdict {
-                banner(verdict)
+            if let feedback {
+                banner(feedback)
                     .transition(
                         reduceMotion
                             ? .opacity
                             : .asymmetric(
-                                insertion: .scale(scale: 0.96).combined(with: .offset(y: 12)).combined(with: .opacity),
+                                insertion: .scale(scale: 0.96).combined(with: .offset(y: 12))
+                                    .combined(with: .opacity),
                                 removal: .opacity
                             )
                     )
@@ -80,28 +76,33 @@ struct PlayerVerdictDock: View {
 
     /// What the dock banner shows right now. Option items: any pick; order
     /// items: the completed assembly. `nil` = no verdict (CTA only).
-    private var verdict: Verdict? {
+    private var feedback: AULearningFeedback? {
         guard let item = model.item else { return nil }
         if item.kind == "order" {
             guard model.tileComplete else { return nil }
             let task = model.tileTask
-            return model.tileCorrect
-                ? .ok(task.ok.isEmpty ? "Correct." : task.ok)
-                : .miss(task.no.isEmpty ? "Not yet — tap a tile again to take it back." : task.no)
+            return .order(
+                isCorrect: model.tileCorrect,
+                isRevealed: false,
+                instruction: task.instr,
+                acceptedOrder: task.key.joined(separator: " "),
+                authoredPositive: task.ok,
+                authoredCorrection: task.no
+            )
         }
         guard model.sel != nil, !model.isQuiet else { return nil }
-        if model.done && !model.revealed && model.isCorrect(item) {
-            return .ok(item.ok ?? "Correct.")
-        }
-        return .miss(item.no ?? "Try again.")
+        return .option(
+            isCorrect: model.done && !model.revealed && model.isCorrect(item),
+            isRevealed: model.revealed,
+            instruction: item.instr,
+            acceptedAnswer: acceptedAnswer(for: item),
+            authoredPositive: item.ok,
+            authoredCorrection: item.no
+        )
     }
 
     private var verdictKey: String {
-        switch verdict {
-        case .ok(let t): return "ok:\(t)"
-        case .miss(let t): return "miss:\(t)"
-        case nil: return "none"
-        }
+        feedback.map { "\($0.outcome):\($0.title):\($0.detail)" } ?? "none"
     }
 
     /// §2.7: "dock hides the CTA while the hint ladder is open." While a
@@ -116,21 +117,21 @@ struct PlayerVerdictDock: View {
         return model.wrong > 0 && !model.done
     }
 
-    private func banner(_ v: Verdict) -> some View {
-        let ok: Bool
-        let text: String
-        switch v {
-        case .ok(let t): ok = true; text = t
-        case .miss(let t): ok = false; text = t
-        }
+    private func banner(_ feedback: AULearningFeedback) -> some View {
+        let ok = feedback.isCorrect
         return HStack(alignment: .top, spacing: 10) {
             AUIcon(kind: ok ? .check : .close, size: 18, color: ok ? .auOkText : .auErrText)
                 .padding(.top, 1)
-            Text(text)
-                .font(.figtree(.regular, size: 14.5))
-                .auLine(14.5, 1.45)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                // Craft overhaul L10: banner body scales with Dynamic Type.
+            VStack(alignment: .leading, spacing: 3) {
+                Text(feedback.title)
+                    .font(.figtree(.bold, size: 14.5))
+                if !feedback.detail.isEmpty {
+                    Text(feedback.detail)
+                        .font(.figtree(.regular, size: 13))
+                        .auLine(13, 1.45)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 15)
         .padding(.vertical, 13)
@@ -140,6 +141,13 @@ struct PlayerVerdictDock: View {
         )
         .foregroundStyle(ok ? Color.auOkText : Color.auErrText)
         .accessibilityElement(children: .combine)
+        .accessibilityLabel(feedback.accessibilityAnnouncement)
+        .accessibilityIdentifier("au.player.feedback.\(feedback.outcome)")
+    }
+
+    private func acceptedAnswer(for item: PlayerModel.PlayerItem) -> String? {
+        guard let option = item.opts.first(where: item.isKey) else { return nil }
+        return option.text ?? option.ill?.alt
     }
 
     // MARK: CTA

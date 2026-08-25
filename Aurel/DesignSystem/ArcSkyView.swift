@@ -34,11 +34,8 @@ struct DayArcState: Equatable, Sendable {
 
     /// Sun position in the 354×118 viewBox space.
     var sunPoint: CGPoint {
-        CGPoint(x: auBezier(arcT, 26, 177, 328), y: auBezier(arcT, 84, -22, 84))
+        CGPoint(x: auBezier(arcT, 26, 177, 328), y: auBezier(arcT, 84, -22, 84) - 12)
     }
-
-    /// stroke-dashoffset for the progress arc (pathLength 100).
-    var arcOffset: Int { 100 - Int((arcT * 100).rounded()) }
 }
 
 /// The sky panel itself — a cinematic pre-dawn scene rather than a flat
@@ -66,7 +63,7 @@ struct ArcSkyView: View {
 
     /// Sun position in the 354×118 viewBox space at the effective t.
     private var sunPoint: CGPoint {
-        CGPoint(x: auBezier(sunT, 26, 177, 328), y: auBezier(sunT, 84, -22, 84))
+        CGPoint(x: auBezier(sunT, 26, 177, 328), y: auBezier(sunT, 84, -22, 84) - 12)
     }
 
     // Chips: (done, label, meta)
@@ -88,19 +85,6 @@ struct ArcSkyView: View {
     /// as the day advances (a touch faster than the arc itself, so midday
     /// reads fully lit).
     private var nightT: Double { max(0, 1 - state.arcT * 1.15) }
-
-    /// The progress arc reads dawn → dusk as a warm ramp.
-    private var arcStroke: LinearGradient {
-        LinearGradient(
-            colors: [
-                Color.auAccentRamp(300),
-                Color.auAccentRamp(400),
-                Color.auAccent,
-                Color.auAccentRamp(500),
-            ],
-            startPoint: .leading, endPoint: .trailing
-        )
-    }
 
     /// Rim light on the dune crests — a warm pool centred under the sun, so
     /// the ridges catch the light where the day currently stands.
@@ -145,7 +129,7 @@ struct ArcSkyView: View {
                     StarField(visible: 1 - state.arcT, reduceMotion: reduceMotion)
 
                     // The day's full path — quietest at its ends, clearest
-                    // overhead; drawn behind the dunes so its ends dip into
+                    // overhead; drawn behind all dunes so its ends dip into
                     // the sand and the arc reads as the sun's route, not
                     // a wire.
                     ArcTrack()
@@ -154,39 +138,8 @@ struct ArcSkyView: View {
                             style: StrokeStyle(lineWidth: 1.3, lineCap: .round, dash: [2, 6.5])
                         )
 
-
-                    // Atmospheric depth: the far ridge reads lighter (light
-                    // mode) / darker (dark mode) than the two authored dunes.
-                    DuneShape(variant: .far)
-                        .fill(Color.auDune.opacity(0.35))
-                    DuneShape(variant: .back)
-                        .fill(Color.auDune)
-                        .overlay { DuneShape(variant: .back).stroke(rimLight, lineWidth: 0.8) }
-                    DuneShape(variant: .front)
-                        .fill(Color.auDune2)
-                        .overlay { DuneShape(variant: .front).stroke(rimLight, lineWidth: 0.9) }
-
-                    // Progress arc — a soft under-glow plus the crisp
-                    // gradient stroke, both data-honest at `state.arcT`.
-                    ArcTrack()
-                        .trim(from: 0, to: state.arcT)
-                        .stroke(
-                            Color.auAccent.opacity(0.35),
-                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
-                        )
-                        .blur(radius: 2)
-                        .opacity(0.7)
-                    ArcTrack()
-                        .trim(from: 0, to: state.arcT)
-                        .stroke(arcStroke, style: StrokeStyle(lineWidth: 2, lineCap: .round))
-                        .shadow(color: Color.auAccent.opacity(0.45), radius: 4, x: 0, y: 0)
-                        .animation(
-                            AUMotion.animation(AUMotion.hero, reduceMotion: reduceMotion),
-                            value: state.arcT
-                        )
-
                     SunMark(reduceMotion: reduceMotion)
-                        .frame(width: 20, height: 20)
+                        .frame(width: 26.6, height: 26.6)
                         // On first reveal the sun rises out of the dune line;
                         // from then on it tracks the day's progress exactly.
                         .offset(y: appeared ? 0 : 16)
@@ -198,22 +151,21 @@ struct ArcSkyView: View {
                         )
                         // §3.6(c): the sun also tracks scroll — follow the
                         // travel value without re-triggering the data spring.
-                        .animation(.easeInOut(duration: 0.35), value: sunTravel)
+                        .animation(
+                            AUMotion.animation(
+                                .easeInOut(duration: 0.35), reduceMotion: reduceMotion),
+                            value: sunTravel)
 
-                    // A spark rides the leading edge of the day so far —
-                    // the exact point the day has reached.
-                    if state.arcT > 0.02 {
-                        ArcTipGlow()
-                            .frame(width: 26, height: 26)
-                            .position(
-                                x: auBezier(state.arcT, 26, 177, 328),
-                                y: auBezier(state.arcT, 84, -22, 84)
-                            )
-                            .animation(
-                                AUMotion.animation(AUMotion.hero, reduceMotion: reduceMotion),
-                                value: state.arcT
-                            )
-                    }
+                    // All mountain / dune layers rendered in front of the globe
+                    // and guide track for complete atmospheric depth.
+                    DuneShape(variant: .far)
+                        .fill(Color.auDune.opacity(0.35))
+                    DuneShape(variant: .back)
+                        .fill(Color.auDune)
+                        .overlay { DuneShape(variant: .back).stroke(rimLight, lineWidth: 0.8) }
+                    DuneShape(variant: .front)
+                        .fill(Color.auDune2)
+                        .overlay { DuneShape(variant: .front).stroke(rimLight, lineWidth: 0.9) }
 
                     // The night lifting as the day advances — deepest at
                     // zenith, thinning into the horizon's warmth.
@@ -226,7 +178,11 @@ struct ArcSkyView: View {
                         startPoint: .top, endPoint: .bottom
                     )
                     .opacity(nightT * 0.55)
-                    .animation(.easeInOut(duration: 1.2), value: state.arcT)
+                    .animation(
+                        AUMotion.animation(
+                            .easeInOut(duration: 1.2), reduceMotion: reduceMotion),
+                        value: state.arcT
+                    )
                     .allowsHitTesting(false)
 
                     // A quiet vignette keeps the eye inside the frame.
@@ -260,8 +216,12 @@ struct ArcSkyView: View {
                 .padding(.trailing, 14)
                 .padding(.bottom, 10)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: dawnDone)
-                .animation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: sundownDone)
+                .animation(
+                    AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion), value: dawnDone
+                )
+                .animation(
+                    AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+                    value: sundownDone)
             }
             .onAppear {
                 guard !reduceMotion, !appeared else { return }
@@ -298,7 +258,9 @@ struct ArcSkyView: View {
                 Circle()
                     .fill(Color.auAccent)
                     .frame(width: 9.5, height: 9.5)
-                    .overlay(Circle().strokeBorder(AUSceneArt.onAccent.opacity(0.5), lineWidth: 0.8))
+                    .overlay(
+                        Circle().strokeBorder(AUSceneArt.onAccent.opacity(0.5), lineWidth: 0.8)
+                    )
                     .shadow(color: Color.auAccent.opacity(0.55), radius: 3, x: 0, y: 0)
             } else {
                 Circle()
@@ -310,7 +272,8 @@ struct ArcSkyView: View {
             }
         }
         .position(point)
-        .animation(AUMotion.animation(AUMotion.celebration, reduceMotion: reduceMotion), value: done)
+        .animation(
+            AUMotion.animation(AUMotion.celebration, reduceMotion: reduceMotion), value: done)
     }
 
     /// arcSky gradient tiers (authored values, theme-independent):
@@ -350,7 +313,7 @@ struct ArcSkyView: View {
                 AUIcon(kind: .check, size: 10, color: .auDuneText)
             }
 
-            Text(label)
+            Text(label.auLocalized)
                 .font(.figtree(.bold, size: 9.5))
                 .tracking(1.33)
                 .textCase(.uppercase)
@@ -416,8 +379,8 @@ struct ArcSkyView: View {
                 p.addQuadCurve(to: CGPoint(x: 160, y: 72), control: CGPoint(x: 80, y: 64))
                 p.addQuadCurve(to: CGPoint(x: 354, y: 66), control: CGPoint(x: 250, y: 82))
             case .back:
-                p.move(to: CGPoint(x: 0, y: 88))
-                p.addQuadCurve(to: CGPoint(x: 130, y: 82), control: CGPoint(x: 66, y: 70))
+                p.move(to: CGPoint(x: 0, y: 76))
+                p.addQuadCurve(to: CGPoint(x: 130, y: 82), control: CGPoint(x: 60, y: 66))
                 p.addQuadCurve(to: CGPoint(x: 262, y: 76), control: CGPoint(x: 196, y: 94))
                 p.addQuadCurve(to: CGPoint(x: 354, y: 78), control: CGPoint(x: 318, y: 62))
             case .front:
@@ -443,29 +406,31 @@ struct ArcSkyView: View {
         }
     }
 
-    /// The sun: a crisp radial disc with specular lift, sparkle glint, and soft 50% transparent pulsing glow.
+    /// The sun: a crisp radial disc with specular lift and a soft transparent pulsing glow.
     private struct SunMark: View {
         let reduceMotion: Bool
-        @State private var breathe = false
         @State private var pingOn = false
 
         var body: some View {
             ZStack {
-                // Soft pulse halo behind the globe (50% transparent)
+                // Soft pulse halo behind the globe (10% stronger)
                 if !reduceMotion {
                     Circle()
-                        .fill(Color(UIColor(hex: 0xb25f1f)).opacity(0.20))
-                        .frame(width: 32, height: 32)
+                        .fill(Color(UIColor(hex: 0xb25f1f)).opacity(0.24))
+                        .frame(width: 42.4, height: 42.4)
                         .modifier(PulseHalo())
                         .allowsHitTesting(false)
                 }
 
-                // Persistent ring pulse marking active globe (50% transparent)
+                // Persistent ring pulse marking active globe (10% stronger)
                 if !reduceMotion {
                     Circle()
-                        .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(pingOn ? 0 : 0.30), lineWidth: pingOn ? 0.5 : 1.2)
+                        .strokeBorder(
+                            Color(UIColor(hex: 0xf29858)).opacity(pingOn ? 0 : 0.33),
+                            lineWidth: pingOn ? 0.65 : 1.5
+                        )
                         .scaleEffect(pingOn ? 1.45 : 1)
-                        .frame(width: 20, height: 20)
+                        .frame(width: 26.6, height: 26.6)
                         .allowsHitTesting(false)
                         .onAppear {
                             withAnimation(
@@ -474,7 +439,7 @@ struct ArcSkyView: View {
                         }
                 }
 
-                // Core disc
+                // Core disc (10% larger)
                 Circle()
                     .fill(
                         RadialGradient(
@@ -485,29 +450,18 @@ struct ArcSkyView: View {
                                 .init(color: Color(UIColor(hex: 0xb25f1f)), location: 1.0),
                             ],
                             center: UnitPoint(x: 0.5, y: 0.42),
-                            startRadius: 0, endRadius: 10
+                            startRadius: 0, endRadius: 13.3
                         )
                     )
                     .overlay(
-                        Circle().strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.0)
+                        Circle().strokeBorder(
+                            Color(UIColor(hex: 0xf29858)).opacity(0.66), lineWidth: 1.3)
                     )
-                    .frame(width: 20, height: 20)
+                    .shadow(
+                        color: Color(UIColor(hex: 0xee9d58)).opacity(0.35), radius: 6, x: 0, y: 0
+                    )
+                    .frame(width: 26.6, height: 26.6)
 
-                // Glint — a four-point sparkle catching the light, slow drift.
-                if !reduceMotion {
-                    SparkleMark()
-                        .fill(AUSceneArt.onAccent.opacity(0.9))
-                        .frame(width: 5, height: 5)
-                        .offset(x: -3, y: -3)
-                        .scaleEffect(breathe ? 1.25 : 0.7)
-                        .opacity(breathe ? 0.9 : 0.3)
-                }
-            }
-            .onAppear {
-                guard !reduceMotion else { return }
-                withAnimation(.easeInOut(duration: 3.2).repeatForever(autoreverses: true)) {
-                    breathe = true
-                }
             }
             .allowsHitTesting(false)
         }
@@ -530,98 +484,6 @@ struct ArcSkyView: View {
         }
     }
 
-    /// A soft spark riding the leading edge of the progress arc — marks the
-    /// exact point the day has reached.
-    private struct ArcTipGlow: View {
-        var body: some View {
-            ZStack {
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            stops: [
-                                .init(color: Color.auAccent.opacity(0.55), location: 0),
-                                .init(color: Color.auAccent.opacity(0.18), location: 0.5),
-                                .init(color: .clear, location: 1),
-                            ],
-                            center: .center, startRadius: 0, endRadius: 13
-                        )
-                    )
-                Circle()
-                    .fill(AUSceneArt.onAccent)
-                    .frame(width: 5, height: 5)
-                    .shadow(color: Color.auAccent.opacity(0.8), radius: 4, x: 0, y: 0)
-            }
-            .allowsHitTesting(false)
-        }
-    }
-
-    /// A wide, shallow band of light pooling along the horizon line under
-    /// the sun — the atmosphere catching first light. It drifts with the
-    /// sun and breathes very slowly.
-    private struct HorizonBand: View {
-        let center: CGPoint
-        let reduceMotion: Bool
-        @State private var breathe = false
-
-        var body: some View {
-            Ellipse()
-                .fill(
-                    RadialGradient(
-                        stops: [
-                            .init(color: AUSceneArt.duskHighlight.opacity(0.34), location: 0),
-                            .init(color: Color.auAccent.opacity(0.10), location: 0.55),
-                            .init(color: .clear, location: 1),
-                        ],
-                        center: .center, startRadius: 0, endRadius: 95
-                    )
-                )
-                .frame(width: 250, height: 46)
-                .position(x: center.x, y: 74)
-                .scaleEffect(breathe ? 1.06 : 0.98)
-                .opacity(breathe ? 0.85 : 0.6)
-                .onAppear {
-                    guard !reduceMotion else { return }
-                    withAnimation(.easeInOut(duration: 4.4).repeatForever(autoreverses: true)) {
-                        breathe = true
-                    }
-                }
-                .allowsHitTesting(false)
-        }
-    }
-
-    /// A warm pool of light on the horizon that drifts with the sun and
-    /// breathes slowly — the scene's answer to "where is the day now?".
-    private struct HorizonGlow: View {
-        let center: CGPoint
-        let reduceMotion: Bool
-        @State private var breathe = false
-
-        var body: some View {
-            Ellipse()
-                .fill(
-                    RadialGradient(
-                        stops: [
-                            .init(color: Color.auAccent.opacity(0.30), location: 0),
-                            .init(color: Color.auAccent.opacity(0.12), location: 0.5),
-                            .init(color: .clear, location: 1),
-                        ],
-                        center: .center, startRadius: 0, endRadius: 62
-                    )
-                )
-                .frame(width: 170, height: 70)
-                // Hug the horizon line regardless of the sun's height.
-                .position(x: center.x, y: 74)
-                .scaleEffect(breathe ? 1.12 : 0.96)
-                .opacity(breathe ? 0.9 : 0.65)
-                .onAppear {
-                    guard !reduceMotion else { return }
-                    withAnimation(.easeInOut(duration: 3.6).repeatForever(autoreverses: true)) {
-                        breathe = true
-                    }
-                }
-                .allowsHitTesting(false)
-        }
-    }
     /// Pre-dawn stars. The field's opacity is tied to the day's progress —
     /// full at dawn (arcT 0), dissolved by midday — and each star twinkles
     /// on its own staggered, deterministic rhythm. Two bright stars carry a
@@ -772,7 +634,10 @@ struct LessonPathNode: View {
                     // Persistent ring pulse marking "you are here"
                     if !reduceMotion {
                         Circle()
-                            .strokeBorder(Color(UIColor(hex: 0xb25f1f)).opacity(pingOn ? 0 : 0.55), lineWidth: pingOn ? 0.75 : 2.5)
+                            .strokeBorder(
+                                Color(UIColor(hex: 0xb25f1f)).opacity(pingOn ? 0 : 0.55),
+                                lineWidth: pingOn ? 0.75 : 2.5
+                            )
                             .scaleEffect(pingOn ? 1.22 : 1)
                             .frame(width: size, height: size)
                             .allowsHitTesting(false)
@@ -783,8 +648,11 @@ struct LessonPathNode: View {
                             }
                     }
                     Circle()
-                        .fill(Color(UIColor(hex: 0xb25f1f)))
-                        .overlay(Circle().strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2))
+                        .fill(Color.auPrimaryButtonFill)
+                        .overlay(
+                            Circle().strokeBorder(
+                                Color.auPrimaryButtonBorder.opacity(0.72), lineWidth: 1.2)
+                        )
                         .overlay(
                             VStack(spacing: 2) {
                                 AUIcon(
@@ -797,7 +665,7 @@ struct LessonPathNode: View {
                             }
                             .foregroundStyle(Color(red: 1, green: 0.965, blue: 0.918))
                         )
-                        .shadow(color: Color(UIColor(hex: 0xb25f1f)).opacity(0.35), radius: 12, y: 6)
+                        .shadow(color: Color.auPrimaryButtonFill.opacity(0.35), radius: 12, y: 6)
                         .frame(width: size, height: size)
                 case .done:
                     Circle()
@@ -871,57 +739,6 @@ private struct PulseHalo: ViewModifier {
                     on = true
                 }
             }
-    }
-}
-
-/// auBreath on the open node.
-private struct Breath: ViewModifier {
-    let enabled: Bool
-    @State private var on = false
-    func body(content: Content) -> some View {
-        content
-            .scaleEffect(enabled && on ? 1.04 : 1)
-            .onAppear {
-                guard enabled else { return }
-                withAnimation(.easeInOut(duration: 3.8).repeatForever(autoreverses: true)) {
-                    on = true
-                }
-            }
-    }
-}
-
-// MARK: - Week dots (Aurel.dc.html lines 2111–2115)
-
-/// M T W T F S S — today lit with the accent gradient, rest quiet.
-struct WeekDots: View {
-    var todayIndex: Int = 0
-
-    var body: some View {
-        HStack(spacing: 8) {
-            ForEach(Array(["M", "T", "W", "T", "F", "S", "S"].enumerated()), id: \.offset) {
-                i, label in
-                Text(label)
-                    .font(.figtree(.semibold, size: 12))
-                    .frame(width: 34, height: 34)
-                    .background {
-                        if i == todayIndex {
-                            Capsule().fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color.auAccent.mixed(with: 0.26, of: .white),
-                                        Color.auAccent,
-                                    ],
-                                    startPoint: .top, endPoint: .bottom
-                                )
-                            )
-                        } else {
-                            Capsule().fill(Color.auText.opacity(0.10))
-                        }
-                    }
-                    .foregroundStyle(i == todayIndex ? Color.auPrimaryButtonText : Color.auText)
-                    .modifier(PopIn(delay: 0.06 + Double(i) * 0.055))
-            }
-        }
     }
 }
 

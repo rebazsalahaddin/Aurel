@@ -1,5 +1,6 @@
-import XCTest
 import SwiftUI
+import XCTest
+
 @testable import Aurel
 
 @MainActor
@@ -43,6 +44,7 @@ final class Stage6PlayerTests: XCTestCase {
         let say = SayCoach()
         let recorder = FakeTakeRecorder()
         say.recorder = recorder
+        say.onDeviceRecognitionProbe = { true }
         say.micPermissionProbe = { .granted }
 
         say.toggle(target: "bonjour")

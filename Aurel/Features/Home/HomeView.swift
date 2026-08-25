@@ -8,11 +8,16 @@ import SwiftUI
 struct HomeView: View {
     @Environment(AppEnvironment.self) private var env
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var scheme
 
     /// §3.6(a): the path draw-in plays on the first reveal only.
     @State private var pathDrawn = false
     /// §3.6(c): home scroll offset, driving the day-arc sun's travel.
     @State private var scrollY: CGFloat = 0
+    /// The chapter promise stays available without occupying permanent hero space.
+    @State private var lessonDetailsExpanded = false
+    /// Restarting a pending lesson is destructive and always requires confirmation.
+    @State private var showRestartConfirmation = false
     /// §3.6(d): the locked stop whose explainer is showing (first tap
     /// explains, second tap opens the paywall).
     @State private var lockedExplainer: Int? = nil
@@ -28,12 +33,12 @@ struct HomeView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color.auBackground.ignoresSafeArea()
+            HomeLiquidBackground().ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     header
-                    pendingCard
+                    recommendedCard
                     dayArcCard
                     lessonPath
                 }
@@ -66,6 +71,23 @@ struct HomeView: View {
             }
         }
         .auScreenEntrance()
+        .overlay {
+            if showRestartConfirmation {
+                RestartLessonConfirmation(
+                    cancel: { showRestartConfirmation = false },
+                    restart: {
+                        showRestartConfirmation = false
+                        env.router.discardPending()
+                    }
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.97)))
+                .zIndex(20)
+            }
+        }
+        .animation(
+            AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+            value: showRestartConfirmation
+        )
     }
 
     // MARK: Header (lines 459–480)
@@ -81,19 +103,22 @@ struct HomeView: View {
                 Button {
                     env.router.nav(.settings)
                 } label: {
-                    AUIcon(kind: .gear, size: 17)
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(Color.auText)
                         .frame(width: 44, height: 44)
-                        .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
+                        .contentShape(Circle())
+                        .auPracticeGlass(in: Circle(), interactive: true)
                 }
                 .buttonStyle(.auTap)
                 .accessibilityLabel("Settings")
                 .accessibilityIdentifier("au.home.settings")
             }
             .padding(.top, 62)
-            .padding(.bottom, 28)
+            .padding(.bottom, 24)
 
             VStack(alignment: .leading, spacing: 0) {
-                Text(ch.no.uppercased())
+                Text("CHAPTER \(env.router.chapterIdx + 1)")
                     .font(.figtree(.bold, size: 11))
                     .tracking(1.76)
                     .foregroundStyle(Color.auAccentText)
@@ -102,51 +127,58 @@ struct HomeView: View {
                     .font(.caprasimo(size: 31))
                     .tracking(-0.62)
                     .lineLimit(2)
-                Text("\(ch.level) — \(inChapter) of \(ch.count) lessons")
+                Text(ch.level)
                     .font(.figtree(.regular, size: 13))
                     .foregroundStyle(Color.auTextSecondary)
                     .padding(.top, 7)
-                AUParagraph(
-                    text:
-                        "\(inChapter >= ch.count ? "Done: you can " : "By the end: you can ")\(ch.promise)",
-                    size: 12.5, lineHeight: 1.45, color: Color.auAccentText
-                )
-                .frame(maxWidth: 288, alignment: .leading)
-                .padding(.top, 9)
+
+                Button {
+                    withAnimation(
+                        AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion)
+                    ) {
+                        lessonDetailsExpanded.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 7) {
+                        Text("Lesson details")
+                            .font(.figtree(.semibold, size: 12.5))
+                        AUIcon(kind: .chevronDown, size: 11, color: .auTextSecondary)
+                            .rotationEffect(.degrees(lessonDetailsExpanded ? 180 : 0))
+                    }
+                    .foregroundStyle(Color.auTextSecondary)
+                    .frame(minHeight: 44)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.auTap)
+                .accessibilityIdentifier("au.home.lesson-details")
+                .accessibilityValue(lessonDetailsExpanded ? "Expanded" : "Collapsed")
+
+                if lessonDetailsExpanded {
+                    Text(
+                        "\(inChapter >= ch.count ? "You can " : "By the end, you can ")\(ch.promise)"
+                    )
+                    .font(.figtree(.regular, size: 12.5))
+                    .auLine(12.5, 1.45)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.horizontal, 13)
+                    .padding(.vertical, 11)
+                    .frame(maxWidth: 300, alignment: .leading)
+                    .background(
+                        .thinMaterial,
+                        in: RoundedRectangle(cornerRadius: 15, style: .continuous)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                            .strokeBorder(Color.white.opacity(0.16), lineWidth: 1)
+                    )
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                    .accessibilityIdentifier("au.home.lesson-description")
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 24)
         .padding(.bottom, 16)
-        .background(
-            ZStack {
-                LinearGradient(
-                    stops: [
-                        .init(color: Color.auBackground, location: 0),
-                        .init(
-                            color: Color.auBackground.mixed(with: 0.07, of: Color.auAccent),
-                            location: 0.30),
-                        .init(
-                            color: Color.auBackground.mixed(with: 0.16, of: Color.auAccent),
-                            location: 0.60),
-                        .init(
-                            color: Color.auBackground.mixed(with: 0.10, of: Color.auAccent),
-                            location: 0.84),
-                        .init(color: Color.auBackground, location: 1),
-                    ],
-                    startPoint: .top, endPoint: .bottom
-                )
-                RadialGradient(
-                    stops: [
-                        .init(color: Color.auAccent.opacity(0.18), location: 0),
-                        .init(color: .clear, location: 0.68),
-                    ],
-                    center: UnitPoint(x: 0.30, y: 0.84), startRadius: 0, endRadius: 500
-                )
-                GrainOverlay(opacity: 0.05)
-            }
-            .ignoresSafeArea()
-        )
     }
 
     private var ch: AppRouter.ChapterHeader { env.router.chapterHeader }
@@ -160,46 +192,50 @@ struct HomeView: View {
         env.router.basePos + (env.router.lessonsDone - env.router.baseLessons)
     }
 
-    // MARK: Pending resume card (lines 482–491)
+    // MARK: One recommended next action
 
-    @ViewBuilder
-    private var pendingCard: some View {
-        if let pending = env.router.pending {
-            ACard(radius: 24) {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("Pick up where you stopped?")
-                        .font(.caprasimo(size: 16))
-                        .padding(.bottom, 4)
-                    Text("You left \(pending.title) at screen \(pending.at) of \(pending.of).")
-                        .font(.figtree(.regular, size: 12.5))
-                        .auLine(12.5, 1.45)
-                        .foregroundStyle(Color.auTextSecondary)
-                    HStack(spacing: 9) {
-                        APillButton(title: "Resume", compact: true, aid: "au.home.resume") {
-                            env.router.resumePending()
-                        }
-                        Button {
-                            env.router.discardPending()
-                        } label: {
-                            Text("Start over")
-                                .font(.figtree(.bold, size: 14))
-                                .padding(.horizontal, 18)
-                                .padding(.vertical, 13)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 19, style: .continuous)
-                                        .strokeBorder(Color.auEdge, lineWidth: 1)
-                                )
-                                .foregroundStyle(Color.auTextSecondary)
-                        }
-                        .buttonStyle(.auTap)
-                        .accessibilityIdentifier("au.home.start-over")
-                    }
-                    .padding(.top, 14)
-                }
+    private var recommendedCard: some View {
+        let r = env.router
+        let next = r.learnNextAction
+        return VStack(spacing: 10) {
+            HomeNextActionCard(
+                title: r.pending == nil
+                    ? next.title : String(localized: "Resume where you stopped"),
+                lessonTitle: r.pending?.title,
+                progress: r.pending.map { String(localized: "Step \($0.at) of \($0.of)") },
+                buttonTitle: r.pending == nil
+                    ? next.buttonTitle : String(localized: "Resume lesson"),
+                buttonAid: r.pending == nil ? "au.home.today" : "au.home.resume"
+            ) {
+                r.perform(next)
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 14)
+
+            if r.pending != nil {
+                Button {
+                    showRestartConfirmation = true
+                } label: {
+                    HStack(spacing: 8) {
+                        AUIcon(kind: .reviewLoop, size: 14, color: .auErrText)
+                        Text("Restart lesson")
+                            .font(.figtree(.semibold, size: 13.5))
+                    }
+                    .foregroundStyle(Color.auErrText)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color.auErr.opacity(0.08))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .strokeBorder(Color.auErr.opacity(0.28), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.auTap)
+                .accessibilityIdentifier("au.home.start-over")
+            }
         }
+        .padding(.horizontal, 24)
+        .padding(.top, 14)
     }
 
     // MARK: Day-arc card (lines 492–528 + 2315–2346)
@@ -300,23 +336,29 @@ struct HomeView: View {
                     .padding(.bottom, 13)
 
                 if arc.arcT < 1 {
-                    DayArcCTA(title: arcLabel, aid: "au.home.today") {
-                        if !r.dayLesson {
-                            r.goCourse(min(pathAt, 3))
-                        } else {
-                            r.reviewRun()
-                        }
+                    HStack(alignment: .top, spacing: 10) {
+                        AUIcon(kind: .arrow, size: 14, color: .auAccentText)
+                            .padding(.top, 2)
+                        Text(
+                            !r.dayLesson
+                                ? "First half: the recommended lesson above. Your place is saved at the natural pause."
+                                : "Second half: recall the words that came loose in today’s lesson."
+                        )
+                        .font(.figtree(.regular, size: 12.5))
+                        .auLine(12.5, 1.45)
+                        .foregroundStyle(Color.auTextSecondary)
                     }
+                    .padding(.horizontal, 15)
+                    .padding(.vertical, 13)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .fill(Color.auFill.opacity(0.65)))
                 } else {
                     HStack(spacing: 11) {
                         AUIcon(kind: .check, size: 17, color: .auOkText)
-                        Text(
-                            dueNow == 0 && r.dayLesson && !r.dayRecall
-                                ? "Today is complete — nothing was due. Tomorrow, a new lesson."
-                                : "Today is complete. Tomorrow, these come back one interval wider."
-                        )
-                        .font(.figtree(.regular, size: 13.5))
-                        .auLine(13.5, 1.45)
+                        Text("Day \(max(r.streak, 1)) Complete")
+                            .font(.figtree(.semibold, size: 14))
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 14)
@@ -330,7 +372,7 @@ struct HomeView: View {
                     Button {
                         r.goCourse(min(pathAt, 3))
                     } label: {
-                        Text("One more, for the pleasure of it")
+                        Text("One more?")
                             .font(.figtree(.bold, size: 13.5))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 13)
@@ -351,17 +393,8 @@ struct HomeView: View {
             .padding(.top, 14)
             .padding(.bottom, 16)
         }
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .background(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(Color(UIColor.secondarySystemBackground).opacity(0.16))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .strokeBorder(Color.white.opacity(0.12), lineWidth: 1)
-        )
+        .auPracticeGlass(radius: 28)
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .shadow(color: Color.black.opacity(0.10), radius: 16, y: 6)
         .padding(.horizontal, 24)
         .padding(.top, 14)
     }
@@ -371,11 +404,7 @@ struct HomeView: View {
         let r = env.router
         if r.dayLesson { return "done" }
         let i = min(pathAt, ch.lessons.count - 1)
-        let meta = ch.metas.indices.contains(i) ? ch.metas[i] : ""
-        let time =
-            meta.split(separator: "·").count > 1
-            ? String(meta.split(separator: "·")[1]).trimmingCharacters(in: .whitespaces) : ""
-        return "\(ch.lessons.indices.contains(i) ? ch.lessons[i] : "") · \(time)"
+        return ch.lessons.indices.contains(i) ? ch.lessons[i] : ""
     }
 
     /// act2Meta (line 2335)
@@ -385,18 +414,6 @@ struct HomeView: View {
         if r.dayRecall { return "caught" }
         let due = r.mistakes.count
         return due == 0 ? "nothing due" : "\(due)\(due == 1 ? " word · 1 min" : " words · 1 min")"
-    }
-
-    /// arcLabel (line 2341)
-    private var arcLabel: String {
-        let r = env.router
-        if !r.dayLesson {
-            return pathAt == 0
-                ? "Begin Lesson 1 · \(ch.lessons.first ?? "")"
-                : "Continue · \(ch.lessons.indices.contains(min(pathAt, 3)) ? ch.lessons[min(pathAt, 3)] : "")"
-        }
-        let due = r.mistakes.count
-        return due == 1 ? "Catch one word · 1 min" : "Catch \(due) words · 1 min"
     }
 
     // MARK: Lesson path (lines 530–632)
@@ -458,28 +475,6 @@ struct HomeView: View {
                                     animate: animatePath))
                         }
 
-                        // §3.6(d): the locked-stop explainer — first tap
-                        // explains, second tap opens the paywall.
-                        if let li = lockedExplainer,
-                            nodes.indices.contains(li),
-                            nodes[li].state == .locked
-                        {
-                            LockedStopCard(
-                                prev:
-                                    ch.lessons.indices.contains(max(0, li - 1))
-                                    ? ch.lessons[max(0, li - 1)] : ""
-                            )
-                            .position(
-                                x: min(max(nodes[li].x, 136), 402 - 136),
-                                y: nodes[li].y + 68
-                            )
-                            .transition(
-                                reduceMotion
-                                    ? .opacity
-                                    : .opacity.combined(with: .scale(scale: 0.94))
-                            )
-                        }
-
                         ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
                             VStack(
                                 alignment: node.alignRight ? .trailing : .leading, spacing: 3
@@ -494,14 +489,16 @@ struct HomeView: View {
                                     // slightly rather than collide with the
                                     // path or the neighbouring stop.
                                     .minimumScaleFactor(0.82)
-                                Text(node.meta)
-                                    .font(.figtree(.regular, size: 12))
-                                    .foregroundStyle(Color.auTextSecondary)
-                                    .multilineTextAlignment(
-                                        node.alignRight ? .trailing : .leading
-                                    )
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .minimumScaleFactor(0.82)
+                                if !node.meta.isEmpty {
+                                    Text(node.meta)
+                                        .font(.figtree(.regular, size: 12))
+                                        .foregroundStyle(Color.auTextSecondary)
+                                        .multilineTextAlignment(
+                                            node.alignRight ? .trailing : .leading
+                                        )
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .minimumScaleFactor(0.82)
+                                }
                             }
                             .frame(
                                 width: node.labelWidth,
@@ -533,38 +530,82 @@ struct HomeView: View {
                                         .foregroundStyle(Color.auTextTertiary)
                                 }
                                 Spacer(minLength: 8)
-                                Text(env.router.pro ? "Open" : "Opens with Pro")
-                                    .font(.figtree(.bold, size: 11))
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 3)
-                                    .background(
-                                        Capsule().fill(
-                                            env.router.pro ? Color.auOkBg : Color.auFlatBg)
-                                    )
-                                    .foregroundStyle(
-                                        env.router.pro ? Color.auOkQuiet : Color.auFlatText)
+                                Text(
+                                    env.router.pro ? "Open" : "View access"
+                                )
+                                .font(.figtree(.bold, size: 11))
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 3)
+                                .background(
+                                    Capsule().fill(
+                                        env.router.pro ? Color.auOkBg : Color.auFlatBg)
+                                )
+                                .foregroundStyle(
+                                    env.router.pro ? Color.auOkQuiet : Color.auFlatText)
                             }
                             .padding(.horizontal, 20)
                             .padding(.vertical, 18)
-                            .background(
-                                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                    .fill(Color.auFill)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                    .strokeBorder(Color.auEdge, lineWidth: 1)
-                            )
-                            .auLift()
+                            .auPracticeGlass(radius: 24)
                         }
                         .buttonStyle(.auTap)
                         .accessibilityIdentifier("au.home.next-chapter")
                         .frame(width: 402 - 48)
                         .offset(x: 24, y: 570)
+
+                        // §3.6(d): the locked-stop explainer on frosted glass with
+                        // a semi-transparent dismissal backdrop — renders strictly
+                        // on top of all labels, lines, and cards.
+                        if let li = lockedExplainer,
+                            nodes.indices.contains(li),
+                            nodes[li].state == .locked
+                        {
+                            Color.black.opacity(scheme == .dark ? 0.32 : 0.12)
+                                .frame(width: 402, height: 724)
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    withAnimation(
+                                        AUMotion.animation(
+                                            AUMotion.quick, reduceMotion: reduceMotion)
+                                    ) {
+                                        lockedExplainer = nil
+                                    }
+                                }
+                                .transition(.opacity)
+                                .zIndex(15)
+
+                            LockedStopCard(
+                                prev:
+                                    ch.lessons.indices.contains(max(0, li - 1))
+                                    ? ch.lessons[max(0, li - 1)] : "",
+                                commerceAvailable: env.router.capabilities.commerce,
+                                onUnlock: env.router.capabilities.commerce
+                                    ? {
+                                        withAnimation(
+                                            AUMotion.animation(
+                                                AUMotion.quick, reduceMotion: reduceMotion)
+                                        ) {
+                                            lockedExplainer = nil
+                                        }
+                                        env.router.nav(.paywall)
+                                    } : nil
+                            )
+                            .position(
+                                x: min(max(nodes[li].x, 138), 402 - 138),
+                                y: nodes[li].y + 72
+                            )
+                            .transition(
+                                reduceMotion
+                                    ? .opacity
+                                    : .opacity.combined(with: .scale(scale: 0.93))
+                            )
+                            .zIndex(20)
+                        }
                     }
                     .frame(width: 402, height: 724, alignment: .topLeading)
                     .scaleEffect(x: scale, y: scale, anchor: .topLeading)
                     .frame(
-                        width: geo.size.width, height: 724 * scale, alignment: .topLeading)
+                        width: geo.size.width, height: 724 * scale, alignment: .topLeading
+                    )
                     .onAppear { beginPathReveal() }
                     // §3.6(d): the explainer card enters/leaves on the quick
                     // spring (opacity-only under Reduce Motion).
@@ -631,14 +672,15 @@ struct HomeView: View {
                     ? ch.lessons[max(0, i - 1)] : ""
                 return "Opens after \(prev)"
             }
-            return (st == .done ? "Complete · " : "")
-                + (ch.metas.indices.contains(i) ? ch.metas[i] : "")
+            return st == .done ? "Complete" : ""
         }
         func act(_ i: Int) -> () -> Void {
             guard state(i) == .locked else {
                 return {
                     // Any open explainer steps aside when a playable stop is tapped.
-                    lockedExplainer = nil
+                    withAnimation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion)) {
+                        lockedExplainer = nil
+                    }
                     r.goCourse(i)
                 }
             }
@@ -646,11 +688,14 @@ struct HomeView: View {
             // free, later chapters come with Aurel Pro"), the second opens
             // the paywall.
             return {
-                if lockedExplainer == i {
-                    r.nav(.paywall)
-                } else {
-                    lockedExplainer = i
-                    AUFeedback.press()
+                withAnimation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion)) {
+                    if lockedExplainer == i {
+                        lockedExplainer = nil
+                        if r.capabilities.commerce { r.nav(.paywall) }
+                    } else {
+                        lockedExplainer = i
+                        AUFeedback.press()
+                    }
                 }
             }
         }
@@ -682,6 +727,188 @@ struct HomeView: View {
     }
 }
 
+/// A restrained color field gives native glass real depth without decorative blur blobs.
+private struct HomeLiquidBackground: View {
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        GeometryReader { geo in
+            let depth = max(geo.size.width, geo.size.height)
+            ZStack {
+                LinearGradient(
+                    stops: [
+                        .init(color: Color.auBackground, location: 0),
+                        .init(
+                            color: Color.auBackground.mixed(
+                                with: scheme == .dark ? 0.08 : 0.11,
+                                of: Color.auAccent
+                            ),
+                            location: 0.28
+                        ),
+                        .init(color: Color.auBackground, location: 0.58),
+                        .init(
+                            color: Color.auBackground.mixed(
+                                with: scheme == .dark ? 0.05 : 0.07,
+                                of: Color.auAccent2
+                            ),
+                            location: 1
+                        ),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+
+                RadialGradient(
+                    stops: [
+                        .init(
+                            color: Color.auAccent.opacity(scheme == .dark ? 0.12 : 0.09),
+                            location: 0),
+                        .init(color: .clear, location: 0.72),
+                    ],
+                    center: UnitPoint(x: 0.92, y: 0.08),
+                    startRadius: 0,
+                    endRadius: depth * 0.52
+                )
+
+                RadialGradient(
+                    stops: [
+                        .init(
+                            color: Color.auAccent2.opacity(scheme == .dark ? 0.08 : 0.06),
+                            location: 0),
+                        .init(color: .clear, location: 0.76),
+                    ],
+                    center: UnitPoint(x: 0.08, y: 0.76),
+                    startRadius: 0,
+                    endRadius: depth * 0.48
+                )
+
+                GrainOverlay(opacity: scheme == .dark ? 0.018 : 0.024)
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
+/// Home's single next action: essential context on native, integrated glass.
+private struct HomeNextActionCard: View {
+    let title: String
+    let lessonTitle: String?
+    let progress: String?
+    let buttonTitle: String
+    let buttonAid: String
+    let action: () -> Void
+
+    @Environment(\.colorScheme) private var scheme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(title)
+                .font(.caprasimo(size: 22))
+                .auHeadLine(22, 1.2)
+                .accessibilityIdentifier("au.home.recommendation.title")
+
+            if let lessonTitle {
+                Text(lessonTitle)
+                    .font(.figtree(.regular, size: 13))
+                    .auLine(13, 1.4)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.top, 6)
+            }
+
+            if let progress {
+                Text(progress)
+                    .font(.figtree(.semibold, size: 11.5))
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule().fill(Color.auText.opacity(scheme == .dark ? 0.10 : 0.055))
+                    )
+                    .padding(.top, 12)
+                    .accessibilityIdentifier("au.home.recommendation.progress")
+            }
+
+            APillButton(title: buttonTitle, aid: buttonAid, action: action)
+                .padding(.top, 18)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 19)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .auPracticeGlass(radius: 26)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("au.home.recommendation")
+    }
+}
+
+/// A compact in-app confirmation so the destructive action follows Aurel's
+/// own hierarchy and glass material while retaining the existing restart
+/// behavior.
+private struct RestartLessonConfirmation: View {
+    let cancel: () -> Void
+    let restart: () -> Void
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.28)
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture(perform: cancel)
+
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: 10) {
+                    AUIcon(kind: .reviewLoop, size: 17, color: .auAccentText)
+                        .frame(width: 36, height: 36)
+                        .background(Circle().fill(Color.auTintBg))
+                    Text("Restart lesson?")
+                        .font(.caprasimo(size: 22))
+                        .tracking(-0.34)
+                }
+
+                Text("Today’s lesson progress will be cleared.")
+                    .font(.figtree(.regular, size: 13.5))
+                    .auLine(13.5, 1.45)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.top, 12)
+
+                HStack(spacing: 10) {
+                    Button(action: cancel) {
+                        Text("Cancel")
+                            .font(.figtree(.semibold, size: 14.5))
+                            .frame(maxWidth: .infinity, minHeight: 48)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .fill(Color.auText.opacity(0.055))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .strokeBorder(Color.auEdge, lineWidth: 1)
+                            )
+                    }
+                    .buttonStyle(.auTap)
+                    .accessibilityIdentifier("au.home.restart.cancel")
+
+                    APillButton(
+                        title: "Restart",
+                        role: .primary,
+                        compact: true,
+                        aid: "au.home.restart.confirm",
+                        action: restart
+                    )
+                }
+                .padding(.top, 22)
+            }
+            .padding(20)
+            .frame(maxWidth: 342)
+            .auPracticeGlass(radius: 26)
+            .padding(.horizontal, 24)
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("au.home.restart.confirmation")
+        }
+        .accessibilityAction(.escape, cancel)
+    }
+}
+
 /// §3.6(a): a path node's entrance — the authored pop, gated to the path's
 /// first reveal. `animate` flips false only after the reveal has fully
 /// played, so the stagger is never cut short by the re-render.
@@ -698,21 +925,27 @@ private struct NodePopIn: ViewModifier {
     }
 }
 
-/// §3.6(d): the locked-stop explainer — two authored lines under the stop.
-/// The first tap on a locked stop shows it; the second opens the paywall.
+/// §3.6(d): the locked-stop explainer — modern frosted glass card with
+/// clear elevation over the semi-transparent dismissal backdrop.
 private struct LockedStopCard: View {
     let prev: String
+    let commerceAvailable: Bool
     var onUnlock: (() -> Void)? = nil
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 6) {
             Text("Opens after \(prev).")
-                .font(.figtree(.semibold, size: 13))
+                .font(.figtree(.bold, size: 13.5))
                 .foregroundStyle(Color.auText)
-            Text("Chapter One is free — later chapters come with Aurel Pro.")
-                .font(.figtree(.regular, size: 12))
-                .auLine(12, 1.4)
-                .foregroundStyle(Color.auText.opacity(0.62))
+            Text(
+                commerceAvailable
+                    ? "Chapter One is free — later chapters come with Aurel Pro."
+                    : "Additional chapters aren't available in this build."
+            )
+            .font(.figtree(.regular, size: 12))
+            .auLine(12, 1.4)
+            .foregroundStyle(Color.auText.opacity(0.72))
 
             if let onUnlock {
                 Button(action: onUnlock) {
@@ -727,56 +960,37 @@ private struct LockedStopCard: View {
                 .buttonStyle(.auTap)
             }
         }
-        .padding(.horizontal, 15)
-        .padding(.vertical, 12)
-        .frame(width: 248, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.auFill)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(Color.auEdge, lineWidth: 1)
-        )
-        .auShadowSm()
-        .accessibilityElement(children: .combine)
-    }
-}
-
-/// The day-arc's hero action — a modern, flat, elegant accent pill.
-private struct DayArcCTA: View {
-    let title: String
-    var aid: String? = nil
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: {
-            AUFeedback.press()
-            action()
-        }) {
-            HStack(spacing: 8) {
-                Text(title)
-                    .font(.figtree(.bold, size: 16))
-                    .tracking(0.2)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                AUIcon(kind: .chevron, size: 12, color: Color.auPrimaryButtonText.opacity(0.9))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .padding(.horizontal, 20)
-            .foregroundStyle(Color.auPrimaryButtonText)
-            .background(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(Color(UIColor(hex: 0xb25f1f)))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .strokeBorder(Color(UIColor(hex: 0xf29858)).opacity(0.60), lineWidth: 1.2)
-            )
-            .shadow(color: Color(UIColor(hex: 0xb25f1f)).opacity(0.32), radius: 8, x: 0, y: 3)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .frame(width: 252, alignment: .leading)
+        .background {
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(
+                            scheme == .dark
+                                ? Color(UIColor(hex: 0x1f1b18)).opacity(0.75)
+                                : Color.auFill.opacity(0.82)
+                        )
+                }
         }
-        .buttonStyle(.auTap)
-        .accessibilityIdentifier(aid ?? "au.btn.\(title.auSlug)")
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(scheme == .dark ? 0.28 : 0.65),
+                            Color.auEdge.opacity(scheme == .dark ? 0.45 : 0.35),
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: Color.black.opacity(scheme == .dark ? 0.45 : 0.15), radius: 18, x: 0, y: 8)
+        .accessibilityElement(children: .combine)
     }
 }
 

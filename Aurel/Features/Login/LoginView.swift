@@ -8,7 +8,24 @@ struct LoginView: View {
     @State private var shakeAttempts: CGFloat = 0
     @FocusState private var passwordFocused: Bool
 
+    @ViewBuilder
     var body: some View {
+        if env.router.capabilities.accounts {
+            loginForm
+        } else {
+            CapabilityUnavailableView(
+                title: "Accounts aren't available.",
+                message:
+                    "Your learning stays on this iPhone. You can begin or continue without signing in.",
+                buttonTitle: "Back",
+                aid: "au.capability.accounts-unavailable"
+            ) {
+                env.router.nav(.welcome)
+            }
+        }
+    }
+
+    private var loginForm: some View {
         GeometryReader { geo in
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
@@ -215,11 +232,11 @@ struct AUTextField: View {
         if secure {
             SecureField(
                 "", text: $text,
-                prompt: Text(placeholder).foregroundStyle(Color.auTextTertiary))
+                prompt: Text(placeholder.auLocalized).foregroundStyle(Color.auTextTertiary))
         } else {
             TextField(
                 "", text: $text,
-                prompt: Text(placeholder).foregroundStyle(Color.auTextTertiary))
+                prompt: Text(placeholder.auLocalized).foregroundStyle(Color.auTextTertiary))
         }
     }
 }

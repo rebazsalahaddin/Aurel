@@ -10,7 +10,7 @@ enum AUMotion {
     // Micro-interactions & button presses
     static let press: Animation = .spring(response: 0.18, dampingFraction: 0.70)
     static let snap: Animation = .spring(response: 0.22, dampingFraction: 0.76)
-    
+
     // Toggle flips, instant feedback
     static let instant: Animation = .easeOut(duration: 0.15)
 
@@ -22,7 +22,6 @@ enum AUMotion {
 
     // Fluid hero expansion (path node to lesson player, welcome sun)
     static let hero: Animation = .spring(response: 0.46, dampingFraction: 0.84)
-    static let heroExpand: Animation = .spring(response: 0.48, dampingFraction: 0.88)
 
     // Dynamic tile snap & drag reordering
     static let tileSnap: Animation = .spring(response: 0.22, dampingFraction: 0.78)
@@ -42,7 +41,6 @@ enum AUMotion {
 
     // Index delay for staggered choreography (60ms)
     static let staggerDelay: TimeInterval = 0.06
-    static let staggerStep: Double = 0.06
 
     // The screen-swap slide distance
     static let sceneSlide: CGFloat = 24
@@ -60,26 +58,6 @@ enum AUMotion {
                 .combined(with: .opacity),
             removal: .move(edge: forward ? .leading : .trailing)
                 .combined(with: .opacity)
-        )
-    }
-
-    /// Directional push transition for sequential multi-step flows (Onboarding, Quick Practice).
-    static func flowPush(reduceMotion: Bool, forward: Bool = true) -> AnyTransition {
-        guard !reduceMotion else { return .opacity }
-        return .asymmetric(
-            insertion: .move(edge: forward ? .trailing : .leading)
-                .combined(with: .opacity),
-            removal: .move(edge: forward ? .leading : .trailing)
-                .combined(with: .opacity)
-        )
-    }
-
-    /// Hero modal sheet rise transition.
-    static func sheetRise(reduceMotion: Bool) -> AnyTransition {
-        guard !reduceMotion else { return .opacity }
-        return .asymmetric(
-            insertion: .move(edge: .bottom).combined(with: .opacity),
-            removal: .move(edge: .bottom).combined(with: .opacity)
         )
     }
 }

@@ -74,24 +74,26 @@ final class FeedbackServicesTests: XCTestCase {
         AUAX.verdict(correct: false)
     }
 
-    /// §2.8 — placeholder v2 keeps the honesty contract: the ILL id kicker,
-    /// the alt caption, and the honest VoiceOver label stay in the source.
+    /// §2.8 — the illustration fallback keeps authoring metadata out of the
+    /// learner surface while preserving its descriptive alternative text.
     /// (Same source-scan approach as ColorLiteralTripwireTests.)
     func testIllustrationPlaceholderHonestyContract() throws {
         let repoRoot = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()
             .deletingLastPathComponent()
-        let file = repoRoot
+        let file =
+            repoRoot
             .appendingPathComponent("Aurel/DesignSystem/Components/Components.swift")
         let source = try String(contentsOf: file, encoding: .utf8)
-        XCTAssertTrue(
+        XCTAssertFalse(
             source.contains("Text(ill.id)"),
-            "the authored ILL id kicker must stay in the placeholder")
+            "internal illustration ids must stay out of release UI")
+        XCTAssertTrue(source.contains("Text(\"Scene\")"))
         XCTAssertTrue(
-            source.contains("Text(ill.alt)"),
+            source.contains("Text(learnerAlt)"),
             "the authored alt caption must stay in the placeholder")
         XCTAssertTrue(
-            source.contains("accessibilityLabel(\"Illustration placeholder: \\(ill.alt)\")"),
-            "the placeholder must keep announcing itself honestly to VoiceOver")
+            source.contains("accessibilityLabel(learnerAlt)"),
+            "VoiceOver must receive the descriptive alternative text")
     }
 }

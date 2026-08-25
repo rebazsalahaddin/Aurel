@@ -34,7 +34,8 @@ struct QuickItem: Identifiable, Hashable, Sendable {
     var answerText: String { answerString }
     var answerString: String = ""
 
-    var src: String = ""
+    /// Stable authoring provenance for diagnostics; never learner-facing.
+    var debugSource: String = ""
 }
 
 extension QuickItem {
@@ -47,7 +48,6 @@ extension QuickItem {
 
         for f in course.flat {
             let src = "\(f.chapter.id)-\(f.lesson.id)"
-            let lessonSrc = f.lesson.src ?? ""
             switch f.screen.payload {
             case .cards(let sc):
                 for c in sc.cards ?? [] {
@@ -56,30 +56,30 @@ extension QuickItem {
                         QuickItem(
                             id: "\(src)-\(c.id)",
                             type: .flash,
-                            kicker: "Vocabulary · \(c.id)",
+                            kicker: String(localized: "Vocabulary"),
                             front: c.w,
                             back: fn,
                             ex: c.frame ?? "",
                             ipa: c.ipa ?? "",
                             ill: c.ill,
-                            src: src
+                            debugSource: src
                         ))
                 }
             case .practice(let sc):
                 append(
-                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    items: sc.items, src: src, chapterId: f.chapter.id,
                     into: &choice, &listen, &order)
             case .quiz(let sc):
                 append(
-                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    items: sc.items, src: src, chapterId: f.chapter.id,
                     into: &choice, &listen, &order)
             case .reading(let sc):
                 append(
-                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    items: sc.items, src: src, chapterId: f.chapter.id,
                     into: &choice, &listen, &order)
             case .testlet(let sc):
                 append(
-                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    items: sc.items, src: src, chapterId: f.chapter.id,
                     into: &choice, &listen, &order)
             default:
                 break
@@ -110,7 +110,6 @@ extension QuickItem {
         items: [PracticeItem]?,
         src: String,
         chapterId: String,
-        lessonSrc: String,
         into choice: inout [QuickItem],
         _ listen: inout [QuickItem],
         _ order: inout [QuickItem]
@@ -118,13 +117,14 @@ extension QuickItem {
         for it in items ?? [] {
             if it.kind == "order", let tiles = it.tiles, !tiles.isEmpty {
                 var item = QuickItem(
-                    id: "\(src)-\(it.id)", type: .order, kicker: "Word order · \(it.id)")
+                    id: "\(src)-\(it.id)", type: .order,
+                    kicker: String(localized: "Word order"))
                 item.prompt = it.instr.isEmpty ? "Put in order." : it.instr
                 item.words = tiles
                 item.answerString = (it.key?.sequence ?? []).joined(separator: " ")
                 item.why = it.ok ?? ""
                 item.hint = it.no ?? ""
-                item.src = src
+                item.debugSource = src
                 order.append(item)
                 continue
             }
@@ -137,17 +137,19 @@ extension QuickItem {
             var base = QuickItem(
                 id: "\(src)-\(it.id)",
                 type: it.aud != nil ? .listen : .choice,
-                kicker: it.id.replacingOccurrences(
-                    of: "^PR-", with: "", options: .regularExpression) + " · " + src
+                kicker: it.aud != nil
+                    ? String(localized: "Listening") : String(localized: "Practice")
             )
             base.options = opts.compactMap(\.text)
             base.answer = answer
             base.why = it.ok ?? ""
             base.hint = it.no ?? ""
-            base.src = src
+            base.debugSource = src
             if it.aud != nil {
                 base.audio =
-                    "not recorded yet — \(chapterId)-\(it.aud ?? "") is a script in \(lessonSrc)"
+                    opts.indices.contains(answer)
+                    ? (opts[answer].text ?? it.prompt ?? String(localized: "Listening prompt"))
+                    : (it.prompt ?? String(localized: "Listening prompt"))
                 base.audioAsset = it.aud.map { "\(chapterId)-\($0)" } ?? ""
                 base.prompt = it.prompt ?? ""
                 listen.append(base)
@@ -216,7 +218,7 @@ struct SceneScript: Sendable, Hashable {
     let title: String
     let role: String
     let close: String
-    let source: String
+    let debugSource: String
     let turns: [Turn]
 
     /// sceneFromCourse() — the newest authored roleplay plus its rehearsal taps.
@@ -245,13 +247,11 @@ struct SceneScript: Sendable, Hashable {
             guard !rehearsalItems.isEmpty else { continue }
 
             return SceneScript(
-                title: (f.screen.label ?? "").replacingOccurrences(
-                    of: "^Roleplay — ", with: "", options: .regularExpression) + " · "
-                    + (rp.spec ?? ""),
+                title: f.screen.learnerTitle,
                 role: rp.scenario ?? "",
                 close: "Slots completed, not perfection: "
                     + (rp.checklist ?? []).joined(separator: " · ") + ".",
-                source: "\(f.chapter.id) · \(f.lesson.src ?? "")",
+                debugSource: "\(f.chapter.id) · \(f.lesson.src ?? "")",
                 turns: rehearsalItems.map { it in
                     Turn(
                         them: it.prompt ?? "",
@@ -266,10 +266,10 @@ struct SceneScript: Sendable, Hashable {
             )
         }
         return SceneScript(
-            title: "Scene — awaiting content",
-            role: "No roleplay is authored yet.",
+            title: "Conversation practice unavailable",
+            role: "No conversation practice is available yet.",
             close: "",
-            source: "",
+            debugSource: "",
             turns: [Turn(them: "", replies: [])]
         )
     }

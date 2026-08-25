@@ -15,7 +15,7 @@ final class AppRouter {
     // MARK: Screens (the authored `screen` values, in flow order)
 
     enum Screen: Equatable {
-        case welcome, goal, commit, plan, login
+        case welcome, onboardingSample, onboardingValue, goal, commit, plan, login
         case home, course, lesson, result
         case streak, leaderboard, stories
         case scene, speak, review
@@ -33,6 +33,8 @@ final class AppRouter {
         static func named(_ raw: String) -> Screen? {
             switch raw {
             case "welcome": .welcome
+            case "onboardingSample": .onboardingSample
+            case "onboardingValue": .onboardingValue
             case "goal": .goal
             case "commit": .commit
             case "plan": .plan
@@ -60,6 +62,8 @@ final class AppRouter {
         var rawName: String {
             switch self {
             case .welcome: "welcome"
+            case .onboardingSample: "onboardingSample"
+            case .onboardingValue: "onboardingValue"
             case .goal: "goal"
             case .commit: "commit"
             case .plan: "plan"
@@ -79,6 +83,17 @@ final class AppRouter {
             case .settings: "settings"
             case .paywall: "paywall"
             case .subscribeAccount: "subscribeAccount"
+            }
+        }
+
+        /// Setup routes never imply that onboarding has finished. This also
+        /// protects partial-route persistence from stamping `onboardedAt`.
+        var isOnboarding: Bool {
+            switch self {
+            case .welcome, .onboardingSample, .onboardingValue, .goal, .commit, .plan, .login:
+                true
+            default:
+                false
             }
         }
     }
@@ -120,7 +135,6 @@ final class AppRouter {
     var boardOut = false
     var boardAll = false
     var boardRules = false
-    var dragTray = false
     var selfRate: Int? = nil
     var sceneRoleB = false
     var invited = false
@@ -138,6 +152,16 @@ final class AppRouter {
     var speakTypedCheck = false
     var speakTypedVerdict: SpeakVerdict.Tier? = nil
     var speakTypedWords = (matched: 0, total: 0)
+
+    enum OnboardingSampleOutcome: String, Equatable, Sendable {
+        case notTried, recognized, skipped
+    }
+
+    /// The value sample is deliberately outside course progress. Only this
+    /// lightweight outcome and its route checkpoint persist.
+    var onboardingSampleOutcome: OnboardingSampleOutcome = .notTried
+    var onboardingSampleSelection: Int? = nil
+    var onboardingCheckpoint: Screen = .welcome
     /// §3.16: the shared say-aloud take coordinator (mic, window, clarity
     /// check). Owned here so the Speak screen and the player's pronProduce
     /// items (§3.11c) share one honest flow.
@@ -195,14 +219,14 @@ final class AppRouter {
     var typeStep = 2  // text-size index; 2 = standard
 
     struct NotifPrefs: Equatable {
-        var dawn = true
-        var sundown = true
-        var milestone = true
+        var dawn = false
+        var sundown = false
+        var milestone = false
         var cohort = false
     }
 
     struct SwitchPrefs: Equatable {
-        var reminder = true
+        var reminder = false
         var sound = true
         var haptics = true
         var weekly = false
@@ -211,71 +235,87 @@ final class AppRouter {
     // MARK: Dependencies
 
     let course: CourseStore
+    let capabilities: AppCapabilities
     private let modelContext: ModelContext?
 
     // MARK: Init
 
-    init(course: CourseStore, modelContext: ModelContext? = nil) {
+    init(
+        course: CourseStore,
+        modelContext: ModelContext? = nil,
+        capabilities: AppCapabilities = .release
+    ) {
         self.course = course
         self.modelContext = modelContext
+        self.capabilities = capabilities
         if let modelContext,
             let profile = try? modelContext.fetch(FetchDescriptor<LearnerProfile>()).first
         {
             load(from: profile)
+            sanitizeUnavailablePrototypeState(in: profile, context: modelContext)
         }
         // Midnight rollover (S1-009): durable day flags must never outlive
         // their day — the prototype was session-scoped, the port persists.
         rolloverDayIfNeeded()
-        // Verification hook: SIMCTL_CHILD_AUREL_SCREEN=home — routes like the
-        // fast path and never writes the store (a debug route must not mark
-        // the learner onboarded).
-        if let s = Self.screenHook(ProcessInfo.processInfo.environment) {
-            screen = s
-        }
-        // UI-test fast path: launch with ["-AUREL_TEST_START", "home"] — routes
-        // like the env hook but never writes the store.
-        let args = ProcessInfo.processInfo.arguments
-        if let i = args.firstIndex(of: "-AUREL_TEST_START"), i + 1 < args.count,
-            let s = Screen.named(args[i + 1])
-        {
-            screen = s
-        }
+        #if AUREL_VERIFICATION
+            // Verification hook: SIMCTL_CHILD_AUREL_SCREEN=home — routes like the
+            // fast path and never writes the store (a debug route must not mark
+            // the learner onboarded).
+            if let s = Self.screenHook(ProcessInfo.processInfo.environment) {
+                screen = s
+            }
+            // UI-test fast path: launch with ["-AUREL_TEST_START", "home"] — routes
+            // like the env hook but never writes the store.
+            let args = ProcessInfo.processInfo.arguments
+            if let i = args.firstIndex(of: "-AUREL_TEST_START"), i + 1 < args.count,
+                let s = Screen.named(args[i + 1])
+            {
+                screen = s
+            }
+            // PH-01 deterministic renderer fixtures. These routes exist only in
+            // verification builds and never stamp progress or onboarding state.
+            if let i = args.firstIndex(of: "-AUREL_RENDERER_KIND"), i + 1 < args.count,
+                let kind = ScreenKind(rawValue: args[i + 1]),
+                let fixture = course.rendererFixture(for: kind)
+            {
+                coursePos = fixture.position
+                screen = .course
+            }
+            if let i = args.firstIndex(of: "-AUREL_LESSON_INDEX"), i + 1 < args.count,
+                let index = Int(args[i + 1]), course.lessonFixtures.indices.contains(index)
+            {
+                coursePos = course.lessonFixtures[index].position
+                screen = .course
+            }
+            if let i = args.firstIndex(of: "-AUREL_THEME_MODE"), i + 1 < args.count,
+                let mode = Int(args[i + 1]), (0...2).contains(mode)
+            {
+                themeMode = mode
+            }
+        #endif
     }
 
-    /// The `AUREL_SCREEN` verification hook: pure routing only — a debug
-    /// route must never write SwiftData (S2-001: it used to `persist()` and
-    /// stamped `onboardedAt` for a debug launch).
-    static func screenHook(_ env: [String: String]) -> Screen? {
-        env["AUREL_SCREEN"].flatMap(Screen.named)
-    }
-
-    /// Preview-only mid-journey seed (seedFor('mid-journey'), line 1747).
-    static func midJourneyPreview(course: CourseStore) -> AppRouter {
-        let r = AppRouter(course: course)
-        r.screen = .home
-        r.goals = ["work"]
-        r.streak = 43
-        r.lessonsDone = 37
-        r.baseLessons = 37
-        r.basePos = 2
-        r.chapterIdx = 1
-        r.pro = true
-        r.mistakes = [1, 3]
-        return r
-    }
+    #if AUREL_VERIFICATION
+        /// The `AUREL_SCREEN` verification hook: pure routing only — a debug
+        /// route must never write SwiftData (S2-001: it used to `persist()` and
+        /// stamped `onboardedAt` for a debug launch).
+        static func screenHook(_ env: [String: String]) -> Screen? {
+            env["AUREL_SCREEN"].flatMap(Screen.named)
+        }
+    #endif
 
     func load(from p: LearnerProfile) {
         goals = p.goals
         level = p.level
-        email = p.email
+        email = capabilities.accounts ? p.email : ""
         commit = p.commitMinutes
-        remindAt = p.remindAt
+        remindAt = capabilities.notifications ? p.remindAt : ""
         streak = p.streakDays
         lessonsDone = p.lessonsDone
         baseLessons = p.baseLessons
         basePos = p.basePos
         chapterIdx = p.chapterIdx
-        pro = p.isPro
+        pro = capabilities.commerce ? p.isPro : false
         mistakes = p.mistakeBankIndexes
         arcs = p.dayArcsCompleted
         dayLesson = p.dayLessonDone
@@ -286,16 +326,78 @@ final class AppRouter {
         graceMonth = p.graceMonth
         graceUsed = p.graceUsed
         coursePos = p.coursePos
-        notif = NotifPrefs(
-            dawn: p.notifDawn, sundown: p.notifSundown, milestone: p.notifMilestone,
-            cohort: p.notifCohort)
+        notif =
+            capabilities.notifications
+            ? NotifPrefs(
+                dawn: p.notifDawn, sundown: p.notifSundown,
+                milestone: p.notifMilestone, cohort: p.notifCohort)
+            : NotifPrefs()
         sw = SwitchPrefs(
-            reminder: p.swReminder, sound: p.swSound, haptics: p.swHaptics, weekly: p.swWeekly)
+            reminder: capabilities.notifications ? p.swReminder : false,
+            sound: p.swSound,
+            haptics: p.swHaptics,
+            weekly: capabilities.weeklyEmail ? p.swWeekly : false)
         themeMode = p.themeMode
         typeStep = p.typeStep
         milestonesSeen = p.milestonesSeen
+        onboardingSampleOutcome =
+            OnboardingSampleOutcome(rawValue: p.onboardingSampleOutcome) ?? .notTried
+        onboardingSampleSelection = onboardingSampleOutcome == .recognized ? 0 : nil
+        onboardingCheckpoint = Self.onboardingScreen(named: p.onboardingCheckpoint) ?? .welcome
         syncFeedbackGates()  // the persisted Haptics/Sound prefs gate the services
-        screen = p.onboardedAt == nil ? .welcome : .home
+        screen = Self.launchScreen(
+            onboardingCheckpoint: onboardingCheckpoint,
+            completedOnboarding: p.onboardedAt != nil,
+            authenticatedAccount: capabilities.accounts && !p.email.isEmpty
+        )
+    }
+
+    /// Launch routing has one explicit boundary: a fresh or partially set-up
+    /// learner returns to the welcome/onboarding route; a signed-in account
+    /// skips it. Completed local-only learners also retain their Home fast
+    /// path because returning to Welcome would strand existing progress.
+    static func launchScreen(
+        onboardingCheckpoint: Screen,
+        completedOnboarding: Bool,
+        authenticatedAccount: Bool
+    ) -> Screen {
+        if authenticatedAccount || completedOnboarding { return .home }
+        return onboardingCheckpoint.isOnboarding ? onboardingCheckpoint : .welcome
+    }
+
+    /// Remove legacy prototype-only identity, entitlement, and delivery state
+    /// so a release build cannot revive it after relaunch.
+    private func sanitizeUnavailablePrototypeState(
+        in profile: LearnerProfile,
+        context: ModelContext
+    ) {
+        var changed = false
+        if !capabilities.accounts, !profile.email.isEmpty {
+            profile.email = ""
+            changed = true
+        }
+        if !capabilities.commerce, profile.isPro {
+            profile.isPro = false
+            changed = true
+        }
+        if !capabilities.notifications {
+            if !profile.remindAt.isEmpty || profile.swReminder || profile.notifDawn
+                || profile.notifSundown || profile.notifMilestone || profile.notifCohort
+            {
+                profile.remindAt = ""
+                profile.swReminder = false
+                profile.notifDawn = false
+                profile.notifSundown = false
+                profile.notifMilestone = false
+                profile.notifCohort = false
+                changed = true
+            }
+        }
+        if !capabilities.weeklyEmail, profile.swWeekly {
+            profile.swWeekly = false
+            changed = true
+        }
+        if changed { try? context.save() }
     }
 
     /// Write durable fields back to SwiftData.
@@ -334,7 +436,9 @@ final class AppRouter {
         profile.themeMode = themeMode
         profile.typeStep = typeStep
         profile.milestonesSeen = milestonesSeen
-        if screen != .welcome && screen != .goal && screen != .commit && screen != .plan {
+        profile.onboardingCheckpoint = onboardingCheckpoint.rawName
+        profile.onboardingSampleOutcome = onboardingSampleOutcome.rawValue
+        if !screen.isOnboarding {
             profile.onboardedAt = profile.onboardedAt ?? Date()
         }
         try? modelContext.save()
@@ -502,7 +606,10 @@ final class AppRouter {
     func recordLessonCompletion(now: Date = Date()) {
         guard let modelContext else { return }
         let existing = (try? modelContext.fetch(FetchDescriptor<LessonRecord>())) ?? []
-        guard !existing.contains(where: { $0.chapterIdx == chapterIdx && $0.lessonIdx == courseLesson })
+        guard
+            !existing.contains(where: {
+                $0.chapterIdx == chapterIdx && $0.lessonIdx == courseLesson
+            })
         else { return }
         modelContext.insert(
             LessonRecord(
@@ -537,15 +644,20 @@ final class AppRouter {
     ) -> [Int] {
         let today = calendar.startOfDay(for: now)
         let weekday = (calendar.component(.weekday, from: today) + 5) % 7  // Mon = 0
-        guard let currentWeekStart = calendar.date(
-            byAdding: .day, value: -weekday, to: today
-        ) else { return Array(repeating: 0, count: 8) }
+        guard
+            let currentWeekStart = calendar.date(
+                byAdding: .day, value: -weekday, to: today
+            )
+        else { return Array(repeating: 0, count: 8) }
         return (0..<8).map { back in
             let weeksBack = 7 - back
-            guard let weekStart = calendar.date(
-                byAdding: .day, value: -(weeksBack * 7), to: currentWeekStart
-            ) else { return 0 }
-            return logs
+            guard
+                let weekStart = calendar.date(
+                    byAdding: .day, value: -(weeksBack * 7), to: currentWeekStart
+                )
+            else { return 0 }
+            return
+                logs
                 .filter { $0.day >= weekStart && ($0.day < currentWeekStart || back == 7) }
                 .reduce(0) { $0 + $1.minutes }
         }
@@ -650,7 +762,8 @@ final class AppRouter {
                 row.dueAt = cal.date(byAdding: .day, value: 1, to: now) ?? now
             } else {
                 modelContext.insert(
-                    MistakeItem(bankIndex: idx, word: "", intervalDays: 1, learner: fetchOrCreateProfile()))
+                    MistakeItem(
+                        bankIndex: idx, word: "", intervalDays: 1, learner: fetchOrCreateProfile()))
             }
         }
         syncQueueFromRows()
@@ -692,6 +805,9 @@ final class AppRouter {
         if to == .settings {
             settingsSource = (screen == .profile || screen == .home) ? screen : .home
         }
+        if to.isOnboarding, to != .login {
+            onboardingCheckpoint = to
+        }
         screen = to
         persist()
     }
@@ -701,10 +817,43 @@ final class AppRouter {
         persist()
     }
 
-    // MARK: Onboarding (toggleGoal / finishOnboarding, lines 1705–1710, 2060)
+    // MARK: Onboarding (value sample + preferences)
 
     /// Delayed-transition tasks (S2-002).
     private var sceneReplyTask: Task<Void, Never>?
+
+    private static func onboardingScreen(named raw: String) -> Screen? {
+        guard let screen = Screen.named(raw), screen.isOnboarding, screen != .login else {
+            return nil
+        }
+        return screen
+    }
+
+    /// The recognition sample has one safe, unambiguous answer. A wrong tap
+    /// stays local to the sample; a correct tap persists only the sample
+    /// outcome and never changes lesson, streak, review, or day progress.
+    func chooseOnboardingSample(_ option: Int) {
+        onboardingSampleSelection = option
+        if option == 0 {
+            onboardingSampleOutcome = .recognized
+            AUFeedback.correct()
+        } else {
+            onboardingSampleOutcome = .notTried
+            AUFeedback.miss()
+        }
+        persist()
+    }
+
+    func continueOnboardingSample() {
+        guard onboardingSampleOutcome == .recognized else { return }
+        nav(.onboardingValue)
+    }
+
+    func skipOnboardingSample() {
+        onboardingSampleSelection = nil
+        onboardingSampleOutcome = .skipped
+        nav(.onboardingValue)
+    }
 
     func toggleGoal(_ id: String) {
         AUFeedback.selection()
@@ -726,10 +875,19 @@ final class AppRouter {
 
     func finishOnboarding() {
         screen = .plan
+        onboardingCheckpoint = .plan
         persist()
     }
 
-    // MARK: Login (mock validation, lines 2504–2509)
+    /// The plan's CTA is the single onboarding completion boundary. Starting
+    /// the real lesson stamps onboarding once; the preceding sample remains
+    /// progress-free.
+    func startFirstLesson() {
+        goStarter()
+        persist()
+    }
+
+    // MARK: Account gates
 
     func setEmail(_ e: String) { email = e }
 
@@ -742,7 +900,9 @@ final class AppRouter {
         guard !done.isEmpty else { return 0 }
         var words = 0
         for f in course.flat {
-            guard done.contains("\(chapterIndex(of: f.chapter.id))-\(f.lesson.n - 1)") else { continue }
+            guard done.contains("\(chapterIndex(of: f.chapter.id))-\(f.lesson.n - 1)") else {
+                continue
+            }
             if case .cards(let sc) = f.screen.payload {
                 words += sc.cards?.count ?? 0
             }
@@ -757,6 +917,12 @@ final class AppRouter {
     func setPass(_ p: String) { pass = p }
 
     func signIn() {
+        guard capabilities.accounts else {
+            withAnimation(AUMotion.flow) {
+                loginErr = "Account sign-in isn't available in this build."
+            }
+            return
+        }
         let okMail = email.range(of: #".+@.+\..+"#, options: .regularExpression) != nil
         // Craft overhaul M9: banner state animates (was a hard cut).
         guard okMail else {
@@ -767,9 +933,9 @@ final class AppRouter {
             withAnimation(AUMotion.flow) { loginErr = "Passwords are at least six characters." }
             return
         }
-        withAnimation(AUMotion.flow) { loginErr = "" }
-        screen = .home
-        persist()
+        withAnimation(AUMotion.flow) {
+            loginErr = "An account service isn't connected."
+        }
     }
 
     // MARK: Course player wiring (lines 2028–2036, 2267–2277)
@@ -788,7 +954,7 @@ final class AppRouter {
         coursePos =
             i >= lessons
             ? course.chapterEndPos(chapterIdx)
-            : course.coursePos(chapterIdx: chapterIdx, lessonIdx: i)
+            : course.lessonStartPos(chapterIdx: chapterIdx, lessonIdx: i)
         pending = nil
         courseStart = Date()  // §3.18 session clock
         screen = .course
@@ -797,7 +963,7 @@ final class AppRouter {
     func goStarter() {
         screen = .course
         courseLesson = 0
-        coursePos = course.coursePos(chapterIdx: chapterIdx, lessonIdx: 0)
+        coursePos = course.lessonStartPos(chapterIdx: chapterIdx, lessonIdx: 0)
         starter = false
         reviewMode = false
         pending = nil
@@ -863,13 +1029,6 @@ final class AppRouter {
         nudge = false
         wrongSel = nil
         retries = 0
-    }
-
-    func goLesson() {
-        resetLesson()
-        screen = .lesson
-        starter = false
-        pending = nil
     }
 
     func reviewRun() {
@@ -942,7 +1101,8 @@ final class AppRouter {
             // §3.17: the run's misses land on the ladder (display indexes
             // are bank indexes in a normal run — the list is the bank).
             advanceMistakeLadder(caught: [], missed: mistakes)
-            upsertDayLog(minutesDelta: sessionMinutes)  // the quick lesson is the day's first half (§3.14)
+            // The quick lesson is the day's first half (§3.14).
+            upsertDayLog(minutesDelta: sessionMinutes)
             screen = .result
             persist()
             return
@@ -1100,42 +1260,136 @@ final class AppRouter {
         persist()
     }
 
-    // MARK: Paywall & Subscriptions (lines 2566–2574)
+    // MARK: Account, commerce, and local-data contracts
 
     var hasAccount: Bool {
-        !email.isEmpty
+        capabilities.accounts && !email.isEmpty
     }
 
     func startSubscribe() {
+        guard capabilities.commerce else {
+            loginErr = "Subscriptions aren't available in this build."
+            return
+        }
         if hasAccount {
-            pro = true
-            screen = .home
-            persist()
+            // A real commerce client owns entitlement. Never grant it from a tap.
+            loginErr = "A purchase service isn't connected."
         } else {
             screen = .subscribeAccount
         }
     }
 
     func restorePurchase() {
-        if hasAccount {
-            pro = true
-            screen = .home
-            persist()
-        } else {
-            loginErr = "Sign in to restore a purchase."
-            screen = .login
+        guard capabilities.commerce else {
+            loginErr = "Purchase restore isn't available in this build."
+            return
         }
+        loginErr = "A purchase service isn't connected."
     }
 
     func createAccountAndSubscribe() {
+        guard capabilities.accounts, capabilities.commerce else {
+            loginErr = "Account subscriptions aren't available in this build."
+            return
+        }
         let okMail = email.range(of: #".+@.+\..+"#, options: .regularExpression) != nil
         guard okMail, pass.count >= 6 else {
             loginErr = "Enter a valid email and a password of at least six characters."
             return
         }
+        loginErr = "A purchase service isn't connected."
+    }
+
+    /// Account-session semantics are separate from learning-data semantics.
+    /// This is hidden in release until accounts exist, but is defined and
+    /// regression-tested now so a future sign-out cannot erase progress.
+    func signOut() {
+        email = ""
+        pass = ""
+        pro = false
         loginErr = ""
-        pro = true
-        screen = .home
-        persist()
+        if let modelContext,
+            let profile = try? modelContext.fetch(FetchDescriptor<LearnerProfile>()).first
+        {
+            profile.email = ""
+            profile.isPro = false
+            try? modelContext.save()
+        }
+        screen = .welcome
+    }
+
+    /// Permanently erase every local Aurel model after the UI's explicit
+    /// confirmation, then reset the running app to a guest. Normal launch/day
+    /// initialization may create a fresh default profile later; deleted
+    /// identity, settings, and learning records must never return.
+    @discardableResult
+    func deleteLocalData() -> Bool {
+        guard let modelContext else {
+            resetAfterLocalDeletion()
+            return true
+        }
+        do {
+            for row in try modelContext.fetch(FetchDescriptor<MistakeItem>()) {
+                modelContext.delete(row)
+            }
+            for row in try modelContext.fetch(FetchDescriptor<DayLog>()) {
+                modelContext.delete(row)
+            }
+            for row in try modelContext.fetch(FetchDescriptor<LessonRecord>()) {
+                modelContext.delete(row)
+            }
+            for row in try modelContext.fetch(FetchDescriptor<LearnerProfile>()) {
+                modelContext.delete(row)
+            }
+            try modelContext.save()
+            resetAfterLocalDeletion()
+            return true
+        } catch {
+            modelContext.rollback()
+            loginErr = "Aurel couldn't delete the local data. Nothing was changed."
+            return false
+        }
+    }
+
+    /// The explicit cancellation branch for the local-deletion prompt. It is
+    /// intentionally side-effect free and kept as a tested router contract so
+    /// cancellation can never drift into the destructive path during later UI
+    /// refactors.
+    func cancelLocalDataDeletion() {}
+
+    private func resetAfterLocalDeletion() {
+        goals = []
+        level = "a1"
+        email = ""
+        pass = ""
+        commit = 10
+        remindAt = ""
+        streak = 0
+        lessonsDone = 0
+        baseLessons = 0
+        basePos = 0
+        chapterIdx = 0
+        pro = false
+        mistakes = []
+        arcs = 0
+        dayLesson = false
+        dayRecall = false
+        activeDay = nil
+        dayStartStreak = 0
+        dayCounted = false
+        graceMonth = 0
+        graceUsed = 0
+        coursePos = 0
+        notif = NotifPrefs()
+        sw = SwitchPrefs()
+        themeMode = 0
+        typeStep = 2
+        milestonesSeen = []
+        onboardingSampleOutcome = .notTried
+        onboardingSampleSelection = nil
+        onboardingCheckpoint = .welcome
+        queue = []
+        syncFeedbackGates()
+        screen = .welcome
     }
 }

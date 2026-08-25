@@ -2,6 +2,14 @@ import CoreText
 import SwiftUI
 import UIKit
 
+extension String {
+    /// Resolves a runtime string through the app's source-language catalog.
+    /// Course-authored text falls back to itself until curriculum locales are approved.
+    var auLocalized: String {
+        NSLocalizedString(self, tableName: "Localizable", bundle: .main, comment: "")
+    }
+}
+
 // MARK: - Typography
 //
 // The Organic system pairs Caprasimo (display, single weight) with Figtree
@@ -175,13 +183,16 @@ struct AUParagraph: View {
     var alignment: TextAlignment = .leading
     var color: Color = .auText
 
+    private var localizedText: String { text.auLocalized }
+
     var body: some View {
         LabelBox(
-            text: text, font: Figtree.uiFont(weight: weight, size: AUTypeScale.scaled(size)),
+            text: localizedText,
+            font: Figtree.uiFont(weight: weight, size: AUTypeScale.scaled(size)),
             lineHeight: AUTypeScale.scaled(size) * lineHeight, tracking: tracking,
             alignment: alignment, color: UIColor(color)
         )
-        .accessibilityLabel(text)
+        .accessibilityLabel(localizedText)
     }
 
     /// `UILabel` sized by SwiftUI's proposed width.
@@ -378,16 +389,16 @@ enum AUTypeScale {
 // MARK: - AUTextToken (Apple Design Award Typography Scale)
 
 enum AUTextToken {
-    case displayHero     // 36pt Caprasimo Bold
-    case displayLarge    // 29pt Caprasimo Bold
-    case titleLarge      // 22pt Caprasimo Bold
-    case titleMedium     // 18pt Caprasimo Bold
-    case bodyLead        // 16.5pt Figtree Regular
-    case bodyStandard    // 14.5pt Figtree Regular
-    case bodyMedium      // 14.5pt Figtree Medium
-    case captionBold     // 10.5pt Figtree Bold (Uppercase)
-    case labelSmall      // 12.0pt Figtree SemiBold
-    case statNumber      // 33.0pt Figtree Bold Monospaced
+    case displayHero  // 36pt Caprasimo Bold
+    case displayLarge  // 29pt Caprasimo Bold
+    case titleLarge  // 22pt Caprasimo Bold
+    case titleMedium  // 18pt Caprasimo Bold
+    case bodyLead  // 16.5pt Figtree Regular
+    case bodyStandard  // 14.5pt Figtree Regular
+    case bodyMedium  // 14.5pt Figtree Medium
+    case captionBold  // 10.5pt Figtree Bold (Uppercase)
+    case labelSmall  // 12.0pt Figtree SemiBold
+    case statNumber  // 33.0pt Figtree Bold Monospaced
 }
 
 extension View {
@@ -398,4 +409,3 @@ extension View {
             .lineLimit(nil)
     }
 }
-

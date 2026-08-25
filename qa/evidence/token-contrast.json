@@ -163,21 +163,21 @@
       "theme" : "dark"
     },
     {
-      "backgroundRGBA" : "rgba(0.6980, 0.3843, 0.1765, 1.0000)",
-      "flattenedBackgroundRGBA" : "rgba(0.6980, 0.3843, 0.1765, 1.0000)",
+      "backgroundRGBA" : "rgba(0.5490, 0.2863, 0.1020, 1.0000)",
+      "flattenedBackgroundRGBA" : "rgba(0.5490, 0.2863, 0.1020, 1.0000)",
       "foregroundRGBA" : "rgba(1.0000, 0.9725, 0.9412, 1.0000)",
-      "pair" : "white (#fff8f0) on --color-accent-600 (.au-btn-primary text)",
-      "passesThreshold" : false,
-      "ratio" : 4.26,
+      "pair" : "white (#fff8f0) on --color-accent-700 (.au-btn-primary text)",
+      "passesThreshold" : true,
+      "ratio" : 6.47,
       "theme" : "light"
     },
     {
-      "backgroundRGBA" : "rgba(0.6980, 0.3843, 0.1765, 1.0000)",
-      "flattenedBackgroundRGBA" : "rgba(0.6980, 0.3843, 0.1765, 1.0000)",
+      "backgroundRGBA" : "rgba(0.5490, 0.2863, 0.1020, 1.0000)",
+      "flattenedBackgroundRGBA" : "rgba(0.5490, 0.2863, 0.1020, 1.0000)",
       "foregroundRGBA" : "rgba(1.0000, 0.9725, 0.9412, 1.0000)",
-      "pair" : "white (#fff8f0) on --color-accent-600 (.au-btn-primary text)",
-      "passesThreshold" : false,
-      "ratio" : 4.26,
+      "pair" : "white (#fff8f0) on --color-accent-700 (.au-btn-primary text)",
+      "passesThreshold" : true,
+      "ratio" : 6.47,
       "theme" : "dark"
     }
   ],

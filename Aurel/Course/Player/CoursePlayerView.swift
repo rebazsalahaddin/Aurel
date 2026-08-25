@@ -7,6 +7,7 @@ import SwiftUI
 
 struct CoursePlayerView: View {
     @Environment(AppEnvironment.self) private var env
+    @Environment(\.scenePhase) private var scenePhase
     @State private var model: PlayerModel?
 
     let startPos: Int
@@ -32,7 +33,13 @@ struct CoursePlayerView: View {
                 onFinish: { env.router.finishCourse() }
             )
             m.speaker = env.speaker
+            env.router.trackCourse(m.p)
             model = m
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase != .active else { return }
+            env.speaker.stop()
+            model?.say.reset()
         }
     }
 }
@@ -66,15 +73,17 @@ private struct PlayerChrome: View {
                     .accessibilityIdentifier(bound ? "au.player.close" : "au.player.back")
 
                     VStack(alignment: .leading, spacing: 5) {
-                        Text("Ch \(cur.chapter.n) · L\(cur.lesson.n) \(cur.lesson.title)")
-                            // Craft overhaul L2: was 9pt fixed + truncated to
-                            // one line — now a legible 11pt label, 2 lines.
-                            .font(.figtree(.semibold, size: 11))
-                            .tracking(0.6)
-                            .textCase(.uppercase)
-                            .foregroundStyle(Color.auAccentText)
-                            .lineLimit(2)
-                            .truncationMode(.tail)
+                        Text(
+                            "Chapter \(cur.chapter.n) · Lesson \(cur.lesson.n) · \(cur.lesson.learnerTitle)"
+                        )
+                        // Craft overhaul L2: was 9pt fixed + truncated to
+                        // one line — now a legible 11pt label, 2 lines.
+                        .font(.figtree(.semibold, size: 11))
+                        .tracking(0.6)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auAccentText)
+                        .lineLimit(2)
+                        .truncationMode(.tail)
                         GeometryReader { geo in
                             ZStack(alignment: .leading) {
                                 // Craft overhaul L4: track visible on cream
@@ -83,34 +92,44 @@ private struct PlayerChrome: View {
                                 Capsule()
                                     .fill(Color.auAccent)
                                     .frame(width: geo.size.width * lessonPct)
-                                    .animation(AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion), value: model.p)
+                                    .animation(
+                                        AUMotion.animation(
+                                            AUMotion.flow, reduceMotion: reduceMotion),
+                                        value: model.p)
                             }
                         }
                         .frame(height: 3)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Lesson progress")
+                        .accessibilityValue(lessonProgressValue)
                     }
 
-                    #if DEBUG
-                    if !bound {
-                        Text(cur.screen.id)
-                            .font(.figtree(.bold, size: 9.5))
-                            .tracking(1)
-                            .padding(.horizontal, 9)
-                            .padding(.vertical, 5)
-                            .background(Capsule().fill(Color.auFlatBg))
-                            .foregroundStyle(Color.auFlatText)
-                    }
+                    #if AUREL_VERIFICATION
+                        if !bound {
+                            Text(cur.screen.id)
+                                .font(.figtree(.bold, size: 9.5))
+                                .tracking(1)
+                                .padding(.horizontal, 9)
+                                .padding(.vertical, 5)
+                                .background(Capsule().fill(Color.auFlatBg))
+                                .foregroundStyle(Color.auFlatText)
+                        }
                     #endif
                 }
-                // padding: 60px 20px 0
-                .padding(.top, 60)
+                // The course route now respects the device safe area, so this
+                // is spacing below the status region rather than a hardcoded
+                // physical-screen offset.
+                .padding(.top, 12)
                 .padding(.horizontal, 20)
             }
 
             GeometryReader { geo in
                 ScrollView(showsIndicators: false) {
                     screenBody
+                        .environment(\.auLessonGlassEnabled, model.cur?.chapter.n == 1)
                         .frame(minHeight: geo.size.height)
                         .id(model.p)
+                        .accessibilityIdentifier("au.player.kind.\(curKind)")
                         .transition(
                             // Craft overhaul L7: slide with the actual travel
                             // direction (was hardcoded forward: true).
@@ -144,10 +163,19 @@ private struct PlayerChrome: View {
 
     private var lessonPct: CGFloat {
         guard let cur = model.cur else { return 0 }
-        let screens = cur.lesson.screens
+        let screens = cur.lesson.screens.filter { $0.kind.participatesInLessonFlow }
         let pos = screens.firstIndex(where: { $0.id == cur.screen.id }) ?? 0
         return CGFloat(pos + 1) / CGFloat(max(1, screens.count))
     }
+
+    private var lessonProgressValue: String {
+        guard let cur = model.cur else { return "" }
+        let screens = cur.lesson.screens.filter { $0.kind.participatesInLessonFlow }
+        let position = screens.firstIndex(where: { $0.id == cur.screen.id }) ?? 0
+        return "\(position + 1) of \(max(1, screens.count))"
+    }
+
+    private var curKind: String { model.cur?.screen.kind.rawValue ?? "unknown" }
 
     @ViewBuilder
     private var screenBody: some View {
@@ -231,6 +259,7 @@ struct ScreenColumn<Content: View>: View {
         .padding(.horizontal, hPad)
         .padding(.top, topPad)
         .padding(.bottom, bottomPad)
+        .accessibilityElement(children: .contain)
     }
 }
 
@@ -240,9 +269,12 @@ struct ScreenColumn<Content: View>: View {
 struct GoOnButton: View {
     let label: String
     var aid: String = "au.player.go-on"
+    var disabled = false
     let action: () -> Void
 
     var body: some View {
-        APillButton(title: label, icon: .arrow, player: true, aid: aid, action: action)
+        APillButton(
+            title: label, icon: .arrow, player: true, disabled: disabled,
+            aid: aid, action: action)
     }
 }

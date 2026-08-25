@@ -15,7 +15,7 @@ struct PendingScreenView: View {
             if case .pending(let p) = m.cur?.screen.payload {
                 HStack(spacing: 8) {
                     AUIcon(kind: .lock, size: 13, color: .auFlatText)
-                    Text("Awaiting course content")
+                    Text("Course content unavailable")
                 }
                 .font(.figtree(.bold, size: 9.5))
                 .tracking(1.3)
@@ -26,44 +26,37 @@ struct PendingScreenView: View {
                 .background(Capsule().fill(Color.auFlatBg))
                 .padding(.bottom, 18)
 
-                Text(m.cur?.screen.label ?? "")
+                Text(m.cur?.screen.learnerTitle ?? ScreenKind.pending.defaultDisplayTitle)
                     .font(.caprasimo(size: 27))
                     .tracking(-0.54)
                     .auHeadLine(27, 1.2)
                     .padding(.bottom, 12)
 
-                Text(p.awaiting ?? "")
-                    .font(.figtree(.regular, size: 14))
-                    .auLine(14, 1.6)
-                    .foregroundStyle(Color.auText.opacity(0.62))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 20)
+                Text(
+                    p.awaiting.learnerFacing
+                        ?? "This activity is not available in the current course."
+                )
+                .font(.figtree(.regular, size: 14))
+                .auLine(14, 1.6)
+                .foregroundStyle(Color.auText.opacity(0.62))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 20)
 
-                PlaceholderFrame(height: 170, cornerRadius: 20, label: "screen placeholder")
+                PlaceholderFrame(height: 170, cornerRadius: 20, label: "Course illustration")
                     .padding(.bottom, 20)
 
                 ACard(radius: 18, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Specified, not yet authored")
+                        Text("Choose another activity")
                             .font(.figtree(.bold, size: 9.5))
                             .tracking(1.3)
                             .textCase(.uppercase)
                             .foregroundStyle(Color.auAccentText)
                             .padding(.bottom, 10)
-                        ForEach(p.planned ?? [], id: \.self) { t in
-                            HStack(alignment: .top, spacing: 10) {
-                                Circle()
-                                    .fill(Color.auText.opacity(0.28))
-                                    .frame(width: 5, height: 5)
-                                    .padding(.top, 7)
-                                Text(t)
-                                    .font(.figtree(.regular, size: 12.8))
-                                    .auLine(12.8, 1.5)
-                                    .foregroundStyle(Color.auText.opacity(0.66))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .padding(.vertical, 6)
-                        }
+                        Text("Continue to the next available part of the lesson.")
+                            .font(.figtree(.regular, size: 12.8))
+                            .auLine(12.8, 1.5)
+                            .foregroundStyle(Color.auText.opacity(0.66))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 17)
@@ -72,13 +65,6 @@ struct PendingScreenView: View {
                 .padding(.bottom, 16)
 
                 Spacer(minLength: 12)
-
-                Text("Source: \(p.source ?? "")")
-                    .font(.figtree(.regular, size: 11))
-                    .auLine(11, 1.5)
-                    .foregroundStyle(Color.auTextTertiary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.bottom, 14)
 
                 GoOnButton(label: "Go on") { m.goto(m.p + 1) }
             }
@@ -551,7 +537,8 @@ struct ChapterMapScreenView: View {
                                                 AUIcon(kind: .check, size: 13, color: .auOkText)
                                             } else if locked {
                                                 AUIcon(
-                                                    kind: .lock, size: 12, color: .auText.opacity(0.38))
+                                                    kind: .lock, size: 12,
+                                                    color: .auText.opacity(0.38))
                                             }
                                         }
                                 }

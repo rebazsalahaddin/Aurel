@@ -100,7 +100,8 @@ extension AUSound {
             return (
                 [
                     Note(frequency: 523.25, start: 0, duration: 0.10, amplitude: 0.16, decay: 18),
-                    Note(frequency: 659.25, start: 0.09, duration: 0.12, amplitude: 0.14, decay: 16),
+                    Note(
+                        frequency: 659.25, start: 0.09, duration: 0.12, amplitude: 0.14, decay: 16),
                 ], 0.23
             )
         case .miss:
@@ -114,8 +115,10 @@ extension AUSound {
             return (
                 [
                     Note(frequency: 523.25, start: 0, duration: 0.11, amplitude: 0.15, decay: 15),
-                    Note(frequency: 659.25, start: 0.10, duration: 0.11, amplitude: 0.14, decay: 15),
-                    Note(frequency: 783.99, start: 0.20, duration: 0.16, amplitude: 0.15, decay: 13),
+                    Note(
+                        frequency: 659.25, start: 0.10, duration: 0.11, amplitude: 0.14, decay: 15),
+                    Note(
+                        frequency: 783.99, start: 0.20, duration: 0.16, amplitude: 0.15, decay: 13),
                 ], 0.38
             )
         case .milestone:
@@ -123,7 +126,8 @@ extension AUSound {
             return (
                 [
                     Note(frequency: 440, start: 0, duration: 0.70, amplitude: 0.11, decay: 5),
-                    Note(frequency: 440 * 2.756, start: 0, duration: 0.45, amplitude: 0.04, decay: 8),
+                    Note(
+                        frequency: 440 * 2.756, start: 0, duration: 0.45, amplitude: 0.04, decay: 8),
                 ], 0.75
             )
         }
@@ -161,20 +165,19 @@ extension AUSound {
             withUnsafeBytes(of: value) { wav.append(contentsOf: $0) }
         }
         wav.append(contentsOf: Array("RIFF".utf8))
-        append(UInt32(36 + dataLen))                  // chunk size
+        append(UInt32(36 + dataLen))  // chunk size
         wav.append(contentsOf: Array("WAVE".utf8))
         wav.append(contentsOf: Array("fmt ".utf8))
-        append(UInt32(16))                            // fmt chunk size
-        append(UInt16(1))                             // PCM
-        append(UInt16(1))                             // mono
+        append(UInt32(16))  // fmt chunk size
+        append(UInt16(1))  // PCM
+        append(UInt16(1))  // mono
         append(UInt32(sampleRate))
         append(byteRate)
-        append(UInt16(2))                             // block align
-        append(UInt16(16))                            // bits per sample
+        append(UInt16(2))  // block align
+        append(UInt16(16))  // bits per sample
         wav.append(contentsOf: Array("data".utf8))
         append(dataLen)
         samples.withUnsafeBytes { wav.append(contentsOf: $0) }
         return wav
     }
 }
-

@@ -9,11 +9,6 @@ import Foundation
 extension AppRouter {
     // MARK: Setters used by onboarding/settings
 
-    func setLevel(_ value: String) {
-        AUFeedback.selection()
-        level = value
-        persist()
-    }
     func setCommitMinutes(_ value: Int) {
         AUFeedback.selection()
         commit = value
@@ -142,5 +137,286 @@ extension AppRouter {
     var chapterHeader: ChapterHeader {
         let headers = chapterHeaders
         return headers.indices.contains(chapterIdx) ? headers[chapterIdx] : headers[0]
+    }
+}
+
+// MARK: - PH-02 information architecture contracts
+
+extension AppRouter {
+    enum TopLevelSection: String, CaseIterable, Equatable, Sendable {
+        case learn, practice, progress, you
+
+        var title: String {
+            switch self {
+            case .learn: String(localized: "Learn")
+            case .practice: String(localized: "Practice")
+            case .progress: String(localized: "Progress")
+            case .you: String(localized: "You")
+            }
+        }
+
+        var purpose: String {
+            switch self {
+            case .learn: String(localized: "Today’s recommended lesson and the path ahead.")
+            case .practice: String(localized: "Choose a scene, speaking, review, or story.")
+            case .progress:
+                String(localized: "See practice evidence and the next skill to strengthen.")
+            case .you: String(localized: "Manage identity, preferences, and local data.")
+            }
+        }
+    }
+
+    static func topLevelSection(for screen: Screen) -> TopLevelSection? {
+        switch screen {
+        case .home: .learn
+        case .stories: .practice
+        case .progress: .progress
+        case .profile, .leaderboard: .you
+        default: nil
+        }
+    }
+
+    struct GoalFocus: Equatable, Sendable {
+        let title: String
+        let reason: String
+        let planLine: String
+    }
+
+    var goalFocus: GoalFocus {
+        switch goals.first {
+        case "work":
+            GoalFocus(
+                title: String(localized: "Work and interviews"),
+                reason: String(localized: "Your work goal puts a confident first meeting first."),
+                planLine: String(
+                    localized: "Start with a greeting you can use with a colleague or interviewer.")
+            )
+        case "travel":
+            GoalFocus(
+                title: String(localized: "Travel and living abroad"),
+                reason: String(localized: "Your travel goal puts a useful first meeting first."),
+                planLine: String(
+                    localized: "Start with a greeting you can use when you arrive somewhere new."))
+        case "exam":
+            GoalFocus(
+                title: String(localized: "Exam preparation"),
+                reason: String(localized: "Your exam goal puts clear, complete answers first."),
+                planLine: String(
+                    localized: "Start by building a short answer with clear meaning and word order."
+                ))
+        case "self":
+            GoalFocus(
+                title: String(localized: "English for yourself"),
+                reason: String(localized: "Your personal goal puts everyday conversation first."),
+                planLine: String(
+                    localized: "Start with a natural greeting you can reuse in conversation."))
+        default:
+            GoalFocus(
+                title: String(localized: "Everyday English"),
+                reason: String(
+                    localized: "A practical first meeting is the clearest place to begin."),
+                planLine: String(
+                    localized: "Start with a natural greeting and a simple introduction."))
+        }
+    }
+
+    struct NextAction: Equatable, Sendable {
+        enum Destination: Equatable, Sendable {
+            case resumeCourse
+            case course(Int)
+            case review
+            case practice
+            case scene
+            case speak
+        }
+
+        let title: String
+        let reason: String
+        let duration: String
+        let outcome: String
+        let buttonTitle: String
+        let destination: Destination
+    }
+
+    private var currentPathIndex: Int {
+        max(0, basePos + (lessonsDone - baseLessons))
+    }
+
+    /// Learn owns the single recommended task. Every state states why it is
+    /// next, how long it should take, and what changes when it is done.
+    var learnNextAction: NextAction {
+        let chapter = chapterHeader
+        if let pending {
+            return NextAction(
+                title: String(localized: "Resume \(pending.title)"),
+                reason: String(
+                    localized:
+                        "You stopped at step \(pending.at) of \(pending.of), so your place is still waiting."
+                ),
+                duration: String(localized: "Up to \(max(1, commit)) minutes"),
+                outcome: String(localized: "Continue toward: \(chapter.promise)"),
+                buttonTitle: String(localized: "Resume where you stopped"),
+                destination: .resumeCourse)
+        }
+
+        if dayLesson, !dayRecall, !mistakes.isEmpty {
+            let count = mistakes.count
+            return NextAction(
+                title: count == 1
+                    ? String(localized: "Catch one word")
+                    : String(localized: "Catch \(count) words"),
+                reason: String(
+                    localized: "These are the words that need another look after today’s lesson."),
+                duration: count == 1
+                    ? String(localized: "About 1 minute")
+                    : String(localized: "About \(min(count, 5)) minutes"),
+                outcome: String(
+                    localized: "A correct recall moves each word to a wider review interval."),
+                buttonTitle: count == 1
+                    ? String(localized: "Review one word")
+                    : String(localized: "Review \(count) words"),
+                destination: .review)
+        }
+
+        if dayLesson || dayRecall {
+            return NextAction(
+                title: String(localized: "Choose what to practise"),
+                reason: String(
+                    localized: "Today’s required work is complete; anything else is optional."),
+                duration: String(localized: "3–10 minutes"),
+                outcome: String(
+                    localized: "Keep one skill active without changing today’s streak."),
+                buttonTitle: String(localized: "Choose optional practice"),
+                destination: .practice)
+        }
+
+        if currentPathIndex >= chapter.count {
+            return NextAction(
+                title: String(localized: "Keep Chapter One fresh"),
+                reason: String(localized: "You completed the lessons available in this chapter."),
+                duration: String(localized: "3–10 minutes"),
+                outcome: String(localized: "Revisit a scene, story, spoken line, or due word."),
+                buttonTitle: String(localized: "Choose practice"),
+                destination: .practice)
+        }
+
+        let index = min(currentPathIndex, max(0, chapter.count - 1))
+        let lessonTitle =
+            chapter.lessons.indices.contains(index)
+            ? chapter.lessons[index] : String(localized: "Next lesson")
+        let fullLesson = commit > 10
+        return NextAction(
+            title: lessonTitle,
+            reason: goalFocus.reason,
+            duration: fullLesson
+                ? String(localized: "About 20 minutes for the full lesson")
+                : String(localized: "About 10 minutes to the natural pause"),
+            outcome: String(localized: "You’ll \(chapter.promise)"),
+            buttonTitle: currentPathIndex == 0
+                ? String(localized: "Start today’s lesson")
+                : String(localized: "Continue today’s path"),
+            destination: .course(index))
+    }
+
+    /// Progress turns the weakest evidence row into a specific recovery path
+    /// without presenting lesson counts as a test score.
+    func progressNextAction(skill: String, evidenceCount: Int) -> NextAction {
+        let reason =
+            evidenceCount == 0
+            ? String(
+                localized: "No completed lesson has recorded \(skill.lowercased()) practice yet.")
+            : String(
+                localized:
+                    "\(skill) has the least recorded practice: \(evidenceCount) completed lesson\(evidenceCount == 1 ? "" : "s")."
+            )
+
+        switch skill {
+        case "Speaking":
+            return NextAction(
+                title: String(localized: "Strengthen speaking"), reason: reason,
+                duration: String(localized: "About 3 minutes"),
+                outcome: String(localized: "Compare one clear line without an accent score."),
+                buttonTitle: String(localized: "Practise speaking"), destination: .speak)
+        case "Listening", "Conversation":
+            return NextAction(
+                title: String(localized: "Strengthen \(skill.lowercased())"), reason: reason,
+                duration: String(localized: "About 5 minutes"),
+                outcome: String(localized: "Choose replies in a complete, low-pressure exchange."),
+                buttonTitle: String(localized: "Open a scene"), destination: .scene)
+        default:
+            if !mistakes.isEmpty {
+                return NextAction(
+                    title: String(localized: "Strengthen \(skill.lowercased())"), reason: reason,
+                    duration: mistakes.count == 1
+                        ? String(localized: "About 1 minute")
+                        : String(localized: "About \(min(mistakes.count, 5)) minutes"),
+                    outcome: String(
+                        localized: "Recall due material and widen its next review interval."),
+                    buttonTitle: String(localized: "Review due words"), destination: .review)
+            }
+            let index = min(currentPathIndex, max(0, chapterHeader.count - 1))
+            return NextAction(
+                title: String(localized: "Strengthen \(skill.lowercased())"), reason: reason,
+                duration: commit > 10
+                    ? String(localized: "About 20 minutes")
+                    : String(localized: "About 10 minutes to the pause"),
+                outcome: String(localized: "Add new practice evidence in the next lesson."),
+                buttonTitle: String(localized: "Start the next lesson"), destination: .course(index)
+            )
+        }
+    }
+
+    func perform(_ action: NextAction) {
+        switch action.destination {
+        case .resumeCourse: resumePending()
+        case .course(let index): goCourse(index)
+        case .review: reviewRun()
+        case .practice: nav(.stories)
+        case .scene: nav(.scene)
+        case .speak: nav(.speak)
+        }
+    }
+
+    enum PracticeEvidenceLevel: Int, CaseIterable, Equatable, Sendable {
+        case notStarted, introduced, practised, building, repeated, wellRehearsed
+
+        var label: String {
+            switch self {
+            case .notStarted: String(localized: "Not started")
+            case .introduced: String(localized: "Introduced")
+            case .practised: String(localized: "Practised")
+            case .building: String(localized: "Building")
+            case .repeated: String(localized: "Repeated")
+            case .wellRehearsed: String(localized: "Well rehearsed")
+            }
+        }
+
+        var fill: Double {
+            switch self {
+            case .notStarted: 0.03
+            case .introduced: 0.10
+            case .practised: 0.30
+            case .building: 0.52
+            case .repeated: 0.78
+            case .wellRehearsed: 1
+            }
+        }
+
+        static let explanation =
+            String(
+                localized:
+                    "Levels come from completed lessons that use each skill. They show practice evidence, not a test score or permanent mastery."
+            )
+    }
+
+    static func practiceEvidenceLevel(for completedLessons: Int) -> PracticeEvidenceLevel {
+        switch completedLessons {
+        case ...0: .notStarted
+        case 1: .introduced
+        case 2: .practised
+        case 3: .building
+        case 4...7: .repeated
+        default: .wellRehearsed
+        }
     }
 }

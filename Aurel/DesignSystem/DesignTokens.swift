@@ -1,6 +1,19 @@
 import SwiftUI
 import UIKit
 
+private struct AULessonGlassEnabledKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    /// Scoped by the course player so Chapter One's reusable lesson cards
+    /// can share Home's frosted surface without changing later chapters.
+    var auLessonGlassEnabled: Bool {
+        get { self[AULessonGlassEnabledKey.self] }
+        set { self[AULessonGlassEnabledKey.self] = newValue }
+    }
+}
+
 // MARK: - Organic design tokens
 //
 // Ported 1:1 from:
@@ -73,7 +86,6 @@ enum AURadius {
     static let sm: CGFloat = 8
     static let md: CGFloat = 16
     static let lg: CGFloat = 28  // --radius-lg
-    static let lgPadded: CGFloat = 32.2  // calc(--radius-lg * 1.15) used by .card/.dialog
     static let btn: CGFloat = 22  // .au-btn
     static let key: CGFloat = 24  // .au-key
     static let pill: CGFloat = 999
@@ -215,6 +227,11 @@ enum AUColorTokens {
     // `Color.black.opacity(0.12)` upward shadow (PlayerVerdictDock).
     static let dockShadowLight = UIColor.black.withAlphaComponent(0.10)
     static let dockShadowDark = UIColor.black.withAlphaComponent(0.32)
+
+    // Primary-action semantic pair. Accent-700 retains the copper role while
+    // clearing WCAG AA with the warm-white label at normal text sizes.
+    static let primaryButtonFill = UIColor(hex: Palette.accentRamp[700]!)
+    static let primaryButtonBorder = UIColor(hex: Palette.accentRamp[500]!)
 }
 
 // MARK: Color tokens
@@ -273,6 +290,8 @@ extension Color {
 
     /// Text color used on primary buttons (CSS `color:#fff8f0`).
     static let auPrimaryButtonText = Color(red: 1, green: 0.972, blue: 0.941)  // #fff8f0
+    static var auPrimaryButtonFill: Color { Color(AUColorTokens.primaryButtonFill) }
+    static var auPrimaryButtonBorder: Color { Color(AUColorTokens.primaryButtonBorder) }
 }
 
 // MARK: Gradients
@@ -337,13 +356,13 @@ enum AUGradients {
             ])
     }
 
-    /// `.au-btn-primary` — accent-600 top-lit through accent-700:
+    /// `.au-btn-primary` — the accessible accent-700 role through accent-800.
     /// `linear-gradient(180deg, color-mix(accent-600 93%, #fff) 0%,
     ///  accent-600 46%, accent-700 100%)`. The first stop is 93 % *accent*,
     /// i.e. only a 7 % lift toward white — not 93 % white.
     static func primaryButton(dark: Bool) -> LinearGradient {
-        let mid = UIColor(hex: 0xb2622d)  // accent-600
-        let deep = UIColor(hex: 0x8c491a)  // accent-700
+        let mid = UIColor(hex: Palette.accentRamp[700]!)
+        let deep = UIColor(hex: Palette.accentRamp[800]!)
         let whiteShare: CGFloat = dark ? 0.18 : 0.07
         return LinearGradient(
             stops: [
@@ -359,6 +378,35 @@ enum AUGradients {
 // MARK: Shadows — CSS values approximated (blur÷2 → SwiftUI radius)
 
 extension View {
+    /// The native frosted surface authored for Home's recommendation card.
+    /// Keep this as the single source of truth for matching Home and lesson
+    /// panels so their tint, highlight, and edge never drift apart.
+    func auPracticeGlass<S: InsettableShape>(
+        in shape: S,
+        enabled: Bool = true,
+        interactive: Bool = false
+    ) -> some View {
+        modifier(
+            AUPracticeGlassModifier(
+                shape: shape,
+                enabled: enabled,
+                interactive: interactive
+            )
+        )
+    }
+
+    func auPracticeGlass(
+        radius: CGFloat,
+        enabled: Bool = true,
+        interactive: Bool = false
+    ) -> some View {
+        auPracticeGlass(
+            in: RoundedRectangle(cornerRadius: radius, style: .continuous),
+            enabled: enabled,
+            interactive: interactive
+        )
+    }
+
     /// `--au-lift` — `0 1px 2px rgba(74,48,26,.05), 0 10px 22px -16px rgba(74,48,26,.4)`.
     /// The second layer's **-16px spread** shrinks the shadow shape well inside
     /// the card, so the visible result is a faint pool a few points below it —
@@ -399,60 +447,55 @@ extension View {
             radius: 12, y: -4)
     }
 
-    /// Apple Design Award Specular Glass Card Material
-    func auGlassCard(radius: CGFloat = 26) -> some View {
-        self
-            .background(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(Color.auFill)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(
-                            stops: [
-                                .init(color: Color.white.opacity(0.45), location: 0),
-                                .init(color: Color.auEdge, location: 0.25),
-                                .init(color: Color.auEdge, location: 0.75),
-                                .init(color: Color.white.opacity(0.12), location: 1.0),
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1
-                    )
-            )
-            .auLift()
-    }
-
-    /// Floating frosted glass dock modifier for bottom navigation & verdict trays
-    func auGlassDock(radius: CGFloat = 28) -> some View {
-        self
-            .background(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(.ultraThinMaterial)
-            )
-            .background(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(Color.auSurface.opacity(0.65))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [Color.white.opacity(0.55), Color.white.opacity(0.15), Color.auEdge],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ),
-                        lineWidth: 1
-                    )
-            )
-            .auSoft()
-    }
-
     /// Shimmer border for high-value subscription plans & milestones
     func auShimmerBorder(radius: CGFloat = 24, isActive: Bool = true) -> some View {
         self.modifier(AUShimmerBorderModifier(radius: radius, isActive: isActive))
+    }
+}
+
+private struct AUPracticeGlassModifier<Surface: InsettableShape>: ViewModifier {
+    let shape: Surface
+    let enabled: Bool
+    let interactive: Bool
+    @Environment(\.colorScheme) private var scheme
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if !enabled {
+            content
+        } else if interactive {
+            decorated(
+                content.glassEffect(
+                    .regular
+                        .tint(Color.auAccent.opacity(scheme == .dark ? 0.08 : 0.045))
+                        .interactive(),
+                    in: shape
+                )
+            )
+        } else {
+            decorated(
+                content.glassEffect(
+                    .regular.tint(Color.auAccent.opacity(scheme == .dark ? 0.08 : 0.045)),
+                    in: shape
+                )
+            )
+        }
+    }
+
+    private func decorated<Decorated: View>(_ content: Decorated) -> some View {
+        content.overlay(
+            shape.strokeBorder(
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(scheme == .dark ? 0.22 : 0.54),
+                        Color.auEdge.opacity(0.30),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                lineWidth: 1
+            )
+        )
     }
 }
 
@@ -470,10 +513,16 @@ private struct AUShimmerBorderModifier: ViewModifier {
                         .strokeBorder(
                             LinearGradient(
                                 stops: [
-                                    .init(color: Color.auAccent.opacity(0.2), location: max(0, phase - 0.2)),
+                                    .init(
+                                        color: Color.auAccent.opacity(0.2),
+                                        location: max(0, phase - 0.2)),
                                     .init(color: Color.auAccent, location: phase),
-                                    .init(color: Color(UIColor(hex: 0xffe1d0)), location: min(1, phase + 0.1)),
-                                    .init(color: Color.auAccent.opacity(0.2), location: min(1, phase + 0.3)),
+                                    .init(
+                                        color: Color(UIColor(hex: 0xffe1d0)),
+                                        location: min(1, phase + 0.1)),
+                                    .init(
+                                        color: Color.auAccent.opacity(0.2),
+                                        location: min(1, phase + 0.3)),
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -481,7 +530,9 @@ private struct AUShimmerBorderModifier: ViewModifier {
                             lineWidth: 1.8
                         )
                         .onAppear {
-                            withAnimation(.easeInOut(duration: 2.8).repeatForever(autoreverses: true)) {
+                            withAnimation(
+                                .easeInOut(duration: 2.8).repeatForever(autoreverses: true)
+                            ) {
                                 phase = 1.0
                             }
                         }
@@ -517,16 +568,8 @@ enum AUSceneArt {
     static let sunDeep = Color(red: 0.776, green: 0.443, blue: 0.224)
     /// #22271a — deep green foreground (welcome art).
     static let deepGreen = Color(red: 0.133, green: 0.153, blue: 0.102)
-    /// #a3b383 — sage glow dot (welcome chip; fixed — the welcome sky is always dusk).
-    static let sageGlow = Color(UIColor(hex: 0xa3b383))
-
-    /// Paywall dusk-panel stops (theme-fixed art; ProgressProfileSettingsPaywall).
-    /// Light panel: cream → amber → copper. Dark panel: near-black → plum → copper.
-    static let paywallDuskLight: [Color] = [
-        Color(UIColor(hex: 0xfff1d4)),
-        Color(UIColor(hex: 0xf7c489)),
-        Color(UIColor(hex: 0xe08f4c)),
-    ]
+    /// Paywall dusk-panel stops (theme-fixed art; ProgressProfileSettingsPaywall):
+    /// near-black → plum → copper.
     static let paywallDuskDark: [Color] = [
         Color(UIColor(hex: 0x16131a)),
         Color(UIColor(hex: 0x20191f)),
