@@ -388,6 +388,12 @@ struct CardsScreenView: View {
             let isTargetRecording = m.say.recording && m.say.activeTarget == card.main
             let rec = m.say.record(for: card.main)
 
+            if case .cards(let content) = m.cur?.screen.payload,
+                let pulses = content.meaningPulses, !pulses.isEmpty, !m.learningComplete
+            {
+                MeaningPulseSequenceView(m: m, pulses: pulses)
+            } else {
+
             // chip + count row
             HStack(spacing: 9) {
                 if case .cards(let c) = m.cur?.screen.payload, let chip = c.chip {
@@ -507,7 +513,7 @@ struct CardsScreenView: View {
                     }
 
                     if !card.sub.isEmpty {
-                        Text(card.sub)
+                        Text(card.moment.isEmpty ? card.sub : card.moment)
                             .font(.figtree(.regular, size: 12.3))
                             .auLine(12.3, 1.5)
                             .foregroundStyle(Color.auTextSecondary)
@@ -668,6 +674,7 @@ struct CardsScreenView: View {
                         m.goto(m.p + 1)
                     }
                 }
+            }
             }
         }
     }

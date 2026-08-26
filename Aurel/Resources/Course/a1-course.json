@@ -1457,6 +1457,96 @@
       "label": "Set C cards — states",
       "step": "STEP 4 · ≈4 min",
       "chip": "how you are",
+      "meaningPulses": [
+       {
+        "id": "C1-L2-BRIDGE-1",
+        "title": "Alex says I",
+        "instruction": "Look. Listen. Choose.",
+        "chat": [
+         {
+          "sp": "ALEX",
+          "t": "I. I am Alex."
+         }
+        ],
+        "prompt": "Alex points to Alex. Who is I?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Alex"
+         },
+         {
+          "id": "B",
+          "t": "Maya"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. I is the person speaking: Alex.",
+        "no": "Look at Alex's self-point. Listen again.",
+        "examples": [
+         "Alex points to Alex: I."
+        ],
+        "pattern": "I am Alex."
+       },
+       {
+        "id": "C1-L2-BRIDGE-2",
+        "title": "Alex says you",
+        "instruction": "Look. Listen. Choose.",
+        "chat": [
+         {
+          "sp": "ALEX",
+          "t": "You. You are Maya."
+         }
+        ],
+        "prompt": "Alex looks at Maya. Who is you?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Alex"
+         },
+         {
+          "id": "B",
+          "t": "Maya"
+         }
+        ],
+        "key": "B",
+        "ok": "Yes. You is the person Alex talks to: Maya.",
+        "no": "Follow Alex's eyes to Maya. Listen again.",
+        "examples": [
+         "Alex looks at Maya: you."
+        ],
+        "pattern": "You are Maya."
+       },
+       {
+        "id": "C1-L2-BRIDGE-3",
+        "title": "I moves with the voice",
+        "instruction": "Look. Listen. Choose.",
+        "chat": [
+         {
+          "sp": "MAYA",
+          "t": "I. I am Maya."
+         }
+        ],
+        "prompt": "Now Maya speaks. Who is I?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Maya"
+         },
+         {
+          "id": "B",
+          "t": "Alex"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. I moves to the person speaking.",
+        "no": "Maya is speaking now. Watch her self-point.",
+        "examples": [
+         "Alex speaks: I am Alex.",
+         "Maya speaks: I am Maya."
+        ],
+        "pattern": "I = the person speaking"
+       }
+      ],
       "cards": [
        {
         "id": "V016",
@@ -1468,7 +1558,8 @@
          "id": "A1-C01-ILL013",
          "alt": "Maya smiles warmly with relaxed shoulders, feeling good"
         },
-        "fn": "state word (positive)"
+        "fn": "state word (positive)",
+        "frame": "I'm good."
        },
        {
         "id": "V017",
@@ -1480,7 +1571,8 @@
          "id": "A1-C01-ILL014",
          "alt": "Leo gives a gentle content nod with a soft smile, feeling fine"
         },
-        "fn": "state word (calm positive)"
+        "fn": "state word (calm positive)",
+        "frame": "I'm fine."
        },
        {
         "id": "V018",
@@ -1492,7 +1584,8 @@
          "id": "A1-C01-ILL015",
          "alt": "Nina holds one hand level in a so-so tilt with a small neutral smile, feeling okay"
         },
-        "fn": "state word (neutral positive)"
+        "fn": "state word (neutral positive)",
+        "frame": "I'm okay."
        },
        {
         "id": "V019",
@@ -1504,7 +1597,8 @@
          "id": "A1-C01-ILL016",
          "alt": "Alex raises both arms with a big open smile, feeling great"
         },
-        "fn": "state word (strong positive)"
+        "fn": "state word (strong positive)",
+        "frame": "I'm great."
        },
        {
         "id": "V020",
@@ -1516,7 +1610,8 @@
          "id": "A1-C01-ILL017",
          "alt": "Leo gives an easy shrug with a small friendly smile — not bad"
         },
-        "fn": "greeting-state chunk (mild positive)"
+        "fn": "greeting-state chunk (mild positive)",
+        "frame": "I'm not bad."
        }
       ],
       "strengthStrip": [
@@ -1639,6 +1734,126 @@
       "displayTitle": "Grammar model — notice first",
       "label": "Grammar model — notice first",
       "step": "STEP 6 · ≈4 min",
+      "meaningPulses": [
+       {
+        "id": "C1-G001-1",
+        "title": "The same person",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "ALEX",
+          "t": "I am Alex. I'm Alex."
+         }
+        ],
+        "prompt": "Do both lines mean the same person?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Yes — the same person"
+         },
+         {
+          "id": "B",
+          "t": "No — two people"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. The message stays the same.",
+        "no": "Alex says both lines. Listen again.",
+        "examples": [
+         "I am Alex. I'm Alex."
+        ],
+        "pattern": "I am → I'm"
+       },
+       {
+        "id": "C1-G001-2",
+        "title": "The person Alex talks to",
+        "instruction": "Look. Listen. Choose.",
+        "chat": [
+         {
+          "sp": "ALEX",
+          "t": "You are Maya. You're Maya."
+         }
+        ],
+        "prompt": "Alex looks at Maya. Who is you're?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Alex"
+         },
+         {
+          "id": "B",
+          "t": "Maya"
+         }
+        ],
+        "key": "B",
+        "ok": "Yes. Alex is talking to Maya.",
+        "no": "Follow Alex's eyes to Maya.",
+        "examples": [
+         "You are Maya. You're Maya."
+        ],
+        "pattern": "You are → You're"
+       },
+       {
+        "id": "C1-G002-1",
+        "title": "Two badges",
+        "instruction": "Look. Choose.",
+        "chat": [
+         {
+          "sp": "ALEX",
+          "t": "My name is Alex."
+         }
+        ],
+        "prompt": "Which badge does Alex mean?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Alex's badge"
+         },
+         {
+          "id": "B",
+          "t": "Maya's badge"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. My name points to Alex's own badge.",
+        "no": "Alex touches Alex's badge. Look again.",
+        "examples": [
+         "Alex: My name is Alex.",
+         "Alex to Maya: Your name is Maya."
+        ],
+        "pattern": "my name = my badge · your name = your badge"
+       },
+       {
+        "id": "C1-G003-1",
+        "title": "A question needs the right answer",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "MAYA",
+          "t": "How are you?"
+         }
+        ],
+        "prompt": "Which answer fits?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "I'm fine, thank you."
+         },
+         {
+          "id": "B",
+          "t": "My name is Alex."
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. A feeling answer fits How are you?",
+        "no": "The question asks how the person feels.",
+        "examples": [
+         "What's your name? — I'm Alex.",
+         "How are you? — I'm fine. And you?"
+        ],
+        "pattern": "ask → answer → ask back: And you?"
+       }
+      ],
       "notice": [
        {
         "aud": "AUD038",
@@ -1804,14 +2019,11 @@
         ]
        },
        {
-        "id": "PR-G002",
-        "instr": "Look. Choose.",
-        "icon": "choose",
-        "ill": {
-         "id": "A1-C01-ILL020",
-         "alt": "Maya leans slightly toward you with an open hand, speaking to the person in front of her"
-        },
-        "prompt": "___ Maya!",
+       "id": "PR-G002",
+       "instr": "Look. Choose.",
+       "icon": "choose",
+        "scene": "Alex faces Maya and points gently toward Maya; the eye-line arrow ends at Maya.",
+        "prompt": "Alex to Maya: ‘___ Maya!’",
         "opts": [
          {
           "id": "A",
@@ -1828,10 +2040,10 @@
         ],
         "key": "C",
         "ok": "Yes — You're Maya!",
-        "no": "Maya talks about the OTHER person.",
+        "no": "Alex looks at Maya. Alex says: You're Maya.",
         "hints": [
-         "Who is Maya talking about?",
-         "One option needs a noun after it."
+         "Follow the eye-line arrow to Maya.",
+         "Listen: You are Maya. You're Maya."
         ],
         "secs": 15,
         "a11y": [
@@ -1920,7 +2132,7 @@
         "no": "Open the short word back to two.",
         "hints": [
          "I'm = two words.",
-         "One option has no verb."
+         "Replay: I am Leo."
         ],
         "secs": 15,
         "a11y": []
@@ -1945,15 +2157,15 @@
          },
          {
           "id": "C",
-          "t": "I'm not"
+          "t": "My"
          }
         ],
         "key": "B",
         "ok": "Yes — you're for the other person.",
         "no": "The finger points at MAYA.",
         "hints": [
-         "Self or other?",
-         "One option is a not-form for later."
+         "Self or the person addressed?",
+         "Listen: You are Maya. You're Maya."
         ],
         "secs": 15,
         "a11y": [
@@ -2365,7 +2577,7 @@
         ],
         "key": "C",
         "ok": "Yes — My name is Alex!",
-        "no": "Check the badge word and the little verb.",
+        "no": "Replay the complete line: My name is Alex.",
         "hints": [
          "Read each aloud.",
          "Two options are missing one piece each."
@@ -9037,6 +9249,138 @@
       "displayTitle": "Grammar model — Are you…? / It's…",
       "label": "Grammar model — Are you…? / It's…",
       "step": "STEP 6",
+      "meaningPulses": [
+       {
+        "id": "C2-G004-1",
+        "title": "Nina checks a badge",
+        "instruction": "Look. Listen. Choose.",
+        "chat": [
+         {
+          "sp": "NINA",
+          "t": "Are you Maya?"
+         },
+         {
+          "sp": "MAYA",
+          "t": "Yes, I am!"
+         }
+        ],
+        "prompt": "Does Maya's answer say yes or no?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Yes"
+         },
+         {
+          "id": "B",
+          "t": "No"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. The badge and person match.",
+        "no": "The badge says Maya, and Maya is speaking.",
+        "examples": [
+         "Are you Maya? — Yes, I am."
+        ],
+        "pattern": "Are you ___? → Yes, I am."
+       },
+       {
+        "id": "C2-G004-2",
+        "title": "The badge does not match",
+        "instruction": "Look. Listen. Choose.",
+        "chat": [
+         {
+          "sp": "NINA",
+          "t": "Are you Leo?"
+         },
+         {
+          "sp": "MAYA",
+          "t": "No, I'm not!"
+         }
+        ],
+        "prompt": "Which answer fits the mismatch?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Yes, I am."
+         },
+         {
+          "id": "B",
+          "t": "No, I'm not."
+         }
+        ],
+        "key": "B",
+        "ok": "Yes. Maya is not Leo.",
+        "no": "Look at Maya and the Leo badge again.",
+        "examples": [
+         "Are you Leo? — No, I'm not."
+        ],
+        "pattern": "Are you ___? → No, I'm not."
+       },
+       {
+        "id": "C2-G005-1",
+        "title": "Nina asks for one detail",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "NINA",
+          "t": "What's your phone number?"
+         },
+         {
+          "sp": "MAYA",
+          "t": "It's five-five-five, two-zero-one."
+         }
+        ],
+        "prompt": "What detail does Maya give?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "A phone number"
+         },
+         {
+          "id": "B",
+          "t": "A name"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. Nina asks for the number, and Maya gives it.",
+        "no": "Listen for five-five-five. It is the phone number.",
+        "examples": [
+         "It's M.",
+         "It's five-five-five, two-zero-one.",
+         "It's maya dot haddad at aroa dot com."
+        ],
+        "pattern": "Nina asks for one detail → It's ___."
+       },
+       {
+        "id": "C2-G006-1",
+        "title": "One word, one action",
+        "instruction": "Look. Listen. Choose.",
+        "chat": [
+         {
+          "sp": "NINA",
+          "t": "Listen!"
+         }
+        ],
+        "prompt": "Which picture action fits Listen?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Ear"
+         },
+         {
+          "id": "B",
+          "t": "Mouth"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. The ear listens.",
+        "no": "Watch the ear icon and listen again.",
+        "examples": [
+         "Listen. Say. Repeat. Choose. Match."
+        ],
+        "pattern": "Listen · Say · Repeat · Choose · Match"
+       }
+      ],
       "notice": [
        {
         "aud": "AUD060",
@@ -9115,12 +9459,12 @@
        },
        {
         "id": "G005",
-        "title": "It's …",
-        "pattern": "What's your ___? → It's ___.",
+        "title": "It's … — one detail",
+        "pattern": "Nina asks for one detail → It's ___.",
         "errs": [
          [
           "I'm M-A-Y-A.",
-          "letters take It's — I'm is for people."
+          "For this detail check, the model answer starts It's."
          ],
          [
           "Its 5-5-5.",
@@ -9131,7 +9475,7 @@
        {
         "id": "G006",
         "title": "Class words",
-        "pattern": "Action word + (please) + !",
+        "pattern": "Listen · Say · Repeat · Choose · Match",
         "errs": [
          [
           "Listening! / Listens!",

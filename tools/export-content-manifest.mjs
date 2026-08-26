@@ -21,14 +21,18 @@
 // quiz records. Nothing outside english_course/ is read; nothing inside it is
 // written.
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const chaptersRoot = path.join(root, 'english_course', '04_A1_chapters');
+const activeCourseRoot = path.join(root, 'english_course', '04_A1_chapters');
+const archivedCourseRoot = path.join(root, 'Archive', 'english_course', '04_A1_chapters');
+const chaptersRoot = existsSync(activeCourseRoot) ? activeCourseRoot : archivedCourseRoot;
 const deepDirs = ['A1_C01', 'A1_C02', 'A1_C03'];
-const reportOnlyDirs = ['A1_C04', 'A1_C05'];
+const reportOnlyDirs = ['A1_C04', 'A1_C05'].filter((dir) =>
+  existsSync(path.join(chaptersRoot, dir))
+);
 const deepSet = new Set(deepDirs);
 
 const parse = {
@@ -737,14 +741,16 @@ for (const dirName of reportOnlyDirs) {
   };
 }
 
-const deepSkipped = parse.skipped.filter((s) => /^english_course\/04_A1_chapters\/A1_C0[123]\//.test(s.file));
+const deepSkipped = parse.skipped.filter((s) =>
+  /^(?:Archive\/)?english_course\/04_A1_chapters\/A1_C0[123]\//.test(s.file)
+);
 
 const manifest = {
   chapters,
   generatedBy: 'tools/export-content-manifest.mjs',
   parse,
   reportedOnly,
-  source: 'english_course/04_A1_chapters',
+  source: path.relative(root, chaptersRoot),
 };
 
 const destDir = path.join(root, 'AurelTests', 'Fixtures');

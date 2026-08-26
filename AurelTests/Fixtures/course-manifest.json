@@ -258,7 +258,7 @@
           "semanticTarget": "good (warm positive state)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1746
+            "line": 1762
           }
         },
         {
@@ -269,7 +269,7 @@
           "semanticTarget": "fine (calm positive state)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1766
+            "line": 1782
           }
         },
         {
@@ -280,7 +280,7 @@
           "semanticTarget": "okay (middle state)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1786
+            "line": 1802
           }
         },
         {
@@ -291,7 +291,7 @@
           "semanticTarget": "great (strong positive state)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1806
+            "line": 1822
           }
         },
         {
@@ -302,7 +302,7 @@
           "semanticTarget": "not bad (mild positive, shrug)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1826
+            "line": 1842
           }
         },
         {
@@ -313,7 +313,7 @@
           "semanticTarget": "name badge (name / first name / last Name schema)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1846
+            "line": 1862
           }
         },
         {
@@ -324,7 +324,7 @@
           "semanticTarget": "My name is / I'm (self-introduction)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1866
+            "line": 1882
           }
         },
         {
@@ -335,7 +335,7 @@
           "semanticTarget": "What's your name? (asking)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1886
+            "line": 1902
           }
         },
         {
@@ -346,7 +346,7 @@
           "semanticTarget": "Nice to meet you (first meeting)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1906
+            "line": 1922
           }
         },
         {
@@ -357,7 +357,7 @@
           "semanticTarget": "How are you? / And you? (caring question, bounce back)",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1926
+            "line": 1942
           }
         },
         {
@@ -1183,7 +1183,7 @@
           "secs": 60,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 596
+            "line": 612
           },
           "stimulus": {
             "audio": "A1-C01-AUD041"
@@ -1212,7 +1212,7 @@
           "secs": 60,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 616
+            "line": 632
           },
           "stimulus": {
             "audio": "A1-C01-AUD042"
@@ -1239,7 +1239,7 @@
           "secs": 40,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 635
+            "line": 651
           },
           "stimulus": {
             "audio": "A1-C01-AUD038",
@@ -1267,7 +1267,7 @@
           "secs": 40,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 654
+            "line": 670
           },
           "stimulus": {
             "audio": "A1-C01-AUD030",
@@ -1311,7 +1311,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 683
+            "line": 699
           },
           "stimulus": {
             "audio": "A1-C01-AUD020"
@@ -1354,7 +1354,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 703
+            "line": 719
           },
           "stimulus": {
             "audio": "A1-C01-AUD023"
@@ -1397,7 +1397,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 723
+            "line": 739
           },
           "stimulus": {
             "illustration": "A1-C01-ILL016"
@@ -1439,7 +1439,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 743
+            "line": 759
           },
           "stimulus": {
             "illustration": "A1-C01-ILL017"
@@ -1481,7 +1481,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 763
+            "line": 779
           },
           "stimulus": {
             "illustration": "A1-C01-ILL015"
@@ -1524,7 +1524,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 783
+            "line": 799
           },
           "stimulus": {
             "audio": "A1-C01-AUD024"
@@ -1566,7 +1566,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 803
+            "line": 819
           },
           "stimulus": {
             "audio": "A1-C01-AUD032"
@@ -1608,7 +1608,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 823
+            "line": 839
           },
           "stimulus": {
             "audio": "A1-C01-AUD030"
@@ -1650,7 +1650,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 843
+            "line": 859
           },
           "stimulus": {
             "illustration": "A1-C01-ILL021"
@@ -1692,7 +1692,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 863
+            "line": 879
           },
           "stimulus": {
             "illustration": "A1-C01-ILL018"
@@ -1734,7 +1734,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 883
+            "line": 899
           },
           "stimulus": {
             "audio": "A1-C01-AUD026"
@@ -1776,7 +1776,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 903
+            "line": 919
           },
           "stimulus": {
             "audio": "A1-C01-AUD027"
@@ -1818,7 +1818,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 923
+            "line": 939
           },
           "stimulus": {
             "audio": "A1-C01-AUD021"
@@ -1840,7 +1840,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Alex points at ALEX's badge. Whose name?",
+          "no": "Alex points at ALEX's badge. Which name is on it?",
           "ok": "Yes — my badge, my name!",
           "options": [
             {
@@ -1860,7 +1860,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 943
+            "line": 959
           },
           "stimulus": {
             "illustration": "A1-C01-ILL019"
@@ -1902,7 +1902,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 963
+            "line": 979
           },
           "stimulus": {
             "illustration": "A1-C01-ILL020"
@@ -1944,7 +1944,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 983
+            "line": 999
           },
           "stimulus": {
             "illustration": "A1-C01-ILL022"
@@ -1986,7 +1986,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1003
+            "line": 1019
           },
           "stimulus": {
             "audio": "A1-C01-AUD029"
@@ -2028,7 +2028,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1023
+            "line": 1039
           },
           "stimulus": {
             "audio": "A1-C01-AUD033"
@@ -2070,7 +2070,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1043
+            "line": 1059
           },
           "stimulus": {
             "illustration": "A1-C01-ILL013"
@@ -2114,7 +2114,7 @@
           "secs": 45,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1063
+            "line": 1079
           },
           "stimulus": {
             "audios": [
@@ -2131,8 +2131,8 @@
           ],
           "component": "grammar",
           "hints": [
-            "Look at the finger — self or other?",
-            "One option needs a noun after it."
+            "Look at the finger — self or the person addressed?",
+            "Replay: I'm Alex."
           ],
           "id": "A1-C01-PR-G001",
           "instruction": "Look. Choose.",
@@ -2160,7 +2160,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1084
+            "line": 1100
           },
           "stimulus": {
             "illustration": "A1-C01-ILL019"
@@ -2173,8 +2173,8 @@
           ],
           "component": "grammar",
           "hints": [
-            "Who is Maya talking about?",
-            "One option needs a noun after it."
+            "Follow the eye-line arrow to Maya.",
+            "Listen: You are Maya. You're Maya."
           ],
           "id": "A1-C01-PR-G002",
           "instruction": "Look. Choose.",
@@ -2182,7 +2182,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "Maya talks about the OTHER person.",
+          "no": "Alex looks at Maya. Alex says: You're Maya.",
           "ok": "Yes — You're Maya!",
           "options": [
             {
@@ -2202,10 +2202,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1105
-          },
-          "stimulus": {
-            "illustration": "A1-C01-ILL020"
+            "line": 1121
           },
           "subskill": "choose_subject_be_contraction"
         },
@@ -2242,7 +2239,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1126
+            "line": 1142
           },
           "subskill": "produce_short_form"
         },
@@ -2279,7 +2276,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1146
+            "line": 1162
           },
           "subskill": "produce_short_form"
         },
@@ -2287,8 +2284,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "I'm = two words.",
-            "One option has no verb."
+            "I'm opens to two words.",
+            "Replay: I am Leo."
           ],
           "id": "A1-C01-PR-G005",
           "instruction": "Look. Choose.",
@@ -2316,7 +2313,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1166
+            "line": 1182
           },
           "subskill": "produce_long_form"
         },
@@ -2326,8 +2323,8 @@
           ],
           "component": "grammar",
           "hints": [
-            "Self or other?",
-            "One option is a not-form for later."
+            "Self or the person addressed?",
+            "Listen: You are Maya. You're Maya."
           ],
           "id": "A1-C01-PR-G006",
           "instruction": "Look. Choose.",
@@ -2348,14 +2345,14 @@
             },
             {
               "id": "C",
-              "text": "I'm not"
+              "text": "My"
             }
           ],
           "responseType": "single_choice",
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1186
+            "line": 1202
           },
           "stimulus": {
             "illustration": "A1-C01-ILL019"
@@ -2368,8 +2365,8 @@
           ],
           "component": "grammar",
           "hints": [
-            "Replay — whose voice?",
-            "One option needs a noun."
+            "Replay — who is speaking?",
+            "Listen: I'm good."
           ],
           "id": "A1-C01-PR-G007",
           "instruction": "Listen. Choose.",
@@ -2377,7 +2374,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "Whose feeling? Maya's own.",
+          "no": "Maya is talking about how Maya feels.",
           "ok": "Yes — I'm good!",
           "options": [
             {
@@ -2397,7 +2394,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1207
+            "line": 1223
           },
           "stimulus": {
             "audio": "A1-C01-AUD033"
@@ -2437,7 +2434,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1227
+            "line": 1243
           },
           "subskill": "contraction_spelling"
         },
@@ -2454,7 +2451,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "Two words join with a hook. Your is the other word — before a noun.",
+          "no": "Two words join with a hook: you are → you're. Your stays with name: your name.",
           "ok": "Yes — you're, with the hook.",
           "options": [
             {
@@ -2474,7 +2471,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1247
+            "line": 1263
           },
           "subskill": "you're_vs_your"
         },
@@ -2511,7 +2508,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1267
+            "line": 1283
           },
           "subskill": "choose_be_form_with_I"
         },
@@ -2548,7 +2545,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1287
+            "line": 1303
           },
           "subskill": "choose_be_form_with_you"
         },
@@ -2576,7 +2573,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1307
+            "line": 1323
           },
           "subskill": "tile_order_sentence",
           "tiles": [
@@ -2591,8 +2588,8 @@
           ],
           "component": "grammar",
           "hints": [
-            "Look at the glowing badge.",
-            "One option is not a badge word."
+            "Look at the glowing badge on Alex.",
+            "Listen: My name is Alex."
           ],
           "id": "A1-C01-PR-G013",
           "instruction": "Look. Choose.",
@@ -2600,7 +2597,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Whose badge glows? The speaker's own.",
+          "no": "The badge is on Alex. Alex says: My name.",
           "ok": "Yes — my name!",
           "options": [
             {
@@ -2620,7 +2617,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1325
+            "line": 1341
           },
           "stimulus": {
             "illustration": "A1-C01-ILL018"
@@ -2631,8 +2628,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "Whose badge? Alex's. Maya speaks ABOUT it.",
-            "One option means the speaker's own."
+            "Maya looks at Alex's badge.",
+            "Listen: Your name is Alex."
           ],
           "id": "A1-C01-PR-G014",
           "instruction": "Look. Choose.",
@@ -2640,7 +2637,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "Maya talks about Alex's badge.",
+          "no": "The badge is on Alex. Maya says to Alex: Your name.",
           "ok": "Yes — your name, Alex!",
           "options": [
             {
@@ -2660,7 +2657,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1346
+            "line": 1362
           },
           "subskill": "choose_possessive"
         },
@@ -2697,7 +2694,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1366
+            "line": 1382
           },
           "subskill": "choose_be_form"
         },
@@ -2705,8 +2702,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "Point outward — whose name do you ask?",
-            "One option is not a badge word."
+            "The arrow points to the person you talk to.",
+            "Listen: your name."
           ],
           "id": "A1-C01-PR-G016",
           "instruction": "Look. Choose.",
@@ -2714,7 +2711,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "You ask about THEIR badge.",
+          "no": "You ask the person in front of you: What's your name?",
           "ok": "Yes — What's YOUR name?",
           "options": [
             {
@@ -2734,7 +2731,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1386
+            "line": 1402
           },
           "subskill": "choose_possessive_in_chunk"
         },
@@ -2771,7 +2768,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1406
+            "line": 1422
           },
           "subskill": "choose_possessive_self"
         },
@@ -2808,7 +2805,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1426
+            "line": 1442
           },
           "subskill": "choose_possessive_other"
         },
@@ -2837,7 +2834,7 @@
           "secs": 25,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1446
+            "line": 1462
           },
           "subskill": "tile_order_sentence",
           "tiles": [
@@ -2861,7 +2858,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "Check the badge word and the little verb.",
+          "no": "Replay the model: My name is Alex.",
           "ok": "Yes — My name is Alex!",
           "options": [
             {
@@ -2881,7 +2878,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1464
+            "line": 1480
           },
           "subskill": "choose_correct_sentence"
         },
@@ -2920,7 +2917,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1484
+            "line": 1500
           },
           "stimulus": {
             "audio": "A1-C01-AUD030"
@@ -2962,7 +2959,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1504
+            "line": 1520
           },
           "stimulus": {
             "audio": "A1-C01-AUD032"
@@ -3002,7 +2999,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1524
+            "line": 1540
           },
           "subskill": "choose_question_for_purpose"
         },
@@ -3039,7 +3036,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1544
+            "line": 1560
           },
           "subskill": "choose_question_for_purpose"
         },
@@ -3076,7 +3073,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1564
+            "line": 1580
           },
           "subskill": "choose_next_turn_after_introduction"
         },
@@ -3113,7 +3110,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1584
+            "line": 1600
           },
           "subskill": "choose_reply_to_return_question"
         },
@@ -3141,7 +3138,7 @@
           "secs": 40,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1604
+            "line": 1620
           },
           "subskill": "dialogue_order_four_turns",
           "tiles": [
@@ -3184,7 +3181,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1622
+            "line": 1638
           },
           "subskill": "capitalisation_and_punctuation"
         },
@@ -3221,7 +3218,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1642
+            "line": 1658
           },
           "subskill": "question_mark_recognition"
         },
@@ -3246,7 +3243,7 @@
           "secs": 30,
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 1662
+            "line": 1678
           },
           "stimulus": {
             "audio": "A1-C01-AUD040",
@@ -5529,15 +5526,15 @@
           ],
           "component": "grammar",
           "hints": [
-            "Self or other?",
-            "One option is not a badge word."
+            "Sam or the other person?",
+            "Look again at Sam's badge."
           ],
           "id": "A1-C01-QZ-G001",
           "key": [
             "A"
           ],
           "kind": "quiz",
-          "no": "Whose badge? Sam's OWN badge.",
+          "no": "Look at Sam's badge. Sam says the name on it.",
           "ok": "Yes — my!",
           "options": [
             {
@@ -5649,8 +5646,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "Point outward — whose name?",
-            "One option needs are after it."
+            "Point outward — which name?",
+            "Replay: You are Maya."
           ],
           "id": "A1-C01-QZ-G004",
           "key": [
@@ -5689,8 +5686,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "Say it fast — two words melt.",
-            "One option lost the hook; one lost the verb."
+            "Replay the long and short forms.",
+            "Listen: you are … you're."
           ],
           "id": "A1-C01-QZ-G005",
           "key": [
@@ -5737,7 +5734,7 @@
             "B"
           ],
           "kind": "quiz",
-          "no": "Check the badge word and the little verb.",
+          "no": "Replay the badge line: My name is Leo.",
           "ok": "Yes — perfect introduction!",
           "options": [
             {
@@ -5857,7 +5854,7 @@
           "component": "listening",
           "hints": [
             "Replay the last line.",
-            "The speaker says a NAME after excuse me — whose?"
+            "Which name comes after excuse me?"
           ],
           "id": "A1-C01-QZ-LS003",
           "key": [
@@ -6417,7 +6414,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 30
+            "line": 43
           },
           "spelling": "good"
         },
@@ -6432,7 +6429,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 60
+            "line": 73
           },
           "spelling": "fine"
         },
@@ -6447,7 +6444,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 90
+            "line": 103
           },
           "spelling": "okay"
         },
@@ -6462,7 +6459,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 120
+            "line": 133
           },
           "spelling": "great"
         },
@@ -6477,7 +6474,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 150
+            "line": 163
           },
           "spelling": "not bad"
         },
@@ -6492,7 +6489,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 190
+            "line": 203
           },
           "spelling": "name"
         },
@@ -6507,7 +6504,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 220
+            "line": 233
           },
           "spelling": "first name"
         },
@@ -6522,7 +6519,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 250
+            "line": 263
           },
           "spelling": "last name"
         },
@@ -6537,7 +6534,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 280
+            "line": 293
           },
           "spelling": "My name is …"
         },
@@ -6552,7 +6549,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 310
+            "line": 323
           },
           "spelling": "I'm …"
         },
@@ -6567,7 +6564,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 340
+            "line": 353
           },
           "spelling": "What's your name?"
         },
@@ -6582,7 +6579,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 370
+            "line": 383
           },
           "spelling": "Nice to meet you"
         },
@@ -6597,7 +6594,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 498
+            "line": 514
           },
           "spelling": "How are you?"
         },
@@ -6612,7 +6609,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 528
+            "line": 544
           },
           "spelling": "I'm good/fine/okay"
         },
@@ -6627,7 +6624,7 @@
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L02_LESSON.md",
-            "line": 558
+            "line": 574
           },
           "spelling": "And you?"
         }
@@ -6919,7 +6916,7 @@
           "semanticTarget": "the twenty-cup delivery (story anchor for 6–20)",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1672
+            "line": 1679
           }
         },
         {
@@ -6930,7 +6927,7 @@
           "semanticTarget": "seven (count scene)",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1692
+            "line": 1699
           }
         },
         {
@@ -6941,7 +6938,7 @@
           "semanticTarget": "twenty (the full set)",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1712
+            "line": 1719
           }
         },
         {
@@ -6952,7 +6949,7 @@
           "semanticTarget": "phone / phone number",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1732
+            "line": 1739
           }
         },
         {
@@ -6963,7 +6960,7 @@
           "semanticTarget": "email / email address",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1752
+            "line": 1759
           }
         },
         {
@@ -6974,7 +6971,7 @@
           "semanticTarget": "address (where your home is)",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1772
+            "line": 1779
           }
         },
         {
@@ -6985,7 +6982,7 @@
           "semanticTarget": "at (pointing at a place)",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1792
+            "line": 1799
           }
         },
         {
@@ -6996,7 +6993,7 @@
           "semanticTarget": "dot (the small round stop)",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1812
+            "line": 1819
           }
         },
         {
@@ -7007,7 +7004,7 @@
           "semanticTarget": "Are you…? (the badge check)",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1832
+            "line": 1839
           }
         },
         {
@@ -7018,7 +7015,7 @@
           "semanticTarget": "the register page (details recorded with It's…)",
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1852
+            "line": 1859
           }
         },
         {
@@ -8054,7 +8051,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 539
+            "line": 546
           },
           "stimulus": {
             "audio": "A1-C02-AUD063"
@@ -8099,7 +8096,7 @@
           "secs": 25,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 560
+            "line": 567
           },
           "stimulus": {
             "audio": "A1-C02-AUD064"
@@ -8143,7 +8140,7 @@
           "secs": 25,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 581
+            "line": 588
           },
           "stimulus": {
             "audio": "A1-C02-AUD065"
@@ -8170,7 +8167,7 @@
           "secs": 30,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 602
+            "line": 609
           },
           "stimulus": {
             "audio": "A1-C02-AUD064"
@@ -8214,7 +8211,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 631
+            "line": 638
           },
           "stimulus": {
             "audio": "A1-C02-AUD034"
@@ -8258,7 +8255,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 652
+            "line": 659
           },
           "stimulus": {
             "audio": "A1-C02-AUD038"
@@ -8302,7 +8299,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 673
+            "line": 680
           },
           "stimulus": {
             "audio": "A1-C02-AUD043"
@@ -8346,7 +8343,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 694
+            "line": 701
           },
           "stimulus": {
             "audio": "A1-C02-AUD047"
@@ -8390,7 +8387,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 715
+            "line": 722
           },
           "stimulus": {
             "illustration": "A1-C02-ILL016"
@@ -8434,7 +8431,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 736
+            "line": 743
           },
           "stimulus": {
             "text": "thirteen"
@@ -8478,7 +8475,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 757
+            "line": 764
           },
           "stimulus": {
             "text": "twenty"
@@ -8522,7 +8519,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 778
+            "line": 785
           },
           "stimulus": {
             "illustration": "A1-C02-ILL018",
@@ -8567,7 +8564,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 799
+            "line": 806
           },
           "stimulus": {
             "illustration": "A1-C02-ILL019",
@@ -8612,7 +8609,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 820
+            "line": 827
           },
           "stimulus": {
             "illustration": "A1-C02-ILL020",
@@ -8657,7 +8654,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 841
+            "line": 848
           },
           "stimulus": {
             "audio": "A1-C02-AUD061"
@@ -8700,7 +8697,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 862
+            "line": 869
           },
           "stimulus": {
             "illustration": "A1-C02-ILL022",
@@ -8745,7 +8742,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 883
+            "line": 890
           },
           "stimulus": {
             "illustration": "A1-C02-ILL024"
@@ -8789,7 +8786,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 904
+            "line": 911
           },
           "stimulus": {
             "illustration": "A1-C02-ILL024"
@@ -8833,7 +8830,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 925
+            "line": 932
           },
           "stimulus": {
             "audio": "A1-C02-AUD066"
@@ -8876,7 +8873,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 946
+            "line": 953
           },
           "stimulus": {
             "text": "Nina says 'Maya.' Your job: the same word after her."
@@ -8919,7 +8916,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 969
+            "line": 976
           },
           "stimulus": {
             "illustration": "A1-C02-ILL023",
@@ -8929,17 +8926,17 @@
         },
         {
           "a11y": [
-            "audio_required_transcript_after_response",
-            "replay_allowed_once"
+            "situation_frame_narrated",
+            "alt_text_construct_equivalent"
           ],
-          "aside": "audio: Nina asks \"Are you Nina?\" — to YOU",
+          "aside": "Nina holds up a badge with NINA in the app layer and asks YOU",
           "component": "grammar",
           "hints": [
             "Listen again — who is Nina?",
             "You are YOU → the no answer."
           ],
           "id": "A1-C02-PR-G002",
-          "instruction": "Listen. Choose.",
+          "instruction": "Look. Choose.",
           "key": [
             "B"
           ],
@@ -8964,10 +8961,11 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 990
+            "line": 997
           },
           "stimulus": {
-            "audio": "A1-C02-AUD060"
+            "illustration": "A1-C02-ILL023",
+            "text": "NINA: \"Are you Nina?\" You say: ___"
           },
           "subskill": "choose_short_answer"
         },
@@ -9007,7 +9005,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1011
+            "line": 1018
           },
           "stimulus": {
             "text": "Are you okay? — You say: ___"
@@ -9040,7 +9038,7 @@
           "secs": 25,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1032
+            "line": 1039
           },
           "subskill": "order_question"
         },
@@ -9080,7 +9078,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1051
+            "line": 1058
           },
           "stimulus": {
             "text": "Which one asks?"
@@ -9124,7 +9122,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1072
+            "line": 1079
           },
           "stimulus": {
             "audio": "A1-C02-AUD060"
@@ -9167,7 +9165,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1093
+            "line": 1100
           },
           "stimulus": {
             "text": "A new person waves. Nina asks: Are you ___?"
@@ -9181,8 +9179,8 @@
           "aside": "Nina checks a badge that reads SAM RIVERA — against YOU",
           "component": "grammar",
           "hints": [
-            "Whose name is on the badge?",
-            "Not yours → No, I'm not!"
+            "Which name is on the badge?",
+            "It is not your name → No, I'm not!"
           ],
           "id": "A1-C02-PR-G008",
           "instruction": "Look. Choose.",
@@ -9210,7 +9208,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1114
+            "line": 1121
           },
           "stimulus": {
             "text": "Nina asks: \"Are you Sam Rivera?\" You say: ___"
@@ -9253,7 +9251,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1135
+            "line": 1142
           },
           "stimulus": {
             "text": "NINA: \"Are you Maya?\" … MAYA: \"___\""
@@ -9276,7 +9274,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "I's word is am. Try the fix again.",
+          "no": "After I, use am. Try: Yes, I am.",
           "ok": "Yes, I am — fixed!",
           "options": [
             {
@@ -9296,7 +9294,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1156
+            "line": 1163
           },
           "stimulus": {
             "text": "Nina asks: \"Are you Leo?\" — Leo says: \"Yes, I are.\" Choose the fix:"
@@ -9310,8 +9308,8 @@
           "aside": "Nina points at a big letter card",
           "component": "grammar",
           "hints": [
-            "Is M a person or a thing?",
-            "Things take It's."
+            "Look at the letter card.",
+            "Replay: It's M."
           ],
           "id": "A1-C02-PR-G011",
           "instruction": "Look. Choose.",
@@ -9319,7 +9317,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "Not a person — the letter takes It's.",
+          "no": "Nina points to the card. Listen: It's M.",
           "ok": "Yes — It's M!",
           "options": [
             {
@@ -9339,7 +9337,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1179
+            "line": 1186
           },
           "stimulus": {
             "text": "Nina points at the letter M. She says: ___ M!"
@@ -9353,8 +9351,8 @@
           "aside": "register row: digits",
           "component": "grammar",
           "hints": [
-            "Person or detail?",
-            "Details: It's."
+            "What does Nina ask for? The phone number.",
+            "Replay the model: It's…"
           ],
           "id": "A1-C02-PR-G012",
           "instruction": "Look. Choose.",
@@ -9362,7 +9360,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Numbers are things: It's.",
+          "no": "Nina asks for one detail. Start: It's…",
           "ok": "Yes — It's 5-5-5, 2-0-1.",
           "options": [
             {
@@ -9382,7 +9380,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1200
+            "line": 1207
           },
           "stimulus": {
             "text": "NINA: \"What\\'s your phone number?\" … YOU: \"___ 5-5-5, 2-0-1.\""
@@ -9427,7 +9425,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1221
+            "line": 1228
           },
           "stimulus": {
             "audio": "A1-C02-AUD016"
@@ -9453,7 +9451,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1242
+            "line": 1249
           },
           "subskill": "build_contraction"
         },
@@ -9494,7 +9492,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1261
+            "line": 1268
           },
           "stimulus": {
             "audio": "A1-C02-AUD047"
@@ -9537,7 +9535,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1282
+            "line": 1289
           },
           "stimulus": {
             "text": "NINA: \"What\\'s your email address?\" — Which line answers?"
@@ -9570,7 +9568,7 @@
           "secs": 25,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1303
+            "line": 1310
           },
           "subskill": "order_expansion_question"
         },
@@ -9611,7 +9609,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1322
+            "line": 1329
           },
           "stimulus": {
             "audio": "A1-C02-AUD061"
@@ -9622,11 +9620,11 @@
           "a11y": [
             "alt_text_construct_equivalent"
           ],
-          "aside": "Maya's finished badge: the app shows M-A-Y-A",
+          "aside": "Nina points to the completed name field on the register",
           "component": "grammar",
           "hints": [
-            "Person speaking, or thing being read?",
-            "Things on badges: It's."
+            "Look at the register field.",
+            "Replay the detail frame: It's…"
           ],
           "id": "A1-C02-PR-G019",
           "instruction": "Look. Choose.",
@@ -9634,8 +9632,8 @@
             "A"
           ],
           "kind": "practice",
-          "no": "The badge-thing takes It's.",
-          "ok": "Yes — It's Maya! M-A-Y-A.",
+          "no": "Nina points to the name field. Listen: It's Maya.",
+          "ok": "Yes — It's Maya. M-A-Y-A.",
           "options": [
             {
               "id": "A",
@@ -9643,22 +9641,22 @@
             },
             {
               "id": "B",
-              "text": "You're"
+              "text": "Are you"
             },
             {
               "id": "C",
-              "text": "I'm"
+              "text": "My name is"
             }
           ],
           "responseType": "single_choice",
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1343
+            "line": 1350
           },
           "stimulus": {
             "illustration": "A1-C02-ILL002",
-            "text": "The badge says M-A-Y-A. Nina reads it: ___ Maya!"
+            "text": "Nina points to one name on the register. Nina says: ___ Maya."
           },
           "subskill": "apply_frame_to_spelling"
         },
@@ -9698,7 +9696,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1364
+            "line": 1371
           },
           "stimulus": {
             "text": "NINA: \"What\\'s your phone number?\" … YOU: \"___\""
@@ -9741,7 +9739,7 @@
           "secs": 10,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1387
+            "line": 1394
           },
           "stimulus": {
             "text": "Listen! … Say! … Match! — Which one goes with the ear icon?"
@@ -9784,7 +9782,7 @@
           "secs": 10,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1408
+            "line": 1415
           },
           "stimulus": {
             "text": "Which one goes with the mouth icon?"
@@ -9827,7 +9825,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1429
+            "line": 1436
           },
           "stimulus": {
             "text": "Nina says 'Maya.' Your job: the same word after her."
@@ -9870,7 +9868,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1450
+            "line": 1457
           },
           "stimulus": {
             "text": "Three cards. One card has a star. Your job: the star card."
@@ -9913,7 +9911,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1471
+            "line": 1478
           },
           "stimulus": {
             "text": "Two cards and two pictures. Your job: card to picture, picture to card."
@@ -9955,7 +9953,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1492
+            "line": 1499
           },
           "stimulus": {
             "text": "Which one is the class word?"
@@ -10000,7 +9998,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1513
+            "line": 1520
           },
           "stimulus": {
             "audio": "A1-C02-AUD062"
@@ -10030,7 +10028,7 @@
           "secs": 20,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1534
+            "line": 1541
           },
           "subskill": "order_polite_imperative"
         },
@@ -10041,7 +10039,7 @@
           "aside": "dialogue hole",
           "component": "grammar",
           "hints": [
-            "Whose turn is it — ears or mouth?",
+            "Listen or say — which one now?",
             "Say!"
           ],
           "id": "A1-C02-PR-G029",
@@ -10070,7 +10068,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1553
+            "line": 1560
           },
           "stimulus": {
             "text": "NINA: \"___, Maya! The class listens to you.\" … (Maya\\'s turn to speak)"
@@ -10113,7 +10111,7 @@
           "secs": 15,
           "source": {
             "file": "A1_C02_L02_LESSON.md",
-            "line": 1574
+            "line": 1581
           },
           "stimulus": {
             "text": "You want Maya's word one more time. Nina says: ___"
@@ -10715,8 +10713,8 @@
           "aside": "prep card: YOUR turn — Nina holds up YOUR badge and asks",
           "component": "conversation",
           "hints": [
-            "Whose badge is up?",
-            "Yours → the yes-answer."
+            "Which name is on the badge?",
+            "It is your badge → the yes-answer."
           ],
           "id": "A1-C02-PR-CV015",
           "instruction": "Look. Choose.",
@@ -11260,7 +11258,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "Whose full name gets checked?",
+          "no": "Which full name is Nina checking?",
           "ok": "Yes — Alex, the email version.",
           "options": [
             {
@@ -12090,8 +12088,8 @@
             "5-5-5, 2-0-1."
           ],
           "hints": [
-            "Whose number? Mine → My.",
-            "My → phone → number → is → digits."
+            "Is it your number or Nina's?",
+            "Start: My phone number is …"
           ],
           "id": "A1-C02-PR-WR002",
           "instruction": "Put in order.",
@@ -12233,7 +12231,7 @@
           "id": "A1-C02-PR-WR006",
           "instruction": "Put in order.",
           "kind": "practice",
-          "no": "Whose email? Mine → My.",
+          "no": "It is your email. Start with My.",
           "ok": "My email is nina dot petrova at aroa dot com. — a whole card line!",
           "responseType": "tile_order",
           "secs": 30,
@@ -12344,8 +12342,8 @@
           ],
           "component": "letters",
           "hints": [
-            "Play again; is there a consonant before the eee?",
-            "No consonant → E."
+            "Play again: do you hear only eee, or another sound first?",
+            "Only eee → E."
           ],
           "id": "A1-C02-QZ-L003",
           "key": [
@@ -14940,7 +14938,7 @@
           },
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 182
+            "line": 194
           },
           "stimulus": {
             "text": "6 frame tiles: I ___ from Peru. · Leo ___ from Australia. · Maya and Sam ___ friends. · We ___ a class. · Alex ___ a designer. · You ___ from Mexico."
@@ -14956,7 +14954,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "One person's name → is.",
+          "no": "The line starts with Leo. Replay: Leo is from Australia.",
           "ok": "Leo is from Australia. One name → is.",
           "options": [
             {
@@ -14974,7 +14972,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 198
+            "line": 210
           },
           "stimulus": {
             "text": "LEO (photo): ____ from Australia."
@@ -15008,7 +15006,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 216
+            "line": 228
           },
           "stimulus": {
             "text": "MAYA AND SAM (photo pair): ____ friends."
@@ -15025,7 +15023,7 @@
           "ok": "The little mark ' is the short form. Fast, natural English!",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 234
+            "line": 246
           },
           "stimulus": {
             "text": "left: he is · she is · they are · we are · I am · you are · right: we're · he's · I'm · they're · you're · she's"
@@ -15041,8 +15039,8 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Alex's word is THEY (you met this in Chapter 1!). Try again.",
-          "ok": "Alex is they: They're a designer.",
+          "no": "The card says Alex uses they. Try: They're a designer.",
+          "ok": "For Alex, say they: They're a designer.",
           "options": [
             {
               "id": "A",
@@ -15059,7 +15057,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 247
+            "line": 259
           },
           "stimulus": {
             "text": "ALEX is my friend. ____ a designer."
@@ -15075,7 +15073,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "One person → isn't.",
+          "no": "The line starts with Sam. Replay: Sam isn't from Peru.",
           "ok": "Sam isn't from Peru. He's from Mexico!",
           "options": [
             {
@@ -15093,7 +15091,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 265
+            "line": 277
           },
           "stimulus": {
             "text": "SAM (photo) + Peru map card crossed softly: Sam ____ from Peru."
@@ -15127,7 +15125,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 283
+            "line": 295
           },
           "stimulus": {
             "text": "MAYA AND LEO (photo pair) + Spain map card: They ____ from Spain."
@@ -15161,7 +15159,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 301
+            "line": 313
           },
           "stimulus": {
             "text": "____ she from Kenya?"
@@ -15195,7 +15193,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 319
+            "line": 331
           },
           "stimulusAudio": "fresh take — ALEX: Is Leo from Australia?"
         },
@@ -15209,7 +15207,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "Two cast facts to check: Maya's country, and the pronoun.",
+          "no": "Check two things: Maya is from Egypt. Maya is she.",
           "ok": "No, she isn't. She's from Egypt!",
           "options": [
             {
@@ -15227,7 +15225,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 337
+            "line": 349
           },
           "stimulusAudio": "fresh take — SAM: Is Maya from Peru?"
         },
@@ -15239,10 +15237,10 @@
           ],
           "kind": "practice",
           "no": "Look at the name(s) on the card, not the picture alone.",
-          "ok": "Every pronoun has its person — and Alex is they.",
+          "ok": "He—Leo. She—Maya. They—Alex. We—the class.",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 355
+            "line": 367
           },
           "stimulus": {
             "text": "left: photo cards — MAYA · LEO · ALEX · MAYA AND SAM · YOU AND THE CLASS · right: they (two) · she · they (Alex) · we · he"
@@ -15258,7 +15256,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "One person → is.",
+          "no": "The question names Nina. Replay: Where is Nina from?",
           "ok": "Where is Nina from? — She's from Peru.",
           "options": [
             {
@@ -15276,7 +15274,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 368
+            "line": 380
           },
           "stimulus": {
             "text": "Where ____ Nina from?"
@@ -15291,11 +15289,11 @@
             "order"
           ],
           "kind": "practice",
-          "no": "Start with the person word: He.",
+          "no": "Start with He: He isn't from Australia.",
           "ok": "He isn't from Australia — Sam isn't; Leo is!",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 386
+            "line": 398
           }
         },
         {
@@ -15326,7 +15324,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 398
+            "line": 410
           },
           "stimulus": {
             "text": "THE CLASS (photo, all five cast + learner): We ____ from ten countries."
@@ -15360,7 +15358,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 476
+            "line": 492
           },
           "stimulus": {
             "text": "LEO photo + phone icon: ____ phone is 6-2-0, 1-5-4."
@@ -15394,7 +15392,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 494
+            "line": 510
           },
           "stimulus": {
             "text": "MAYA photo + email icon: ____ email is maya.haddad@aroa.com."
@@ -15428,7 +15426,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 512
+            "line": 528
           },
           "stimulus": {
             "text": "ALEX photo + email icon: ____ email is alex.kim@aroa.com."
@@ -15462,7 +15460,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 530
+            "line": 546
           },
           "stimulus": {
             "text": "CLASS photo + NINA at the front: Nina is ____ teacher."
@@ -15473,8 +15471,8 @@
           "id": "A1-C03-L02-PR-G019",
           "instructionWords": [],
           "kind": "practice",
-          "no": "Whose card is it? Say the name, then the little word.",
-          "ok": "Whose? his, her, their, our!",
+          "no": "Look at the person or group. Then choose the matching small word.",
+          "ok": "Leo—his. Maya—her. Alex and two people—their. We—our.",
           "solution": {
             "her": "[MAYA]",
             "his": "[LEO]",
@@ -15483,7 +15481,7 @@
           },
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 548
+            "line": 564
           },
           "stimulus": {
             "text": "cards: LEO+phone icon · MAYA+email icon · ALEX+email icon · CLASS+Nina · MAYA AND SAM+map card · YOU+name tag"
@@ -15499,8 +15497,8 @@
             "A"
           ],
           "kind": "practice",
-          "no": "his + what? Name, phone, email, country…",
-          "ok": "His NAME is Sam. A thing-word must follow!",
+          "no": "Say the complete model: His name is Sam.",
+          "ok": "His name is Sam. Keep name after his.",
           "options": [
             {
               "id": "A",
@@ -15517,7 +15515,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 561
+            "line": 577
           },
           "stimulusAudio": "learner line (guide plays it): HIS IS SAM."
         },
@@ -15531,7 +15529,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "One woman → her.",
+          "no": "The card names Maya. Replay: her country.",
           "ok": "Egypt is her country. Maya's from Egypt!",
           "options": [
             {
@@ -15549,7 +15547,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 579
+            "line": 595
           },
           "stimulus": {
             "text": "MAYA photo + EGYPT map card: Egypt is ____ country."
@@ -15562,11 +15560,11 @@
             "match"
           ],
           "kind": "practice",
-          "no": "Each person word has its own whose-word.",
-          "ok": "The full family: my, your, his, her, their, our!",
+          "no": "Replay the person-and-detail pairs, then match again.",
+          "ok": "I—my. You—your. He—his. She—her. They—their. We—our.",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 597
+            "line": 613
           },
           "stimulus": {
             "text": "left: he · she · they · we · I · you · right: my · their · his · our · her · your"
@@ -15582,7 +15580,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "Say the next word: EN-gineer. Vowel sound first → an.",
+          "no": "Listen again: an engineer.",
           "ok": "an engineer — the sound decides!",
           "options": [
             {
@@ -15596,7 +15594,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 669
+            "line": 689
           },
           "stimulus": {
             "text": "I'm ____ engineer."
@@ -15612,7 +15610,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "NURSE starts with /n/ → a.",
+          "no": "Listen again: a nurse.",
           "ok": "a nurse — like Maya!",
           "options": [
             {
@@ -15626,7 +15624,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 683
+            "line": 703
           },
           "stimulus": {
             "text": "She's ____ nurse."
@@ -15642,7 +15640,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "OF-fice — vowel sound first → an.",
+          "no": "Listen again: an office worker.",
           "ok": "an office worker!",
           "options": [
             {
@@ -15656,7 +15654,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 697
+            "line": 717
           },
           "stimulus": {
             "text": "He's ____ office worker."
@@ -15672,7 +15670,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "COOK starts with /k/ → a.",
+          "no": "Listen again: a cook.",
           "ok": "a cook — Leo at the café!",
           "options": [
             {
@@ -15686,7 +15684,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 711
+            "line": 731
           },
           "stimulus": {
             "text": "Leo is ____ cook."
@@ -15697,7 +15695,7 @@
           "id": "A1-C03-L02-PR-G027",
           "instructionWords": [],
           "kind": "practice",
-          "no": "Say the job out loud — vowel sound at the start → an tray.",
+          "no": "Play each job. Match the whole chunk: a teacher; an engineer.",
           "ok": "Seven and two — the sounds split the nine!",
           "solution": {
             "tray_a": [
@@ -15716,7 +15714,7 @@
           },
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 725
+            "line": 745
           },
           "stimulus": {
             "text": "9 job tiles → tray a or tray an (ear icon on the an tray)"
@@ -15732,8 +15730,8 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Listen to the first sound of the job word.",
-          "ok": "a teacher! TEA-cher starts with /t/.",
+          "no": "Replay the whole chunk: a teacher.",
+          "ok": "a teacher!",
           "options": [
             {
               "id": "A",
@@ -15750,7 +15748,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 739
+            "line": 759
           },
           "stimulusAudio": "learner line (guide plays it): I'M AN TEACHER."
         },
@@ -15783,7 +15781,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 757
+            "line": 777
           },
           "stimulus": {
             "text": "DOCTOR job card + question bubble: What do you do?"
@@ -15818,7 +15816,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 775
+            "line": 795
           },
           "stimulus": {
             "text": "ENGINEER job card (woman, glasses, hard hat) + question bubble: What do you do?"
@@ -15853,7 +15851,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 854
+            "line": 874
           },
           "stimulusAudio": "fresh take — SAM: Where are you from?"
         },
@@ -15886,7 +15884,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 872
+            "line": 892
           },
           "stimulusAudio": "fresh take — ALEX: What do you do?"
         },
@@ -15919,7 +15917,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 890
+            "line": 910
           },
           "stimulusAudio": "fresh take — SAM: This is my friend Maya."
         },
@@ -15952,7 +15950,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 908
+            "line": 928
           },
           "stimulusAudio": "A1-C03-D01-T08 (Alex): Is she a nurse?"
         },
@@ -15985,7 +15983,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 926
+            "line": 946
           },
           "stimulusAudio": "A1-C03-D01-T03 (Sam): And you? Where are you from?"
         },
@@ -16018,7 +16016,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 944
+            "line": 964
           },
           "stimulusAudio": "A1-C03-D01-T10 (Alex): Your friends! They're from ten countries."
         },
@@ -16035,7 +16033,7 @@
           "ok": "Greet → ask → answer → close. Every good talk!",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 962
+            "line": 982
           }
         },
         {
@@ -16051,7 +16049,7 @@
           "ok": "Introduce → meet → meet-back. The three-step welcome!",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 975
+            "line": 995
           }
         },
         {
@@ -16084,7 +16082,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 986
+            "line": 1006
           },
           "stimulusAudio": "fresh take — SAM: Are you from Mexico?"
         },
@@ -16100,7 +16098,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Two checks: the pronoun (he) and the fact (cook).",
+          "no": "Check two things: Sam is he. Sam is a cook.",
           "ok": "Yes, he is! Leo cooks at the café.",
           "options": [
             {
@@ -16118,7 +16116,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1005
+            "line": 1025
           },
           "stimulusAudio": "fresh take — ALEX: Is Leo a cook?"
         },
@@ -16152,7 +16150,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1024
+            "line": 1044
           },
           "stimulusAudio": "fresh take — ALEX: What do you do?"
         },
@@ -16186,7 +16184,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1043
+            "line": 1063
           },
           "stimulusAudio": "fresh take — MAYA: This is my friend Sam."
         },
@@ -16219,7 +16217,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1070
+            "line": 1090
           },
           "stimulusAudio": "A1-C03-AUD050"
         },
@@ -16239,7 +16237,7 @@
           "optionsNote": "map cards — Canada / Egypt / Mexico",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1088
+            "line": 1108
           },
           "stimulusAudio": "A1-C03-AUD050"
         },
@@ -16272,7 +16270,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1103
+            "line": 1123
           },
           "stimulusAudio": "A1-C03-AUD050"
         },
@@ -16305,7 +16303,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1119
+            "line": 1139
           },
           "stimulusAudio": "A1-C03-AUD050"
         },
@@ -16339,7 +16337,7 @@
           "question": "Who is from Egypt?",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1137
+            "line": 1157
           },
           "stimulusAudio": "A1-C03-AUD051"
         },
@@ -16354,7 +16352,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "Listen for the words 'two languages' — whose voice says them?",
+          "no": "Listen for 'two languages.' Which person says it?",
           "ok": "Sam says it — about Alex's two languages!",
           "options": [
             {
@@ -16373,7 +16371,7 @@
           "question": "Who says 'two languages' in the talk?",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1153
+            "line": 1173
           },
           "stimulusAudio": "A1-C03-AUD051"
         },
@@ -16388,7 +16386,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "The short answer copies the question's person word.",
+          "no": "The question says Alex. The answer starts they.",
           "ok": "Yes, he is!",
           "options": [
             {
@@ -16407,7 +16405,7 @@
           "question": "Is Leo from Australia?",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1190
+            "line": 1210
           },
           "stimulusAudio": "A1-C03-AUD052"
         },
@@ -16428,7 +16426,7 @@
           "question": "Where is Alex from?",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1209
+            "line": 1229
           },
           "stimulusAudio": "A1-C03-AUD052"
         },
@@ -16462,7 +16460,7 @@
           "question": "We're from ten countries — who is we?",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1225
+            "line": 1245
           },
           "stimulusAudio": "A1-C03-AUD052"
         },
@@ -16477,8 +16475,8 @@
             "C"
           ],
           "kind": "practice",
-          "no": "Whose job is asked? LEO's — not the speaker's.",
-          "ok": "A cook — he's! New voice, same grammar.",
+          "no": "The question asks about LEO's job, not the speaker's job.",
+          "ok": "A cook—he's! New voice, same line.",
           "options": [
             {
               "id": "A",
@@ -16496,7 +16494,7 @@
           "question": "Leo's job?",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1244
+            "line": 1264
           },
           "stimulusAudio": "fresh single line — NINA: Leo is my friend. He's a cook."
         },
@@ -16525,7 +16523,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1291
+            "line": 1311
           },
           "stimulusAudio": "A1-C03-AUD053"
         },
@@ -16554,7 +16552,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1305
+            "line": 1325
           },
           "stimulusAudio": "fresh take — GUIDE: Maya and Leo aren't from Spain."
         },
@@ -16570,7 +16568,7 @@
           "ok": "Fast and natural — that's real English rhythm.",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1319
+            "line": 1339
           },
           "stimulusAudio": "A1-C03-AUD055"
         },
@@ -16599,7 +16597,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1331
+            "line": 1351
           },
           "stimulusAudio": "A1-C03-AUD054"
         },
@@ -16617,7 +16615,7 @@
           "ok": "Checked — the voice fell at the end. Answer rhythm!",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1346
+            "line": 1366
           },
           "stimulusAudio": "model — GUIDE: Is Leo from Peru? … No, he isn't."
         },
@@ -16646,7 +16644,7 @@
           ],
           "source": {
             "file": "A1_C03_L02_LESSON.md",
-            "line": 1358
+            "line": 1378
           },
           "stimulusAudio": "A1-C03-AUD053"
         },
@@ -16955,7 +16953,7 @@
           ],
           "kind": "practice",
           "no": "Name first, then is, then an + job.",
-          "ok": "An before the vowel sound — engineer!",
+          "ok": "An engineer—yes!",
           "source": {
             "file": "A1_C03_L03_LESSON.md",
             "line": 210
@@ -17028,7 +17026,7 @@
           ],
           "kind": "practice",
           "no": "her + name comes first.",
-          "ok": "Whose-word + thing + is + name.",
+          "ok": "Their + phone number + is + the number.",
           "source": {
             "file": "A1_C03_L03_LESSON.md",
             "line": 252
@@ -17888,7 +17886,7 @@
             "C"
           ],
           "kind": "quiz",
-          "no": "One person → is.",
+          "no": "The question names Maya. Replay: Where is Maya from?",
           "ok": "Where is Maya from? — Egypt.",
           "options": [
             {
@@ -18928,17 +18926,17 @@
 ],
 "generatedBy": "tools/export-content-manifest.mjs",
 "parse": {
-  "blocksScanned": 955,
+  "blocksScanned": 784,
   "jsonBlocks": 48,
   "skipped": [
     {
       "file": "english_course/04_A1_chapters/A1_C04/A1_C04_L01_LESSON.md",
-      "line": 632,
+      "line": 635,
       "reason": "yaml block has no id:/package_id: field (first field: clinic_exit)"
     },
     {
       "file": "english_course/04_A1_chapters/A1_C04/A1_C04_L02_LESSON.md",
-      "line": 457,
+      "line": 461,
       "reason": "yaml block has no id:/package_id: field (first field: clinic_exit)"
     },
     {
@@ -18967,8 +18965,8 @@
       "reason": "yaml block has no id:/package_id: field (first field: results_routing)"
     }
   ],
-  "textBlocks": 64,
-  "yamlBlocks": 843
+  "textBlocks": 63,
+  "yamlBlocks": 673
 },
 "reportedOnly": {
   "A1_C04": {
@@ -19012,40 +19010,7 @@
     ],
     "recordCounts": {},
     "title": "Checkpoint Review 1: Welcome-Day Mission"
-  },
-  "A1_C05": {
-    "id": "A1-C05",
-    "lessons": [
-      {
-        "file": "A1_C05_L01_LESSON.md",
-        "id": "L01",
-        "recordCounts": {
-          "audio": 1,
-          "ill": 22,
-          "lessonMeta": 1,
-          "pattern": 3,
-          "practice": 41,
-          "vocab": 27
-        },
-        "title": "Families, Friends, and Numbers 21–100"
-      },
-      {
-        "file": "A1_C05_L02_LESSON.md",
-        "id": "L02",
-        "recordCounts": {
-          "audio": 2,
-          "grammar": 3,
-          "ill": 10,
-          "lessonMeta": 1,
-          "practice": 56,
-          "vocab": 3
-        },
-        "title": "'s, have/has, Plurals, and the Photo Conversation"
-      }
-    ],
-    "recordCounts": {},
-    "title": "My Family and the People I Know"
   }
 },
-"source": "english_course/04_A1_chapters"
+"source": "Archive/english_course/04_A1_chapters"
 }

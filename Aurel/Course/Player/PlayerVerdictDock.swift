@@ -174,6 +174,7 @@ extension PlayerModel {
     /// practice family only (practice · quiz · testlet · warmup · reading).
     var hasVerdictDock: Bool {
         guard let cur else { return false }
+        guard practiceTeachingComplete else { return false }
         switch cur.screen.kind {
         case .practice, .quiz, .testlet, .warmup, .reading:
             return item != nil

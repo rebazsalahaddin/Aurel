@@ -132,12 +132,242 @@ struct ReviewScreenView: View {
 
 // MARK: Grammar model
 
+/// Shared meaning-first sequence used by grammar screens, vocabulary bridges,
+/// and review clinics. Each pulse is unscored and repeatable; its short pattern
+/// stays hidden until the learner identifies the matching person or message.
+struct MeaningPulseSequenceView: View {
+    let m: PlayerModel
+    let pulses: [MeaningPulse]
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        if !pulses.isEmpty {
+            let index = min(m.learningStep, pulses.count - 1)
+            let pulse = pulses[index]
+            let selected = m.learningSelection
+            let passed = selected.map { selection in
+                selection == pulse.key
+                    || pulse.opts.first(where: { $0.id == selection })?.text == pulse.key
+            } ?? false
+
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 8) {
+                    ForEach(pulses.indices, id: \.self) { step in
+                        Capsule()
+                            .fill(
+                                step < index || m.learningComplete
+                                    ? Color.auAccent
+                                    : (step == index
+                                        ? Color.auAccent.opacity(0.55)
+                                        : Color.auText.opacity(0.12))
+                            )
+                            .frame(height: 4)
+                    }
+                    Text("\(index + 1) / \(pulses.count)")
+                        .font(.figtree(.semibold, size: 10.5))
+                        .foregroundStyle(Color.auTextTertiary)
+                }
+
+                Text(pulse.title)
+                    .font(.caprasimo(size: 22))
+                    .tracking(-0.3)
+
+                if let ill = pulse.ill {
+                    IllustrationPlaceholder(
+                        ill: ill, height: 150,
+                        aspectRatio: m.cur?.chapter.n == 1 ? 16.0 / 9.0 : nil,
+                        cornerRadius: 18, captionSize: 11
+                    )
+                }
+
+                if let chat = pulse.chat, !chat.isEmpty {
+                    ACard(radius: 17) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(chat, id: \.t) { line in
+                                HStack(alignment: .top, spacing: 9) {
+                                    Text(line.sp)
+                                        .font(.figtree(.bold, size: 9))
+                                        .tracking(0.7)
+                                        .frame(width: 42, alignment: .leading)
+                                        .foregroundStyle(Color.auTextTertiary)
+                                    Text(line.t)
+                                        .font(.figtree(.regular, size: 14))
+                                        .auLine(14, 1.45)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Button {
+                        m.speak(chat.map(\.t).joined(separator: " "), slow: m.plays > 0)
+                        m.plays += 1
+                    } label: {
+                        HStack(spacing: 9) {
+                            AUIcon(kind: .ear, size: 18, color: .auPrimaryButtonText)
+                            Text(m.plays == 0 ? "Listen" : "Listen again")
+                                .font(.figtree(.semibold, size: 13.5))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: 48)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(Color.auAccentRamp(600))
+                        )
+                        .foregroundStyle(Color.auPrimaryButtonText)
+                    }
+                    .buttonStyle(.auTap)
+                }
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(pulse.instruction)
+                        .font(.figtree(.bold, size: 10))
+                        .tracking(1.1)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auAccentText)
+                    Text(pulse.prompt)
+                        .font(.figtree(.semibold, size: 16))
+                        .auLine(16, 1.45)
+                }
+
+                VStack(spacing: 9) {
+                    ForEach(pulse.opts) { option in
+                        let isSelected = selected == option.id
+                        let optionIsKey = option.id == pulse.key || option.text == pulse.key
+                        Button {
+                            withAnimation(
+                                AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion)
+                            ) {
+                                m.pickLearning(option, key: pulse.key)
+                            }
+                        } label: {
+                            HStack(spacing: 11) {
+                                if isSelected {
+                                    AUIcon(
+                                        kind: optionIsKey ? .check : .close, size: 16,
+                                        color: optionIsKey ? .auOkText : .auErrText
+                                    )
+                                }
+                                Text(option.text ?? option.ill?.alt ?? option.id)
+                                    .font(.figtree(.semibold, size: 14))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.horizontal, 15)
+                            .frame(minHeight: 50)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .fill(
+                                        isSelected
+                                            ? (optionIsKey ? Color.auOkBg : Color.auErrBg)
+                                            : Color.auFill
+                                    )
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .strokeBorder(
+                                        isSelected
+                                            ? (optionIsKey ? Color.auOkText : Color.auErrText)
+                                            : Color.auEdge,
+                                        lineWidth: 1
+                                    )
+                            )
+                            .foregroundStyle(
+                                isSelected
+                                    ? (optionIsKey ? Color.auOkText : Color.auErrText)
+                                    : Color.auText
+                            )
+                        }
+                        .buttonStyle(.auTap)
+                    }
+                }
+
+                if let selected {
+                    let selectedIsKey = selected == pulse.key
+                        || pulse.opts.first(where: { $0.id == selected })?.text == pulse.key
+                    HStack(alignment: .top, spacing: 9) {
+                        AUIcon(
+                            kind: selectedIsKey ? .check : .loop, size: 17,
+                            color: selectedIsKey ? .auOkText : .auErrText
+                        )
+                        Text(selectedIsKey ? pulse.ok : pulse.no)
+                            .font(.figtree(.regular, size: 13))
+                            .auLine(13, 1.45)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 15, style: .continuous)
+                            .fill(selectedIsKey ? Color.auOkBg : Color.auErrBg)
+                    )
+                    .foregroundStyle(selectedIsKey ? Color.auOkText : Color.auErrText)
+                    .accessibilityElement(children: .combine)
+                }
+
+                if passed {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(pulse.examples ?? [], id: \.self) { example in
+                            Text(example)
+                                .font(.figtree(.regular, size: 14))
+                                .auLine(14, 1.45)
+                        }
+                        if let pattern = pulse.pattern {
+                            Text(pattern)
+                                .font(.figtree(.semibold, size: 15))
+                                .auLine(15, 1.45)
+                                .padding(.horizontal, 13)
+                                .padding(.vertical, 11)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                        .fill(Color.auTintBg)
+                                )
+                                .foregroundStyle(Color.auTintText)
+                                .transition(.opacity.combined(with: .scale(scale: 0.98)))
+                        }
+                    }
+
+                    APillButton(
+                        title: index + 1 < pulses.count ? "Next example" : "Start practice",
+                        icon: .arrow, player: true
+                    ) {
+                        withAnimation(
+                            AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion)
+                        ) {
+                            m.advanceLearning(total: pulses.count)
+                        }
+                    }
+                }
+            }
+            .accessibilityElement(children: .contain)
+        }
+    }
+}
+
 struct GrammarScreenView: View {
     let m: PlayerModel
 
     var body: some View {
         ScreenColumn(topPad: 20, bottomPad: 26) {
             if case .grammarModel(let g) = m.cur?.screen.payload {
+                if let pulses = g.meaningPulses, !pulses.isEmpty {
+                    Text("Look and listen · then choose")
+                        .font(.figtree(.bold, size: 9.5))
+                        .tracking(1.43)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auAccentText)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.bottom, 12)
+
+                    MeaningPulseSequenceView(m: m, pulses: pulses)
+
+                    if m.learningComplete {
+                        grammarRecap(g)
+                            .padding(.top, 16)
+                        GoOnButton(label: "Practise it") { m.goto(m.p + 1) }
+                            .padding(.top, 16)
+                    }
+                } else {
                 Text("Notice first · the rule comes after")
                     .font(.figtree(.bold, size: 9.5))
                     .tracking(1.43)
@@ -331,7 +561,47 @@ struct GrammarScreenView: View {
 
                 GoOnButton(label: "Practise it") { m.goto(m.p + 1) }
                     .padding(.top, 16)
+                }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func grammarRecap(_ grammar: GrammarModelScreen) -> some View {
+        ACard(radius: 18) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Your review")
+                    .font(.figtree(.bold, size: 10))
+                    .tracking(1.2)
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.auAccentText)
+
+                ForEach(grammar.records ?? [], id: \.id) { record in
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(record.title)
+                            .font(.figtree(.semibold, size: 14))
+                        Text(record.pattern)
+                            .font(.figtree(.regular, size: 13))
+                            .auLine(13, 1.45)
+                            .foregroundStyle(Color.auTextSecondary)
+                    }
+                }
+
+                if let paradigm = grammar.paradigm {
+                    ForEach(paradigm, id: \.cells) { row in
+                        Button {
+                            m.speak(row.cells.last)
+                        } label: {
+                            Text(row.cells.last ?? "")
+                                .font(.figtree(.regular, size: 13))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.vertical, 5)
+                        }
+                        .buttonStyle(.auTap)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }

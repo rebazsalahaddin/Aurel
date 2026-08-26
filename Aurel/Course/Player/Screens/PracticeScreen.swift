@@ -43,6 +43,7 @@ struct PracticeScreenView: View {
             rungHeader
             groups
             teachBlock
+            if m.practiceTeachingComplete {
             profiles
             badges
             cardBlock
@@ -57,6 +58,7 @@ struct PracticeScreenView: View {
                         AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
                         value: m.wrong
                     )
+            }
             }
 
             Spacer(minLength: 12)
@@ -172,20 +174,27 @@ struct PracticeScreenView: View {
                             .textCase(.uppercase)
                             .foregroundStyle(Color.auAccentText)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Button {
-                            m.teachShut.toggle()
-                        } label: {
-                            Text(m.teachShut ? "Show the model" : "Hide the model")
-                                .font(.figtree(.semibold, size: 10.5))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Capsule().strokeBorder(Color.auEdge, lineWidth: 1))
-                                .foregroundStyle(Color.auText.opacity(0.60))
+                        if m.learningComplete || teach.meaningPulses?.isEmpty != false {
+                            Button {
+                                m.teachShut.toggle()
+                            } label: {
+                                Text(m.teachShut ? "Show the model" : "Hide the model")
+                                    .font(.figtree(.semibold, size: 10.5))
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(
+                                        Capsule().strokeBorder(Color.auEdge, lineWidth: 1)
+                                    )
+                                    .foregroundStyle(Color.auText.opacity(0.60))
+                            }
+                            .buttonStyle(.auTap)
                         }
-                        .buttonStyle(.auTap)
                     }
 
                     if !m.teachShut {
+                        if let pulses = teach.meaningPulses, !pulses.isEmpty {
+                            MeaningPulseSequenceView(m: m, pulses: pulses)
+                        } else {
                         if let ill = teach.ill {
                             IllustrationPlaceholder(
                                 ill: ill, height: 120,
@@ -276,6 +285,7 @@ struct PracticeScreenView: View {
                                 .auLine(11, 1.5)
                                 .foregroundStyle(Color.auTextTertiary)
                                 .padding(.top, 8)
+                        }
                         }
                     }
                 }

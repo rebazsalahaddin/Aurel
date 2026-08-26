@@ -232,6 +232,25 @@ struct NoticeBlock: Decodable, Hashable {
     let chat: [ChatLine]?
 }
 
+/// One progressively disclosed, unscored form–meaning check. The scene and
+/// examples establish meaning first; `pattern` is revealed only after the
+/// learner chooses the matching referent or message.
+struct MeaningPulse: Decodable, Hashable, Identifiable {
+    let id: String
+    let title: String
+    let instruction: String
+    let aud: String?
+    let ill: IllustrationRef?
+    let chat: [ChatLine]?
+    let prompt: String
+    let opts: [PracticeOption]
+    let key: String
+    let ok: String
+    let no: String
+    let examples: [String]?
+    let pattern: String?
+}
+
 /// Grammar ledger record.
 struct GrammarRecord: Decodable, Hashable, Identifiable {
     let id: String
@@ -256,6 +275,7 @@ struct GrammarRow: Decodable, Hashable {
 struct TeachBlock: Decodable, Hashable {
     let ill: IllustrationRef?
     let notice: [NoticeBlock]?
+    let meaningPulses: [MeaningPulse]?
     let patternTiles: [String]?
     let explain: String?
     let records: [GrammarRecord]?

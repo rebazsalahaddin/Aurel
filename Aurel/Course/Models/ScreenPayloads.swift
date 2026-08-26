@@ -268,6 +268,7 @@ struct OrientationScreen: Decodable, Hashable {
 struct CardsScreen: Decodable, Hashable {
     let chip: String?
     let cards: [VocabCard]?
+    let meaningPulses: [MeaningPulse]?
     let encounter: String?
     let strengthStrip: [String]?
     let badgeSchema: Bool?
@@ -329,6 +330,7 @@ struct WarmupScreen: Decodable, Hashable {
 
 struct GrammarModelScreen: Decodable, Hashable {
     let notice: [NoticeBlock]?
+    let meaningPulses: [MeaningPulse]?
     let records: [GrammarRecord]?
     let dockNote: String?
     let ill: IllustrationRef?

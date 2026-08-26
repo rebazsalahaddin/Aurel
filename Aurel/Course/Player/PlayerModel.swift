@@ -27,6 +27,10 @@ final class PlayerModel {
     var tried = false
     var notice = 0
     var revealed = false
+    var learningStep = 0
+    var learningSelection: String? = nil
+    var learningComplete = false
+    var learningWrong = 0
     var order: [Int] = []  // tile order (indexes into tiles)
     var picked: [String: String] = [:]
     var tk = 0  // task index (tiles/order screens)
@@ -165,6 +169,10 @@ final class PlayerModel {
         tried = false
         notice = 0
         revealed = false
+        learningStep = 0
+        learningSelection = nil
+        learningComplete = false
+        learningWrong = 0
         order = []
         picked = [:]
         rec = 0
@@ -192,6 +200,39 @@ final class PlayerModel {
 
     var cur: CourseStore.FlatScreen? {
         course.flat.indices.contains(p) ? course.flat[p] : nil
+    }
+
+    // MARK: Meaning-first grammar pulses
+
+    func pickLearning(_ option: PracticeOption, key: String) {
+        learningSelection = option.id
+        if option.id == key || option.text == key {
+            AUFeedback.correct()
+        } else {
+            learningWrong += 1
+            AUFeedback.miss()
+        }
+    }
+
+    func advanceLearning(total: Int) {
+        guard total > 0 else {
+            learningComplete = true
+            return
+        }
+        if learningStep + 1 < total {
+            learningStep += 1
+            learningSelection = nil
+            learningWrong = 0
+        } else {
+            learningComplete = true
+        }
+    }
+
+    var practiceTeachingComplete: Bool {
+        guard case .practice(let screen) = cur?.screen.payload,
+            let pulses = screen.teach?.meaningPulses, !pulses.isEmpty
+        else { return true }
+        return learningComplete
     }
 
     // MARK: Guided roleplay
