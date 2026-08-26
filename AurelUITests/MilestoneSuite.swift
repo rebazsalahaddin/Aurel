@@ -454,10 +454,11 @@ final class MilestoneSuite: XCTestCase {
         }
         assertUsable("au.tab.learn")
         assertUsable("au.tab.practice")
-        assertUsable("au.home.settings")
+        assertUsable("au.home.profile")
+        assertUsable("au.tab.settings")
 
         // Settings surface at AX size.
-        tap("au.home.settings")
+        tap("au.tab.settings")
         assertUsable("au.settings.type.0")
         assertUsable("au.settings.type.4")
     }
@@ -468,26 +469,17 @@ final class MilestoneSuite: XCTestCase {
         app.launch()
         XCTAssertTrue(onHome(timeout: 30))
 
-        for tab in ["au.tab.practice", "au.tab.progress", "au.tab.you", "au.tab.learn"] {
+        for tab in ["au.tab.practice", "au.tab.progress", "au.tab.settings", "au.tab.learn"] {
             tap(tab, timeout: 10)
         }
         XCTAssertTrue(onHome())
 
-        tap("au.home.settings")
+        tap("au.tab.settings")
         tap("au.settings.type.4")  // Largest
         tap("au.settings.type.2")  // back to Default
-        // Leave settings via the back control.
-        let back = app.buttons.matching(identifier: "au.settings.back").firstMatch
-        if back.waitForExistence(timeout: 4) {
-            back.tap()
-        } else {
-            app.swipeDown()
-        }
-        XCTAssertTrue(
-            onHome(timeout: 10)
-                || app.buttons.matching(identifier: "au.home.settings").firstMatch
-                    .waitForExistence(timeout: 5)
-        )
+        // Settings is a tab surface — leave through the tab bar.
+        tap("au.tab.learn")
+        XCTAssertTrue(onHome(timeout: 10))
 
         // A locked chapter is never a dead end: its action opens the
         // subscription/access route, which remains truthful when commerce is unavailable.

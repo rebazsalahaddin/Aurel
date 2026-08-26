@@ -161,7 +161,7 @@ extension AppRouter {
             case .practice: String(localized: "Choose a scene, speaking, review, or story.")
             case .progress:
                 String(localized: "See practice evidence and the next skill to strengthen.")
-            case .you: String(localized: "Manage identity, preferences, and local data.")
+            case .you: String(localized: "Your profile, preferences, and local data.")
             }
         }
     }
@@ -171,7 +171,7 @@ extension AppRouter {
         case .home: .learn
         case .stories: .practice
         case .progress: .progress
-        case .profile, .leaderboard: .you
+        case .profile, .leaderboard, .settings: .you
         default: nil
         }
     }
@@ -238,7 +238,7 @@ extension AppRouter {
         let destination: Destination
     }
 
-    private var currentPathIndex: Int {
+    var currentPathIndex: Int {
         max(0, basePos + (lessonsDone - baseLessons))
     }
 

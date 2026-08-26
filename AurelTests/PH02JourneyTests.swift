@@ -187,6 +187,7 @@ final class PH02JourneyTests: XCTestCase {
         XCTAssertEqual(AppRouter.topLevelSection(for: .progress), .progress)
         XCTAssertEqual(AppRouter.topLevelSection(for: .profile), .you)
         XCTAssertEqual(AppRouter.topLevelSection(for: .leaderboard), .you)
+        XCTAssertEqual(AppRouter.topLevelSection(for: .settings), .you)
     }
 
     func testTabSwitchesPreserveRouterOwnedPracticeState() {

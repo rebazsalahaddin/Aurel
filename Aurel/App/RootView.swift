@@ -177,7 +177,7 @@ private struct ScreenHost: View {
 
     private var isTabScreen: Bool {
         switch env.router.screen {
-        case .home, .stories, .progress, .profile, .leaderboard:
+        case .home, .stories, .progress, .profile, .leaderboard, .settings:
             return true
         default:
             return false
@@ -223,12 +223,12 @@ private struct ScreenHost: View {
                 insertion: .scale(scale: 0.94).combined(with: .opacity),
                 removal: .opacity
             )
-        case .scene, .speak, .review, .settings:
+        case .scene, .speak, .review:
             return .asymmetric(
                 insertion: .move(edge: .trailing).combined(with: .opacity),
                 removal: .move(edge: .trailing).combined(with: .opacity)
             )
-        case .home, .stories, .progress, .profile, .leaderboard:
+        case .home, .stories, .progress, .profile, .leaderboard, .settings:
             return .asymmetric(
                 insertion: .opacity.combined(with: .scale(scale: 0.98)),
                 removal: .opacity

@@ -88,6 +88,18 @@ final class AppRouterTests: XCTestCase {
         XCTAssertFalse(r.speaking)
     }
 
+    /// The tab surfaces after the Phase-2 swap: Settings is the fourth tab;
+    /// Profile stays a tab surface (reachable from the Home header button).
+    func testTabSurfaceMembershipAfterSettingsSwap() {
+        let tabs: [AppRouter.Screen] = [.home, .stories, .progress, .profile, .leaderboard, .settings]
+        for screen in tabs {
+            XCTAssertTrue(screen.showsTabs, "\(screen) must show the tab bar")
+        }
+        XCTAssertFalse(AppRouter.Screen.course.showsTabs)
+        XCTAssertFalse(AppRouter.Screen.paywall.showsTabs)
+        XCTAssertEqual(AppRouter.topLevelSection(for: .settings), .you)
+    }
+
     /// Legacy verification routes remain nameable, but release capabilities
     /// cannot turn them into a simulated account or entitlement.
     func testSubscribeAccountRoutesCannotGrantReleaseEntitlement() {

@@ -100,19 +100,19 @@ struct HomeView: View {
                     .font(.caprasimo(size: 18))
                     .tracking(0.27)
                 Spacer()
+                // The profile placeholder: stands for the future avatar /
+                // profile surface; Settings lives in the tab bar now.
                 Button {
-                    env.router.nav(.settings)
+                    env.router.nav(.profile)
                 } label: {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(Color.auText)
+                    AUIcon(kind: .person, size: 21, color: .auText)
                         .frame(width: 44, height: 44)
                         .contentShape(Circle())
                         .auPracticeGlass(in: Circle(), interactive: true)
                 }
                 .buttonStyle(.auTap)
-                .accessibilityLabel("Settings")
-                .accessibilityIdentifier("au.home.settings")
+                .accessibilityLabel("You")
+                .accessibilityIdentifier("au.home.profile")
             }
             .padding(.top, 62)
             .padding(.bottom, 24)
@@ -192,47 +192,48 @@ struct HomeView: View {
         env.router.basePos + (env.router.lessonsDone - env.router.baseLessons)
     }
 
+    // MARK: The learner's current lesson (card + day-arc headline share it)
+
+    private var pendingLessonIndex: Int? {
+        env.router.pending.flatMap { p in ch.lessons.firstIndex(of: p.title) }
+    }
+
+    private var nextLessonIndex: Int {
+        min(env.router.currentPathIndex, max(0, ch.count - 1))
+    }
+
+    private var currentLessonNumber: Int {
+        (pendingLessonIndex ?? nextLessonIndex) + 1
+    }
+
+    private var currentLessonTitle: String {
+        let index = pendingLessonIndex ?? nextLessonIndex
+        return ch.lessons.indices.contains(index) ? ch.lessons[index] : ch.name
+    }
+
     // MARK: One recommended next action
 
     private var recommendedCard: some View {
         let r = env.router
         let next = r.learnNextAction
-        return VStack(spacing: 10) {
-            HomeNextActionCard(
-                title: r.pending == nil
-                    ? next.title : String(localized: "Resume where you stopped"),
-                lessonTitle: r.pending?.title,
-                progress: r.pending.map { String(localized: "Step \($0.at) of \($0.of)") },
-                buttonTitle: r.pending == nil
-                    ? next.buttonTitle : String(localized: "Resume lesson"),
-                buttonAid: r.pending == nil ? "au.home.today" : "au.home.resume"
-            ) {
-                r.perform(next)
-            }
+        // One clean lesson card (Enhancement doc Phase 1): first-time users
+        // see "Start Lesson 1", returning users "Resume Lesson N" — with the
+        // restart affordance inside the same card, never a second card.
+        let chapterDone = r.currentPathIndex >= ch.count && r.pending == nil
 
-            if r.pending != nil {
-                Button {
-                    showRestartConfirmation = true
-                } label: {
-                    HStack(spacing: 8) {
-                        AUIcon(kind: .reviewLoop, size: 14, color: .auErrText)
-                        Text("Restart lesson")
-                            .font(.figtree(.semibold, size: 13.5))
-                    }
-                    .foregroundStyle(Color.auErrText)
-                    .frame(maxWidth: .infinity, minHeight: 44)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(Color.auErr.opacity(0.08))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .strokeBorder(Color.auErr.opacity(0.28), lineWidth: 1)
-                    )
-                }
-                .buttonStyle(.auTap)
-                .accessibilityIdentifier("au.home.start-over")
-            }
+        return HomeNextActionCard(
+            title: r.pending != nil
+                ? String(localized: "Resume Lesson \(currentLessonNumber)")
+                : (chapterDone
+                    ? next.title : String(localized: "Start Lesson \(currentLessonNumber)")),
+            lessonTitle: r.pending?.title
+                ?? (chapterDone ? nil : ch.lessons.indices.contains(nextLessonIndex) ? ch.lessons[nextLessonIndex] : nil),
+            progress: r.pending.map { String(localized: "Step \($0.at) of \($0.of)") },
+            buttonTitle: r.pending == nil ? next.buttonTitle : String(localized: "Resume lesson"),
+            buttonAid: r.pending == nil ? "au.home.today" : "au.home.resume",
+            restart: r.pending != nil ? { showRestartConfirmation = true } : nil
+        ) {
+            r.perform(next)
         }
         .padding(.horizontal, 24)
         .padding(.top, 14)
@@ -268,8 +269,10 @@ struct HomeView: View {
             )
 
             VStack(spacing: 0) {
-                // Streak headline — the day's count set as display type,
-                // a small ember/spark mark, and the authored explainer.
+                // Lesson headline — where the learner is on the path, set as
+                // display type; the streak rides along as a quiet caption by
+                // the ember mark (Enhancement doc Phase 1: "Lesson 1 — Say
+                // Hello" replaces the day count).
                 Button {
                     r.nav(.streak)
                 } label: {
@@ -292,21 +295,16 @@ struct HomeView: View {
                         .accessibilityHidden(true)
 
                         VStack(alignment: .leading, spacing: 3) {
-                            HStack(alignment: .firstTextBaseline, spacing: 6) {
-                                Text(r.streak > 0 ? "\(r.streak)" : "Day one")
-                                    .font(.caprasimo(size: 27))
-                                    .monospacedDigit()
-                                    .tracking(-0.54)
-                                    .foregroundStyle(Color.auAccentText)
-                                if r.streak > 0 {
-                                    Text(r.streak == 1 ? "day" : "days")
-                                        .font(.figtree(.semibold, size: 14))
-                                        .foregroundStyle(Color.auText)
-                                }
-                            }
+                            Text(
+                                "Lesson \(currentLessonNumber) — \(currentLessonTitle)"
+                            )
+                            .font(.caprasimo(size: 23))
+                            .tracking(-0.46)
+                            .auHeadLine(23, 1.16)
+                            .foregroundStyle(Color.auAccentText)
                             Text(
                                 r.streak > 0
-                                    ? "A day counts when both halves are done."
+                                    ? "\(r.streak)-day streak · a day counts when both halves are done."
                                     : "A lesson, then the words due back — both halves make a day."
                             )
                             .font(.figtree(.regular, size: 11.5))
@@ -335,26 +333,10 @@ struct HomeView: View {
                     .frame(height: 1)
                     .padding(.bottom, 13)
 
-                if arc.arcT < 1 {
-                    HStack(alignment: .top, spacing: 10) {
-                        AUIcon(kind: .arrow, size: 14, color: .auAccentText)
-                            .padding(.top, 2)
-                        Text(
-                            !r.dayLesson
-                                ? "First half: the recommended lesson above. Your place is saved at the natural pause."
-                                : "Second half: recall the words that came loose in today’s lesson."
-                        )
-                        .font(.figtree(.regular, size: 12.5))
-                        .auLine(12.5, 1.45)
-                        .foregroundStyle(Color.auTextSecondary)
-                    }
-                    .padding(.horizontal, 15)
-                    .padding(.vertical, 13)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .fill(Color.auFill.opacity(0.65)))
-                } else {
+                // The half-explainer tooltip is gone (Enhancement doc Phase
+                // 1); the day-arc card shows its completion state only once
+                // both halves are actually done.
+                if arc.arcT >= 1 {
                     HStack(spacing: 11) {
                         AUIcon(kind: .check, size: 17, color: .auOkText)
                         Text("Day \(max(r.streak, 1)) Complete")
@@ -449,13 +431,22 @@ struct HomeView: View {
                                 style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [3, 9])
                             )
 
-                        WindingPathShape(firstLegOnly: true)
-                            .trim(from: 0, to: drawT)
+                        // The accent thread tracks COMPLETED legs — it
+                        // advances to the next stop each time a lesson
+                        // finishes (Phase 2 fix: it used to be stuck on the
+                        // first leg regardless of progress). drawT keeps the
+                        // first-reveal draw-in gesture.
+                        WindingPathShape()
+                            .trim(from: 0, to: drawT * min(CGFloat(pathAt), 4) / 4)
                             .stroke(
                                 Color.auAccent,
                                 style: StrokeStyle(lineWidth: 2.5, lineCap: .round)
                             )
                             .opacity(pathAt > 0 ? 1 : 0.55)
+                            .animation(
+                                AUMotion.animation(AUMotion.flow, reduceMotion: reduceMotion),
+                                value: pathAt
+                            )
 
                         ForEach(Array(nodes.enumerated()), id: \.offset) { i, node in
                             LessonPathNode(
@@ -797,6 +788,7 @@ private struct HomeNextActionCard: View {
     let progress: String?
     let buttonTitle: String
     let buttonAid: String
+    var restart: (() -> Void)? = nil
     let action: () -> Void
 
     @Environment(\.colorScheme) private var scheme
@@ -831,6 +823,31 @@ private struct HomeNextActionCard: View {
 
             APillButton(title: buttonTitle, aid: buttonAid, action: action)
                 .padding(.top, 18)
+
+            if let restart {
+                // Restart lives inside the same card — one lesson card, not
+                // two boxes (Enhancement doc Phase 1).
+                Button(action: restart) {
+                    HStack(spacing: 8) {
+                        AUIcon(kind: .reviewLoop, size: 14, color: .auErrText)
+                        Text("Restart lesson")
+                            .font(.figtree(.semibold, size: 13.5))
+                    }
+                    .foregroundStyle(Color.auErrText)
+                    .frame(maxWidth: .infinity, minHeight: 44)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color.auErr.opacity(0.08))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .strokeBorder(Color.auErr.opacity(0.28), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.auTap)
+                .accessibilityIdentifier("au.home.start-over")
+                .padding(.top, 10)
+            }
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 19)
@@ -997,16 +1014,9 @@ private struct LockedStopCard: View {
 /// The serpentine thread (line 532). First leg (line 533) is the accent
 /// overlay once the path has begun.
 struct WindingPathShape: Shape {
-    var firstLegOnly = false
     func path(in rect: CGRect) -> Path {
         var p = Path()
         p.move(to: CGPoint(x: 132, y: 46))
-        if firstLegOnly {
-            p.addCurve(
-                to: CGPoint(x: 274, y: 152), control1: CGPoint(x: 132, y: 96),
-                control2: CGPoint(x: 274, y: 100))
-            return p
-        }
         p.addCurve(
             to: CGPoint(x: 274, y: 152), control1: CGPoint(x: 132, y: 96),
             control2: CGPoint(x: 274, y: 100))

@@ -96,7 +96,7 @@ final class RendererCoverageSuite: XCTestCase {
 
         let window = app.windows.firstMatch
         XCTAssertTrue(window.waitForExistence(timeout: 10))
-        for identifier in ["au.tab.learn", "au.tab.practice", "au.tab.progress", "au.tab.you"] {
+        for identifier in ["au.tab.learn", "au.tab.practice", "au.tab.progress", "au.tab.settings"] {
             let element = app.buttons.matching(identifier: identifier).firstMatch
             XCTAssertTrue(element.waitForExistence(timeout: 8), "missing \(identifier)")
             XCTAssertTrue(window.frame.contains(element.frame), "\(identifier) escapes the window")

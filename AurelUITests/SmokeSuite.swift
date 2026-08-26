@@ -68,6 +68,20 @@ final class SmokeSuite: XCTestCase {
         return e
     }
 
+    /// Path stops can sit behind the floating tab bar when the content above
+    /// is tall (pending lesson + day-complete state) — scroll the stop clear
+    /// of the bar before tapping, exactly what a user does.
+    private func revealAndTap(_ id: String) {
+        let e = wait(id, timeout: 10)
+        let bar = app.buttons.matching(identifier: "au.tab.practice").firstMatch
+        if bar.exists, e.frame.maxY > bar.frame.minY - 8 {
+            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.82))
+            let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.62))
+            start.press(forDuration: 0.02, thenDragTo: end)
+        }
+        e.tap()
+    }
+
     private func onScreen(
         _ marker: String, timeout: TimeInterval = 10, file: StaticString = #filePath,
         line: UInt = #line
@@ -124,7 +138,7 @@ final class SmokeSuite: XCTestCase {
         app.launch()
         onScreen(Screen.home)
 
-        tap("au.home.node.0")  // "Begin" on the open lesson node
+        revealAndTap("au.home.node.0")  // "Begin" on the open lesson node
         onScreen(Screen.course)
 
         // Advance a couple of screens (promise → hook); the player tracks
@@ -156,7 +170,7 @@ final class SmokeSuite: XCTestCase {
         // path present); the pending card itself is ephemeral by design and
         // correctly does not reappear after process death.
         onScreen(Screen.home)
-        tap("au.home.node.0")
+        revealAndTap("au.home.node.0")
         onScreen(Screen.course)
     }
 

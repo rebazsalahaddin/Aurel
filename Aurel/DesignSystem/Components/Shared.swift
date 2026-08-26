@@ -669,7 +669,7 @@ struct AUTabBar: View {
                     tab(.home, icon: .learn, label: "Learn", width: tabWidth)
                     tab(.stories, icon: .practice, label: "Practice", width: tabWidth)
                     tab(.progress, icon: .progressBar, label: "Progress", width: tabWidth)
-                    tab(.profile, icon: .person, label: "You", width: tabWidth)
+                    tab(.settings, icon: .gear, label: "Settings", width: tabWidth)
                 }
                 .padding(7)
             }
@@ -691,7 +691,7 @@ struct AUTabBar: View {
     }
 
     private enum TabIcon {
-        case learn, practice, progressBar, person
+        case learn, practice, progressBar, gear
     }
 
     private func tab(_ screen: AppRouter.Screen, icon: TabIcon, label: String, width: CGFloat)
@@ -747,9 +747,14 @@ struct AUTabBar: View {
         case .progressBar:
             SVGPathShape(d: "M4 19V11M10 19V5M16 19v-6M22 19H2")
                 .stroke(tint, style: stroke)
-        case .person:
-            SVGPathShape(d: AUIcon.circle(cx: 12, cy: 8, r: 4) + "M4.5 20a7.5 7.5 0 0 1 15 0")
-                .stroke(tint, style: stroke)
+        case .gear:
+            // The design system's settings glyph (AUIcon .gear) as one
+            // stroke path: hub circle + ray ticks.
+            SVGPathShape(
+                d: AUIcon.circle(cx: 12, cy: 12, r: 3.2)
+                    + "M12 3v2.4M12 18.6V21M4.2 7.5l2 1.2M17.8 15.3l2 1.2M4.2 16.5l2-1.2M17.8 8.7l2-1.2"
+            )
+            .stroke(tint, style: stroke)
         }
     }
 }

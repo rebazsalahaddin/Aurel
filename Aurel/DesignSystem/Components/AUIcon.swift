@@ -257,7 +257,7 @@ struct SVGPathShape: Shape {
 struct AUIcon: View {
     enum Kind {
         case ear, eye, tap, choose, match, mouth, loop
-        case check, arrow, close, back
+        case check, arrow, close, back, person
         case play, mic, link, lock
         case gear, offline, sparkle, flame, trophy
         case pencil, star, chevron, chevronDown
@@ -400,6 +400,13 @@ struct AUIcon: View {
             return [
                 Sub(d: rrect(x: 4.5, y: 10.5, w: 15, h: 10, r: 2.6), fill: false, strokeWidth: 1.9),
                 Sub(d: "M8 10.5V7.6a4 4 0 0 1 8 0v2.9", fill: false, strokeWidth: 1.9),
+            ]
+        case .person:
+            // The tab bar's former "You" glyph — head circle + shoulder arc.
+            return [
+                Sub(
+                    d: circle(cx: 12, cy: 8, r: 4) + "M4.5 20a7.5 7.5 0 0 1 15 0",
+                    fill: false, strokeWidth: 2.4)
             ]
         case .gear:
             return [

@@ -14,22 +14,16 @@ struct SettingsView: View {
 
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    r.leaveSettings()
-                } label: {
-                    AUIcon(kind: .back, size: 17)
-                        .frame(width: 44, height: 44)
-                        .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
-                }
-                .buttonStyle(.auTap)
-                .accessibilityLabel("Back")
-                .accessibilityIdentifier("au.settings.back")
-                .padding(.bottom, 26)
-
                 Text("Settings")
                     .font(.caprasimo(size: 29))
                     .tracking(-0.58)
-                    .padding(.bottom, 26)
+                    .padding(.bottom, 6)
+                Text(AppRouter.TopLevelSection.you.purpose.auLocalized)
+                    .font(.figtree(.regular, size: 13.5))
+                    .auLine(13.5, 1.5)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.bottom, 22)
+                    .accessibilityIdentifier("au.settings.purpose")
 
                 if !r.loginErr.isEmpty {
                     AUBanner(text: r.loginErr, tone: .error)

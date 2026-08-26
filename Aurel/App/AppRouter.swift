@@ -24,7 +24,7 @@ final class AppRouter {
         /// MAIN — the tab bar surfaces (line 1571).
         var showsTabs: Bool {
             switch self {
-            case .home, .stories, .progress, .profile, .leaderboard: true
+            case .home, .stories, .progress, .profile, .leaderboard, .settings: true
             default: false
             }
         }
@@ -799,21 +799,11 @@ final class AppRouter {
 
     // MARK: Simple navigation (the `go` map, line 2027)
 
-    var settingsSource: Screen = .home
-
     func nav(_ to: Screen) {
-        if to == .settings {
-            settingsSource = (screen == .profile || screen == .home) ? screen : .home
-        }
         if to.isOnboarding, to != .login {
             onboardingCheckpoint = to
         }
         screen = to
-        persist()
-    }
-
-    func leaveSettings() {
-        screen = settingsSource
         persist()
     }
 
