@@ -201,7 +201,9 @@ struct MeaningPulseSequenceView: View {
                     }
 
                     Button {
-                        m.speak(chat.map(\.t).joined(separator: " "), slow: m.plays > 0)
+                        m.speak(
+                            chat.map(\.t).joined(separator: " "), audio: pulse.aud,
+                            slow: m.plays > 0)
                         m.plays += 1
                     } label: {
                         HStack(spacing: 9) {
@@ -383,6 +385,10 @@ struct GrammarScreenView: View {
                         Button {
                             m.notice = min((g.notice ?? []).count - 1, k + 1)
                             m.revealed = k + 1 >= (g.notice ?? []).count - 1
+                            let transcript = (n.chat ?? []).map(\.t).joined(separator: " ")
+                            m.speak(
+                                transcript.isEmpty ? n.task : transcript,
+                                audio: n.aud)
                         } label: {
                             VStack(alignment: .leading, spacing: 9) {
                                 HStack(spacing: 9) {
@@ -773,7 +779,7 @@ private struct PronProduceItemCard: View {
             WaveForm(heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent)
                 .frame(height: 26)
             Button {
-                m.speak(it.word)
+                m.speak(it.word, audio: it.aud)
             } label: {
                 AUIcon(kind: .play, size: 17, color: .auAccent)
             }
@@ -963,10 +969,13 @@ struct ConversationScreenView: View {
 
                 HStack(spacing: 11) {
                     Button {
-                        m.turn = min((c.turns ?? []).count, m.turn + 1)
                         m.plays += 1
-                        if (c.turns ?? []).indices.contains(m.turn - 1) {
-                            m.speak(c.turns![m.turn - 1].t)
+                        let turns = c.turns ?? []
+                        if !turns.isEmpty {
+                            m.turn = turns.count
+                            m.speak(
+                                turns.map(\.t).joined(separator: " "),
+                                audio: c.aud ?? c.lineAud)
                         }
                     } label: {
                         AUIcon(kind: .play, size: 24, color: .auPrimaryButtonText)

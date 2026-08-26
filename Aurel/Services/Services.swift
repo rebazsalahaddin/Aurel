@@ -3,16 +3,27 @@ import Foundation
 import Network
 import Speech
 
-// MARK: - Audio playback (the TTS stand-in)
+// MARK: - Audio playback
 //
-// Governance: recordings are "scripts only" — nothing may be fabricated. The
-// user-approved stand-in is on-device AVSpeechSynthesizer behind this
-// protocol, so real recordings drop in later without touching call sites.
+// Governance: recordings are "scripts only" — nothing may be fabricated.
+// VoicePlayback is the release implementation; the on-device synthesizer is
+// retained only as a launch-safe fallback for missing/unmapped content.
 @MainActor
 protocol AudioPlaying {
     func speak(_ text: String, slow: Bool)
+    /// Recorded-audio path (audio-upgrade phase): implementations that own an audio
+    /// catalog resolve `audioID` (the full "A1-C01-AUD043" asset id) to the
+    /// bundled takes; everyone else falls back to the text.
+    func speak(audioID: String?, text: String, slow: Bool, lineIndex: Int?)
     func stop()
     var isSpeaking: Bool { get }
+}
+
+extension AudioPlaying {
+    /// Text-only conformers (the TTS Speaker) simply speak the text.
+    func speak(audioID: String?, text: String, slow: Bool, lineIndex: Int? = nil) {
+        speak(text, slow: slow)
+    }
 }
 
 @MainActor
@@ -28,15 +39,21 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     private var totalChars: Double = 1
 
     private let synthesizer = AVSpeechSynthesizer()
+    private var sessionConfigured = false
 
     override init() {
         super.init()
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
         synthesizer.delegate = self
     }
 
     func speak(_ text: String, slow: Bool) {
         stop()
+        if !sessionConfigured {
+            sessionConfigured = true
+            let session = AVAudioSession.sharedInstance()
+            try? session.setCategory(.playback, mode: .spokenAudio)
+            try? session.setActive(true)
+        }
         // Feedback sounds never talk over the voice (IMPROVEMENT_PLAN §2.6).
         AUSound.shared.isDucked = true
         // Learning takes ≈100–110 wpm; challenge ≈120–130 wpm

@@ -32,7 +32,7 @@ final class AppEnvironment {
     let router: AppRouter
     let scene: SceneScript
     let wordSheet: [WordRow]
-    let speaker: Speaker
+    let speaker: VoicePlayback
     let connectivity: Connectivity
 
     /// S1-004: the bundled course could not be decoded — RootView shows the
@@ -53,7 +53,7 @@ final class AppEnvironment {
             courseLoadFailed = true
         }
         course = store
-        let playback = Speaker()
+        let playback = VoicePlayback()
         speaker = playback
         router = AppRouter(
             course: store,

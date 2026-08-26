@@ -1,0 +1,1309 @@
+{
+  "version": 2,
+  "generationRevision": 2,
+  "model": "ElevenLabs-v2.5-Turbo",
+  "generatedBy": "tools/generate-audio.mjs",
+  "voices": {
+    "GUIDE": "Sarah",
+    "ALEX": "Lily",
+    "MAYA": "Jessica",
+    "LEO": "George",
+    "NINA": "Matilda",
+    "SAM": "Brian",
+    "AMARA": "River",
+    "RAFAEL": "Will",
+    "KENJI": "Monika Sogam"
+  },
+  "assets": [
+    {
+      "id": "A1-C01-AUD001",
+      "purpose": "story hook",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD001_L1.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "Hello!",
+          "dur": 0.73,
+          "wpm": 82,
+          "sha256": "4d87f26200102b709fb4356b569a4c8e1cabaedb34b8a79431b4b0bc246ae5a7"
+        },
+        {
+          "file": "A1-C01-AUD001_L2.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Hi, Alex!",
+          "dur": 1.02,
+          "wpm": 118,
+          "sha256": "d72b7ed8e81a556dd31e8aeb11d78e6e30df7ab7134d297f294a017f3bdf7750"
+        },
+        {
+          "file": "A1-C01-AUD001_L3.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "Hi, Maya! … Good morning!",
+          "dur": 1.91,
+          "wpm": 126,
+          "sha256": "34b5de3e8ef66d734c5f9681c02ce7f2899e747208bcf25b838b2368a48520cb"
+        },
+        {
+          "file": "A1-C01-AUD001_L4.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Good morning, Alex!",
+          "dur": 1.28,
+          "wpm": 141,
+          "sha256": "80f16b234d6dc9b3ca3fd731be807c21b624f4c11053332da9cab9d07a98a80a"
+        },
+        {
+          "file": "A1-C01-AUD001_L5.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "Thank you, Maya!",
+          "dur": 1.2,
+          "wpm": 150,
+          "sha256": "930d0932fd09353deb2cbec617fd0e05afbd26015064b7edb304e61c3b1cd2ef"
+        },
+        {
+          "file": "A1-C01-AUD001_L6.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "You're welcome!",
+          "dur": 1.02,
+          "wpm": 118,
+          "sha256": "525b328d6dee0b52c93b003a4ddb71e3aa22804801285aaf12425e27191250c5"
+        }
+      ],
+      "text": "Hello! Hi, Alex! Hi, Maya! … Good morning! Good morning, Alex! Thank you, Maya! You're welcome!",
+      "duration": 7.16
+    },
+    {
+      "id": "A1-C01-AUD002",
+      "purpose": "word model V001",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD002_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Hello. … Hello.",
+          "dur": 1.33,
+          "wpm": 90,
+          "sha256": "9365ce9086a0d37ebf35adcc0c2d234b2b9381f1d0bcc41398ca93e5015f56ac"
+        }
+      ],
+      "text": "Hello. … Hello.",
+      "duration": 1.33
+    },
+    {
+      "id": "A1-C01-AUD003",
+      "purpose": "word model V002",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD003_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Hi. … Hi.",
+          "dur": 0.84,
+          "wpm": 144,
+          "sha256": "a9338427eb4a6cc7109a8a8d2c158c8890bb9902a4813b4cc3b0a8679f8c149b"
+        }
+      ],
+      "text": "Hi. … Hi.",
+      "duration": 0.84
+    },
+    {
+      "id": "A1-C01-AUD004",
+      "purpose": "word model V003",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD004_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Good morning. … Good morning.",
+          "dur": 1.75,
+          "wpm": 137,
+          "sha256": "c32bbe1d620a7c527f547cc095d073ea0b6d252c79f3e1ec18fb531085057642"
+        }
+      ],
+      "text": "Good morning. … Good morning.",
+      "duration": 1.75
+    },
+    {
+      "id": "A1-C01-AUD005",
+      "purpose": "word model V004",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD005_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Good afternoon. … Good afternoon.",
+          "dur": 1.99,
+          "wpm": 121,
+          "sha256": "fc1f8b24e7f268a47693f16a3a54938ffe97e10cd3104ccf4ede840a390d6d75"
+        }
+      ],
+      "text": "Good afternoon. … Good afternoon.",
+      "duration": 1.99
+    },
+    {
+      "id": "A1-C01-AUD006",
+      "purpose": "word model V005",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD006_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Good evening. … Good evening.",
+          "dur": 1.44,
+          "wpm": 167,
+          "sha256": "d22a5c59ff4dd8e9bc08b4f9a01a8cd9c81269994020ed5f106343a14a5ea85e"
+        }
+      ],
+      "text": "Good evening. … Good evening.",
+      "duration": 1.44
+    },
+    {
+      "id": "A1-C01-AUD007",
+      "purpose": "word model V006",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD007_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Goodbye. … Goodbye.",
+          "dur": 1.62,
+          "wpm": 74,
+          "sha256": "c553966f81c326d280abefd507415f61ad3bf0274d1e81f76dfa862a9789c88e"
+        }
+      ],
+      "text": "Goodbye. … Goodbye.",
+      "duration": 1.62
+    },
+    {
+      "id": "A1-C01-AUD008",
+      "purpose": "word model V007",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD008_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Bye. … Bye.",
+          "dur": 1.02,
+          "wpm": 118,
+          "sha256": "d4aa71569e298ae1346950691bb326ebb821f8b20932d196e079fbde7e31ff13"
+        }
+      ],
+      "text": "Bye. … Bye.",
+      "duration": 1.02
+    },
+    {
+      "id": "A1-C01-AUD009",
+      "purpose": "word model V008",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD009_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "See you. … See you.",
+          "dur": 1.38,
+          "wpm": 173,
+          "sha256": "391b004938a52cebb91a91908d4801739abd08df4390c0e893031f62561b35b4"
+        }
+      ],
+      "text": "See you. … See you.",
+      "duration": 1.38
+    },
+    {
+      "id": "A1-C01-AUD010",
+      "purpose": "word model V009",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD010_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Please. … Please.",
+          "dur": 1.33,
+          "wpm": 90,
+          "sha256": "4ce062d408597e5537e86b1727f780bc833d39bef4acbac79e4909dbba46f26d"
+        }
+      ],
+      "text": "Please. … Please.",
+      "duration": 1.33
+    },
+    {
+      "id": "A1-C01-AUD011",
+      "purpose": "word model V010",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD011_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Thank you. … Thank you.",
+          "dur": 1.44,
+          "wpm": 167,
+          "sha256": "6a035092630a05a824314d724b5404f779c34079b8c171ae4b98e7835a265707"
+        }
+      ],
+      "text": "Thank you. … Thank you.",
+      "duration": 1.44
+    },
+    {
+      "id": "A1-C01-AUD012",
+      "purpose": "word model V011",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD012_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Thanks. … Thanks.",
+          "dur": 1.33,
+          "wpm": 90,
+          "sha256": "1323a2957bb5a21734ceab7eb61d3bc1b26322eb572d4ea8aa9df9b41e89db0f"
+        }
+      ],
+      "text": "Thanks. … Thanks.",
+      "duration": 1.33
+    },
+    {
+      "id": "A1-C01-AUD013",
+      "purpose": "word model V012",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD013_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Sorry. … Sorry.",
+          "dur": 1.28,
+          "wpm": 94,
+          "sha256": "7793495d8bd7c650fba8cac2668512b314493db351ea29631ab66f26e689da54"
+        }
+      ],
+      "text": "Sorry. … Sorry.",
+      "duration": 1.28
+    },
+    {
+      "id": "A1-C01-AUD014",
+      "purpose": "word model V013",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD014_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Excuse me. … Excuse me.",
+          "dur": 1.57,
+          "wpm": 153,
+          "sha256": "c883ddb94184f7ab012d477493f24ac7f487d42c2b7daedd041bb68aa7ac2e10"
+        }
+      ],
+      "text": "Excuse me. … Excuse me.",
+      "duration": 1.57
+    },
+    {
+      "id": "A1-C01-AUD015",
+      "purpose": "word model V014",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD015_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Yes. … Yes.",
+          "dur": 1.07,
+          "wpm": 112,
+          "sha256": "176b1fbf2cf693e6dd9609d335730426cf14ff4905c2b41edd701cb5242062f1"
+        }
+      ],
+      "text": "Yes. … Yes.",
+      "duration": 1.07
+    },
+    {
+      "id": "A1-C01-AUD016",
+      "purpose": "word model V015",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD016_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "No. … No.",
+          "dur": 0.97,
+          "wpm": 124,
+          "sha256": "618a6547c35d53bb258cf0cf028db633e49e631efc658f7273f2db906ed09dbf"
+        }
+      ],
+      "text": "No. … No.",
+      "duration": 0.97
+    },
+    {
+      "id": "A1-C01-AUD017",
+      "purpose": "blended review Set A",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD017_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Hello … Hi … Good morning … Good afternoon … Good evening … Goodbye … Bye … See you.",
+          "dur": 7.18,
+          "wpm": 100,
+          "sha256": "9b72f71f0399f1db70c00131a5e819c288c5b50a73045da16b9ec0e04eb16ce2"
+        },
+        {
+          "file": "A1-C01-AUD017_L2.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Bye … Good morning … See you … Hello … Good evening … Goodbye … Hi … Good afternoon.",
+          "dur": 7.65,
+          "wpm": 94,
+          "sha256": "06b3e3d0ddb8cc0b0d6c2fdf0a0cdf7405051e206c9c27974958d5434aa25ea7"
+        }
+      ],
+      "text": "Hello … Hi … Good morning … Good afternoon … Good evening … Goodbye … Bye … See you. Bye … Good morning … See you … Hello … Good evening … Goodbye … Hi … Good afternoon.",
+      "duration": 14.83
+    },
+    {
+      "id": "A1-C01-AUD018",
+      "purpose": "blended review Set B",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L01_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD018_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Please … Thank you … Thanks … Sorry … Excuse me … Yes … No.",
+          "dur": 5.33,
+          "wpm": 101,
+          "sha256": "9f6be4057d528cf78f8d290dde359091112f51c88578004889fd137e1f53bf29"
+        },
+        {
+          "file": "A1-C01-AUD018_L2.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Sorry … Yes … Thank you … No … Please … Excuse me … Thanks.",
+          "dur": 6.3,
+          "wpm": 86,
+          "sha256": "1a5cbd4e0f2e71888e386155fb0992371a70bc5555a4b3c45e96e5a8c4f3882a"
+        }
+      ],
+      "text": "Please … Thank you … Thanks … Sorry … Excuse me … Yes … No. Sorry … Yes … Thank you … No … Please … Excuse me … Thanks.",
+      "duration": 11.63
+    },
+    {
+      "id": "A1-C01-AUD019",
+      "purpose": "warm-up retrieval",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD019_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Hello … Thank you … Good evening … Bye … Sorry … See you.",
+          "dur": 4.36,
+          "wpm": 124,
+          "sha256": "3234a9d171a0c11c9442a6007d52f06d5b08ac0d5f69266d0f80713b41c5f285"
+        }
+      ],
+      "text": "Hello … Thank you … Good evening … Bye … Sorry … See you.",
+      "duration": 4.36
+    },
+    {
+      "id": "A1-C01-AUD020",
+      "purpose": "word model V016",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD020_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Good. … Good.",
+          "dur": 1.1,
+          "wpm": 109,
+          "sha256": "c9f7a1f87b9f81b6a9a01b4a6438362b5428c6b671a8ebd1c6eb0d3ae862cb5f"
+        }
+      ],
+      "text": "Good. … Good.",
+      "duration": 1.1
+    },
+    {
+      "id": "A1-C01-AUD021",
+      "purpose": "word model V017",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD021_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Fine. … Fine.",
+          "dur": 1.1,
+          "wpm": 109,
+          "sha256": "2a17548742b57002d152105b91f933e2208926a2f91c3c2e6a2acca91b9c6d57"
+        }
+      ],
+      "text": "Fine. … Fine.",
+      "duration": 1.1
+    },
+    {
+      "id": "A1-C01-AUD022",
+      "purpose": "word model V018",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD022_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Okay. … Okay.",
+          "dur": 1.15,
+          "wpm": 104,
+          "sha256": "2ee15ddff63cc434c3e360db27bdeb78a3a3623a2226df3f6d540ef41289258a"
+        }
+      ],
+      "text": "Okay. … Okay.",
+      "duration": 1.15
+    },
+    {
+      "id": "A1-C01-AUD023",
+      "purpose": "word model V019",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD023_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Great. … Great.",
+          "dur": 1.25,
+          "wpm": 96,
+          "sha256": "6eb37907e47524c4cf5726ed25fc4944d6dbd2781059739b94908e83f5b80925"
+        }
+      ],
+      "text": "Great. … Great.",
+      "duration": 1.25
+    },
+    {
+      "id": "A1-C01-AUD024",
+      "purpose": "word model V020",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD024_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Not bad. … Not bad.",
+          "dur": 1.7,
+          "wpm": 141,
+          "sha256": "d01163d810136483736d32ffc68a8064761f206ec02ee4daf87395f89bca389e"
+        }
+      ],
+      "text": "Not bad. … Not bad.",
+      "duration": 1.7
+    },
+    {
+      "id": "A1-C01-AUD025",
+      "purpose": "word model V021",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD025_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Name. … Name.",
+          "dur": 1.38,
+          "wpm": 87,
+          "sha256": "9394978c692afbe93f5178f3bc39fdaf2160707341b9aea76a0ae75b65093a27"
+        }
+      ],
+      "text": "Name. … Name.",
+      "duration": 1.38
+    },
+    {
+      "id": "A1-C01-AUD026",
+      "purpose": "word model V022",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD026_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "First name. … First name.",
+          "dur": 1.49,
+          "wpm": 161,
+          "sha256": "10322eaec978eb79c965950fa7617add1bdcd4d9909ee508e59273f70ce4077c"
+        }
+      ],
+      "text": "First name. … First name.",
+      "duration": 1.49
+    },
+    {
+      "id": "A1-C01-AUD027",
+      "purpose": "word model V023",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD027_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Last name. … Last name.",
+          "dur": 1.7,
+          "wpm": 141,
+          "sha256": "5b085c354915519599c701516eaa2680d2c65ef4d240a1f4c6e1ad9417ae6f82"
+        }
+      ],
+      "text": "Last name. … Last name.",
+      "duration": 1.7
+    },
+    {
+      "id": "A1-C01-AUD028",
+      "purpose": "word model V024",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD028_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "My name is Alex. … My name is Alex.",
+          "dur": 2.53,
+          "wpm": 189,
+          "sha256": "3124fb16ad9811f9c94876761c5674e6a534c2c8d52579d6e8597872764a06e4"
+        }
+      ],
+      "text": "My name is Alex. … My name is Alex.",
+      "duration": 2.53
+    },
+    {
+      "id": "A1-C01-AUD029",
+      "purpose": "word model V025",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD029_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "I'm Maya. … I'm Maya.",
+          "dur": 1.75,
+          "wpm": 137,
+          "sha256": "5a446dcbec1fef7f2d850b6fdfb941c82a479d180642367ea6cc48307d0dc1ff"
+        }
+      ],
+      "text": "I'm Maya. … I'm Maya.",
+      "duration": 1.75
+    },
+    {
+      "id": "A1-C01-AUD030",
+      "purpose": "word model V026",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD030_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "What's your name? … What's your name?",
+          "dur": 2.04,
+          "wpm": 177,
+          "sha256": "cb7bbd0b5af5053e5090d5c6f192d0573ecaaaf06c8fcd951ff6b7c7fe144cfa"
+        }
+      ],
+      "text": "What's your name? … What's your name?",
+      "duration": 2.04
+    },
+    {
+      "id": "A1-C01-AUD031",
+      "purpose": "word model V027",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD031_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Nice to meet you. … Nice to meet you.",
+          "dur": 2.22,
+          "wpm": 216,
+          "sha256": "b6b24c25b51240cae41845725ef858ff3d7093983747b47f19c7aad87eba0f81"
+        }
+      ],
+      "text": "Nice to meet you. … Nice to meet you.",
+      "duration": 2.22
+    },
+    {
+      "id": "A1-C01-AUD032",
+      "purpose": "word model V028",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD032_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "How are you? … How are you?",
+          "dur": 1.93,
+          "wpm": 186,
+          "sha256": "a094730ba2eb777751e8e990c14f006b066c33107dbae7c9cadd4738b9f35564"
+        }
+      ],
+      "text": "How are you? … How are you?",
+      "duration": 1.93
+    },
+    {
+      "id": "A1-C01-AUD033",
+      "purpose": "word model V029",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD033_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "I'm good, thank you! … I'm good, thank you!",
+          "dur": 2.35,
+          "wpm": 204,
+          "sha256": "295fe96ad54a2518b794ba76afd41261f81468bb238896aff8d682d71918cc60"
+        }
+      ],
+      "text": "I'm good, thank you! … I'm good, thank you!",
+      "duration": 2.35
+    },
+    {
+      "id": "A1-C01-AUD034",
+      "purpose": "word model V030",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD034_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "And you? … And you?",
+          "dur": 1.57,
+          "wpm": 153,
+          "sha256": "3842559ea3b3091d0096635ff06c7fa29f8d86cd81866e8d364834c8d2be361a"
+        }
+      ],
+      "text": "And you? … And you?",
+      "duration": 1.57
+    },
+    {
+      "id": "A1-C01-AUD035",
+      "purpose": "blended review Set C",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD035_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Good … Fine … Okay … Great … Not bad.",
+          "dur": 3.34,
+          "wpm": 108,
+          "sha256": "70820036f63e4a94d34d96ffae72108ca3449d9e171105364e24cce256a8afec"
+        },
+        {
+          "file": "A1-C01-AUD035_L2.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Okay … Great … Not bad … Good … Fine.",
+          "dur": 3.29,
+          "wpm": 109,
+          "sha256": "972ecc74a1b9cc4ef0ad0082c4da2116f23ef785bd7024895adb2b15a5f9a9d1"
+        }
+      ],
+      "text": "Good … Fine … Okay … Great … Not bad. Okay … Great … Not bad … Good … Fine.",
+      "duration": 6.63
+    },
+    {
+      "id": "A1-C01-AUD036",
+      "purpose": "blended review Set D",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD036_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Name … First name … Last name … My name is Alex. … I'm Maya. … What's your name? … Nice to meet you.",
+          "dur": 7.97,
+          "wpm": 136,
+          "sha256": "0804fd132e6118e1106aef8ecd67f7bd9e7d597105387649112fc4c875c9136e"
+        },
+        {
+          "file": "A1-C01-AUD036_L2.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "Last name … Nice to meet you … Name … I'm Maya … First name … What's your name? … My name is Alex.",
+          "dur": 8.39,
+          "wpm": 129,
+          "sha256": "69d8d7c62dee2f47635ef68ae764c9024b084e1eea7d9859b2748872e40ddb54"
+        }
+      ],
+      "text": "Name … First name … Last name … My name is Alex. … I'm Maya. … What's your name? … Nice to meet you. Last name … Nice to meet you … Name … I'm Maya … First name … What's your name? … My name is Alex.",
+      "duration": 16.36
+    },
+    {
+      "id": "A1-C01-AUD037",
+      "purpose": "blended review Set E",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD037_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "How are you? … I'm good, thank you! … And you?",
+          "dur": 3.16,
+          "wpm": 171,
+          "sha256": "aea852b6e82d2875c0790f6d979a2dc3021f42979fc92b4b4fd770c221777bde"
+        },
+        {
+          "file": "A1-C01-AUD037_L2.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "And you? … How are you? … I'm good, thank you!",
+          "dur": 3.42,
+          "wpm": 158,
+          "sha256": "b1cc57fc6b0cc860f374083f6123e7819d9d6ca3c3d480a26e2d3c31bd268dc8"
+        }
+      ],
+      "text": "How are you? … I'm good, thank you! … And you? And you? … How are you? … I'm good, thank you!",
+      "duration": 6.58
+    },
+    {
+      "id": "A1-C01-AUD038",
+      "purpose": "G001 viewpoint + form model",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD038_L1.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "I. … I am Alex. … I'm Alex.",
+          "dur": 2.59,
+          "wpm": 139,
+          "sha256": "342a00a7cef055351ab77e36cb459995382ded287995083076cd675a37b3b410"
+        },
+        {
+          "file": "A1-C01-AUD038_L2.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "You. … You are Maya. … You're Maya.",
+          "dur": 2.69,
+          "wpm": 134,
+          "sha256": "2d0bbf5ba28610836061d27fb7d9f9434786e2118b9125bf8dd56a50ff3ac832"
+        },
+        {
+          "file": "A1-C01-AUD038_L3.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "I am good. … I'm good!",
+          "dur": 1.93,
+          "wpm": 155,
+          "sha256": "1c78c871d2e555a6a27d609a999dea65a4a36a221ffb76720c36be3dc7fe4213"
+        }
+      ],
+      "text": "I. … I am Alex. … I'm Alex. You. … You are Maya. … You're Maya. I am good. … I'm good!",
+      "duration": 7.21
+    },
+    {
+      "id": "A1-C01-AUD039",
+      "purpose": "G002 model",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD039_L1.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "My name is Alex Kim.",
+          "dur": 1.49,
+          "wpm": 201,
+          "sha256": "5fa8deffd3e998eb11c718eccdcafdf6c423028c41618cdb4e76679b90bdc11d"
+        },
+        {
+          "file": "A1-C01-AUD039_L2.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Your name is Maya Haddad!",
+          "dur": 1.75,
+          "wpm": 171,
+          "sha256": "c48c03b7349f71aeb5834328e9366cd48f518ae8d745fce3e9409c7f58a72531"
+        },
+        {
+          "file": "A1-C01-AUD039_L3.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "My first name is Alex. My last name is Kim.",
+          "dur": 2.82,
+          "wpm": 213,
+          "sha256": "d7e75155b1ba5e2910808a37a7f6d0f91c35b4dbadf6e2f381d8d90eda194054"
+        }
+      ],
+      "text": "My name is Alex Kim. Your name is Maya Haddad! My first name is Alex. My last name is Kim.",
+      "duration": 6.06
+    },
+    {
+      "id": "A1-C01-AUD040",
+      "purpose": "G003 chunk dialogue model",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD040_L1.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Hello! What's your name?",
+          "dur": 1.57,
+          "wpm": 153,
+          "sha256": "ec32a814b38d4c5d39d1ab17ed1a9b15f90ee6d61e6c152d689bdf534599a5a6"
+        },
+        {
+          "file": "A1-C01-AUD040_L2.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "My name is Alex. I'm Alex.",
+          "dur": 2.04,
+          "wpm": 177,
+          "sha256": "76512b8fa3cd40a88c544bf713355d6431160bcf0ff458fe0bf4754ef0356814"
+        },
+        {
+          "file": "A1-C01-AUD040_L3.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Nice to meet you, Alex! How are you?",
+          "dur": 1.7,
+          "wpm": 283,
+          "sha256": "b365abac834d38197e7a1b0991e3dcd9c2a472609b352f6ac0788fb2b8ce231d"
+        },
+        {
+          "file": "A1-C01-AUD040_L4.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "I'm good, thank you! … And you?",
+          "dur": 2.17,
+          "wpm": 166,
+          "sha256": "e46da5b0467a0f257100fc284b2ee4639323b413bb0017e890c637de2dcf307d"
+        },
+        {
+          "file": "A1-C01-AUD040_L5.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "I'm fine!",
+          "dur": 0.86,
+          "wpm": 139,
+          "sha256": "7d05ccd045e9da7f9fff03e49b1f9ac7309fc5352d5daa61c580db53130c0e0a"
+        }
+      ],
+      "text": "Hello! What's your name? My name is Alex. I'm Alex. Nice to meet you, Alex! How are you? I'm good, thank you! … And you? I'm fine!",
+      "duration": 8.34
+    },
+    {
+      "id": "A1-C01-AUD041",
+      "purpose": "intonation pairs (P001)",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD041_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "You're Maya. … You're Maya? … I'm Leo. … I'm Leo? … My name is Nina. … What's your name?",
+          "dur": 8.02,
+          "wpm": 112,
+          "sha256": "288db58fc43cb5a5540eed2d98f667f3f877997889d0ea6f4fecbd6f28a7ca48"
+        }
+      ],
+      "text": "You're Maya. … You're Maya? … I'm Leo. … I'm Leo? … My name is Nina. … What's your name?",
+      "duration": 8.02
+    },
+    {
+      "id": "A1-C01-AUD042",
+      "purpose": "contraction pairs (P002)",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L02_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD042_L1.m4a",
+          "speaker": "GUIDE",
+          "voice": "Sarah",
+          "text": "I am. … I'm. … You are. … You're. … What is. … What's.",
+          "dur": 5.28,
+          "wpm": 102,
+          "sha256": "2f101462cfe9711af45c745bf4311d81bf9bab5cf1fc44f6d04302897abf2d76"
+        }
+      ],
+      "text": "I am. … I'm. … You are. … You're. … What is. … What's.",
+      "duration": 5.28
+    },
+    {
+      "id": "A1-C01-AUD043",
+      "purpose": "model dialogue learning take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L03_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD043_L1.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "Hi! Good morning!",
+          "dur": 1.57,
+          "wpm": 115,
+          "sha256": "62226e59b9d30ce2817acdde2f6d4e8f62c40584da32888e71ab6f058535495d"
+        },
+        {
+          "file": "A1-C01-AUD043_L2.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Good morning! Welcome!",
+          "dur": 1.33,
+          "wpm": 135,
+          "sha256": "15ebb8000b309e2f561d98e41f224665043b542b56b96c0d1bba0ce2b1e918b2"
+        },
+        {
+          "file": "A1-C01-AUD043_L3.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "Thank you! What's your name?",
+          "dur": 1.85,
+          "wpm": 162,
+          "sha256": "c37d68aaa462cc88a56c84f1b8b3a966793b39246fb2b0df1e77f585a055c710"
+        },
+        {
+          "file": "A1-C01-AUD043_L4.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "My name is Maya. I'm Maya.",
+          "dur": 2.17,
+          "wpm": 166,
+          "sha256": "14752509ec0d45cb617f5759a3e46d3bafd3667fb743fdf4c470aba6f8d307e1"
+        },
+        {
+          "file": "A1-C01-AUD043_L5.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "Nice to meet you, Maya! I'm Nina.",
+          "dur": 1.91,
+          "wpm": 220,
+          "sha256": "1546c6643085800f8f57636e72978e594dda942f43d98d1eee687dabb114270c"
+        },
+        {
+          "file": "A1-C01-AUD043_L6.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Nice to meet you, Nina! How are you?",
+          "dur": 1.91,
+          "wpm": 252,
+          "sha256": "75828a07b8bd212c5d745902d8f7f3b5fb8cce6da243b71746c04a42b22544ba"
+        },
+        {
+          "file": "A1-C01-AUD043_L7.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "I'm good, thank you! And you?",
+          "dur": 1.85,
+          "wpm": 194,
+          "sha256": "fe8b98b210b6d120d737baf41169895ecffd42d17145233e443b441514d965f5"
+        },
+        {
+          "file": "A1-C01-AUD043_L8.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "I'm fine! Excuse me, Nina — see you!",
+          "dur": 2.09,
+          "wpm": 201,
+          "sha256": "b9d246e361d501f7ec396197446e550c0db224b65f592153935b875b14c964fd"
+        }
+      ],
+      "text": "Hi! Good morning! Good morning! Welcome! Thank you! What's your name? My name is Maya. I'm Maya. Nice to meet you, Maya! I'm Nina. Nice to meet you, Nina! How are you? I'm good, thank you! And you? I'm fine! Excuse me, Nina — see you!",
+      "duration": 14.68
+    },
+    {
+      "id": "A1-C01-AUD044",
+      "purpose": "alias",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L03_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD043_L1.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "Hi! Good morning!",
+          "dur": 1.57,
+          "wpm": 115,
+          "sha256": "62226e59b9d30ce2817acdde2f6d4e8f62c40584da32888e71ab6f058535495d"
+        },
+        {
+          "file": "A1-C01-AUD043_L2.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Good morning! Welcome!",
+          "dur": 1.33,
+          "wpm": 135,
+          "sha256": "15ebb8000b309e2f561d98e41f224665043b542b56b96c0d1bba0ce2b1e918b2"
+        },
+        {
+          "file": "A1-C01-AUD043_L3.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "Thank you! What's your name?",
+          "dur": 1.85,
+          "wpm": 162,
+          "sha256": "c37d68aaa462cc88a56c84f1b8b3a966793b39246fb2b0df1e77f585a055c710"
+        },
+        {
+          "file": "A1-C01-AUD043_L4.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "My name is Maya. I'm Maya.",
+          "dur": 2.17,
+          "wpm": 166,
+          "sha256": "14752509ec0d45cb617f5759a3e46d3bafd3667fb743fdf4c470aba6f8d307e1"
+        },
+        {
+          "file": "A1-C01-AUD043_L5.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "Nice to meet you, Maya! I'm Nina.",
+          "dur": 1.91,
+          "wpm": 220,
+          "sha256": "1546c6643085800f8f57636e72978e594dda942f43d98d1eee687dabb114270c"
+        },
+        {
+          "file": "A1-C01-AUD043_L6.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Nice to meet you, Nina! How are you?",
+          "dur": 1.91,
+          "wpm": 252,
+          "sha256": "75828a07b8bd212c5d745902d8f7f3b5fb8cce6da243b71746c04a42b22544ba"
+        },
+        {
+          "file": "A1-C01-AUD043_L7.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "I'm good, thank you! And you?",
+          "dur": 1.85,
+          "wpm": 194,
+          "sha256": "fe8b98b210b6d120d737baf41169895ecffd42d17145233e443b441514d965f5"
+        },
+        {
+          "file": "A1-C01-AUD043_L8.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "I'm fine! Excuse me, Nina — see you!",
+          "dur": 2.09,
+          "wpm": 201,
+          "sha256": "b9d246e361d501f7ec396197446e550c0db224b65f592153935b875b14c964fd"
+        }
+      ],
+      "text": "Hi! Good morning! Good morning! Welcome! Thank you! What's your name? My name is Maya. I'm Maya. Nice to meet you, Maya! I'm Nina. Nice to meet you, Nina! How are you? I'm good, thank you! And you? I'm fine! Excuse me, Nina — see you!",
+      "duration": 14.68,
+      "aliasOf": "A1-C01-AUD043"
+    },
+    {
+      "id": "A1-C01-AUD045",
+      "purpose": "challenge dialogue",
+      "delivery": "challenge_natural_slow",
+      "src": "A1_C01_L03_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD045_L1.m4a",
+          "speaker": "LEO",
+          "voice": "George",
+          "text": "Hello! Good afternoon!",
+          "dur": 1.62,
+          "wpm": 111,
+          "sha256": "90126853ff5dfc14b4f3f8f611058da9e3a71f3150a58c3d4a3fdb6f918ed28a"
+        },
+        {
+          "file": "A1-C01-AUD045_L2.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Good afternoon! What's your name?",
+          "dur": 1.75,
+          "wpm": 171,
+          "sha256": "205c9ee9fbcde460c3cb8d5d95b76c660e9e4038587ac89f51dadff6cad0edf8"
+        },
+        {
+          "file": "A1-C01-AUD045_L3.m4a",
+          "speaker": "LEO",
+          "voice": "George",
+          "text": "My name is Leo. I'm Leo.",
+          "dur": 2.35,
+          "wpm": 153,
+          "sha256": "3f725c7ada30427aee2adb5c10c5dc25535a201f34dee55ff7ce548225a1a89b"
+        },
+        {
+          "file": "A1-C01-AUD045_L4.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Nice to meet you, Leo! I'm Maya.",
+          "dur": 2.09,
+          "wpm": 201,
+          "sha256": "a9f31382445ede3eaffd6666218aceab57270e12098875d1911ca25d16c9caa7"
+        },
+        {
+          "file": "A1-C01-AUD045_L5.m4a",
+          "speaker": "LEO",
+          "voice": "George",
+          "text": "Nice to meet you, Maya! How are you?",
+          "dur": 2.35,
+          "wpm": 204,
+          "sha256": "88ca438e687d0010826f073cca276da21df0b9d0e58c7f160775e9178524d4aa"
+        },
+        {
+          "file": "A1-C01-AUD045_L6.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "I'm great, thank you! And you?",
+          "dur": 2.46,
+          "wpm": 147,
+          "sha256": "df8faf00989546ead174d5f06ba114fae008a0abe5e743507c7361b57879d58e"
+        },
+        {
+          "file": "A1-C01-AUD045_L7.m4a",
+          "speaker": "LEO",
+          "voice": "George",
+          "text": "Not bad! Excuse me, Maya — see you!",
+          "dur": 2.69,
+          "wpm": 156,
+          "sha256": "85d41bb667d1e8c1432205242c023f1314a60b528ea063d764860c1039323e8f"
+        }
+      ],
+      "text": "Hello! Good afternoon! Good afternoon! What's your name? My name is Leo. I'm Leo. Nice to meet you, Leo! I'm Maya. Nice to meet you, Maya! How are you? I'm great, thank you! And you? Not bad! Excuse me, Maya — see you!",
+      "duration": 15.31
+    },
+    {
+      "id": "A1-C01-AUD046",
+      "purpose": "testlet 2 stimulus (detail)",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L03_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD046_L1.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "Hello! What's your name?",
+          "dur": 1.44,
+          "wpm": 167,
+          "sha256": "2f01c6ff0f3bb97536d5cc120249430585230ba0e3d4565d7211af48e813f9a9"
+        },
+        {
+          "file": "A1-C01-AUD046_L2.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "My name is Nina Petrova.",
+          "dur": 1.67,
+          "wpm": 179,
+          "sha256": "7333046b78f1bbcde669a61384c3675f03492277f0646836f2ae1ff88463ab65"
+        },
+        {
+          "file": "A1-C01-AUD046_L3.m4a",
+          "speaker": "ALEX",
+          "voice": "Lily",
+          "text": "Nice to meet you, Nina!",
+          "dur": 1.49,
+          "wpm": 201,
+          "sha256": "aef7bd29385a0055f69ace36ebc167a9ac5b4bce68ac6447efb0ea90654a1fc9"
+        },
+        {
+          "file": "A1-C01-AUD046_L4.m4a",
+          "speaker": "NINA",
+          "voice": "Matilda",
+          "text": "Thank you!",
+          "dur": 1.02,
+          "wpm": 118,
+          "sha256": "77dbe8309cacdeb51f67dc0e9f7f76ba7662bb145c27d7a1ca1c743533cf8efa"
+        }
+      ],
+      "text": "Hello! What's your name? My name is Nina Petrova. Nice to meet you, Nina! Thank you!",
+      "duration": 5.62
+    },
+    {
+      "id": "A1-C01-AUD047",
+      "purpose": "quiz listening (fresh check-in)",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C01_L04_LESSON.md",
+      "lines": [
+        {
+          "file": "A1-C01-AUD047_L1.m4a",
+          "speaker": "SAM",
+          "voice": "Brian",
+          "text": "Hello! My name is Sam Rivera.",
+          "dur": 1.93,
+          "wpm": 186,
+          "sha256": "20b80bc0d188b19f1890a8b28d5c24b99e96872ab053dd6703efb40768eb36aa"
+        },
+        {
+          "file": "A1-C01-AUD047_L2.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "Nice to meet you, Sam! How are you?",
+          "dur": 1.85,
+          "wpm": 259,
+          "sha256": "6f7660a49e5d5045db5005ef19373fcd70a299dfac5aac6047a39049492a5422"
+        },
+        {
+          "file": "A1-C01-AUD047_L3.m4a",
+          "speaker": "SAM",
+          "voice": "Brian",
+          "text": "I'm okay, thank you! And you?",
+          "dur": 1.91,
+          "wpm": 189,
+          "sha256": "75e97ae45ac26563a092fe2a2c87d3dfa56b2bc7ce6865382baa831776beee59"
+        },
+        {
+          "file": "A1-C01-AUD047_L4.m4a",
+          "speaker": "MAYA",
+          "voice": "Jessica",
+          "text": "I'm great! Excuse me, Sam — see you!",
+          "dur": 2.4,
+          "wpm": 175,
+          "sha256": "7806d3e573fef982365d932f33d8c85dd3a3bf242e47b285572fb629785794e8"
+        }
+      ],
+      "text": "Hello! My name is Sam Rivera. Nice to meet you, Sam! How are you? I'm okay, thank you! And you? I'm great! Excuse me, Sam — see you!",
+      "duration": 8.09
+    }
+  ]
+}

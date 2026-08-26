@@ -212,6 +212,7 @@ struct SceneScript: Sendable, Hashable {
 
     struct Turn: Sendable, Hashable {
         let them: String
+        let audioAsset: String
         let replies: [Reply]
     }
 
@@ -255,6 +256,9 @@ struct SceneScript: Sendable, Hashable {
                 turns: rehearsalItems.map { it in
                     Turn(
                         them: it.prompt ?? "",
+                        audioAsset: it.aud.map {
+                            $0.contains("-AUD") ? $0 : "\(f.chapter.id)-\($0)"
+                        } ?? "",
                         replies: (it.opts ?? []).map { o in
                             Reply(
                                 t: o.text ?? "",
@@ -270,7 +274,7 @@ struct SceneScript: Sendable, Hashable {
             role: "No conversation practice is available yet.",
             close: "",
             debugSource: "",
-            turns: [Turn(them: "", replies: [])]
+            turns: [Turn(them: "", audioAsset: "", replies: [])]
         )
     }
 }

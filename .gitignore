@@ -8,3 +8,11 @@ xcuserdata/
 .derivedData/
 Archive/
 
+# Secrets — never committed, never shipped (audio generation reads these
+# offline; the app itself only plays bundled files).
+.env
+tools/.env
+*.pem
+# Raw generation staging (downloaded attachments before afconvert)
+tools/.audio-raw/
+

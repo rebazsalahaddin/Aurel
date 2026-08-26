@@ -464,7 +464,9 @@ struct PracticeScreenView: View {
         if item.aud != nil {
             Button {
                 m.plays += 1
-                m.speak(m.speakTextForItem, slow: m.plays > 1)
+                m.speak(
+                    m.speakTextForItem, audio: item.aud,
+                    slow: m.plays > 1)
             } label: {
                 HStack(spacing: 13) {
                     AUIcon(kind: .ear, size: 26, color: .auPrimaryButtonText)

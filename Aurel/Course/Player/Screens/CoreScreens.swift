@@ -122,7 +122,9 @@ struct HookScreenView: View {
                 HStack(spacing: 14) {
                     Button {
                         m.plays += 1
-                        m.speak((h.lines ?? []).map(\.t).joined(separator: ". "))
+                        m.speak(
+                            (h.lines ?? []).map(\.t).joined(separator: ". "),
+                            audio: h.aud)
                     } label: {
                         AUIcon(kind: .ear, size: 30, color: .auPrimaryButtonText)
                             .frame(width: 66, height: 66)
@@ -148,7 +150,9 @@ struct HookScreenView: View {
 
                     Button {
                         m.plays += 1
-                        m.speak((h.lines ?? []).map(\.t).joined(separator: ". "), slow: true)
+                        m.speak(
+                            (h.lines ?? []).map(\.t).joined(separator: ". "),
+                            audio: h.aud, slow: true)
                     } label: {
                         AUIcon(kind: .loop, size: 17)
                             .frame(width: 40, height: 40)
@@ -531,7 +535,7 @@ struct CardsScreenView: View {
             HStack(spacing: 12) {
                 Button {
                     m.plays += 1
-                    m.speak(card.main, slow: m.plays > 1)
+                    m.speak(card.main, audio: card.aud, slow: m.plays > 1)
                 } label: {
                     HStack(spacing: 9) {
                         AUIcon(kind: .ear, size: 24, color: .auPrimaryButtonText)

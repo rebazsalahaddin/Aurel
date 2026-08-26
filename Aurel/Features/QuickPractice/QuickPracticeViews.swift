@@ -349,8 +349,9 @@ struct LessonRunnerView: View {
             HStack(spacing: 18) {
                 Button {
                     env.speaker.speak(
-                        q.options.indices.contains(q.answer) ? q.options[q.answer] : q.prompt,
-                        slow: false)
+                        audioID: q.audioAsset.isEmpty ? nil : q.audioAsset,
+                        text: q.options.indices.contains(q.answer) ? q.options[q.answer] : q.prompt,
+                        slow: false, lineIndex: nil)
                 } label: {
                     AUIcon(kind: .ear, size: 24, color: .auBackground)
                         .frame(width: 58, height: 58)
@@ -368,10 +369,11 @@ struct LessonRunnerView: View {
 
                 Button {
                     env.speaker.speak(
-                        q.options.indices.contains(q.answer) ? q.options[q.answer] : q.prompt,
-                        slow: true)
+                        audioID: q.audioAsset.isEmpty ? nil : q.audioAsset,
+                        text: q.options.indices.contains(q.answer) ? q.options[q.answer] : q.prompt,
+                        slow: true, lineIndex: nil)
                 } label: {
-                    Text("Slower")
+                    Text("Again")
                         .font(.figtree(.bold, size: 11))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 9)

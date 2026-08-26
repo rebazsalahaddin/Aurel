@@ -65,7 +65,7 @@ final class PlayerModel {
     var onExit: () -> Void
     var onScreen: (Int) -> Void
 
-    /// The audio stand-in (TTS), attached by the hosting view.
+    /// The recorded course player, attached by the hosting view.
     var speaker: (any AudioPlaying)? {
         didSet {
             let playback = speaker
@@ -73,13 +73,28 @@ final class PlayerModel {
         }
     }
 
-    /// Speak authored text as the not-yet-recorded audio stand-in.
-    func speak(_ text: String?, slow: Bool = false) {
+    /// Plays the authored offline take when `audio` resolves in the current
+    /// chapter, with text-to-speech retained only as a missing-asset fallback.
+    func speak(
+        _ text: String?, audio: String? = nil, slow: Bool = false,
+        lineIndex: Int? = nil
+    ) {
         guard let text, !text.isEmpty else { return }
         // Switching back to the model line cancels a learner take and deletes
         // its temporary file before the playback audio session starts.
         say.reset()
-        speaker?.speak(text, slow: slow)
+        speaker?.speak(
+            audioID: resolvedAudioID(audio), text: text, slow: slow,
+            lineIndex: lineIndex)
+    }
+
+    func resolvedAudioID(_ reference: String?) -> String? {
+        guard let reference = reference?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !reference.isEmpty
+        else { return nil }
+        if reference.contains("-AUD") { return reference }
+        guard let chapterID = cur?.chapter.id else { return nil }
+        return "\(chapterID)-\(reference)"
     }
 
     /// The authored text an audio-cued item should speak — the key option for
@@ -686,7 +701,8 @@ final class PlayerModel {
         case .numbers(let s):
             return (s.nums ?? []).map { n in
                 PlayerCard(
-                    main: n.d + "  " + n.w, ipa: n.ipa ?? "", sub: "count scene", digit: n.d,
+                    main: n.d + "  " + n.w, ipa: n.ipa ?? "", sub: "count scene",
+                    aud: Self.numberAudioReference(n.d, chapterID: cur.chapter.id), digit: n.d,
                     number: true)
             }
         case .cards(let s):
@@ -703,6 +719,25 @@ final class PlayerModel {
     var card: PlayerCard {
         let list = cardList
         return list.indices.contains(c) ? list[c] : PlayerCard()
+    }
+
+    /// Chapter 2's number bank authored individual models for every number
+    /// except one/four, which intentionally live in the 0–5 count-along take.
+    private static func numberAudioReference(_ digit: String, chapterID: String) -> String? {
+        guard chapterID == "A1-C02", let value = Int(digit), (0...20).contains(value) else {
+            return nil
+        }
+        let asset: Int
+        switch value {
+        case 0: asset = 26
+        case 1, 4: asset = 27
+        case 2: asset = 23
+        case 3: asset = 24
+        case 5: asset = 25
+        case 6...20: asset = 27 + value
+        default: return nil
+        }
+        return String(format: "A1-C02-AUD%03d", asset)
     }
 
     // MARK: Rings (lines 1390–1401)

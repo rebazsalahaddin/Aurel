@@ -168,7 +168,10 @@ struct SceneView: View {
                             let i = min(r.sceneTurn, max(0, sc.turns.count - 1))
                             if sc.turns.indices.contains(i) {
                                 AUFeedback.press()
-                                env.speaker.speak(sc.turns[i].them, slow: false)
+                                let turn = sc.turns[i]
+                                env.speaker.speak(
+                                    audioID: turn.audioAsset.isEmpty ? nil : turn.audioAsset,
+                                    text: turn.them, slow: false, lineIndex: nil)
                             }
                         } label: {
                             Text("Hear that again")
@@ -257,7 +260,7 @@ struct SpeakView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     /// sayItem — the newest authored chunk frame with a sentence in it.
-    private var sayItem: (line: String, ctx: String) {
+    private var sayItem: (line: String, ctx: String, audioAsset: String) {
         for f in env.course.flat.reversed() {
             if case .cards(let c) = f.screen.payload {
                 for card in c.cards ?? [] {
@@ -272,12 +275,16 @@ struct SpeakView: View {
                         // ("Model audio … is a script; no recording exists yet")
                         // — now a learner-facing context line.
                         let ctx = card.fn ?? ""
-                        return (line, ctx)
+                        return (
+                            line, ctx,
+                            card.aud.map {
+                                $0.contains("-AUD") ? $0 : "\(f.chapter.id)-\($0)"
+                            } ?? "")
                     }
                 }
             }
         }
-        return ("—", "No chunk record is loaded yet.")
+        return ("—", "No chunk record is loaded yet.", "")
     }
 
     /// The your-take waveform is real metering now (§3.16a) — the samples
@@ -393,7 +400,9 @@ struct SpeakView: View {
                                     env.speaker.stop()
                                 } else {
                                     r.say.reset()
-                                    env.speaker.speak(item.line, slow: false)
+                                    env.speaker.speak(
+                                        audioID: item.audioAsset.isEmpty ? nil : item.audioAsset,
+                                        text: item.line, slow: false, lineIndex: nil)
                                 }
                             } label: {
                                 AUIcon(
