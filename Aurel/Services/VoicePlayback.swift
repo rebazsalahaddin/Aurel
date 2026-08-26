@@ -34,8 +34,12 @@ final class VoicePlayback: NSObject, AudioPlaying {
     private(set) var spokenRange: NSRange?
     /// The text of the line being spoken (nil outside recorded playback).
     private(set) var spokenLineText: String?
+    /// The authored speaker of the line being spoken ("GUIDE", "ALEX", …);
+    /// nil on the TTS fallback, which has no character identity. Karaoke
+    /// rows match on it so two same-text speakers can't both light up.
+    private(set) var spokenSpeaker: String?
 
-    private let catalog: AudioCatalog
+    let catalog: AudioCatalog
     private let tts: Speaker
 
     private var lines: [AudioCatalog.Line] = []
@@ -93,7 +97,18 @@ final class VoicePlayback: NSObject, AudioPlaying {
         spokenLine = -1
         spokenRange = nil
         spokenLineText = nil
+        spokenSpeaker = nil
         AUSound.shared.isDucked = false
+    }
+
+    /// True while `text` is the line currently being spoken — karaoke rows
+    /// ask this each render. Speaker-voiced takes (recorded catalog lines)
+    /// match text *and* speaker; the TTS fallback has no speaker identity,
+    /// so it matches on text alone.
+    func isSpoken(text: String, speaker: String? = nil) -> Bool {
+        guard speaking, spokenLineText == text else { return false }
+        guard let spokenSpeaker, let speaker, !speaker.isEmpty else { return true }
+        return spokenSpeaker.caseInsensitiveCompare(speaker) == .orderedSame
     }
 
     // MARK: Recorded queue
@@ -129,7 +144,10 @@ final class VoicePlayback: NSObject, AudioPlaying {
 
     private func beginFallback(_ text: String, slow: Bool) {
         spokenLine = -1
-        spokenLineText = nil
+        spokenSpeaker = nil
+        // Single-line fallback speech can still karaoke: the synthesizer
+        // reports exact word ranges, and rows match on this text.
+        spokenLineText = text
         spokenRange = nil
         tts.speak(text, slow: slow)
         speaking = tts.isSpeaking
@@ -137,11 +155,15 @@ final class VoicePlayback: NSObject, AudioPlaying {
         ticker = Task { [weak self] in
             while !Task.isCancelled, let self, self.tts.isSpeaking {
                 self.progress = self.tts.progress
+                self.spokenRange = self.tts.spokenRange
                 try? await Task.sleep(for: .milliseconds(30))
             }
             guard !Task.isCancelled, let self else { return }
             self.speaking = false
             self.progress = self.tts.progress
+            if let text = self.spokenLineText, !text.isEmpty {
+                self.spokenRange = NSRange(location: 0, length: (text as NSString).length)
+            }
             self.ticker = nil
         }
     }
@@ -155,6 +177,7 @@ final class VoicePlayback: NSObject, AudioPlaying {
             lineIndex = index
             spokenLine = index
             spokenLineText = lines.indices.contains(index) ? lines[index].text : nil
+            spokenSpeaker = lines.indices.contains(index) ? lines[index].speaker : nil
             speaking = true
             startTicker()
         } catch {
@@ -181,8 +204,11 @@ final class VoicePlayback: NSObject, AudioPlaying {
         lineProgress = min(1, player.currentTime / dur)
 
         if let text = spokenLineText, !text.isEmpty {
-            let len = Int((Double(text.count) * lineProgress).rounded())
-            spokenRange = NSRange(location: 0, length: min(text.count, len))
+            // UTF-16 units throughout — the synthesizer reports its exact
+            // ranges in the same units, so the two paths stay interchangeable.
+            let total = (text as NSString).length
+            let len = Int((Double(total) * lineProgress).rounded())
+            spokenRange = NSRange(location: 0, length: min(total, len))
         }
         let before = charOffsets.indices.contains(lineIndex) ? charOffsets[lineIndex] : 0
         let lineChars = Double(spokenLineText?.count ?? 1)
@@ -205,7 +231,7 @@ final class VoicePlayback: NSObject, AudioPlaying {
         progress = 1
         lineProgress = 1
         if let text = spokenLineText {
-            spokenRange = NSRange(location: 0, length: text.count)
+            spokenRange = NSRange(location: 0, length: (text as NSString).length)
         }
         ticker?.cancel()
         ticker = nil

@@ -175,10 +175,15 @@ struct HookScreenView: View {
                                 .padding(.top, 3)
                                 .foregroundStyle(
                                     learner ? Color.auTintText : Color.auAccentText)
-                            Text(l.t)
-                                .font(.figtree(.regular, size: 15))
-                                .auLine(15, 1.4)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            KaraokeText(
+                                text: l.t,
+                                isSpoken: m.playback?.isSpoken(text: l.t, speaker: l.sp) ?? false,
+                                spokenRange: m.playback?.spokenRange,
+                                base: learner ? .auTintText : .auText
+                            )
+                            .font(.figtree(.regular, size: 15))
+                            .auLine(15, 1.4)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .padding(.horizontal, 13)
                         .padding(.vertical, 11)
@@ -501,12 +506,16 @@ struct CardsScreenView: View {
                         .padding(.bottom, 10)
                     }
 
-                    Text(card.main)
-                        .font(.caprasimo(size: 34))
-                        .tracking(-0.68)
-                        .auHeadLine(34, 1.15)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 9)
+                    KaraokeText(
+                        text: card.main,
+                        isSpoken: m.playback?.isSpoken(text: card.main) ?? false,
+                        spokenRange: m.playback?.spokenRange
+                    )
+                    .font(.caprasimo(size: 34))
+                    .tracking(-0.68)
+                    .auHeadLine(34, 1.15)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 9)
 
                     if !card.ipa.isEmpty {
                         Text(card.ipa)

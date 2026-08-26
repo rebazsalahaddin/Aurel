@@ -88,11 +88,15 @@ struct SceneView: View {
                                             .foregroundStyle(Color.auTextTertiary)
                                             .padding(.bottom, 5)
                                     }
-                                    Text(turn.them)
-                                        .font(.figtree(.regular, size: 14.5))
-                                        .auLine(14.5, 1.45)
-                                        .padding(.horizontal, 17)
-                                        .padding(.vertical, 14)
+                                    KaraokeText(
+                                        text: turn.them,
+                                        isSpoken: env.speaker.isSpoken(text: turn.them),
+                                        spokenRange: env.speaker.spokenRange
+                                    )
+                                    .font(.figtree(.regular, size: 14.5))
+                                    .auLine(14.5, 1.45)
+                                    .padding(.horizontal, 17)
+                                    .padding(.vertical, 14)
                                         .frame(maxWidth: 311, alignment: .leading)
                                         .background(partnerShape.fill(Color.auFill))
                                         .overlay(
@@ -378,11 +382,15 @@ struct SpeakView: View {
                     .foregroundStyle(Color.auAccentText)
                     .padding(.bottom, 10)
 
-                Text(item.line)
-                    .font(.caprasimo(size: 25))
-                    .tracking(-0.38)
-                    .auHeadLine(25, 1.26)
-                    .padding(.bottom, 8)
+                KaraokeText(
+                    text: item.line,
+                    isSpoken: env.speaker.isSpoken(text: item.line),
+                    spokenRange: env.speaker.spokenRange
+                )
+                .font(.caprasimo(size: 25))
+                .tracking(-0.38)
+                .auHeadLine(25, 1.26)
+                .padding(.bottom, 8)
 
                 Text(item.ctx)
                     .font(.figtree(.regular, size: 13))

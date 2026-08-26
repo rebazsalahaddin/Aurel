@@ -73,6 +73,13 @@ final class PlayerModel {
         }
     }
 
+    /// The player narrowed to the recorded-audio implementation, whose
+    /// karaoke state (`spokenLineText`/`spokenRange`) screen views observe.
+    /// Reading it in a view body tracks the underlying observables.
+    var playback: VoicePlayback? {
+        speaker as? VoicePlayback
+    }
+
     /// Plays the authored offline take when `audio` resolves in the current
     /// chapter, with text-to-speech retained only as a missing-asset fallback.
     func speak(

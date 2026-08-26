@@ -35,6 +35,10 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     /// native-line waveform tints along it while TTS speaks. Real data from
     /// the synthesizer delegate, never an assumed duration.
     private(set) var progress: Double = 0
+    /// The exact UTF-16 range the synthesizer is currently voicing (word
+    /// boundaries straight from the engine) — karaoke highlighting on the
+    /// TTS-fallback path keys off this instead of estimating.
+    private(set) var spokenRange: NSRange?
     private var spokenChars: Double = 0
     private var totalChars: Double = 1
 
@@ -68,6 +72,7 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
         synthesizer.speak(u)
         speaking = true
         progress = 0
+        spokenRange = nil
         spokenChars = 0
         totalChars = Double(max(1, text.count))
     }
@@ -76,6 +81,7 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
         synthesizer.stopSpeaking(at: .immediate)
         speaking = false
         progress = 0
+        spokenRange = nil
         AUSound.shared.isDucked = false
     }
 
@@ -99,6 +105,7 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
             // Monotonic: out-of-order delegate callbacks must not rewind it.
             self.spokenChars = max(self.spokenChars, end)
             self.progress = min(1, self.spokenChars / max(total, self.totalChars, 1))
+            self.spokenRange = characterRange
         }
     }
 }

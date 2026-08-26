@@ -190,10 +190,15 @@ struct MeaningPulseSequenceView: View {
                                         .tracking(0.7)
                                         .frame(width: 42, alignment: .leading)
                                         .foregroundStyle(Color.auTextTertiary)
-                                    Text(line.t)
-                                        .font(.figtree(.regular, size: 14))
-                                        .auLine(14, 1.45)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    KaraokeText(
+                                        text: line.t,
+                                        isSpoken: m.playback?.isSpoken(
+                                            text: line.t, speaker: line.sp) ?? false,
+                                        spokenRange: m.playback?.spokenRange
+                                    )
+                                    .font(.figtree(.regular, size: 14))
+                                    .auLine(14, 1.45)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
                         }
@@ -231,6 +236,13 @@ struct MeaningPulseSequenceView: View {
                     Text(pulse.prompt)
                         .font(.figtree(.semibold, size: 16))
                         .auLine(16, 1.45)
+                    #if AUREL_VERIFICATION
+                        Color.clear
+                            .frame(width: 1, height: 1)
+                            .accessibilityElement()
+                            .accessibilityLabel(pulse.id)
+                            .accessibilityIdentifier("au.player.fixture.item.\(pulse.id)")
+                    #endif
                 }
 
                 VStack(spacing: 9) {
@@ -281,6 +293,10 @@ struct MeaningPulseSequenceView: View {
                             )
                         }
                         .buttonStyle(.auTap)
+                        // Same a11y-id contract as practice options
+                        // (au.player.option.<id>) so UI-test walkers — and any
+                        // future driver — can address pulse choices.
+                        .accessibilityIdentifier("au.player.option.\(option.id)")
                     }
                 }
 
@@ -740,8 +756,12 @@ private struct PronProduceItemCard: View {
     var body: some View {
         ACard(radius: 22, padded: false) {
             VStack(alignment: .leading, spacing: 0) {
-                Text(it.word)
-                    .font(.caprasimo(size: 22))
+                KaraokeText(
+                    text: it.word,
+                    isSpoken: m.playback?.isSpoken(text: it.word) ?? false,
+                    spokenRange: m.playback?.spokenRange
+                )
+                .font(.caprasimo(size: 22))
                     .tracking(-0.26)
                     .padding(.bottom, 14)
 
@@ -1021,10 +1041,14 @@ struct ConversationScreenView: View {
                                 .frame(width: 42, alignment: .leading)
                                 .padding(.top, 3)
                                 .foregroundStyle(Color.auAccentText)
-                            Text(t.t)
-                                .font(.figtree(.regular, size: 15))
-                                .auLine(15, 1.4)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            KaraokeText(
+                                text: t.t,
+                                isSpoken: m.playback?.isSpoken(text: t.t, speaker: t.sp) ?? false,
+                                spokenRange: m.playback?.spokenRange
+                            )
+                            .font(.figtree(.regular, size: 15))
+                            .auLine(15, 1.4)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .padding(.horizontal, 13)
                         .padding(.vertical, 11)
@@ -1034,9 +1058,7 @@ struct ConversationScreenView: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                .strokeBorder(
-                                    k == m.turn - 1 ? Color.auAccent.opacity(0.40) : Color.auEdge,
-                                    lineWidth: 1)
+                                .strokeBorder(Color.auEdge, lineWidth: 1)
                         )
                         .opacity(on ? 1 : 0.32)
                         .animation(

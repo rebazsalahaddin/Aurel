@@ -79,6 +79,7 @@
 		2260AD77948A2E95C846CA7DCA11A245 /* A1-C03-AUD051_L9.m4a in Resources */ = {isa = PBXBuildFile; fileRef = CA1461DF8E2B1F2B4FBCCB5A4B441140 /* A1-C03-AUD051_L9.m4a */; };
 		2278A54C67CF9C781BC4ACB010B88710 /* A1-C04-AUD011_L1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = B17F5F63442086DD1D0E910A90A31351 /* A1-C04-AUD011_L1.m4a */; };
 		22CCF6DEA23D144F499BBDE72C6D5AF4 /* A1-C03-AUD047_L1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = BEBCEC4CBD9310A6BDF3515CF0A03291 /* A1-C03-AUD047_L1.m4a */; };
+		23395A514EAB7464BCEA0C5D614743C2 /* KaraokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00626BDFB688E06658C3CD60D11526 /* KaraokeTests.swift */; };
 		23413B810967C37C12CC66D5BF75BB16 /* A1-C02-AUD022_L1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 0C3A53B5BCCE150CEA0091AAB6024039 /* A1-C02-AUD022_L1.m4a */; };
 		2434688F2D54AB29DFD669142E91EF76 /* A1-C02-AUD069_L1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = D3ED4AE80C0B3F9863669AA712215D5E /* A1-C02-AUD069_L1.m4a */; };
 		2437097DABD6D8BFA4BBFEFEE11E20D6 /* AssemblyScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9C297E535AF94479E90F3D74EADE50 /* AssemblyScreens.swift */; };
@@ -172,6 +173,7 @@
 		4C4FDC1FB8214705B90DA9D372091727 /* A1-C04-AUD031_L1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = A2D596F95CF0BFCFA920D13ED2601716 /* A1-C04-AUD031_L1.m4a */; };
 		4CE6C0E4F37A711C20C6237A81E5920F /* PH02NavigationSuite.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD136E163E250EC753C39768A469EE1D /* PH02NavigationSuite.swift */; };
 		4CFCBB8CAEF30518AD7A48124B9709A9 /* A1-C04-AUD026_L1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = EA9CFA05D71BD7545005692862F6E5BC /* A1-C04-AUD026_L1.m4a */; };
+		4D03AFB7EDAB66831F899E7EB3986239 /* KaraokeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DA776F11244349D2931769EA821A2C9 /* KaraokeText.swift */; };
 		4D6A3CFE47C63D36D5ECCF9E157B88DC /* A1-C03-AUD009_L1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9E73EFC66DD16325459E3B5A4D9848C9 /* A1-C03-AUD009_L1.m4a */; };
 		4E5D7E49BCE4594A5A91662AEECA388B /* A1-C01-AUD028_L1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 17CD958BAB6D4E4B699EF87839DCABEB /* A1-C01-AUD028_L1.m4a */; };
 		4ECDF14D00C41F6764DDFCDD055DD830 /* A1-C02-AUD078_L4.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 9D93EDAB5BBA38B0A6DDF09F4E99260B /* A1-C02-AUD078_L4.m4a */; };
@@ -639,6 +641,7 @@
 		1AF5E7CB27B0ECE365AB16077E1EA4D4 /* A1-C02-AUD014_L2.m4a */ = {isa = PBXFileReference; path = "A1-C02-AUD014_L2.m4a"; sourceTree = "<group>"; };
 		1B96834B4123A452659854A2C27FC438 /* A1-C02-AUD011_L1.m4a */ = {isa = PBXFileReference; path = "A1-C02-AUD011_L1.m4a"; sourceTree = "<group>"; };
 		1D0B7E14F05DC6331A12663234A4D573 /* A1-C04-AUD025_L1.m4a */ = {isa = PBXFileReference; path = "A1-C04-AUD025_L1.m4a"; sourceTree = "<group>"; };
+		1DA776F11244349D2931769EA821A2C9 /* KaraokeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KaraokeText.swift; sourceTree = "<group>"; };
 		1DB704AE51980CF42C25B70393B09BCE /* A1-C02-AUD040_L1.m4a */ = {isa = PBXFileReference; path = "A1-C02-AUD040_L1.m4a"; sourceTree = "<group>"; };
 		1DC4C6B6BF17A05B821D24654B8BBBF9 /* A1-C04-AUD043_L2.m4a */ = {isa = PBXFileReference; path = "A1-C04-AUD043_L2.m4a"; sourceTree = "<group>"; };
 		1DE8FD23883A867D108F3CE8F2884360 /* A1-C01-AUD005_L1.m4a */ = {isa = PBXFileReference; path = "A1-C01-AUD005_L1.m4a"; sourceTree = "<group>"; };
@@ -810,6 +813,7 @@
 		6DE3B2C6614FB5B0EA627E1035E4572B /* A1-C04-AUD019_L1.m4a */ = {isa = PBXFileReference; path = "A1-C04-AUD019_L1.m4a"; sourceTree = "<group>"; };
 		6E3DDCE5B57DDE272F39A2384EF7C7C9 /* A1-C04-AUD037_L12.m4a */ = {isa = PBXFileReference; path = "A1-C04-AUD037_L12.m4a"; sourceTree = "<group>"; };
 		6E5013F75D5893C10A79563E6E7C5078 /* A1-C04-AUD037_L9.m4a */ = {isa = PBXFileReference; path = "A1-C04-AUD037_L9.m4a"; sourceTree = "<group>"; };
+		6F00626BDFB688E06658C3CD60D11526 /* KaraokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KaraokeTests.swift; sourceTree = "<group>"; };
 		6F1DD4F202E58A9FAC1D0BE4FC062C9A /* A1-C04-AUD032_L1.m4a */ = {isa = PBXFileReference; path = "A1-C04-AUD032_L1.m4a"; sourceTree = "<group>"; };
 		71558DE54F886AAAE94DD2B42F435B3A /* A1-C03-AUD066_L1.m4a */ = {isa = PBXFileReference; path = "A1-C03-AUD066_L1.m4a"; sourceTree = "<group>"; };
 		719BF620D42C590029B403F2ABF49C56 /* PlayerModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModelTests.swift; sourceTree = "<group>"; };
@@ -1130,6 +1134,7 @@
 			children = (
 				307FBEBFB78F4741282B48E9FEE8DE2E /* AUIcon.swift */,
 				399402AEBA1EB7F8C70D7408542B0153 /* Components.swift */,
+				1DA776F11244349D2931769EA821A2C9 /* KaraokeText.swift */,
 				0D72008BB451DE64C4F92ED4776869E6 /* Shared.swift */,
 			);
 			path = Components;
@@ -1219,6 +1224,7 @@
 				E730F518B882EBBFEA897E38649ED2D3 /* DesignTokenTests.swift */,
 				CBF3250CDE01EB5DD295C7AF67823C4A /* FeedbackServicesTests.swift */,
 				CC20A5FA2AFF520BA3BDD703E029C43D /* GrammarConformanceTests.swift */,
+				6F00626BDFB688E06658C3CD60D11526 /* KaraokeTests.swift */,
 				AE84A363F608654D4461E6684E023BC6 /* PH01FoundationTests.swift */,
 				276C8A363BDB3093D96D43925B48F9CE /* PH02JourneyTests.swift */,
 				52BE6B5EFFCDF0FF333BF753675CE285 /* PH03LaunchHardeningTests.swift */,
@@ -2564,6 +2570,7 @@
 				E77BF59C986E4F00C5DF1A275B9AAFBD /* CourseStore.swift in Sources */,
 				827F3FF10004A9CDE36281E20D67BB28 /* DesignTokens.swift in Sources */,
 				5268A4DA5F9EB8E8B5195077C4D21927 /* HomeView.swift in Sources */,
+				4D03AFB7EDAB66831F899E7EB3986239 /* KaraokeText.swift in Sources */,
 				A514AE3AD41455F42415430BB02456EA /* LangScreens.swift in Sources */,
 				E8CECBA320CF32A8F408F374BFF5B74B /* LeaderboardView.swift in Sources */,
 				7242BD8322619D646B6321BB72728278 /* LoginView.swift in Sources */,
@@ -2605,6 +2612,7 @@
 				42A8A242208F454B5A30C7A7B4190160 /* DesignTokenTests.swift in Sources */,
 				E5A60EACD0757D3E4A8B491FBF7CBB26 /* FeedbackServicesTests.swift in Sources */,
 				4883D8B2A72DB8375AE145D291986512 /* GrammarConformanceTests.swift in Sources */,
+				23395A514EAB7464BCEA0C5D614743C2 /* KaraokeTests.swift in Sources */,
 				2CD1694CF9102208B4A43FAFEB095C69 /* PH01FoundationTests.swift in Sources */,
 				10DDAC7AD903FAE13B5CB233006EF070 /* PH02JourneyTests.swift in Sources */,
 				82368B916673D18A06759815CA7A7CC8 /* PH03LaunchHardeningTests.swift in Sources */,

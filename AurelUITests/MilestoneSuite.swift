@@ -108,6 +108,14 @@ final class MilestoneSuite: XCTestCase {
                                 pMap[id] = key
                             }
                         }
+                        // Meaning-pulse choices carry authored keys too
+                        // (grammar screens); they surface through the same
+                        // au.player.option.<id> contract as practice items.
+                        for p in sc["meaningPulses"] as? [[String: Any]] ?? [] {
+                            if let id = p["id"] as? String, let key = p["key"] as? String {
+                                pMap[id] = key
+                            }
+                        }
                         addOrder(sc["tiles"] as? [String], sc["key"] as? [String])
                         if let id = sc["id"] as? String, let key = sc["key"] as? String {
                             pMap[id] = key

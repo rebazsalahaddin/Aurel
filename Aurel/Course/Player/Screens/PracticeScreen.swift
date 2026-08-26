@@ -530,11 +530,15 @@ struct PracticeScreenView: View {
                     .frame(width: 38, height: 38)
                     .background(Circle().fill(Color.auFlatBg))
                     .foregroundStyle(Color.auFlatText)
-                Text(said.t)
-                    .font(.figtree(.regular, size: 15.5))
-                    .auLine(15.5, 1.45)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 13)
+                KaraokeText(
+                    text: said.t,
+                    isSpoken: m.playback?.isSpoken(text: said.t) ?? false,
+                    spokenRange: m.playback?.spokenRange
+                )
+                .font(.figtree(.regular, size: 15.5))
+                .auLine(15.5, 1.45)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 13)
                     .background(
                         UnevenCorners(bottomTrailing: 5)
                             .fill(Color.auFill)
