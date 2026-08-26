@@ -74,9 +74,9 @@ final class AppRouterTests: XCTestCase {
         let r = AppRouter(course: CourseDecodingTests.store)
         let fake = FakeTakeRecorder()
         r.say.recorder = fake
-        r.say.onDeviceRecognitionProbe = { true }
+        r.say.recognitionProbe = { true }
         r.say.micPermissionProbe = { .granted }
-        r.say.transcriber = { _ in "hello world" }
+        r.say.transcriber = { _ in .text("hello world") }
         r.toggleSpeak(target: "hello world")  // take 1 starts
         r.toggleSpeak(target: "hello world")  // manual stop
         r.toggleSpeak(target: "hello world")  // take 2 starts — must get its own 2.6 s window

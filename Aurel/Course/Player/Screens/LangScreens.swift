@@ -915,7 +915,7 @@ private struct PronProduceItemCard: View {
     }
 
     private var unavailableNotice: some View {
-        Text("Clarity check offline — your take stands.")
+        Text("No clarity check available — your take stands.")
             .font(.figtree(.regular, size: 12))
             .foregroundStyle(Color.auText.opacity(0.65))
             .padding(.top, 8)

@@ -78,7 +78,7 @@ final class Stage5SpeakTests: XCTestCase {
 
     func testSayCoachPermissionDenied() {
         let coach = SayCoach()
-        coach.onDeviceRecognitionProbe = { true }
+        coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .denied }
 
         coach.toggle(target: "Hello")
@@ -90,7 +90,7 @@ final class Stage5SpeakTests: XCTestCase {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
-        coach.onDeviceRecognitionProbe = { true }
+        coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
 
         coach.toggle(target: "Hello")
@@ -106,9 +106,9 @@ final class Stage5SpeakTests: XCTestCase {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
-        coach.onDeviceRecognitionProbe = { true }
+        coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
-        coach.transcriber = { _ in "hello world" }
+        coach.transcriber = { _ in .text("hello world") }
 
         coach.toggle(target: "hello world")
         XCTAssertTrue(coach.recording)
@@ -122,13 +122,13 @@ final class Stage5SpeakTests: XCTestCase {
         XCTAssertFalse(rec.unavailable)
     }
 
-    func testSayCoachUnavailableWhenTranscriberReturnsNil() async throws {
+    func testSayCoachUnavailableWhenBothRecognitionTiersFail() async throws {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
-        coach.onDeviceRecognitionProbe = { true }
+        coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
-        coach.transcriber = { _ in nil }  // simulated recognition failure
+        coach.transcriber = { _ in .unavailable }  // both tiers failed
 
         coach.toggle(target: "hello world")
         coach.finish()
@@ -141,12 +141,53 @@ final class Stage5SpeakTests: XCTestCase {
         XCTAssertEqual(fake.discardedURLs.count, 1, "failed recognition still deletes the take")
     }
 
-    func testUnsupportedOnDeviceRecognitionRecordsNoTake() async throws {
+    func testEmptyTranscriptIsNothingHeardNotUnavailable() async throws {
+        let coach = SayCoach()
+        coach.recorder = FakeTakeRecorder()
+        coach.recognitionProbe = { true }
+        coach.micPermissionProbe = { .granted }
+        // The recognizer ran and heard nothing — an honest tier, never the
+        // no-verdict state.
+        coach.transcriber = { _ in .text("") }
+
+        coach.toggle(target: "hello world")
+        coach.finish()
+
+        try await Task.sleep(for: .milliseconds(50))
+        let rec = coach.record(for: "hello world")
+        XCTAssertEqual(rec.verdict, .nothingHeard)
+        XCTAssertFalse(rec.unavailable)
+    }
+
+    /// The Phase-5 fix itself: on hardware without an on-device model (the
+    /// simulator among them) the take still records and scores — the server
+    /// tier carries the check instead of the old silent no-op.
+    func testTakeRecordsAndScoresWithoutOnDeviceSupport() async throws {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
-        coach.onDeviceRecognitionProbe = { false }
-        coach.onDeviceRecognitionRequest = { false }
+        // Authorized recognition, whatever tier it ends up on.
+        coach.recognitionProbe = { true }
+        coach.micPermissionProbe = { .granted }
+        coach.transcriber = { _ in .text("hello world") }
+
+        coach.toggle(target: "hello world")
+        XCTAssertTrue(coach.recording, "an authorized take records without on-device support")
+        coach.finish()
+
+        try await Task.sleep(for: .milliseconds(50))
+        let rec = coach.record(for: "hello world")
+        XCTAssertEqual(rec.takes, 1)
+        XCTAssertEqual(rec.verdict, .clear)
+        XCTAssertFalse(rec.unavailable)
+    }
+
+    func testUnauthorizedRecognitionRecordsNoTake() async throws {
+        let coach = SayCoach()
+        let fake = FakeTakeRecorder()
+        coach.recorder = fake
+        coach.recognitionProbe = { false }
+        coach.recognitionRequest = { false }
         coach.micPermissionProbe = { .granted }
 
         coach.toggle(target: "hello world")
@@ -159,23 +200,25 @@ final class Stage5SpeakTests: XCTestCase {
         XCTAssertTrue(rec.unavailable)
     }
 
-    func testSpeechCaptureContractRequiresAuthorizationAndOnDeviceSupport() {
-        XCTAssertFalse(
-            SpeechToText.permitsCapture(
-                authorized: false, supportsOnDeviceRecognition: true))
-        XCTAssertFalse(
-            SpeechToText.permitsCapture(
-                authorized: true, supportsOnDeviceRecognition: false))
-        XCTAssertTrue(
-            SpeechToText.permitsCapture(
-                authorized: true, supportsOnDeviceRecognition: true))
+    func testSpeechCaptureContractRequiresAuthorization() {
+        // The speech permission gates the check; on-device support only
+        // picks the tier (server fallback), it never blocks the take.
+        XCTAssertFalse(SpeechToText.permitsCapture(authorized: false))
+        XCTAssertTrue(SpeechToText.permitsCapture(authorized: true))
+    }
+
+    func testResumeOnceAllowsExactlyOneClaim() {
+        let once = ResumeOnce()
+        XCTAssertTrue(once.claim())
+        XCTAssertFalse(once.claim())
+        XCTAssertFalse(once.claim())
     }
 
     func testSayCoachResetCancelsRunningTake() {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
-        coach.onDeviceRecognitionProbe = { true }
+        coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
 
         coach.toggle(target: "test")

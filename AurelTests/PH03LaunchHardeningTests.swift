@@ -52,7 +52,7 @@ final class PH03LaunchHardeningTests: XCTestCase {
 
         let coach = SayCoach()
         coach.recorder = recorder
-        coach.onDeviceRecognitionProbe = { true }
+        coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
         coach.onCaptureWillBegin = { events.append("stop playback") }
 

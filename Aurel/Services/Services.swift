@@ -213,40 +213,44 @@ enum StreakEngine {
     }
 }
 
-// MARK: - Speech recognition (say-aloud; on-device, optional)
+// MARK: - Speech recognition (say-aloud clarity check)
 //
-// The tap path is always available and equal in weight; recognition never
-// blocks and never leaves the device.
+// The tap path is always available and equal in weight. Recognition is
+// two-tier: on-device whenever the device supports it (the take never
+// leaves the device), Apple's speech service otherwise — the fallback
+// that makes the check work on hardware without an on-device en-US model
+// (the simulator among them). "Unavailable" means both tiers failed.
 
 @MainActor
 @Observable
-final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
-    var transcript = ""
-    var listening = false
+final class SpeechToText {
+    /// A finished take's transcription — the honest distinction the verdict
+    /// UI renders: text (possibly empty — the recognizer ran and heard
+    /// nothing) versus recognition that could not run at all.
+    enum Transcription: Equatable {
+        case text(String)
+        case unavailable
+    }
+
+    /// How long a wedged recognizer may hold the take flow (server-tier
+    /// requests can be slow; the old 4 s watchdog cut them off).
+    static let transcriptionWatchdog: Duration = .seconds(8)
+
     private(set) var authorized = false
 
     private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-    private let audioEngine = AVAudioEngine()
-    private var request: SFSpeechAudioBufferRecognitionRequest?
-    private var task: SFSpeechRecognitionTask?
 
+    /// Whether the device has an en-US on-device model (the simulator and
+    /// some hardware do not — those take the server tier).
     var supportsOnDeviceRecognition: Bool {
         recognizer?.supportsOnDeviceRecognition == true
     }
 
-    var canRecognizeOnDevice: Bool {
-        Self.permitsCapture(
-            authorized: authorized,
-            supportsOnDeviceRecognition: supportsOnDeviceRecognition
-        )
-    }
+    /// Recognition may run at all — the speech permission is the gate;
+    /// on-device support only picks the tier, never blocks the check.
+    var canRecognize: Bool { Self.permitsCapture(authorized: authorized) }
 
-    static func permitsCapture(
-        authorized: Bool,
-        supportsOnDeviceRecognition: Bool
-    ) -> Bool {
-        authorized && supportsOnDeviceRecognition
-    }
+    static func permitsCapture(authorized: Bool) -> Bool { authorized }
 
     @discardableResult
     func requestAuthorization() async -> Bool {
@@ -254,80 +258,73 @@ final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
             SFSpeechRecognizer.requestAuthorization { cont.resume(returning: $0) }
         }
         authorized = status == .authorized
-        return canRecognizeOnDevice
-    }
-
-    func start() async throws {
-        guard let recognizer, canRecognizeOnDevice else { return }
-        stop()
-
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.record, mode: .measurement)
-        try session.setActive(true)
-
-        let request = SFSpeechAudioBufferRecognitionRequest()
-        request.shouldReportPartialResults = true
-        request.requiresOnDeviceRecognition = true
-        self.request = request
-
-        let input = audioEngine.inputNode
-        let format = input.outputFormat(forBus: 0)
-        input.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
-            request.append(buffer)
-        }
-        audioEngine.prepare()
-        try audioEngine.start()
-        listening = true
-
-        task = recognizer.recognitionTask(with: request) { [weak self] result, _ in
-            Task { @MainActor in
-                if let result {
-                    self?.transcript = result.bestTranscription.formattedString
-                }
-            }
-        }
-    }
-
-    func stop() {
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        task?.cancel()
-        request?.endAudio()
-        request = nil
-        listening = false
+        return canRecognize
     }
 
     /// §3.16(c): transcribe a finished take file — the clarity check runs
-    /// after the take, not as live dictation. On-device recognition is a
-    /// hard precondition; nil when recognition is unavailable
-    /// (unauthorized, unsupported locale, or recognizer failure — the caller
-    /// renders an honest no-verdict state).
-    func transcribe(url: URL) async -> String? {
-        guard let recognizer, canRecognizeOnDevice else { return nil }
+    /// after the take, never as live dictation. Tier 1 requires on-device
+    /// recognition where supported (audio stays on the device); tier 2 is
+    /// Apple's speech service. `.unavailable` only when both fail —
+    /// unauthorized, an error on both tiers, or the watchdog.
+    func transcribe(
+        url: URL, watchdog: Duration = SpeechToText.transcriptionWatchdog
+    ) async -> Transcription {
+        guard let recognizer, canRecognize else { return .unavailable }
+        if supportsOnDeviceRecognition,
+            case .text(let text) = await attempt(
+                url: url, recognizer: recognizer, requiresOnDevice: true, watchdog: watchdog)
+        {
+            return .text(text)
+        }
+        return await attempt(
+            url: url, recognizer: recognizer, requiresOnDevice: false, watchdog: watchdog)
+    }
+
+    private func attempt(
+        url: URL, recognizer: SFSpeechRecognizer, requiresOnDevice: Bool, watchdog: Duration
+    ) async -> Transcription {
         let request = SFSpeechURLRecognitionRequest(url: url)
-        request.requiresOnDeviceRecognition = true
+        request.requiresOnDeviceRecognition = requiresOnDevice
         return await withCheckedContinuation { cont in
-            var resumed = false
+            // The recognition callback arrives on a service queue while the
+            // watchdog sleeps on the main actor — both race to finish, and
+            // exactly one may resume the continuation.
+            let once = ResumeOnce()
             let task = recognizer.recognitionTask(with: request) { result, error in
-                guard !resumed else { return }
                 if let result, result.isFinal {
-                    resumed = true
-                    cont.resume(returning: result.bestTranscription.formattedString)
-                } else if error != nil {
-                    resumed = true
-                    cont.resume(returning: nil)
+                    if once.claim() {
+                        cont.resume(
+                            returning: .text(result.bestTranscription.formattedString))
+                    }
+                } else if let error, once.claim() {
+                    cont.resume(returning: .unavailable)
                 }
                 // Partial results keep waiting; a short take resolves fast.
             }
             // A wedged recognizer must not hang the take flow forever.
             Task { @MainActor in
-                try? await Task.sleep(for: .seconds(4))
-                guard !resumed else { return }
+                try? await Task.sleep(for: watchdog)
+                guard once.claim() else { return }
                 task.cancel()
-                resumed = true
-                cont.resume(returning: nil)
+                cont.resume(returning: .unavailable)
             }
         }
+    }
+}
+
+/// Single-use resume guard for a checked continuation with two racing
+/// completion sources (the recognition callback vs the watchdog).
+final class ResumeOnce: @unchecked Sendable {
+    private let lock = NSLock()
+    private var claimed = false
+
+    /// True exactly once — the first caller finishes the continuation.
+    func claim() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        if claimed { return false }
+        claimed = true
+        return true
     }
 }
 
@@ -531,12 +528,14 @@ final class SayCoach {
     // MARK: Seams (production defaults; tests inject fakes)
 
     var recorder: any TakeRecording = MicRecorder()
-    /// Transcribe a finished take (nil → the honest unavailable state).
-    var transcriber: @Sendable (URL) async -> String?
-    /// A take may begin only when recognition is authorized and guaranteed
-    /// on-device. Both seams are injectable for deterministic privacy tests.
-    var onDeviceRecognitionProbe: () -> Bool
-    var onDeviceRecognitionRequest: () async -> Bool
+    /// Transcribe a finished take (`.unavailable` → the honest no-verdict
+    /// state, never an invented tier).
+    var transcriber: @Sendable (URL) async -> SpeechToText.Transcription
+    /// A take may begin only when recognition is authorized — on-device
+    /// support picks the tier at transcription time, it never blocks the
+    /// take. Both seams are injectable for deterministic privacy tests.
+    var recognitionProbe: () -> Bool
+    var recognitionRequest: () async -> Bool
     /// Stops any model playback before the audio session changes to record.
     /// The owning environment/player supplies this hook so playback and a
     /// learner take can never overlap.
@@ -567,8 +566,8 @@ final class SayCoach {
     init() {
         let speech = self.speech
         transcriber = { url in await speech.transcribe(url: url) }
-        onDeviceRecognitionProbe = { speech.canRecognizeOnDevice }
-        onDeviceRecognitionRequest = { await speech.requestAuthorization() }
+        recognitionProbe = { speech.canRecognize }
+        recognitionRequest = { await speech.requestAuthorization() }
     }
 
     /// The record for the active target (empty when never attempted).
@@ -596,11 +595,11 @@ final class SayCoach {
 
     private func begin(target: String) {
         guard !preparingRecognition else { return }
-        guard onDeviceRecognitionProbe() else {
+        guard recognitionProbe() else {
             preparingRecognition = true
             recognitionPreparationGeneration += 1
             let generation = recognitionPreparationGeneration
-            let request = onDeviceRecognitionRequest
+            let request = recognitionRequest
             Task { @MainActor in
                 let available = await request()
                 guard self.recognitionPreparationGeneration == generation else { return }
@@ -687,16 +686,17 @@ final class SayCoach {
         assessing = true
         let transcribe = transcriber
         Task { @MainActor in
-            let transcript = await transcribe(url)
+            let outcome = await transcribe(url)
             recorder.discardTake(url)  // nothing the learner says is kept
             var rec = records[target] ?? Record()
-            if let transcript {
+            switch outcome {
+            case .text(let transcript):
                 rec.verdict = SpeakVerdict.evaluate(target: target, transcript: transcript)
                 let words = SpeakVerdict.wordsInOrder(target: target, transcript: transcript)
                 rec.matchedWords = words.matched
                 rec.totalWords = words.total
                 rec.unavailable = false
-            } else {
+            case .unavailable:
                 rec.verdict = nil
                 rec.unavailable = true
             }

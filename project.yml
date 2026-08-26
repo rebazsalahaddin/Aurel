@@ -52,13 +52,14 @@ targets:
           - Figtree-ExtraBold.ttf
         NSMicrophoneUsageDescription: >-
           Aurel uses the microphone only when you choose to speak in a practice.
-          Recognition runs on your device. If on-device recognition is unavailable,
-          Aurel offers the type or skip path instead. Recordings are temporary and
-          deleted after the check.
+          Recognition runs on your device when it is supported; otherwise the
+          take is checked by Apple's speech service and never stored. Recordings
+          are temporary and deleted after the check.
         NSSpeechRecognitionUsageDescription: >-
-          Aurel checks spoken practice only with on-device recognition. If that
-          is unavailable, no take is recorded and you can type or skip instead.
-          Temporary recordings are deleted after the check.
+          Aurel checks spoken practice to score clarity. Recognition runs on
+          your device when it is supported; otherwise the take is processed by
+          Apple's speech service and never stored. Recordings are temporary and
+          deleted after the check.
         ITSAppUsesNonExemptEncryption: false
   AurelTests:
     type: bundle.unit-test

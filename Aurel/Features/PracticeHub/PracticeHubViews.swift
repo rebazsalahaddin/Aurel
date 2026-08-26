@@ -685,7 +685,7 @@ struct SpeakView: View {
     private func verdictBody(_ v: VerdictState) -> String {
         switch v {
         case .none: return ""
-        case .assessing: return "The check runs on this device — a moment."
+        case .assessing: return "Checking the take — a moment."
         case .tier(.clear, _, let total):
             return "All \(total) words came through in order — this is how it sounds."
         case .tier(.near, let matched, let total):
@@ -701,7 +701,7 @@ struct SpeakView: View {
             return "None of the words match the line. Try again, or use the microphone."
         case .unavailable:
             return
-                "Speech recognition isn't available on this device, so the take stands as a take — and nothing you said is kept."
+                "Speech recognition isn't available right now, so the take stands as a take — and nothing you said is kept."
         }
     }
 }
