@@ -25,7 +25,9 @@ final class PH01FoundationTests: XCTestCase {
     func testLessonFixturesMatchTheCurrentCourse() {
         XCTAssertEqual(store.lessonFixtures.count, 14)
         XCTAssertEqual(store.lessonFixtures.map(\.screenCount).reduce(0, +), 131)
-        XCTAssertEqual(store.lessonFixtures.first?.position, 0)
+        // C1-L1 opens on S02 (hook): S01 promise is an authoring-only page and
+        // `participatesInLessonFlow` deliberately skips it.
+        XCTAssertEqual(store.lessonFixtures.first?.position, 1)
         XCTAssertEqual(store.lessonFixtures.last?.chapterID, "A1-C04")
     }
 

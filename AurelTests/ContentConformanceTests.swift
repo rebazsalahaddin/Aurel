@@ -542,8 +542,8 @@ final class ContentConformanceTests: XCTestCase {
         "A1-C01": [
             "A1-C01-ILL001": 4, "A1-C01-ILL002": 6, "A1-C01-ILL003": 3, "A1-C01-ILL004": 5,
             "A1-C01-ILL005": 3, "A1-C01-ILL006": 2, "A1-C01-ILL007": 2, "A1-C01-ILL009": 2,
-            "A1-C01-ILL012": 2, "A1-C01-ILL013": 6, "A1-C01-ILL015": 3, "A1-C01-ILL016": 4,
-            "A1-C01-ILL017": 3, "A1-C01-ILL018": 8, "A1-C01-ILL019": 4, "A1-C01-ILL020": 6,
+            "A1-C01-ILL013": 6, "A1-C01-ILL015": 3, "A1-C01-ILL016": 4,
+            "A1-C01-ILL017": 3, "A1-C01-ILL018": 8, "A1-C01-ILL019": 4, "A1-C01-ILL020": 5,
             "A1-C01-ILL021": 3, "A1-C01-ILL022": 4, "A1-C01-ILL027": 2, "A1-C01-ILL028": 2,
             "A1-C01-ILL032": 2, "A1-C01-ILL033": 3,
         ],

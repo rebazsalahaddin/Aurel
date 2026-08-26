@@ -1168,11 +1168,26 @@ struct IllustrationPlaceholder: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(learnerAlt)
         } else {
-            ZStack {
-                StripeField()
-                AUIcon(kind: .eye, size: 28, color: .auTextTertiary)
+            // Honest placeholder (IMPROVEMENT_PLAN §2.8): the authored alt
+            // caption stays visible so the learner knows what the scene will
+            // depict once the commissioned asset lands — ids never leak.
+            VStack(spacing: 7) {
+                AUIcon(kind: .eye, size: 22, color: .auTextTertiary)
                     .accessibilityHidden(true)
+                Text("Scene")
+                    .font(.figtree(.bold, size: kickerSize))
+                    .tracking(1.2)
+                    .textCase(.uppercase)
+                    .foregroundStyle(Color.auTextTertiary)
+                Text(learnerAlt)
+                    .font(.figtree(.regular, size: captionSize))
+                    .auLine(captionSize, 1.4)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 18)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(StripeField())
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(learnerAlt)
         }

@@ -1840,7 +1840,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Alex points at ALEX's badge. Which name is on it?",
+          "no": "Alex points at ALEX's badge. Whose name?",
           "ok": "Yes — my badge, my name!",
           "options": [
             {
@@ -2131,8 +2131,8 @@
           ],
           "component": "grammar",
           "hints": [
-            "Look at the finger — self or the person addressed?",
-            "Replay: I'm Alex."
+            "Look at the finger — self or other?",
+            "One option needs a name after it."
           ],
           "id": "A1-C01-PR-G001",
           "instruction": "Look. Choose.",
@@ -2284,7 +2284,7 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "I'm opens to two words.",
+            "I'm = two words.",
             "Replay: I am Leo."
           ],
           "id": "A1-C01-PR-G005",
@@ -2365,7 +2365,7 @@
           ],
           "component": "grammar",
           "hints": [
-            "Replay — who is speaking?",
+            "Replay — whose voice?",
             "Listen: I'm good."
           ],
           "id": "A1-C01-PR-G007",
@@ -2374,7 +2374,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "Maya is talking about how Maya feels.",
+          "no": "Whose feeling? Maya's own.",
           "ok": "Yes — I'm good!",
           "options": [
             {
@@ -2451,7 +2451,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "Two words join with a hook: you are → you're. Your stays with name: your name.",
+          "no": "Two words join with a hook. Your is the other word — before a name.",
           "ok": "Yes — you're, with the hook.",
           "options": [
             {
@@ -2588,8 +2588,8 @@
           ],
           "component": "grammar",
           "hints": [
-            "Look at the glowing badge on Alex.",
-            "Listen: My name is Alex."
+            "Look at the glowing badge.",
+            "One option is not a badge word."
           ],
           "id": "A1-C01-PR-G013",
           "instruction": "Look. Choose.",
@@ -2597,7 +2597,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "The badge is on Alex. Alex says: My name.",
+          "no": "Whose badge glows? The speaker's own.",
           "ok": "Yes — my name!",
           "options": [
             {
@@ -2628,8 +2628,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "Maya looks at Alex's badge.",
-            "Listen: Your name is Alex."
+            "Whose badge? Alex's. Maya speaks ABOUT it.",
+            "One option means the speaker's own."
           ],
           "id": "A1-C01-PR-G014",
           "instruction": "Look. Choose.",
@@ -2637,7 +2637,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "The badge is on Alex. Maya says to Alex: Your name.",
+          "no": "Maya talks about Alex's badge.",
           "ok": "Yes — your name, Alex!",
           "options": [
             {
@@ -2702,8 +2702,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "The arrow points to the person you talk to.",
-            "Listen: your name."
+            "Point outward — whose name do you ask?",
+            "One option is not a badge word."
           ],
           "id": "A1-C01-PR-G016",
           "instruction": "Look. Choose.",
@@ -2711,7 +2711,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "You ask the person in front of you: What's your name?",
+          "no": "You ask about THEIR badge.",
           "ok": "Yes — What's YOUR name?",
           "options": [
             {
@@ -2858,7 +2858,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "Replay the model: My name is Alex.",
+          "no": "Replay the complete line: My name is Alex.",
           "ok": "Yes — My name is Alex!",
           "options": [
             {
@@ -5526,15 +5526,15 @@
           ],
           "component": "grammar",
           "hints": [
-            "Sam or the other person?",
-            "Look again at Sam's badge."
+            "Self or other?",
+            "One option is not a badge word."
           ],
           "id": "A1-C01-QZ-G001",
           "key": [
             "A"
           ],
           "kind": "quiz",
-          "no": "Look at Sam's badge. Sam says the name on it.",
+          "no": "Whose badge? Sam's OWN badge.",
           "ok": "Yes — my!",
           "options": [
             {
@@ -5646,8 +5646,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "Point outward — which name?",
-            "Replay: You are Maya."
+            "Point outward — whose name?",
+            "One option needs are after it."
           ],
           "id": "A1-C01-QZ-G004",
           "key": [
@@ -5686,8 +5686,8 @@
           "a11y": [],
           "component": "grammar",
           "hints": [
-            "Replay the long and short forms.",
-            "Listen: you are … you're."
+            "Say it fast — two words melt.",
+            "One option lost the hook; one lost am."
           ],
           "id": "A1-C01-QZ-G005",
           "key": [
@@ -5854,7 +5854,7 @@
           "component": "listening",
           "hints": [
             "Replay the last line.",
-            "Which name comes after excuse me?"
+            "The speaker says a NAME after excuse me — whose?"
           ],
           "id": "A1-C01-QZ-LS003",
           "key": [
@@ -6374,13 +6374,13 @@
           "spelling": "excuse me"
         },
         {
-          "alt": "A smiling person nods yes, head tilted down then up",
+          "alt": "A smiling person nods yes and gives a clear thumbs-up",
           "aud": "A1-C01-AUD015",
           "fn": "answer word (positive)",
           "frame": "Yes + short answer (Ch2: Yes, I am)",
           "headword": "yes",
           "id": "A1-C01-L01-V014",
-          "ill": "A1-C01-ILL012",
+          "ill": "A1-C01-ILL035",
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L01_LESSON.md",
@@ -6389,13 +6389,13 @@
           "spelling": "yes"
         },
         {
-          "alt": "A calm person gently shakes their head no with a soft open-palm gesture",
+          "alt": "A calm person shakes their head no and raises an open refusal hand",
           "aud": "A1-C01-AUD016",
           "fn": "answer word (negative)",
           "frame": "No + short answer (Ch2: No, I'm not)",
           "headword": "no",
           "id": "A1-C01-L01-V015",
-          "ill": "A1-C01-ILL012",
+          "ill": "A1-C01-ILL036",
           "kind": "vocab",
           "source": {
             "file": "A1_C01_L01_LESSON.md",
@@ -9179,8 +9179,8 @@
           "aside": "Nina checks a badge that reads SAM RIVERA — against YOU",
           "component": "grammar",
           "hints": [
-            "Which name is on the badge?",
-            "It is not your name → No, I'm not!"
+            "Whose name is on the badge?",
+            "Not your name → No, I'm not!"
           ],
           "id": "A1-C02-PR-G008",
           "instruction": "Look. Choose.",
@@ -9633,19 +9633,19 @@
           ],
           "kind": "practice",
           "no": "Nina points to the name field. Listen: It's Maya.",
-          "ok": "Yes — It's Maya. M-A-Y-A.",
+          "ok": "Yes — It’s Maya! M-A-Y-A.",
           "options": [
             {
               "id": "A",
-              "text": "It's"
+              "text": "It’s"
             },
             {
               "id": "B",
-              "text": "Are you"
+              "text": "You’re"
             },
             {
               "id": "C",
-              "text": "My name is"
+              "text": "I’m"
             }
           ],
           "responseType": "single_choice",
@@ -10039,7 +10039,7 @@
           "aside": "dialogue hole",
           "component": "grammar",
           "hints": [
-            "Listen or say — which one now?",
+            "Whose turn is it — ears or mouth?",
             "Say!"
           ],
           "id": "A1-C02-PR-G029",
@@ -10713,8 +10713,8 @@
           "aside": "prep card: YOUR turn — Nina holds up YOUR badge and asks",
           "component": "conversation",
           "hints": [
-            "Which name is on the badge?",
-            "It is your badge → the yes-answer."
+            "Whose badge is up?",
+            "Your badge → the yes-answer."
           ],
           "id": "A1-C02-PR-CV015",
           "instruction": "Look. Choose.",
@@ -12088,8 +12088,8 @@
             "5-5-5, 2-0-1."
           ],
           "hints": [
-            "Is it your number or Nina's?",
-            "Start: My phone number is …"
+            "Whose number is it?",
+            "My → phone → number → is → digits."
           ],
           "id": "A1-C02-PR-WR002",
           "instruction": "Put in order.",
@@ -14954,7 +14954,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "The line starts with Leo. Replay: Leo is from Australia.",
+          "no": "One person's name → is.",
           "ok": "Leo is from Australia. One name → is.",
           "options": [
             {
@@ -15039,8 +15039,8 @@
             "A"
           ],
           "kind": "practice",
-          "no": "The card says Alex uses they. Try: They're a designer.",
-          "ok": "For Alex, say they: They're a designer.",
+          "no": "Alex’s word is THEY (you met this in Chapter 1!). Try again.",
+          "ok": "Alex is they: They’re a designer.",
           "options": [
             {
               "id": "A",
@@ -15073,7 +15073,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "The line starts with Sam. Replay: Sam isn't from Peru.",
+          "no": "One person → isn't.",
           "ok": "Sam isn't from Peru. He's from Mexico!",
           "options": [
             {
@@ -15256,7 +15256,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "The question names Nina. Replay: Where is Nina from?",
+          "no": "One person → is.",
           "ok": "Where is Nina from? — She's from Peru.",
           "options": [
             {
@@ -15289,7 +15289,7 @@
             "order"
           ],
           "kind": "practice",
-          "no": "Start with He: He isn't from Australia.",
+          "no": "Start with the person word: He.",
           "ok": "He isn't from Australia — Sam isn't; Leo is!",
           "source": {
             "file": "A1_C03_L02_LESSON.md",
@@ -15497,7 +15497,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Say the complete model: His name is Sam.",
+          "no": "his + what? Name, phone, email, country…",
           "ok": "His name is Sam. Keep name after his.",
           "options": [
             {
@@ -15529,7 +15529,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "The card names Maya. Replay: her country.",
+          "no": "One woman → her.",
           "ok": "Egypt is her country. Maya's from Egypt!",
           "options": [
             {
@@ -15730,7 +15730,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "Replay the whole chunk: a teacher.",
+          "no": "Listen to the first sound of the job word.",
           "ok": "a teacher!",
           "options": [
             {
@@ -16352,7 +16352,7 @@
             "B"
           ],
           "kind": "practice",
-          "no": "Listen for 'two languages.' Which person says it?",
+          "no": "Listen for the words 'two languages' — whose voice says them?",
           "ok": "Sam says it — about Alex's two languages!",
           "options": [
             {
@@ -16386,7 +16386,7 @@
             "A"
           ],
           "kind": "practice",
-          "no": "The question says Alex. The answer starts they.",
+          "no": "The short answer copies the question's person word.",
           "ok": "Yes, he is!",
           "options": [
             {
@@ -16475,7 +16475,7 @@
             "C"
           ],
           "kind": "practice",
-          "no": "The question asks about LEO's job, not the speaker's job.",
+          "no": "Whose job is asked? LEO's — not the speaker's.",
           "ok": "A cook—he's! New voice, same line.",
           "options": [
             {
@@ -17886,7 +17886,7 @@
             "C"
           ],
           "kind": "quiz",
-          "no": "The question names Maya. Replay: Where is Maya from?",
+          "no": "One person → is.",
           "ok": "Where is Maya from? — Egypt.",
           "options": [
             {

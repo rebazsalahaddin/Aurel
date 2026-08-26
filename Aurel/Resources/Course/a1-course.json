@@ -1644,7 +1644,7 @@
          "id": "A1-C01-ILL018",
          "alt": "A blank name badge pinned to a shirt, with two empty line shapes where names go"
         },
-        "fn": "noun (the word someone is called)",
+        "fn": "the word someone is called",
         "badge": "both"
        },
        {
@@ -1656,7 +1656,7 @@
          "id": "A1-C01-ILL018",
          "alt": "On a blank name badge, the top shorter line is softly highlighted — the first name line"
         },
-        "fn": "noun chunk (given name)",
+        "fn": "name chunk (first name)",
         "badge": "top"
        },
        {
@@ -1668,7 +1668,7 @@
          "id": "A1-C01-ILL018",
          "alt": "On a blank name badge, the lower longer line is softly highlighted — the last name line"
         },
-        "fn": "noun chunk (family name)",
+        "fn": "name chunk (family name)",
         "badge": "bottom"
        },
        {
@@ -2011,7 +2011,7 @@
         "no": "Alex talks about ALEX. Which word means the speaker?",
         "hints": [
          "Look at the finger — self or other?",
-         "One option needs a noun after it."
+         "One option needs a name after it."
         ],
         "secs": 15,
         "a11y": [
@@ -2019,9 +2019,9 @@
         ]
        },
        {
-       "id": "PR-G002",
-       "instr": "Look. Choose.",
-       "icon": "choose",
+        "id": "PR-G002",
+        "instr": "Look. Choose.",
+        "icon": "choose",
         "scene": "Alex faces Maya and points gently toward Maya; the eye-line arrow ends at Maya.",
         "prompt": "Alex to Maya: ‘___ Maya!’",
         "opts": [
@@ -2197,7 +2197,7 @@
         "no": "Whose feeling? Maya's own.",
         "hints": [
          "Replay — whose voice?",
-         "One option needs a noun."
+         "Listen: I'm good."
         ],
         "secs": 15,
         "a11y": [
@@ -2254,7 +2254,7 @@
         ],
         "key": "C",
         "ok": "Yes — you're, with the hook.",
-        "no": "Two words join with a hook. Your is the other word — before a noun.",
+        "no": "Two words join with a hook. Your is the other word — before a name.",
         "hints": [
          "Say you are, then join.",
          "One option belongs before name."
@@ -4116,7 +4116,7 @@
          "id": "A1-C01-ILL018",
          "alt": "A blank name badge pinned to a shirt, with two empty line shapes where names go"
         },
-        "fn": "noun (the word someone is called)",
+        "fn": "the word someone is called",
         "badge": "both"
        },
        {
@@ -4128,7 +4128,7 @@
          "id": "A1-C01-ILL018",
          "alt": "On a blank name badge, the top shorter line is softly highlighted — the first name line"
         },
-        "fn": "noun chunk (given name)",
+        "fn": "name chunk (first name)",
         "badge": "top"
        },
        {
@@ -4140,7 +4140,7 @@
          "id": "A1-C01-ILL018",
          "alt": "On a blank name badge, the lower longer line is softly highlighted — the last name line"
         },
-        "fn": "noun chunk (family name)",
+        "fn": "name chunk (family name)",
         "badge": "bottom"
        },
        {
@@ -6761,7 +6761,7 @@
         "no": "Join I and am — keep the little hook.",
         "hints": [
          "Say it fast — two words melt.",
-         "One option lost the hook; one lost the verb."
+         "One option lost the hook; one lost am."
         ],
         "secs": 15,
         "a11y": []
@@ -6787,7 +6787,7 @@
         ],
         "key": "B",
         "ok": "Yes — perfect introduction!",
-        "no": "Check the badge word and the little verb.",
+        "no": "Replay the badge line: My name is Leo.",
         "hints": [
          "Read each aloud.",
          "Two options each miss one piece."
@@ -7428,7 +7428,7 @@
        ],
        [
         "G001–G003",
-        "Ch2 Are you…?, Ch3 full be paradigm"
+        "Ch2 Are you…?, Ch3 the full be family"
        ]
       ],
       "tip": "S36 shows the review plan as a calm week-strip (no streak shaming; optional notifications off by default).",
@@ -9134,7 +9134,7 @@
         "w": "phone",
         "ipa": "/foʊn/",
         "aud": "AUD046",
-        "fn": "noun — the thing you call with",
+        "fn": "the thing you call with",
         "ill": {
          "id": "A1-C02-ILL018",
          "alt": "Maya holds up a simple rounded mobile phone with a blank screen"
@@ -9145,7 +9145,7 @@
         "w": "phone number",
         "ipa": "/ˈfoʊn ˌnʌmbər/",
         "aud": "AUD047",
-        "fn": "noun chunk — the digits row",
+        "fn": "detail chunk — the digits row",
         "ill": {
          "id": "A1-C02-ILL018",
          "alt": "Nina points at the digits row of the open register"
@@ -9156,7 +9156,7 @@
         "w": "email",
         "ipa": "/ˈiːmeɪl/",
         "aud": "AUD048",
-        "fn": "noun — the message you send",
+        "fn": "the message you send",
         "ill": {
          "id": "A1-C02-ILL019",
          "alt": "A paper envelope with a small closed flap flies toward an open laptop"
@@ -9167,7 +9167,7 @@
         "w": "email address",
         "ipa": "/ˈiːmeɪl ˌædrɛs/",
         "aud": "AUD049",
-        "fn": "noun chunk — the message row",
+        "fn": "detail chunk — the message row",
         "ill": {
          "id": "A1-C02-ILL019",
          "alt": "Nina underlines the email line of the open register"
@@ -9178,7 +9178,7 @@
         "w": "address",
         "ipa": "/ˈædrɛs/",
         "aud": "AUD050",
-        "fn": "noun — where something is sent",
+        "fn": "where something is sent",
         "ill": {
          "id": "A1-C02-ILL020",
          "alt": "A small house with a blank plaque beside the door"
@@ -9745,7 +9745,7 @@
         "no": "The badge is Sam's, not yours — answer with the no-answer.",
         "hints": [
          "Whose name is on the badge?",
-         "Not yours → No, I'm not!"
+         "Not your name → No, I'm not!"
         ],
         "secs": 20,
         "a11y": [
@@ -9804,7 +9804,7 @@
         ],
         "key": "C",
         "ok": "Yes, I am — fixed!",
-        "no": "I's word is am. Try the fix again.",
+        "no": "After I, use am. Try: Yes, I am.",
         "hints": [
          "I am… you are… — which one fits Leo?",
          "Swap the last word: am."
@@ -9835,10 +9835,10 @@
         ],
         "key": "C",
         "ok": "Yes — It's M!",
-        "no": "Not a person — the letter takes It's.",
+        "no": "Nina points to the card. Listen: It’s M.",
         "hints": [
-         "Is M a person or a thing?",
-         "Things take It's."
+         "Look at the letter card.",
+         "Replay: It’s M."
         ],
         "secs": 15,
         "a11y": [
@@ -9866,10 +9866,10 @@
         ],
         "key": "A",
         "ok": "Yes — It's 5-5-5, 2-0-1.",
-        "no": "Numbers are things: It's.",
+        "no": "Nina asks for one detail. Start: It’s…",
         "hints": [
-         "Person or detail?",
-         "Details: It's."
+         "What does Nina ask for? The phone number.",
+         "Replay the model: It’s…"
         ],
         "secs": 15,
         "a11y": [
@@ -10085,10 +10085,10 @@
         ],
         "key": "A",
         "ok": "Yes — It's Maya! M-A-Y-A.",
-        "no": "The badge-thing takes It's.",
+        "no": "Nina points to the name field. Listen: It’s Maya.",
         "hints": [
-         "Person speaking, or thing being read?",
-         "Things on badges: It's."
+         "Look at the register field.",
+         "Replay the detail frame: It’s…"
         ],
         "secs": 15,
         "a11y": [
@@ -11111,7 +11111,7 @@
         "w": "phone",
         "ipa": "/foʊn/",
         "aud": "AUD046",
-        "fn": "noun — the thing you call with",
+        "fn": "the thing you call with",
         "ill": {
          "id": "A1-C02-ILL018",
          "alt": "Maya holds up a simple rounded mobile phone with a blank screen"
@@ -11122,7 +11122,7 @@
         "w": "phone number",
         "ipa": "/ˈfoʊn ˌnʌmbər/",
         "aud": "AUD047",
-        "fn": "noun chunk — the digits row",
+        "fn": "detail chunk — the digits row",
         "ill": {
          "id": "A1-C02-ILL018",
          "alt": "Nina points at the digits row of the open register"
@@ -11133,7 +11133,7 @@
         "w": "email",
         "ipa": "/ˈiːmeɪl/",
         "aud": "AUD048",
-        "fn": "noun — the message you send",
+        "fn": "the message you send",
         "ill": {
          "id": "A1-C02-ILL019",
          "alt": "A paper envelope with a small closed flap flies toward an open laptop"
@@ -11144,7 +11144,7 @@
         "w": "email address",
         "ipa": "/ˈiːmeɪl ˌædrɛs/",
         "aud": "AUD049",
-        "fn": "noun chunk — the message row",
+        "fn": "detail chunk — the message row",
         "ill": {
          "id": "A1-C02-ILL019",
          "alt": "Nina underlines the email line of the open register"
@@ -11155,7 +11155,7 @@
         "w": "address",
         "ipa": "/ˈædrɛs/",
         "aud": "AUD050",
-        "fn": "noun — where something is sent",
+        "fn": "where something is sent",
         "ill": {
          "id": "A1-C02-ILL020",
          "alt": "A small house with a blank plaque beside the door"
@@ -12589,7 +12589,7 @@
         "no": "The badge is YOURS. Claim it.",
         "hints": [
          "Whose badge is up?",
-         "Yours → the yes-answer."
+         "Your badge → the yes-answer."
         ],
         "secs": 15,
         "a11y": [
@@ -13022,7 +13022,7 @@
         "ok": "My phone number is 5-5-5, 2-0-1. — your first details sentence!",
         "no": "Start with My.",
         "hints": [
-         "Whose number? Mine → My.",
+         "Whose number is it?",
          "My → phone → number → is → digits."
         ]
        }
@@ -13414,8 +13414,8 @@
         "ok": "Yes — E! Just the pure long e.",
         "no": "Say the three: bee, see, ee. The answer has NO start.",
         "hints": [
-         "Play again; is there a consonant before the eee?",
-         "No consonant → E."
+         "Play again: do you hear only eee, or another sound first?",
+         "Only eee → E."
         ],
         "secs": 20,
         "a11y": [
@@ -14305,7 +14305,7 @@
          "nina dot petrova at aroa dot com."
         ],
         "ok": "My email is nina dot petrova at aroa dot com. — a whole card line!",
-        "no": "Whose email? Mine → My.",
+        "no": "It is your email. Start with My.",
         "hints": [
          "Start with My.",
          "My → email → is → the address."
@@ -14678,7 +14678,7 @@
          "id": "A1-C03-ILL002",
          "alt": "Open landscape with rolling fields and distant hills under a cream sky"
         },
-        "fn": "noun — a big place, one name on the map",
+        "fn": "a big place, one name on the map",
         "frame": "One country, one dot. · Canada is a country."
        },
        {
@@ -14691,7 +14691,7 @@
          "id": "A1-C03-ILL002",
          "alt": "Small city with streets, houses, and a park corner under a soft sky"
         },
-        "fn": "noun — a place with streets and houses",
+        "fn": "a place with streets and houses",
         "frame": "Aroa is a city."
        },
        {
@@ -14704,7 +14704,7 @@
          "id": "A1-C03-ILL001",
          "alt": "Hand placing an orange dot on a world map while a figure waves"
         },
-        "fn": "preposition in the fixed frame — says your place",
+        "fn": "in the fixed frame — says your place",
         "frame": "I'm from Peru. · Where are you from?"
        },
        {
@@ -14717,7 +14717,7 @@
          "id": "A1-C03-ILL001",
          "alt": "Two empty rounded speech bubbles floating over talking figures"
         },
-        "fn": "noun — what people speak",
+        "fn": "what people speak",
         "frame": "I speak Arabic and English. Two languages!"
        },
        {
@@ -14730,7 +14730,7 @@
          "id": "A1-C03-ILL001",
          "alt": "Man at a map wall saying a line into a blank speech bubble"
         },
-        "fn": "noun — a language name, always capitalized",
+        "fn": "a language name, always capitalized",
         "frame": "I speak English."
        },
        {
@@ -14743,7 +14743,7 @@
          "id": "A1-C03-ILL001",
          "alt": "Figure speaking warmly beside two empty speech bubbles"
         },
-        "fn": "verb — frames only (I speak … / They speak …)",
+        "fn": "action word — I speak / they speak",
         "frame": "I speak Arabic and English. · They speak Spanish."
        }
       ],
@@ -16003,7 +16003,7 @@
          "id": "A1-C03-ILL022",
          "alt": "Maya smiling, one hand open toward Sam beside the dotted map wall"
         },
-        "fn": "noun — a person you like",
+        "fn": "a person you like",
         "frame": "This is my friend Sam."
        },
        {
@@ -16016,7 +16016,7 @@
          "id": "A1-C03-ILL022",
          "alt": "One figure standing alone beside the map wall"
         },
-        "fn": "noun (singular) — one human",
+        "fn": "one human",
         "frame": "one person"
        },
        {
@@ -16029,7 +16029,7 @@
          "id": "A1-C03-ILL001",
          "alt": "Five figures standing together beside the dotted map wall"
         },
-        "fn": "noun (plural) — many persons",
+        "fn": "many humans",
         "frame": "People from many countries. · People from ten countries!"
        },
        {
@@ -16112,7 +16112,7 @@
          "id": "A1-C03-ILL003",
          "alt": "Photo card and map card side by side, question bubble between them"
         },
-        "fn": "chunk — 3rd-person origin question, FIXED FRAME (paradigm is G007 in L2)",
+        "fn": "chunk — asks for one person's country",
         "frame": "Where is Alex from? … Alex is from Canada.",
         "chunk": true
        },
@@ -16126,7 +16126,7 @@
          "id": "A1-C03-ILL016",
          "alt": "Question bubble over a nurse card"
         },
-        "fn": "chunk [CHUNK:survival] — asks a job",
+        "fn": "chunk — asks a job",
         "frame": "What do you do? … I'm a nurse.",
         "chunk": true
        },
@@ -16140,7 +16140,7 @@
          "id": "A1-C03-ILL013",
          "alt": "Frame tiles above a student card"
         },
-        "fn": "chunk — job answer frame; the a-vs-an sound rule is G009 in L2",
+        "fn": "chunk — the job answer frame",
         "frame": "I'm a student. / I'm an engineer.",
         "chunk": true
        }
@@ -16572,17 +16572,147 @@
          ],
          [
           "he from Australia",
-          "He IS from Australia — be never disappears."
+          "He IS from Australia — is never disappears."
          ]
         ]
        }
       ],
       "dockNote": "The paradigm table is app-layer typography over textless art; tap a row to hear its line. Contractions are highlighted in orange, never spelled out in the audio.",
-      "notYet": "Not yet allowed: past was/were · any verb besides be · it for people · questions beyond Is/Are/Where-from and the fixed chunk set.",
+      "notYet": "Not yet allowed: past was/were · words beyond am/is/are · it for people · questions beyond Is/Are/Where-from and the fixed chunk set.",
       "tip": "Teaching order per §10.5: example → meaning question → more examples → highlighted pattern → concise explanation → choice → tile order → contextual use → conversation transfer → later retrieval.",
       "assets": [
        "A1-C03-AUD045",
        "A1-C03-ILL023"
+      ],
+      "meaningPulses": [
+       {
+        "id": "C3-G007-1",
+        "title": "One person — he or she",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "SAM",
+          "t": "Leo is my friend. He’s from Australia."
+         },
+         {
+          "sp": "SAM",
+          "t": "Maya is my friend. She’s from Egypt."
+         }
+        ],
+        "prompt": "Sam talks about Maya. Which word points to Maya?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "she"
+         },
+         {
+          "id": "B",
+          "t": "he"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. Maya → she.",
+        "no": "Listen again — Maya, then she.",
+        "examples": [
+         "Leo → he · Maya → she"
+        ],
+        "pattern": "Leo → he · Maya → she"
+       },
+       {
+        "id": "C3-G007-2",
+        "title": "Alex — one person, they",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "SAM",
+          "t": "Alex is my friend. They’re from Canada."
+         }
+        ],
+        "prompt": "Alex is one person. Which word points to Alex?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "they"
+         },
+         {
+          "id": "B",
+          "t": "we"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. For Alex, say they.",
+        "no": "Alex is one person. They points to Alex.",
+        "examples": [
+         "Alex → they"
+        ],
+        "pattern": "Alex (one person) → they"
+       },
+       {
+        "id": "C3-G007-3",
+        "title": "Two people — and all of us",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "SAM",
+          "t": "Nina and Maya are friends. They’re from Peru and Egypt."
+         },
+         {
+          "sp": "SAM",
+          "t": "And we — the class! … We’re from ten countries!"
+         }
+        ],
+        "prompt": "Sam says we. Who is we?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Sam and the whole class"
+         },
+         {
+          "id": "B",
+          "t": "Nina and Maya"
+         }
+        ],
+        "key": "A",
+        "ok": "Yes. We = the class.",
+        "no": "Listen — the class says we about itself.",
+        "examples": [
+         "two people → they · the class → we"
+        ],
+        "pattern": "Nina and Maya → they · the class → we"
+       },
+       {
+        "id": "C3-G007-4",
+        "title": "is or are",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "SAM",
+          "t": "Leo is from Australia."
+         },
+         {
+          "sp": "SAM",
+          "t": "Nina and Maya are friends."
+         }
+        ],
+        "prompt": "One person: Leo ___ from Australia.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "is"
+         },
+         {
+          "id": "B",
+          "t": "are"
+         }
+        ],
+        "key": "A",
+        "ok": "One person → is. Two people → are.",
+        "no": "One person → is. Listen again.",
+        "examples": [
+         "Leo is … · Nina and Maya are …"
+        ],
+        "pattern": "one person → is · you/we/they → are"
+       }
       ]
      },
      {
@@ -16686,6 +16816,109 @@
        "A1-C03-AUD047",
        "A1-C03-ILL024",
        "A1-C03-ILL025"
+      ],
+      "meaningPulses": [
+       {
+        "id": "C3-G007-5",
+        "title": "The no-word for one person",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "MAYA",
+          "t": "Sam isn’t from Peru. He’s from Mexico."
+         },
+         {
+          "sp": "SAM",
+          "t": "Two people? Use aren’t. … They aren’t from Spain."
+         }
+        ],
+        "prompt": "One person: Sam ___ from Peru.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "isn't"
+         },
+         {
+          "id": "B",
+          "t": "aren't"
+         }
+        ],
+        "key": "A",
+        "ok": "One person → isn't. Two people → aren't.",
+        "no": "One person → isn't. Listen again.",
+        "examples": [
+         "Sam isn't … · They aren't …"
+        ],
+        "pattern": "one person → isn't · two people → aren't"
+       },
+       {
+        "id": "C3-G007-6",
+        "title": "Ask about one person",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "ALEX",
+          "t": "Is Leo from Australia?",
+          "ask": true
+         },
+         {
+          "sp": "MAYA",
+          "t": "Yes, he is!"
+         }
+        ],
+        "prompt": "One person — Leo. Which line asks?",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Is Leo from Australia?"
+         },
+         {
+          "id": "B",
+          "t": "Are Leo from Australia?"
+         }
+        ],
+        "key": "A",
+        "ok": "One person → Is. Yes, he is!",
+        "no": "One person → Is. Listen again.",
+        "examples": [
+         "Is she …? ↑ · Are they …? ↑"
+        ],
+        "pattern": "one person → Is …? · two people → Are …?"
+       },
+       {
+        "id": "C3-G007-7",
+        "title": "The short answer",
+        "instruction": "Listen. Choose.",
+        "chat": [
+         {
+          "sp": "ALEX",
+          "t": "Are they from Kenya?",
+          "ask": true
+         },
+         {
+          "sp": "MAYA",
+          "t": "Yes, they are."
+         }
+        ],
+        "prompt": "Are they from Kenya? — choose the short answer.",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Yes, they are."
+         },
+         {
+          "id": "B",
+          "t": "Yes, they is."
+         }
+        ],
+        "key": "A",
+        "ok": "Yes! they → are.",
+        "no": "they → are. Listen again.",
+        "examples": [
+         "Is she …? — Yes, she is. · Are they …? — Yes, they are."
+        ],
+        "pattern": "Is …? → is · Are …? → are"
+       }
       ]
      },
      {
@@ -16970,7 +17203,7 @@
         ],
         "key": "B",
         "ok": "No, she isn't. She's from Egypt!",
-        "no": "Two cast facts to check: Maya's country, and the pronoun.",
+        "no": "Check two things: Maya is from Egypt. Maya is she.",
         "a11y": [
          "audio_required_transcript_after_response"
         ]
@@ -17004,7 +17237,7 @@
          ]
         ],
         "key": "all five",
-        "ok": "Every pronoun has its person — and Alex is they.",
+        "ok": "He—Leo. She—Maya. They—Alex. We—the class.",
         "no": "Look at the name(s) on the card, not the picture alone.",
         "a11y": [
          "tap_only_no_drag",
@@ -17138,11 +17371,11 @@
         {
          "id": "G008",
          "title": "His, her, their, our — whose is it?",
-         "pattern": "he→his · she→her · they→their · we→our · + noun",
+         "pattern": "he→his · she→her · they→their · we→our · + name",
          "errs": [
           [
            "His is Sam.",
-           "His NAME is Sam — a noun must follow."
+           "His NAME is Sam — a name must follow."
           ],
           [
            "her/his sound confusion",
@@ -17150,12 +17383,12 @@
           ],
           [
            "Maya's country",
-           "at A1: Her country. The possessive ’s is G010 in Chapter 5."
+           "at A1: Her country. The 's form (Maya's) comes in Chapter 5."
           ]
          ]
         }
        ],
-       "notYet": "Not yet allowed: possessive 's (Maya's) · whose · mine/yours/his as standalone forms.",
+       "notYet": "Not yet allowed: Maya's (the 's form) · whose · mine/yours as standalone words.",
        "canon": "Canon check: Leo 6-2-0 1-5-4 ✓ · maya.haddad@aroa.com ✓ · alex.kim@aroa.com ✓ — all bible-fixed before use."
       },
       "bank": "PR-G015–G022 · 8 of 8 authored items shown",
@@ -17290,8 +17523,8 @@
          }
         ],
         "key": "whose-word matches the named person on each card",
-        "ok": "Whose? his, her, their, our!",
-        "no": "Whose card is it? Say the name, then the little word.",
+        "ok": "Leo—his. Maya—her. Alex and two people—their. We—our.",
+        "no": "Look at the person or group. Then choose the matching small word.",
         "a11y": [
          "icon_cued_no_instruction_word",
          "tap_only_no_drag"
@@ -17317,7 +17550,7 @@
          }
         ],
         "key": "A",
-        "ok": "His NAME is Sam. A thing-word must follow!",
+        "ok": "His name is Sam. Keep name after his.",
         "no": "his + what? Name, phone, email, country…",
         "a11y": [
          "audio_required_transcript_after_response"
@@ -17382,8 +17615,8 @@
          ]
         ],
         "key": "all six",
-        "ok": "The full family: my, your, his, her, their, our!",
-        "no": "Each person word has its own whose-word.",
+        "ok": "I—my. You—your. He—his. She—her. They—their. We—our.",
+        "no": "Replay the person-and-detail pairs, then match again.",
         "a11y": [
          "tap_only_no_drag"
         ]
@@ -17426,21 +17659,21 @@
           },
           {
            "sp": "GUIDE",
-           "t": "A — when the word starts with a consonant sound. … An — when it starts with a vowel sound. … The sound decides, not the letter!"
+           "t": "Listen: a nurse · an engineer. … Your ears choose the small word."
           }
          ]
         }
        ],
        "patternTiles": [
-        "consonant sound → a + job",
-        "vowel sound → an + job"
+        "nurse → a + job",
+        "engineer → an + job"
        ],
-       "explain": "an + vowel sound (a-e-i-o-u sounds). a + every other sound. Jobs say who you are: I'm a cook. I'm an engineer.",
+       "explain": "a + cook · an + engineer — the first sound chooses. Jobs: I’m a cook. I’m an engineer.",
        "records": [
         {
          "id": "G009",
          "title": "A or an? — your ears decide",
-         "pattern": "consonant sound → a + job · vowel sound → an + job",
+         "pattern": "cook → a · engineer → an",
          "errs": [
           [
            "I'm teacher",
@@ -17448,7 +17681,7 @@
           ],
           [
            "an teacher / a engineer",
-           "mixing by letter, not sound. an goes before vowel SOUNDS."
+           "mixing by letter, not sound. Listen: a nurse · an engineer."
           ]
          ]
         }
@@ -17474,7 +17707,7 @@
         ],
         "key": "B",
         "ok": "an engineer — the sound decides!",
-        "no": "Say the next word: EN-gineer. Vowel sound first → an.",
+        "no": "Listen again: an engineer.",
         "a11y": [
          "no_audio_required"
         ]
@@ -17496,7 +17729,7 @@
         ],
         "key": "B",
         "ok": "a nurse — like Maya!",
-        "no": "NURSE starts with /n/ → a.",
+        "no": "Listen again: a nurse.",
         "a11y": [
          "no_audio_required"
         ]
@@ -17518,7 +17751,7 @@
         ],
         "key": "B",
         "ok": "an office worker!",
-        "no": "OF-fice — vowel sound first → an.",
+        "no": "Listen again: an office worker.",
         "a11y": [
          "no_audio_required"
         ]
@@ -17540,7 +17773,7 @@
         ],
         "key": "B",
         "ok": "a cook — Leo at the café!",
-        "no": "COOK starts with /k/ → a.",
+        "no": "Listen again: a cook.",
         "a11y": [
          "no_audio_required"
         ]
@@ -17563,7 +17796,7 @@
         ],
         "key": "seven to a, two to an",
         "ok": "Seven and two — the sounds split the nine!",
-        "no": "Say the job out loud — vowel sound at the start → an tray.",
+        "no": "Play each job. Match the whole chunk: a teacher; an engineer.",
         "a11y": [
          "icon_cued_no_instruction_word",
          "tap_only_no_drag"
@@ -17589,7 +17822,7 @@
          }
         ],
         "key": "A",
-        "ok": "a teacher! TEA-cher starts with /t/.",
+        "ok": "a teacher!",
         "no": "Listen to the first sound of the job word.",
         "a11y": [
          "audio_required_transcript_after_response"
@@ -18049,7 +18282,7 @@
         ],
         "key": "A",
         "ok": "Yes, he is! Leo cooks at the café.",
-        "no": "Two checks: the pronoun (he) and the fact (cook).",
+        "no": "Check two things: Sam is he. Sam is a cook.",
         "a11y": [
          "audio_required_transcript_after_response"
         ]
@@ -18463,7 +18696,7 @@
          }
         ],
         "key": "C",
-        "ok": "A cook — he's! New voice, same grammar.",
+        "ok": "A cook—he’s! New voice, same line.",
         "no": "Whose job is asked? LEO's — not the speaker's.",
         "a11y": [
          "audio_required_transcript_after_response"
@@ -18632,7 +18865,7 @@
          "id": "A1-C03-ILL003",
          "alt": "Photo card and map card side by side, question bubble between them"
         },
-        "fn": "chunk — 3rd-person origin question, FIXED FRAME (paradigm is G007 in L2)",
+        "fn": "chunk — asks for one person's country",
         "frame": "Where is Alex from? … Alex is from Canada.",
         "chunk": true
        },
@@ -18646,7 +18879,7 @@
          "id": "A1-C03-ILL016",
          "alt": "Question bubble over a nurse card"
         },
-        "fn": "chunk [CHUNK:survival] — asks a job",
+        "fn": "chunk — asks a job",
         "frame": "What do you do? … I'm a nurse.",
         "chunk": true
        },
@@ -18660,7 +18893,7 @@
          "id": "A1-C03-ILL013",
          "alt": "Frame tiles above a student card"
         },
-        "fn": "chunk — job answer frame; the a-vs-an sound rule is G009 in L2",
+        "fn": "chunk — the job answer frame",
         "frame": "I'm a student. / I'm an engineer.",
         "chunk": true
        }
@@ -19079,7 +19312,7 @@
          "an",
          "engineer"
         ],
-        "ok": "An before the vowel sound — engineer!",
+        "ok": "An engineer—yes!",
         "no": "Name first, then is, then an + job.",
         "target": "Kenji is an engineer."
        },
@@ -19137,7 +19370,7 @@
          "is",
          "Maya."
         ],
-        "ok": "Whose-word + thing + is + name.",
+        "ok": "Their + phone number + is + the number.",
         "no": "her + name comes first.",
         "target": "Her name is Maya."
        },
@@ -20545,14 +20778,14 @@
        {
         "id": "C3-CLIN-A",
         "name": "they is / they are",
-        "benefit": "pronoun↔be mapping with cast cards — exit: 8/10 correct on a fresh sort",
+        "benefit": "person-word ↔ am/is/are mapping with cast cards — exit: 8/10 correct on a fresh sort",
         "n": 10,
         "trigger": "G007 sort + G001/G005 misses"
        },
        {
         "id": "C3-CLIN-B",
         "name": "his or her?",
-        "benefit": "sound-first his/her drill + canon cards — exit: 8/10 on a fresh possessive set",
+        "benefit": "sound-first his/her drill + canon cards — exit: 8/10 on a fresh his/her set",
         "n": 10,
         "trigger": "G015–G021 pattern of misses"
        },
@@ -21143,7 +21376,7 @@
       "label": "Cumulative retrieval — part 2 (Ch3)",
       "step": "STEP 2 · ≈6 min",
       "bank": "A1-C04-RT009–016 · 8 of 8 authored items shown",
-      "head": "Countries back-to-back with jobs, possessives back-to-back with the I’m… frames — welcome-morning speed.",
+      "head": "Countries back-to-back with jobs, his/her words back-to-back with the I'm… frames — welcome-morning speed.",
       "items": [
        {
         "id": "RT009",
@@ -21414,7 +21647,7 @@
         ],
         "key": "B",
         "ok": "Maya is a nurse.",
-        "no": "Nurse — a consonant sound: a nurse."
+        "no": "Listen: a nurse."
        },
        {
         "id": "CL2-005",
@@ -21436,7 +21669,7 @@
         ],
         "key": "A",
         "ok": "Amara is an office worker.",
-        "no": "Office — a vowel sound: an office worker."
+        "no": "Listen: an office worker."
        },
        {
         "id": "CL2-006",
@@ -22372,7 +22605,7 @@
         ],
         "key": "B",
         "ok": "An engineer.",
-        "no": "Vowel sound → an."
+        "no": "Listen — an."
        },
        {
         "id": "A1-CP1-G011",
