@@ -50,7 +50,7 @@ final class KaraokeTests: XCTestCase {
     // MARK: VoicePlayback — the state karaoke rows match on
 
     /// The shipped Chapter-1 pilot supplies a real catalog take: playing it
-    /// must expose its authored text + speaker for row matching.
+    /// must expose its authored identity (asset + line) for row matching.
     @MainActor
     func testRecordedTakeExposesSpokenLineForMatching() throws {
         let playback = VoicePlayback(catalog: AudioCatalog(bundle: .main))
@@ -64,11 +64,40 @@ final class KaraokeTests: XCTestCase {
         playback.speak(audioID: asset.id, text: line.text, slow: false, lineIndex: nil)
         XCTAssertEqual(playback.spokenLineText, line.text)
         XCTAssertEqual(playback.spokenSpeaker, line.speaker)
-        // Speaker-voiced takes match text *and* speaker…
-        XCTAssertTrue(playback.isSpoken(text: line.text, speaker: line.speaker))
-        XCTAssertFalse(playback.isSpoken(text: line.text, speaker: "NOT-$A-SPEAKER"))
-        // …and never a different line's text.
-        XCTAssertFalse(playback.isSpoken(text: "definitely not the spoken line"))
+        XCTAssertEqual(playback.spokenAssetID, asset.id)
+        XCTAssertEqual(playback.spokenLine, 0)
+        // Identity matching keys on the asset + aligned line (speaker
+        // narrows same-text rows)…
+        XCTAssertTrue(
+            playback.isSpoken(audioID: asset.id, text: line.text, speaker: line.speaker))
+        XCTAssertFalse(
+            playback.isSpoken(audioID: asset.id, text: line.text, speaker: "NOT-A-SPEAKER"))
+        // …never on a different asset…
+        XCTAssertFalse(playback.isSpoken(audioID: "A1-C01-AUD999", text: line.text))
+        // …and the recorded path never degrades to raw text equality, so
+        // equal texts elsewhere can't light up.
+        XCTAssertFalse(playback.isSpoken(text: line.text))
+    }
+
+    /// Line-scoped playback (a single conversation turn) keeps the ABSOLUTE
+    /// catalog line index, so identity matching still resolves.
+    @MainActor
+    func testLineScopedPlaybackKeepsAbsoluteLineIndex() throws {
+        let playback = VoicePlayback(catalog: AudioCatalog(bundle: .main))
+        defer { playback.stop() }
+
+        let asset = try XCTUnwrap(playback.catalog.asset("A1-C01-AUD043"))
+        XCTAssertTrue(asset.lines.indices.contains(1), "pilot asset needs two lines")
+        playback.speak(
+            audioID: asset.id, text: asset.lines[1].text, slow: false, lineIndex: 1)
+        XCTAssertEqual(playback.spokenLine, 1)
+        XCTAssertEqual(playback.spokenLineText, asset.lines[1].text)
+        XCTAssertTrue(
+            playback.isSpoken(
+                audioID: asset.id, text: asset.lines[1].text, speaker: asset.lines[1].speaker))
+        XCTAssertFalse(
+            playback.isSpoken(
+                audioID: asset.id, text: asset.lines[0].text, speaker: asset.lines[0].speaker))
     }
 
     /// The TTS fallback still karaoke-enables: its text is relayed verbatim
@@ -82,6 +111,7 @@ final class KaraokeTests: XCTestCase {
         playback.speak(audioID: nil, text: "Hello", slow: false)
         XCTAssertEqual(playback.spokenLineText, "Hello")
         XCTAssertNil(playback.spokenSpeaker)
+        XCTAssertTrue(playback.isSpoken(text: "Hello"))
     }
 
     @MainActor
@@ -91,6 +121,128 @@ final class KaraokeTests: XCTestCase {
         playback.stop()
         XCTAssertNil(playback.spokenLineText)
         XCTAssertNil(playback.spokenRange)
+        XCTAssertNil(playback.spokenAssetID)
+        XCTAssertEqual(playback.spokenLine, -1)
         XCTAssertFalse(playback.isSpoken(text: "Hello"))
+    }
+
+    // MARK: KaraokeTimeline — the dialogue timeline resolver
+
+    private func line(_ speaker: String, _ text: String) -> AudioCatalog.Line {
+        AudioCatalog.Line(
+            file: "x.wav", speaker: speaker, voice: "V", text: text, dur: 1, wpm: nil)
+    }
+
+    /// Authored shape: learner (YOU) turns are never recorded, so they map to
+    /// nil while the recorded neighbors keep their authored order.
+    func testAlignSkipsLearnerTurnsAndKeepsAuthorOrder() {
+        let lines = [
+            line("ALEX", "Hello! … Good morning!"),
+            line("NINA", "Good morning, Alex!"),
+            line("NINA", "Welcome! … What's your name?"),
+            line("NINA", "Maya! … How do you spell that?"),
+            line("NINA", "Maya. … Thank you!"),
+        ]
+        let rows = [
+            KaraokeTimeline.Row(speaker: "ALEX", text: "Hello! … Good morning!"),
+            KaraokeTimeline.Row(speaker: "NINA", text: "Good morning, Alex!"),
+            KaraokeTimeline.Row(speaker: "NINA", text: "Welcome! … What's your name?"),
+            KaraokeTimeline.Row(speaker: "YOU", text: "Maya."),
+            KaraokeTimeline.Row(speaker: "NINA", text: "Maya! … How do you spell that?"),
+            KaraokeTimeline.Row(speaker: "YOU", text: "M … A … Y … A."),
+            KaraokeTimeline.Row(speaker: "NINA", text: "Maya. … Thank you!"),
+        ]
+        XCTAssertEqual(
+            KaraokeTimeline.align(rows: rows, lines: lines), [0, 1, 2, nil, 3, nil, 4])
+    }
+
+    /// The authored duplicate (A1-C04-AUD036: AMARA says "Nice to meet you
+    /// too!" twice) resolves in order — exactly one row can be active per
+    /// take, where text equality used to light both.
+    func testAlignResolvesDuplicateLinesInOrder() {
+        let lines = [
+            line("NINA", "Hello!"),
+            line("AMARA", "Hi! I'm Amara."),
+            line("AMARA", "Nice to meet you too!"),
+            line("NINA", "And you?"),
+            line("AMARA", "Nice to meet you too!"),
+        ]
+        let rows = [
+            KaraokeTimeline.Row(speaker: "NINA", text: "Hello!"),
+            KaraokeTimeline.Row(speaker: "AMARA", text: "Hi! I'm Amara."),
+            KaraokeTimeline.Row(speaker: "AMARA", text: "Nice to meet you too!"),
+            KaraokeTimeline.Row(speaker: "NINA", text: "And you?"),
+            KaraokeTimeline.Row(speaker: "AMARA", text: "Nice to meet you too!"),
+        ]
+        XCTAssertEqual(KaraokeTimeline.align(rows: rows, lines: lines), [0, 1, 2, 3, 4])
+    }
+
+    /// Recordings carry TTS pacing the learner-facing rows do not — ellipsis
+    /// pauses and inserted fragments ("Hmm — today:") still align because
+    /// matching runs on normalized tokens in order.
+    func testAlignMatchesTTSPacedScriptVariants() {
+        let paced = line(
+            "ALEX",
+            "Okay! … You're my friend, and today — you're the badge… helper! "
+                + "Hmm — today: you say hello. New people! New names!")
+        let rows = [
+            KaraokeTimeline.Row(
+                speaker: "ALEX",
+                text: "Okay! You're my friend, and today — you're the badge helper! "
+                    + "You say hello. New people! New names!")
+        ]
+        XCTAssertEqual(KaraokeTimeline.align(rows: rows, lines: [paced]), [0])
+
+        let dotted = line("GUIDE", "It is morning. … The Community House is open! … Ready?")
+        let plain = [
+            KaraokeTimeline.Row(
+                speaker: "GUIDE", text: "It is morning. The Community House is open! Ready?")
+        ]
+        XCTAssertEqual(KaraokeTimeline.align(rows: plain, lines: [dotted]), [0])
+    }
+
+    /// An asset whose narration script differs from the dialogue on screen
+    /// (A1-C04-AUD001 shape) highlights nothing — graceful, deterministic.
+    func testAlignMapsNothingWhenAudioIsADifferentScript() {
+        let lines = [line("GUIDE", "Look! … The map wall. … Six dots.")]
+        let rows = [
+            KaraokeTimeline.Row(speaker: "ALEX", text: "You're my friend! Look: one badge."),
+            KaraokeTimeline.Row(speaker: "GUIDE", text: "Three steps, three lessons."),
+        ]
+        XCTAssertEqual(KaraokeTimeline.align(rows: rows, lines: lines), [nil, nil])
+    }
+
+    func testAlignHandlesEmptyAndMalformedInput() {
+        XCTAssertEqual(KaraokeTimeline.align(rows: [], lines: []), [])
+        XCTAssertEqual(
+            KaraokeTimeline.align(
+                rows: [KaraokeTimeline.Row(text: "")], lines: [line("A", "x")]),
+            [nil])
+        XCTAssertEqual(
+            KaraokeTimeline.align(rows: [KaraokeTimeline.Row(text: "Hello")], lines: []),
+            [nil])
+    }
+
+    // MARK: Playback lifecycle
+
+    /// Navigating away must end the audio: karaoke state can never leak
+    /// across screens (the old code kept the old queue playing).
+    @MainActor
+    func testGotoStopsPlaybackSoStateNeverLeaksAcrossScreens() throws {
+        final class StopSpy: AudioPlaying {
+            var stops = 0
+            func speak(_ text: String, slow: Bool) {}
+            func speak(audioID: String?, text: String, slow: Bool, lineIndex: Int?) {}
+            func stop() { stops += 1 }
+            var isSpeaking: Bool { false }
+        }
+
+        let store = CourseDecodingTests.store
+        let start = try XCTUnwrap(store.flat.indices.first, "course must not be empty")
+        let m = PlayerModel(course: store, start: start)
+        let spy = StopSpy()
+        m.speaker = spy
+        m.goto(m.p + 1)
+        XCTAssertGreaterThanOrEqual(spy.stops, 1, "goto must stop the speaker")
     }
 }

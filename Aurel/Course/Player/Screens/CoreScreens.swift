@@ -165,6 +165,9 @@ struct HookScreenView: View {
                 .padding(.bottom, 18)
 
                 VStack(spacing: 9) {
+                    let karaokeRows = (h.lines ?? []).map {
+                        KaraokeTimeline.Row(speaker: $0.sp, text: $0.t)
+                    }
                     ForEach(Array((h.lines ?? []).enumerated()), id: \.offset) { i, l in
                         let learner = l.sp == "YOU"
                         HStack(alignment: .top, spacing: 10) {
@@ -177,7 +180,7 @@ struct HookScreenView: View {
                                     learner ? Color.auTintText : Color.auAccentText)
                             KaraokeText(
                                 text: l.t,
-                                isSpoken: m.playback?.isSpoken(text: l.t, speaker: l.sp) ?? false,
+                                isSpoken: m.isSpeakingRow(i, in: karaokeRows, audio: h.aud),
                                 spokenRange: m.playback?.spokenRange,
                                 base: learner ? .auTintText : .auText
                             )
@@ -508,7 +511,7 @@ struct CardsScreenView: View {
 
                     KaraokeText(
                         text: card.main,
-                        isSpoken: m.playback?.isSpoken(text: card.main) ?? false,
+                        isSpoken: m.isSpeakingText(card.main, audio: card.aud),
                         spokenRange: m.playback?.spokenRange
                     )
                     .font(.caprasimo(size: 34))

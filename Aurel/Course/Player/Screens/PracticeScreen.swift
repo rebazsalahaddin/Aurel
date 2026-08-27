@@ -532,7 +532,7 @@ struct PracticeScreenView: View {
                     .foregroundStyle(Color.auFlatText)
                 KaraokeText(
                     text: said.t,
-                    isSpoken: m.playback?.isSpoken(text: said.t) ?? false,
+                    isSpoken: m.isSpeakingText(said.t, speaker: said.sp, audio: item.aud),
                     spokenRange: m.playback?.spokenRange
                 )
                 .font(.figtree(.regular, size: 15.5))

@@ -48,7 +48,7 @@ final class RendererCoverageSuite: XCTestCase {
         var leakedAuthoringTokens: [String] = []
 
         for kind in Self.authoredKinds {
-            app.launchArguments = ["-AUREL_RENDERER_KIND", kind]
+            app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_RENDERER_KIND", kind]
             app.launch()
 
             let root = anyElement("au.player.kind.\(kind)")
@@ -87,7 +87,7 @@ final class RendererCoverageSuite: XCTestCase {
 
     func testPseudolanguageAndAXLayoutKeepsCoreNavigationUsable() {
         app.launchArguments = [
-            "-AUREL_TEST_START", "home",
+            "-AUREL_TEST_RESET", "-AUREL_TEST_START", "home",
             "-NSDoubleLocalizedStrings", "YES",
             "-NSDoubleLocalizedStringsIncludeDefault", "YES",
             "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL",
@@ -112,7 +112,7 @@ final class RendererCoverageSuite: XCTestCase {
     func testRepresentativeFamiliesAtAccessibilitySizeAndReducedMotion() {
         for kind in Self.representativeKinds {
             app.launchArguments = [
-                "-AUREL_RENDERER_KIND", kind,
+                "-AUREL_TEST_RESET", "-AUREL_RENDERER_KIND", kind,
                 "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL",
                 "-UIAccessibilityReduceMotionEnabled", "YES",
                 "-UIAccessibilityDarkerSystemColorsEnabled", "YES",
@@ -137,7 +137,7 @@ final class RendererCoverageSuite: XCTestCase {
     }
 
     func testPracticeSelectionAnnouncesStateWithoutRelyingOnColor() {
-        app.launchArguments = ["-AUREL_RENDERER_KIND", "practice"]
+        app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_RENDERER_KIND", "practice"]
         app.launch()
 
         let options = app.buttons.matching(
@@ -147,14 +147,21 @@ final class RendererCoverageSuite: XCTestCase {
         if !first.isHittable { app.swipeUp() }
         XCTAssertTrue(first.isHittable)
         first.tap()
-        XCTAssertTrue(first.isSelected, "picked option must expose the selected trait")
+        // Re-resolve the picked option from a fresh snapshot: the reference
+        // captured before the tap predates the state change it caused, and a
+        // stale snapshot can read neither trait nor value.
+        let picked = app.buttons.matching(
+            NSPredicate(format: "identifier BEGINSWITH 'au.player.option.'")
+        ).firstMatch
+        XCTAssertTrue(picked.waitForExistence(timeout: 4), "the picked option disappeared")
+        XCTAssertTrue(picked.isSelected, "picked option must expose the selected trait")
         XCTAssertFalse(
-            String(describing: first.value ?? "").isEmpty,
+            String(describing: picked.value ?? "").isEmpty,
             "picked option must expose text feedback in addition to color")
     }
 
     func testGuidedRoleplayTilesAdvanceToARealCompletionAction() {
-        app.launchArguments = ["-AUREL_RENDERER_KIND", "roleplay"]
+        app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_RENDERER_KIND", "roleplay"]
         app.launch()
 
         let root = anyElement("au.player.kind.roleplay")

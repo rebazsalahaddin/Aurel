@@ -181,9 +181,12 @@ struct MeaningPulseSequenceView: View {
                 }
 
                 if let chat = pulse.chat, !chat.isEmpty {
+                    let karaokeRows = chat.map {
+                        KaraokeTimeline.Row(speaker: $0.sp, text: $0.t)
+                    }
                     ACard(radius: 17) {
                         VStack(alignment: .leading, spacing: 8) {
-                            ForEach(chat, id: \.t) { line in
+                            ForEach(Array(chat.enumerated()), id: \.offset) { i, line in
                                 HStack(alignment: .top, spacing: 9) {
                                     Text(line.sp)
                                         .font(.figtree(.bold, size: 9))
@@ -192,8 +195,8 @@ struct MeaningPulseSequenceView: View {
                                         .foregroundStyle(Color.auTextTertiary)
                                     KaraokeText(
                                         text: line.t,
-                                        isSpoken: m.playback?.isSpoken(
-                                            text: line.t, speaker: line.sp) ?? false,
+                                        isSpoken: m.isSpeakingRow(
+                                            i, in: karaokeRows, audio: pulse.aud),
                                         spokenRange: m.playback?.spokenRange
                                     )
                                     .font(.figtree(.regular, size: 14))
@@ -793,7 +796,7 @@ private struct PronProduceItemCard: View {
             VStack(alignment: .leading, spacing: 0) {
                 KaraokeText(
                     text: it.word,
-                    isSpoken: m.playback?.isSpoken(text: it.word) ?? false,
+                    isSpoken: m.isSpeakingText(it.word, audio: it.aud),
                     spokenRange: m.playback?.spokenRange
                 )
                 .font(.caprasimo(size: 22))
@@ -1060,6 +1063,9 @@ struct ConversationScreenView: View {
                 }
                 .padding(.bottom, 14)
 
+                let karaokeRows = (c.turns ?? []).map {
+                    KaraokeTimeline.Row(speaker: $0.sp, text: $0.t)
+                }
                 VStack(spacing: 8) {
                     ForEach(Array((c.turns ?? []).enumerated()), id: \.offset) { k, t in
                         let on = k < m.turn
@@ -1078,7 +1084,8 @@ struct ConversationScreenView: View {
                                 .foregroundStyle(Color.auAccentText)
                             KaraokeText(
                                 text: t.t,
-                                isSpoken: m.playback?.isSpoken(text: t.t, speaker: t.sp) ?? false,
+                                isSpoken: m.isSpeakingRow(
+                                    k, in: karaokeRows, audio: c.aud ?? c.lineAud),
                                 spokenRange: m.playback?.spokenRange
                             )
                             .font(.figtree(.regular, size: 15))

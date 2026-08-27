@@ -10,7 +10,11 @@ final class PH02NavigationSuite: XCTestCase {
         try await super.setUp()
         continueAfterFailure = false
         app = XCUIApplication()
-        app.launchArguments = ["-AUREL_TEST_START", "home"]
+        // The reset keeps the suite hermetic: a previous Xcode run's
+        // persisted chapter shell, lesson records, and pending card would
+        // otherwise re-shape Home (return card, done stops) and shift every
+        // asserted element.
+        app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_TEST_START", "home"]
         app.launch()
     }
 
@@ -57,16 +61,44 @@ final class PH02NavigationSuite: XCTestCase {
     }
 
     func testLockedChapterOpensAccessRoute() {
-        let nextChapter = app.buttons.matching(identifier: "au.home.next-chapter").firstMatch
-        for _ in 0..<5 where !nextChapter.exists {
-            app.swipeUp()
-        }
+        // Park the shell on the last authored chapter: its successor is
+        // planned but not bundled, so the next-chapter card keeps the access
+        // route — a locked chapter is never a dead end. (On earlier chapters
+        // the card opens the bundled successor directly on Home.)
+        app.terminate()
+        app.launchArguments = [
+            "-AUREL_TEST_RESET", "-AUREL_TEST_START", "home",
+            "-AUREL_CHAPTER_INDEX", "\(Self.lastAuthoredChapterIdx)",
+        ]
+        app.launch()
+        XCTAssertTrue(
+            app.buttons.matching(identifier: "au.tab.learn").firstMatch.waitForExistence(
+                timeout: 10))
 
+        let nextChapter = app.buttons.matching(identifier: "au.home.next-chapter").firstMatch
         XCTAssertTrue(nextChapter.waitForExistence(timeout: 8))
         XCTAssertTrue(nextChapter.isEnabled)
+        // The card sits at the path's end; scroll it clear of the floating
+        // tab bar before tapping, exactly what a user does.
+        for _ in 0..<6 where !nextChapter.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(nextChapter.isHittable, "the next-chapter card never scrolled into view")
         nextChapter.tap()
         assertExists("au.capability.chapters-unavailable", type: .other)
     }
+
+    /// The last bundled chapter hosts the plan-only successor, so it is the
+    /// one surface where the next-chapter card keeps its access route.
+    private static let lastAuthoredChapterIdx: Int = {
+        guard
+            let url = Bundle(for: PH02NavigationSuite.self).url(
+                forResource: "a1-course", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let chapters = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]]
+        else { return 0 }
+        return max(0, chapters.count - 1)
+    }()
 
     private func tap(_ id: String) {
         let element = app.buttons.matching(identifier: id).firstMatch

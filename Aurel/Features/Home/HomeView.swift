@@ -40,6 +40,9 @@ struct HomeView: View {
                     header
                     recommendedCard
                     dayArcCard
+                    if env.router.previousAuthoredChapterIdx != nil {
+                        returnChapterCard
+                    }
                     lessonPath
                 }
                 .padding(.bottom, 160)
@@ -398,6 +401,53 @@ struct HomeView: View {
         return due == 0 ? "nothing due" : "\(due)\(due == 1 ? " word · 1 min" : " words · 1 min")"
     }
 
+    // MARK: Return card (the chapter shell moves both ways)
+
+    /// While the shell sits past Chapter One, the earlier chapter stays one
+    /// tap away — symmetric to the next-chapter card at the path's end. Both
+    /// route through goToChapter, so the target chapter's opener is re-based
+    /// as the learner's next stop and the move persists. Hidden on Chapter
+    /// One (`previousAuthoredChapterIdx` is nil there).
+    private var returnChapterCard: some View {
+        let previous = env.router.previousAuthoredChapterIdx
+        let headers = env.router.chapterHeaders
+        let previousHeader =
+            previous.flatMap { headers.indices.contains($0) ? headers[$0] : nil }
+
+        return Button {
+            env.router.goBackChapter()
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(previousHeader?.no ?? "")
+                        .font(.caprasimo(size: 15))
+                    Text(previousHeader?.name ?? "")
+                        .font(.figtree(.regular, size: 12))
+                        .foregroundStyle(Color.auTextTertiary)
+                }
+                Spacer(minLength: 8)
+                // A quiet affordance — returning is maintenance, not the
+                // day's promise (the forward capsule keeps its accent).
+                Text("Return")
+                    .font(.figtree(.bold, size: 11))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(Color.auFlatBg))
+                    .foregroundStyle(Color.auFlatText)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 18)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .auPracticeGlass(radius: 24)
+        }
+        .buttonStyle(.auTap)
+        .accessibilityIdentifier("au.home.previous-chapter")
+        .accessibilityLabel(
+            "\(previousHeader?.no ?? "Previous chapter"): \(previousHeader?.name ?? ""). Return")
+        .padding(.horizontal, 24)
+        .padding(.bottom, 6)
+    }
+
     // MARK: Lesson path (lines 530–632)
 
     /// Design canvas is 402×724 (svg 402×816; card tops at 570). Laid out
@@ -510,7 +560,7 @@ struct HomeView: View {
                         }
 
                         Button {
-                            env.router.nav(.paywall)
+                            env.router.openNextChapter()
                         } label: {
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
@@ -521,18 +571,22 @@ struct HomeView: View {
                                         .foregroundStyle(Color.auTextTertiary)
                                 }
                                 Spacer(minLength: 8)
-                                Text(
-                                    env.router.pro ? "Open" : "View access"
-                                )
-                                .font(.figtree(.bold, size: 11))
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 3)
-                                .background(
-                                    Capsule().fill(
-                                        env.router.pro ? Color.auOkBg : Color.auFlatBg)
-                                )
-                                .foregroundStyle(
-                                    env.router.pro ? Color.auOkQuiet : Color.auFlatText)
+                                // A bundled next chapter opens on Home; only
+                                // plan-only successors keep the paywall
+                                // affordance (`pro` reads as entitled where
+                                // commerce runs).
+                                let opens =
+                                    env.router.nextAuthoredChapterIdx != nil
+                                    || env.router.pro
+                                Text(opens ? "Open" : "View access")
+                                    .font(.figtree(.bold, size: 11))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 3)
+                                    .background(
+                                        Capsule().fill(opens ? Color.auOkBg : Color.auFlatBg)
+                                    )
+                                    .foregroundStyle(
+                                        opens ? Color.auOkQuiet : Color.auFlatText)
                             }
                             .padding(.horizontal, 20)
                             .padding(.vertical, 18)
@@ -540,6 +594,8 @@ struct HomeView: View {
                         }
                         .buttonStyle(.auTap)
                         .accessibilityIdentifier("au.home.next-chapter")
+                        .accessibilityLabel(
+                            "\(ch.nextNo): \(ch.nextName). \(env.router.nextAuthoredChapterIdx != nil || env.router.pro ? "Open" : "View access")")
                         .frame(width: 402 - 48)
                         .offset(x: 24, y: 570)
 

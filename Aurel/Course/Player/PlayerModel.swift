@@ -80,6 +80,56 @@ final class PlayerModel {
         speaker as? VoicePlayback
     }
 
+    // MARK: Karaoke identity (the dialogue timeline resolver's consumer)
+    //
+    // Screens ask the MODEL whether a rendered row is the one being spoken.
+    // Matching runs on playback identity — (asset id, absolute catalog line
+    // index) resolved through `KaraokeTimeline` — never on raw text equality,
+    // so duplicated lines, TTS-paced scripts, and learner turns stay
+    // deterministic, and stale playback from another screen can never light
+    // foreign rows.
+
+    /// True while the asset behind `audio` is playing and its currently
+    /// spoken catalog line is the one that voices row `index` of `rows`.
+    func isSpeakingRow(_ index: Int, in rows: [KaraokeTimeline.Row], audio: String?) -> Bool {
+        guard let playback, playback.speaking,
+            let assetID = resolvedAudioID(audio),
+            playback.spokenAssetID == assetID,
+            let asset = playback.catalog.asset(assetID),
+            !asset.lines.isEmpty
+        else { return false }
+        let map = karaokeMap(for: assetID, rows: rows, lines: asset.lines)
+        guard map.indices.contains(index), let line = map[index] else { return false }
+        return line == playback.spokenLine
+    }
+
+    /// Single-line variant: identity first; text matching only on the TTS
+    /// fallback (no catalog asset was resolved).
+    func isSpeakingText(
+        _ text: String, speaker: String? = nil, audio: String? = nil
+    ) -> Bool {
+        guard let playback else { return false }
+        if let assetID = resolvedAudioID(audio) {
+            return playback.isSpoken(audioID: assetID, text: text, speaker: speaker)
+        }
+        return playback.isSpoken(text: text, speaker: speaker)
+    }
+
+    /// Row→line maps are pure functions of (asset, rows) — computed once per
+    /// screen, then cached for the session.
+    private var karaokeMaps: [String: [Int?]] = [:]
+
+    private func karaokeMap(
+        for assetID: String, rows: [KaraokeTimeline.Row], lines: [AudioCatalog.Line]
+    ) -> [Int?] {
+        let signature = rows.map(\.text).joined(separator: "\u{1}")
+        let key = assetID + "|" + String(rows.count) + "|" + signature
+        if let cached = karaokeMaps[key] { return cached }
+        let map = KaraokeTimeline.align(rows: rows, lines: lines)
+        karaokeMaps[key] = map
+        return map
+    }
+
     /// Plays the authored offline take when `audio` resolves in the current
     /// chapter, with text-to-speech retained only as a missing-asset fallback.
     func speak(
@@ -160,6 +210,9 @@ final class PlayerModel {
 
     func goto(_ newP: Int) {
         say.reset()
+        // Leaving a screen ends its audio: playback state (and the karaoke
+        // highlight derived from it) must never leak into the next screen.
+        speaker?.stop()
         let f = course.flat
         guard !f.isEmpty else { return }
         let b = bounds

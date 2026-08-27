@@ -5,9 +5,8 @@ import XCTest
 /// Phase 3 (audio-upgrade): the shipped audio catalog and the course bank's
 /// playable audio references stay joined.
 ///
-/// Chapter 1 is the recorded pilot; later chapters stay on the TTS fallback
-/// until their batch ships, so each chapter's expectation is pinned here —
-/// widening it IS the batch-shipping change and should fail loudly otherwise.
+/// All authored A1 chapters are bundled for offline playback. A reference that
+/// misses this catalog falls back safely at runtime, but is a shipping defect.
 ///
 /// Playable references are the fields the speak funnel can receive: `aud`,
 /// `lineAud`, `preAud`. `vo` (promise voice-over text) and `auds` (review
@@ -16,10 +15,11 @@ import XCTest
 final class AudioCatalogTests: XCTestCase {
     private let catalog = AudioCatalog(bundle: .main)
 
-    /// The approved character→voice cast (user decision, 2026-08-26).
-    private let approvedVoices: Set<String> = [
-        "Sarah", "Lily", "Jessica", "George", "Matilda", "Brian", "River",
-        "Will", "Monika Sogam",
+    /// The approved character→voice cast for clear General American A1 audio.
+    private let approvedVoices: [String: String] = [
+        "GUIDE": "Iapetus", "ALEX": "Puck", "MAYA": "Sulafat", "LEO": "Achird",
+        "NINA": "Erinome", "SAM": "Sadachbia", "AMARA": "Autonoe",
+        "RAFAEL": "Algieba", "KENJI": "Schedar",
     ]
 
     // MARK: Shipped-JSON walk (same loader contract as ContentConformanceTests)
@@ -71,6 +71,10 @@ final class AudioCatalogTests: XCTestCase {
 
     // MARK: Bundle integrity
 
+    func testCatalogWasGeneratedByRequestedModel() {
+        XCTAssertEqual(catalog.model, "Gemini-3.1-Flash-TTS")
+    }
+
     func testCatalogBundlesEveryLineFile() {
         let assets = catalog.assets
         XCTAssertFalse(assets.isEmpty, "audio-catalog.json missing or empty from the app bundle")
@@ -87,9 +91,19 @@ final class AudioCatalogTests: XCTestCase {
     func testVoiceCastMatchesApprovedMapping() {
         for asset in catalog.assets {
             for line in asset.lines {
-                XCTAssertTrue(
-                    approvedVoices.contains(line.voice),
-                    "\(asset.id)/\(line.file): voice \"\(line.voice)\" is outside the approved cast")
+                XCTAssertEqual(
+                    line.voice, approvedVoices[line.speaker.uppercased()],
+                    "\(asset.id)/\(line.file): \(line.speaker) has the wrong cast voice")
+            }
+        }
+    }
+
+    func testCatalogUsesLosslessWAVFiles() {
+        for asset in catalog.assets {
+            for line in asset.lines {
+                XCTAssertEqual(
+                    URL(fileURLWithPath: line.file).pathExtension.lowercased(), "wav",
+                    "\(asset.id)/\(line.file): course speech must ship as lossless PCM WAV")
             }
         }
     }
@@ -116,26 +130,9 @@ final class AudioCatalogTests: XCTestCase {
 
     // MARK: Reference coverage (pinned per chapter)
 
-    func testChapter1ReferencesResolve() throws {
-        assertResolves(try references(byChapter: "A1-C01"), chapter: "A1-C01")
-    }
-
-    /// The pilot contract: C2–C4 play through the TTS fallback. When a batch
-    /// ships, flip these to `assertResolves` — this test failing after adding
-    /// assets is the reminder to update it.
-    func testUnshippedChaptersStayOnTTSFallback() throws {
-        let shipped: [String] = ["A1-C01"]
-        for chapter in ["A1-C02", "A1-C03", "A1-C04"] {
-            let references = try references(byChapter: chapter)
-            let resolving = references.filter { catalog.asset(aud: $0, chapter: chapter) != nil }
-            // Cross-chapter full-id references into shipped chapters are fine;
-            // a chapter-scoped hit means the batch shipped without widening
-            // testChapter1ReferencesResolve's siblings above.
-            let chapterScoped = resolving.filter { !$0.contains("-AUD") }
-            XCTAssertTrue(
-                chapterScoped.isEmpty,
-                "\(chapter) references resolve chapter-scoped (\(chapterScoped.sorted())) — "
-                    + "update the pinned expectation if the batch really shipped (shipped: \(shipped))")
+    func testEveryChapterReferenceResolvesOffline() throws {
+        for chapter in ["A1-C01", "A1-C02", "A1-C03", "A1-C04"] {
+            assertResolves(try references(byChapter: chapter), chapter: chapter)
         }
     }
 
@@ -144,7 +141,7 @@ final class AudioCatalogTests: XCTestCase {
     func testChapterScopedResolution() {
         XCTAssertNotNil(catalog.asset(aud: "AUD043", chapter: "A1-C01"))
         XCTAssertNotNil(catalog.asset(aud: "A1-C01-AUD043", chapter: "A1-C99"))
-        XCTAssertNil(catalog.asset(aud: "AUD043", chapter: "A1-C02"))
+        XCTAssertNotNil(catalog.asset(aud: "AUD043", chapter: "A1-C02"))
         XCTAssertNil(catalog.asset(aud: "  ", chapter: "A1-C01"))
         XCTAssertNil(catalog.asset(aud: "", chapter: "A1-C01"))
     }

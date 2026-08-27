@@ -287,6 +287,20 @@ final class AppRouter {
                 coursePos = course.lessonFixtures[index].position
                 screen = .course
             }
+            // PH-02 deterministic chapter fixture. Parks the shell on an
+            // authored chapter with the same re-base goToChapter uses — but
+            // never persists: a debug route must not write the store. The
+            // next-chapter card's access route is only reachable from the
+            // last authored chapter (its successor is planned, not bundled).
+            if let i = args.firstIndex(of: "-AUREL_CHAPTER_INDEX"), i + 1 < args.count,
+                let index = Int(args[i + 1]), course.chapters.indices.contains(index)
+            {
+                chapterIdx = index
+                baseLessons = lessonsDone
+                basePos = 0
+                courseLesson = 0
+                coursePos = course.lessonStartPos(chapterIdx: index, lessonIdx: 0)
+            }
             if let i = args.firstIndex(of: "-AUREL_THEME_MODE"), i + 1 < args.count,
                 let mode = Int(args[i + 1]), (0...2).contains(mode)
             {
@@ -984,6 +998,11 @@ final class AppRouter {
         // Progress aggregates read these.
         recordLessonCompletion()
         lessonsDone = max(lessonsDone, baseLessons + (courseLesson + 1) - basePos)
+        // When that completion was the chapter's last missing lesson, home
+        // must reveal the next authored chapter (its LessonRecord is already
+        // on disk above, so the detection sees the fresh record). Runs before
+        // `persist()` so profile and router swap in one durable step.
+        advanceToNextChapterIfComplete()
         courseStart = nil
         screen = .home
         persist()

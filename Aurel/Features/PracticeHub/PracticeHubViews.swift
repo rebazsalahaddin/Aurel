@@ -18,6 +18,9 @@ struct SceneView: View {
             // header
             HStack(alignment: .top, spacing: 12) {
                 Button {
+                    // Leaving the scene ends its audio — playback state must
+                    // not follow the learner out of the surface.
+                    env.speaker.stop()
                     r.leaveScene()
                 } label: {
                     AUIcon(kind: .close, size: 19, color: .auText.opacity(0.55))
@@ -90,7 +93,10 @@ struct SceneView: View {
                                     }
                                     KaraokeText(
                                         text: turn.them,
-                                        isSpoken: env.speaker.isSpoken(text: turn.them),
+                                        isSpoken: env.speaker.isSpoken(
+                                            audioID: turn.audioAsset.isEmpty
+                                                ? nil : turn.audioAsset,
+                                            text: turn.them),
                                         spokenRange: env.speaker.spokenRange
                                     )
                                     .font(.figtree(.regular, size: 14.5))
@@ -384,7 +390,9 @@ struct SpeakView: View {
 
                 KaraokeText(
                     text: item.line,
-                    isSpoken: env.speaker.isSpoken(text: item.line),
+                    isSpoken: env.speaker.isSpoken(
+                        audioID: item.audioAsset.isEmpty ? nil : item.audioAsset,
+                        text: item.line),
                     spokenRange: env.speaker.spokenRange
                 )
                 .font(.caprasimo(size: 25))

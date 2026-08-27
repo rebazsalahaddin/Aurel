@@ -57,15 +57,23 @@ enum AppSchema {
     }
 
     /// Move the store's sidecar files (`store`, `-wal`, `-shm`) next to
-    /// themselves, tagged `.recovered-<timestamp>` — never deleted.
+    /// themselves, tagged `.recovered-<timestamp>` — never deleted. The stamp
+    /// is millisecond resolution so back-to-back UI-test resets (one launch
+    /// resetting within the same second as the previous move) never collide
+    /// on the destination and silently keep the stale store.
     static func moveStoreAside(_ url: URL?, now: Date = Date()) {
         let base =
             url ?? URL.applicationSupportDirectory.appendingPathComponent("default.store")
-        let stamp = Int(now.timeIntervalSince1970)
+        let stamp = Int(now.timeIntervalSince1970 * 1000)
         for suffix in ["", "-wal", "-shm"] {
             let src = URL(fileURLWithPath: base.path + suffix)
             guard FileManager.default.fileExists(atPath: src.path) else { continue }
-            let dst = URL(fileURLWithPath: base.path + suffix + ".recovered-\(stamp)")
+            var dst = URL(fileURLWithPath: base.path + suffix + ".recovered-\(stamp)")
+            var uniquer = 0
+            while FileManager.default.fileExists(atPath: dst.path) {
+                uniquer += 1
+                dst = URL(fileURLWithPath: base.path + suffix + ".recovered-\(stamp)-\(uniquer)")
+            }
             try? FileManager.default.moveItem(at: src, to: dst)
         }
     }

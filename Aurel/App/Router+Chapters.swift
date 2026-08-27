@@ -140,6 +140,90 @@ extension AppRouter {
     }
 }
 
+// MARK: - Chapter progression
+
+extension AppRouter {
+    /// True when every authored lesson of the chapter has a learner completion
+    /// record (review-only runs don't count). Derived from LessonRecord —
+    /// never stored twice — so it stays data-honest with the Progress
+    /// aggregates that read the same records (§3.18).
+    func chapterComplete(_ idx: Int) -> Bool {
+        guard course.chapters.indices.contains(idx) else { return false }
+        let done = Set(
+            lessonRecords()
+                .filter { !$0.wasReview && $0.chapterIdx == idx }
+                .map(\.lessonIdx))
+        return done.count >= course.chapters[idx].lessons.count
+    }
+
+    /// Moves the shell onto another authored chapter — the learner just
+    /// finished the current one, or opened the next-chapter card. Re-bases the
+    /// per-chapter path math so the new chapter's first stop reads as the
+    /// learner's next stop (pathAt/currentPathIndex restart at 0 while
+    /// `lessonsDone` keeps its course-wide total), and persists through the
+    /// existing LearnerProfile mirror (`chapterIdx`/`baseLessons` are durable
+    /// fields, restored by load(from:)).
+    func goToChapter(_ idx: Int) {
+        guard course.chapters.indices.contains(idx), idx != chapterIdx else { return }
+        AUFeedback.selection()
+        chapterIdx = idx
+        baseLessons = lessonsDone
+        basePos = 0
+        courseLesson = 0
+        coursePos = course.lessonStartPos(chapterIdx: idx, lessonIdx: 0)
+        persist()
+    }
+
+    /// Auto-advance after a lesson lands: when that lesson was the chapter's
+    /// last missing one, home reveals the next authored chapter (its header,
+    /// path, and recommended card follow `chapterIdx`) instead of stranding
+    /// the learner in a finished one. Idempotent — re-running never skips past
+    /// an incomplete chapter — and clamps at the last authored chapter, where
+    /// further completions simply stay put.
+    func advanceToNextChapterIfComplete() {
+        guard chapterComplete(chapterIdx),
+            course.chapters.indices.contains(chapterIdx + 1)
+        else { return }
+        goToChapter(chapterIdx + 1)
+    }
+
+    /// The next-chapter card's reachable target: the authored chapter after
+    /// the current one, when its content actually ships in the bundle. Nil
+    /// for the last authored chapter and for plan-only successors — the card
+    /// keeps its paywall route in those cases.
+    var nextAuthoredChapterIdx: Int? {
+        let next = chapterIdx + 1
+        return course.chapters.indices.contains(next) ? next : nil
+    }
+
+    /// The next-chapter card's tap. A bundled next chapter opens directly on
+    /// home (goToChapter's re-base puts its first stop at the learner's
+    /// position); a plan-only successor keeps the authored paywall route.
+    func openNextChapter() {
+        if let next = nextAuthoredChapterIdx {
+            goToChapter(next)
+        } else {
+            nav(.paywall)
+        }
+    }
+
+    /// The return card's target: the authored chapter before the current one
+    /// while the shell sits past Chapter One. Nil on Chapter One — the card
+    /// hides and the tap is a no-op.
+    var previousAuthoredChapterIdx: Int? {
+        chapterIdx > 0 ? chapterIdx - 1 : nil
+    }
+
+    /// The return card's tap. Routes through goToChapter so the earlier
+    /// chapter's opener is re-based as the learner's next stop and the move
+    /// persists through the same durable mirror the forward jump uses —
+    /// without fabricating completion records.
+    func goBackChapter() {
+        guard let previous = previousAuthoredChapterIdx else { return }
+        goToChapter(previous)
+    }
+}
+
 // MARK: - PH-02 information architecture contracts
 
 extension AppRouter {
@@ -292,7 +376,10 @@ extension AppRouter {
 
         if currentPathIndex >= chapter.count {
             return NextAction(
-                title: String(localized: "Keep Chapter One fresh"),
+                // The chapter's own ordinal ("Keep Chapter Four fresh") — the
+                // copy used to hardcode "Chapter One" and lie the moment the
+                // learner moved past it.
+                title: String(localized: "Keep \(chapter.no) fresh"),
                 reason: String(localized: "You completed the lessons available in this chapter."),
                 duration: String(localized: "3–10 minutes"),
                 outcome: String(localized: "Revisit a scene, story, spoken line, or due word."),

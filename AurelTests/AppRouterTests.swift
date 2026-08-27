@@ -218,4 +218,198 @@ final class AppRouterTests: XCTestCase {
         XCTAssertTrue(ruling.chainContinues, "a complete day never spends grace")
         XCTAssertEqual(ruling.graceUsed, 0)
     }
+
+    // MARK: Chapter progression — later chapters become reachable/shown on Home
+
+    /// Context-backed router so LessonRecord detection and the durable
+    /// profile mirror run against real SwiftData (mirrors Stage4's setup).
+    private func makePersistedRouter() throws -> (AppRouter, ModelContext) {
+        let container = try AppSchema.makeContainer(inMemory: true)
+        let ctx = ModelContext(container)
+        return (AppRouter(course: CourseDecodingTests.store, modelContext: ctx), ctx)
+    }
+
+    /// Completing Chapter One's last lesson moves the shell onto Chapter Two:
+    /// the header/path math re-bases to the new chapter's first stop, Home
+    /// renders CHAPTER 2, and the swap is durable in LearnerProfile. Finishing
+    /// the next chapter keeps advancing the same way.
+    func testFinishingChapterOnesLastLessonAdvancesHomeToChapterTwo() throws {
+        let (r, ctx) = try makePersistedRouter()
+        let store = CourseDecodingTests.store
+
+        // Three of four C1 lessons done — no advancement yet.
+        for i in 0..<3 {
+            r.goCourse(i)
+            r.finishCourse()
+        }
+        XCTAssertEqual(r.chapterIdx, 0, "an incomplete chapter never advances")
+        XCTAssertFalse(r.chapterComplete(0))
+
+        // The fourth completion finishes Chapter One…
+        r.goCourse(3)
+        r.finishCourse()
+
+        // …and Home now shows Chapter Two rebased to its own first stop.
+        XCTAssertTrue(r.chapterComplete(0))
+        XCTAssertEqual(r.chapterIdx, 1, "the shell moves onto the next authored chapter")
+        XCTAssertEqual(r.currentPathIndex, 0, "C2 · L1 is the learner's next stop")
+        XCTAssertEqual(
+            r.coursePos, store.lessonStartPos(chapterIdx: 1, lessonIdx: 0),
+            "entry lands on C2 · L1's first learner-facing screen")
+        XCTAssertEqual(
+            r.baseLessons, 4, "the per-chapter base absorbs course-wide progress")
+        XCTAssertEqual(r.screen, .home)
+
+        // The swap persists exactly like the rest of the durable state.
+        let profiles = try ctx.fetch(FetchDescriptor<LearnerProfile>())
+        XCTAssertEqual(profiles.first?.chapterIdx, 1)
+
+        // The same mechanics carry Chapter Two → Three.
+        for i in 0..<3 {
+            r.goCourse(i)
+            r.finishCourse()
+        }
+        XCTAssertEqual(r.chapterIdx, 1, "C2 stays until its fourth lesson lands")
+        r.goCourse(3)
+        r.finishCourse()
+        XCTAssertEqual(r.chapterIdx, 2)
+        XCTAssertEqual(r.currentPathIndex, 0, "C3 rebases to its own first stop")
+    }
+
+    /// Advancement clamps at the last authored chapter, manual jumps accept
+    /// any authored target while rejecting invalid or same ones, and jumping
+    /// alone never fabricates completion records.
+    func testAdvancementClampsAndManualJumpGuardsHold() throws {
+        let (r, ctx) = try makePersistedRouter()
+        let store = CourseDecodingTests.store
+        let checkpoint = store.chapters.count - 1
+
+        // Complete the bundled checkpoint chapter (its three lessons).
+        r.chapterIdx = checkpoint
+        for i in 0..<store.chapters[checkpoint].lessons.count {
+            r.goCourse(i)
+            r.finishCourse()
+        }
+        XCTAssertEqual(
+            r.chapterIdx, checkpoint, "nothing follows the last authored chapter")
+
+        // Manual jumps land on any authored chapter, rebased to its opener.
+        r.goToChapter(1)
+        XCTAssertEqual(r.chapterIdx, 1)
+        XCTAssertEqual(r.coursePos, store.lessonStartPos(chapterIdx: 1, lessonIdx: 0))
+
+        // Out-of-range and same-chapter targets are no-ops — they neither move
+        // the shell nor write anything.
+        let recordsBefore = try ctx.fetch(FetchDescriptor<LessonRecord>()).count
+        r.goToChapter(-1)
+        r.goToChapter(store.chapters.count)
+        r.goToChapter(1)
+        XCTAssertEqual(r.chapterIdx, 1)
+        let recordsAfter = try ctx.fetch(FetchDescriptor<LessonRecord>()).count
+        XCTAssertEqual(recordsAfter, recordsBefore)
+    }
+
+    /// Review-only runs never complete a chapter — completion counts real
+    /// lesson records only, matching what Progress aggregates.
+    func testReviewOnlyRecordsDoNotCompleteAChapter() throws {
+        let (r, ctx) = try makePersistedRouter()
+
+        let lessonCount = CourseDecodingTests.store.chapters[0].lessons.count
+        for l in 0..<lessonCount {
+            ctx.insert(LessonRecord(chapterIdx: 0, lessonIdx: l, endPos: 0, wasReview: true))
+        }
+        XCTAssertFalse(r.chapterComplete(0), "review-only records never finish a chapter")
+
+        // One real record narrows the gap — still incomplete.
+        ctx.insert(LessonRecord(chapterIdx: 0, lessonIdx: 0, endPos: 9, wasReview: false))
+        XCTAssertFalse(r.chapterComplete(0))
+        XCTAssertEqual(r.chapterIdx, 0)
+    }
+
+    /// The next-chapter card's decision: a bundled successor opens directly
+    /// on Home, while a plan-only successor (beyond the last authored
+    /// chapter) keeps the paywall route.
+    func testNextChapterCardOpensBundledChapterAndFallsBackToPaywall() throws {
+        let (r, _) = try makePersistedRouter()
+        // The card lives on Home — start from its real surface.
+        r.screen = .home
+
+        // On Chapter One the card targets the bundled Chapter Two…
+        XCTAssertEqual(r.nextAuthoredChapterIdx, 1)
+        r.openNextChapter()
+        XCTAssertEqual(r.chapterIdx, 1, "the card opens Chapter Two")
+        XCTAssertEqual(r.screen, .home, "bundled chapters open on Home, not a paywall")
+        XCTAssertEqual(r.currentPathIndex, 0, "C2 · L1 is the learner's next stop")
+
+        // …while past the last authored chapter the plan-only successor
+        // (Chapter Five is planned but not bundled) routes to the paywall.
+        r.goToChapter(3)
+        XCTAssertNil(r.nextAuthoredChapterIdx)
+        r.openNextChapter()
+        XCTAssertEqual(r.screen, .paywall)
+        XCTAssertEqual(r.chapterIdx, 3, "the paywall fallback never moves the shell")
+    }
+
+    /// The return card mirrors the forward jump: hidden on Chapter One,
+    /// targeting the authored predecessor elsewhere. Returning re-bases the
+    /// earlier chapter's opener as the next stop, persists through the same
+    /// durable mirror, and never fabricates completion records.
+    func testReturnCardGoesBackOneAuthoredChapterAndPersists() throws {
+        let (r, ctx) = try makePersistedRouter()
+        let store = CourseDecodingTests.store
+        r.screen = .home
+
+        // On Chapter One the card is hidden and the tap is a no-op.
+        XCTAssertNil(r.previousAuthoredChapterIdx)
+        r.goBackChapter()
+        XCTAssertEqual(r.chapterIdx, 0, "there is nothing before Chapter One")
+        XCTAssertEqual(r.screen, .home)
+
+        // Open Chapter Two, then return: the shell lands back on C1 · L1.
+        r.openNextChapter()
+        XCTAssertEqual(r.chapterIdx, 1)
+        XCTAssertEqual(r.previousAuthoredChapterIdx, 0)
+        let recordsBefore = try ctx.fetch(FetchDescriptor<LessonRecord>()).count
+        r.goBackChapter()
+        XCTAssertEqual(r.chapterIdx, 0, "the card returns to the authored predecessor")
+        XCTAssertEqual(
+            r.coursePos, store.lessonStartPos(chapterIdx: 0, lessonIdx: 0),
+            "C1 · L1's first learner-facing screen is the next stop again")
+        XCTAssertEqual(r.currentPathIndex, 0)
+        XCTAssertEqual(r.screen, .home)
+        let recordsAfter = try ctx.fetch(FetchDescriptor<LessonRecord>()).count
+        XCTAssertEqual(recordsAfter, recordsBefore, "returning never fabricates records")
+
+        // The move persists exactly like the forward jump.
+        let profiles = try ctx.fetch(FetchDescriptor<LearnerProfile>())
+        XCTAssertEqual(profiles.first?.chapterIdx, 0)
+    }
+
+    /// The finished-chapter recommendation names the actual chapter — the
+    /// copy used to hardcode "Chapter One". The branch is reachable in later
+    /// chapters now that progression carries learners past the first one
+    /// (e.g. parked on the last authored chapter after completing it).
+    func testLearnNextActionNamesTheActualFinishedChapter() throws {
+        let (r, _) = try makePersistedRouter()
+        let store = CourseDecodingTests.store
+
+        // Complete every lesson of the last authored chapter — with no
+        // successor, home settles into its keep-fresh state.
+        let checkpoint = store.chapters.count - 1
+        r.chapterIdx = checkpoint
+        for i in 0..<store.chapters[checkpoint].lessons.count {
+            r.goCourse(i)
+            r.finishCourse()
+        }
+
+        // finishCourse marks today's lesson half done; the keep-fresh branch
+        // is the next day's state, so clear the daily gates the way rollover
+        // does.
+        r.dayLesson = false
+        r.dayRecall = false
+
+        let action = r.learnNextAction
+        XCTAssertEqual(action.title, "Keep Chapter Four fresh")
+        XCTAssertEqual(action.destination, .practice)
+    }
 }

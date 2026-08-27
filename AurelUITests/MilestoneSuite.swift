@@ -19,8 +19,11 @@ final class MilestoneSuite: XCTestCase {
         app = XCUIApplication()
         // Self-sufficiency: suites run alphabetically (Milestone before
         // Smoke), so this suite cannot assume an onboarded store — bootstrap
-        // to Home through the non-persisting fast path instead.
-        app.launchArguments = ["-AUREL_TEST_START", "home"]
+        // to Home through the non-persisting fast path instead. The reset
+        // also clears whatever a previous Xcode run persisted on this device
+        // (chapter shell, lesson records, pending card), which would
+        // otherwise re-shape Home and bury the path nodes behind the tab bar.
+        app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_TEST_START", "home"]
     }
 
     // MARK: helpers (same query discipline as SmokeSuite)
@@ -51,6 +54,23 @@ final class MilestoneSuite: XCTestCase {
         let e = wait(id, timeout: timeout)
         e.tap()
         return e
+    }
+
+    /// Path stops sit low in the 724-pt path canvas and end up behind the
+    /// floating tab bar whenever anything above the path is tall (pending
+    /// card, return card, day-complete state) — XCUI's center-tap then hits
+    /// the tab and the player never opens. Scroll the stop clear of the bar
+    /// before tapping, exactly what a user does. Same discipline as
+    /// SmokeSuite's revealAndTap.
+    private func revealAndTap(_ id: String, timeout: TimeInterval = 10) {
+        let e = wait(id, timeout: timeout)
+        let bar = app.buttons.matching(identifier: "au.tab.practice").firstMatch
+        if bar.exists, e.frame.maxY > bar.frame.minY - 8 {
+            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.82))
+            let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.62))
+            start.press(forDuration: 0.02, thenDragTo: end)
+        }
+        e.tap()
     }
 
     private func onHome(timeout: TimeInterval = 10) -> Bool {
@@ -126,6 +146,18 @@ final class MilestoneSuite: XCTestCase {
             return (oMap, pMap, lessonCount)
         }()
 
+    /// The last bundled chapter hosts the plan-only successor, so it is the
+    /// one surface where the next-chapter card keeps its access route.
+    private static let lastAuthoredChapterIdx: Int = {
+        guard
+            let url = Bundle(for: MilestoneSuite.self).url(
+                forResource: "a1-course", withExtension: "json"),
+            let data = try? Data(contentsOf: url),
+            let chapters = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]]
+        else { return 0 }
+        return max(0, chapters.count - 1)
+    }()
+
     /// The practice Next/Go-on pill — only when actually tappable (the pill
     /// is rendered disabled at 0.45 opacity until the item is passable).
     private func enabledGoOn(timeout: TimeInterval = 0.5) -> XCUIElement? {
@@ -133,6 +165,29 @@ final class MilestoneSuite: XCTestCase {
         if go.exists && go.isEnabled { return go }
         guard go.waitForExistence(timeout: timeout), go.isEnabled else { return nil }
         return go
+    }
+
+    /// Tap a button by identifier through a FRESH query with a real frame.
+    /// An element reference captured even one statement earlier goes stale
+    /// when the player advances screens — XCUI then taps a dying element
+    /// whose frame resolves to {{inf, inf}, {0, 0}} and aborts the run (the
+    /// historical "Failed to tap" failure class).
+    @discardableResult
+    private func tapFresh(_ id: String, timeout: TimeInterval = 2) -> Bool {
+        let e = app.buttons[id]
+        guard e.waitForExistence(timeout: timeout) else { return false }
+        if !e.isHittable { app.swipeUp() }
+        guard e.isHittable, !e.frame.isInfinite, !e.frame.isEmpty else { return false }
+        e.tap()
+        return true
+    }
+
+    /// The player's screen transition is the authored 0.42 s flow; advancing
+    /// taps return while both screens are still mid-flight, so the next
+    /// round's queries would catch the dying item mid-removal. Let the
+    /// transition land before acting again.
+    private func settleAfterAdvance() {
+        usleep(450_000)
     }
 
     /// Order items: solve deterministically from the authored key — tap the
@@ -289,17 +344,13 @@ final class MilestoneSuite: XCTestCase {
                 candidateIDs.append(
                     contentsOf: app.staticTexts.allElementsBoundByIndex.prefix(6).map(\.label))
                 for id in candidateIDs {
-                    if let key = Self.optionKeys[id] {
-                        let optBtn = app.buttons["au.player.option.\(key)"]
-                        if optBtn.exists {
-                            if !optBtn.isHittable { app.swipeUp() }
-                            if optBtn.isHittable {
-                                optBtn.tap()
-                                advances += 1
-                                solved = true
-                                break
-                            }
-                        }
+                    if let key = Self.optionKeys[id],
+                        tapFresh("au.player.option.\(key)")
+                    {
+                        advances += 1
+                        settleAfterAdvance()
+                        solved = true
+                        break
                     }
                 }
                 if !solved {
@@ -309,10 +360,10 @@ final class MilestoneSuite: XCTestCase {
                         let option = options.element(boundBy: picks % n)
                         if option.exists {
                             if !option.isHittable { app.swipeUp() }
-                            if option.isHittable {
+                            if option.isHittable, !option.frame.isInfinite {
                                 option.tap()
                                 advances += 1
-                                sleep(1)
+                                settleAfterAdvance()
                             }
                         }
                         picks += 1
@@ -400,7 +451,7 @@ final class MilestoneSuite: XCTestCase {
     func test1FirstLessonEndToEnd() {
         app.launch()
         XCTAssertTrue(onHome(timeout: 30))
-        tap("au.home.node.0")
+        revealAndTap("au.home.node.0")
         XCTAssertTrue(
             app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
                 timeout: 10))
@@ -415,7 +466,7 @@ final class MilestoneSuite: XCTestCase {
     func test2BackgroundResumeMidLesson() {
         app.launch()
         XCTAssertTrue(onHome(timeout: 30))
-        tap("au.home.node.0")
+        revealAndTap("au.home.node.0")
         XCTAssertTrue(
             app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
                 timeout: 10))
@@ -471,23 +522,6 @@ final class MilestoneSuite: XCTestCase {
         assertUsable("au.settings.type.4")
     }
 
-    /// Path stops and the next-chapter card sit low in the 724-pt path
-    /// canvas and can end up behind the floating tab bar after a scroll —
-    /// XCUI's center-tap then hits the tab (the historical test2 flake class,
-    /// per the Phase-2 fix). Scroll the element clear of the bar before
-    /// tapping, exactly what a user does. Same discipline as SmokeSuite's
-    /// revealAndTap.
-    private func revealAndTap(_ id: String) {
-        let e = wait(id, timeout: 10)
-        let bar = app.buttons.matching(identifier: "au.tab.practice").firstMatch
-        if bar.exists, e.frame.maxY > bar.frame.minY - 8 {
-            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.82))
-            let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.62))
-            start.press(forDuration: 0.02, thenDragTo: end)
-        }
-        e.tap()
-    }
-
     // MARK: 4 — tab matrix + settings/paywall round trip
 
     func test4TabMatrixAndSettingsPaywall() {
@@ -506,19 +540,31 @@ final class MilestoneSuite: XCTestCase {
         tap("au.tab.learn")
         XCTAssertTrue(onHome(timeout: 10))
 
-        // A locked chapter is never a dead end: its action opens the
-        // subscription/access route, which remains truthful when commerce is unavailable.
-        // The swipe brings the low canvas card into the lazy hierarchy;
-        // revealAndTap then scrolls it clear of the floating tab bar.
-        app.swipeUp()
+        // A locked chapter is never a dead end. The access route lives on the
+        // LAST authored chapter — its successor is planned but not bundled,
+        // so the card keeps the paywall route there (on earlier chapters the
+        // card opens the bundled successor directly on Home). Park the shell
+        // on the last chapter with the verification hook, then tap through.
+        app.terminate()
+        app.launchArguments = [
+            "-AUREL_TEST_RESET", "-AUREL_TEST_START", "home",
+            "-AUREL_CHAPTER_INDEX", "\(Self.lastAuthoredChapterIdx)",
+        ]
+        app.launch()
+        XCTAssertTrue(onHome(timeout: 10))
+
         let next = app.buttons.matching(identifier: "au.home.next-chapter").firstMatch
-        if next.waitForExistence(timeout: 6) {
-            XCTAssertTrue(next.isEnabled, "locked chapter must offer a clear next action")
-            revealAndTap("au.home.next-chapter")
-            XCTAssertTrue(
-                anyElement("au.capability.chapters-unavailable").waitForExistence(timeout: 8),
-                "Chapter 2 must open its access route")
+        XCTAssertTrue(next.waitForExistence(timeout: 8))
+        XCTAssertTrue(next.isEnabled, "locked chapter must offer a clear next action")
+        // Scroll the card clear of the floating tab bar before tapping.
+        for _ in 0..<6 where !next.isHittable {
+            app.swipeUp()
         }
+        XCTAssertTrue(next.isHittable, "the next-chapter card never scrolled into view")
+        next.tap()
+        XCTAssertTrue(
+            anyElement("au.capability.chapters-unavailable").waitForExistence(timeout: 8),
+            "the plan-only next chapter must open its access route")
     }
 
     // MARK: PH-00 — safe capability routes
@@ -552,7 +598,7 @@ final class MilestoneSuite: XCTestCase {
         app.launch()
         XCTAssertTrue(onHome(timeout: 30))
         // test1 finished L1, so the open node is L2 ("You and Your Name").
-        tap("au.home.node.1", timeout: 10)
+        revealAndTap("au.home.node.1", timeout: 10)
         XCTAssertTrue(
             app.buttons.matching(identifier: "au.player.close").firstMatch.waitForExistence(
                 timeout: 10))
@@ -568,7 +614,7 @@ final class MilestoneSuite: XCTestCase {
         XCTAssertGreaterThan(Self.lessonCount, 0, "course fixture must contain lessons")
         for lessonIndex in 0..<Self.lessonCount {
             app.terminate()
-            app.launchArguments = ["-AUREL_LESSON_INDEX", "\(lessonIndex)"]
+            app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_LESSON_INDEX", "\(lessonIndex)"]
             app.launch()
             XCTAssertTrue(
                 app.buttons.matching(identifier: "au.player.close").firstMatch
@@ -586,7 +632,7 @@ final class MilestoneSuite: XCTestCase {
     /// Regression for the densest Chapter 1 route: mixed tile variants feed
     /// a roleplay whose Speak action remains on-screen until Safe stop exits.
     func test8FourthLessonMixedTilesAndRoleplayComplete() {
-        app.launchArguments = ["-AUREL_LESSON_INDEX", "3"]
+        app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_LESSON_INDEX", "3"]
         app.launch()
         XCTAssertTrue(
             app.buttons.matching(identifier: "au.player.close").firstMatch
@@ -599,7 +645,7 @@ final class MilestoneSuite: XCTestCase {
     /// A focused regression for the first Chapter 3 route, whose repeated
     /// card/practice alternation exercises the walker's choice transitions.
     func test9NinthLessonCardPracticeSequenceCompletes() {
-        app.launchArguments = ["-AUREL_LESSON_INDEX", "8"]
+        app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_LESSON_INDEX", "8"]
         app.launch()
         XCTAssertTrue(
             app.buttons.matching(identifier: "au.player.close").firstMatch
@@ -614,7 +660,7 @@ final class MilestoneSuite: XCTestCase {
     func test10RemainingAuthoredLessonsComplete() {
         for lessonIndex in 9..<Self.lessonCount {
             app.terminate()
-            app.launchArguments = ["-AUREL_LESSON_INDEX", "\(lessonIndex)"]
+            app.launchArguments = ["-AUREL_TEST_RESET", "-AUREL_LESSON_INDEX", "\(lessonIndex)"]
             app.launch()
             XCTAssertTrue(
                 app.buttons.matching(identifier: "au.player.close").firstMatch
