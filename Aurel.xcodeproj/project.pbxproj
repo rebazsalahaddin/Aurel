@@ -151,6 +151,7 @@
 		4121B64C1C89C26F791987A1CE4F1E46 /* CoreScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0639F37AD456BFA682934CC46D8882EA /* CoreScreens.swift */; };
 		4209B168FC50A5E94045FB4D79A98A8B /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B367F3146D919ABA3DA2BA467EA4DDFF /* PlayerModel.swift */; };
 		4226AC2B2F73C48A69052D8A273FBD60 /* OFL-Caprasimo.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6D22511BEADDAF97BFC6F325273B442C /* OFL-Caprasimo.txt */; };
+		426E94FF0FEFEDF84D6406C328B685CF /* ListeningSanityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AB20BA681EAD4377F4C542BF2EBB16 /* ListeningSanityTests.swift */; };
 		42A8A242208F454B5A30C7A7B4190160 /* DesignTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E730F518B882EBBFEA897E38649ED2D3 /* DesignTokenTests.swift */; };
 		4332DBC3F365597826F7AE5FDA8C9636 /* A1-C03-AUD051_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1399818C8EE696F3690B7F2A34C09A20 /* A1-C03-AUD051_L1.wav */; };
 		43A5C0797AC41A189FC1C5737B35966D /* A1-C01-AUD001_L3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 71EC2FE876A72530C055E6683EFA047C /* A1-C01-AUD001_L3.wav */; };
@@ -946,6 +947,7 @@
 		A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseDecodingTests.swift; sourceTree = "<group>"; };
 		A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesTests.swift; sourceTree = "<group>"; };
 		A23BEBDB11D6268A8C8612C268C674DD /* A1-C02-AUD046_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD046_L1.wav"; sourceTree = "<group>"; };
+		A2AB20BA681EAD4377F4C542BF2EBB16 /* ListeningSanityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningSanityTests.swift; sourceTree = "<group>"; };
 		A2BEA6D23B7A899DED635BD4E7F03B61 /* A1-C02-AUD009_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD009_L1.wav"; sourceTree = "<group>"; };
 		A358D9774830CF6F297C4A4E160F06A4 /* KaraokeTimeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KaraokeTimeline.swift; sourceTree = "<group>"; };
 		A3DA7FBFF5A05EFC98FB0F14562956D1 /* AurelUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AurelUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1273,6 +1275,7 @@
 				CBF3250CDE01EB5DD295C7AF67823C4A /* FeedbackServicesTests.swift */,
 				CC20A5FA2AFF520BA3BDD703E029C43D /* GrammarConformanceTests.swift */,
 				6F00626BDFB688E06658C3CD60D11526 /* KaraokeTests.swift */,
+				A2AB20BA681EAD4377F4C542BF2EBB16 /* ListeningSanityTests.swift */,
 				AE84A363F608654D4461E6684E023BC6 /* PH01FoundationTests.swift */,
 				276C8A363BDB3093D96D43925B48F9CE /* PH02JourneyTests.swift */,
 				52BE6B5EFFCDF0FF333BF753675CE285 /* PH03LaunchHardeningTests.swift */,
@@ -2709,6 +2712,7 @@
 				E5A60EACD0757D3E4A8B491FBF7CBB26 /* FeedbackServicesTests.swift in Sources */,
 				4883D8B2A72DB8375AE145D291986512 /* GrammarConformanceTests.swift in Sources */,
 				23395A514EAB7464BCEA0C5D614743C2 /* KaraokeTests.swift in Sources */,
+				426E94FF0FEFEDF84D6406C328B685CF /* ListeningSanityTests.swift in Sources */,
 				2CD1694CF9102208B4A43FAFEB095C69 /* PH01FoundationTests.swift in Sources */,
 				10DDAC7AD903FAE13B5CB233006EF070 /* PH02JourneyTests.swift in Sources */,
 				82368B916673D18A06759815CA7A7CC8 /* PH03LaunchHardeningTests.swift in Sources */,
