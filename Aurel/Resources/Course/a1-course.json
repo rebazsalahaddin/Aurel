@@ -4370,7 +4370,7 @@
         "ok": "Yes — two people talk.",
         "no": "Listen again — count the voices.",
         "hints": [
-         "Play again; the speaker chips glow per turn.",
+         "Play again — count the different voices you hear.",
          "Two names are spoken. Count them."
         ],
         "secs": 30,
@@ -4445,7 +4445,7 @@
         "ok": "Yes — morning!",
         "no": "Listen for the time greeting.",
         "hints": [
-         "Replay T1.",
+         "Play again and listen to the first line.",
          "Two greetings are said. Which time?"
         ],
         "secs": 20,
@@ -11970,7 +11970,7 @@
         ],
         "key": "A",
         "ok": "Yes — one more time.",
-        "no": "Her hand is at her ear.",
+        "no": "Maya asks to hear the number again.",
         "hints": [
          "What follows her line? Nina says it again.",
          "Hearing it again."
@@ -18697,7 +18697,7 @@
          }
         ],
         "key": "C",
-        "ok": "A cook—he’s! New voice, same line.",
+        "ok": "A cook — yes! Leo is a cook.",
         "no": "Whose job is asked? LEO's — not the speaker's.",
         "a11y": [
          "audio_required_transcript_after_response"
@@ -19588,7 +19588,7 @@
         ],
         "key": "B",
         "ok": "Nina — she's from Peru.",
-        "no": "The voice says 'my teacher' — then the name.",
+        "no": "The line says 'my teacher' — then the name.",
         "a11y": [
          "audio_required_transcript_after_response"
         ],

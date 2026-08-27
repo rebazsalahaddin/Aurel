@@ -209,12 +209,28 @@ final class ContentConformanceTests: XCTestCase {
     /// "<chapter> <record>.<field>" and `shipped` is the exact value the app
     /// delivers today; anything outside this list is new drift and fails.
     ///
-    /// The registry is currently EMPTY: the 40 documented drift entries were
-    /// fixed in the export pipeline (tools/content-corrections.mjs, ledger
-    /// S1-005/006, S2-004b/007/008/009/010). The mechanism stays as the
-    /// tripwire for NEW drift — an entry may only land here together with a
-    /// matching exporter correction or an owner deferral.
-    private static let documentedDrift: Set<Drift> = []
+    /// The export-pipeline drift (40 entries) was fully fixed
+    /// (tools/content-corrections.mjs, ledger S1-005/006,
+    /// S2-004b/007/008/009/010). The entries below are the owner-approved
+    /// learner-facing rewordings from the Exercise-Meaningfulness plan §5
+    /// (D-07): the shipped bank speaks plainer A1 English than the authored
+    /// records, so a re-export that reverts them trips the stale-entry
+    /// check and forces reconciliation.
+    private static let documentedDrift: Set<Drift> = [
+        // Exercise-meaningfulness plan §5 (owner-approved rewordings):
+        Drift(key: "A1-C03 PR-LS010.ok", shipped: "A cook — yes! Leo is a cook."),
+        Drift(
+            key: "A1-C03 PR-LS015.no",
+            shipped: "The line says 'my teacher' — then the name."),
+        Drift(
+            key: "A1-C01 PR-LS001.hints",
+            shipped: "Play again — count the different voices you hear."
+                + "␟Two names are spoken. Count them."),
+        Drift(
+            key: "A1-C01 PR-LS003.hints",
+            shipped: "Play again and listen to the first line."
+                + "␟Two greetings are said. Which time?"),
+    ]
 
     /// The registry slice a given test owns, by record-field suffix.
     private func registry(_ suffixes: String...) -> Set<Drift> {
