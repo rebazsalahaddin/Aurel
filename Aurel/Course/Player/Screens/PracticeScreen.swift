@@ -104,7 +104,7 @@ struct PracticeScreenView: View {
         if case .testlet(let t) = m.cur?.screen.payload {
             if let rung = t.rung {
                 HStack(spacing: 9) {
-                    Text(rung)
+                    Text(learnerRungLabel(rung))
                         .font(.figtree(.bold, size: 9.5))
                         .tracking(1.14)
                     if t.support != nil {
@@ -577,6 +577,13 @@ struct PracticeScreenView: View {
         // digit strip (testlet)
         digitStrip
 
+        // The promised line-by-line reveal lands with the verdict (D-02).
+        responseTranscript
+            .animation(
+                AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+                value: m.done
+            )
+
         // The verdict banner now lives in the chrome's dock with the CTA
         // (§3.9a) — the column keeps only the scaffolded learning supports.
 
@@ -897,10 +904,15 @@ struct PracticeScreenView: View {
             HStack(alignment: .top, spacing: 9) {
                 AUIcon(kind: .lock, size: 14, color: .auText.opacity(0.44))
                     .padding(.top, 2)
-                Text("Complete the activity to reveal the transcript.")
-                    .font(.figtree(.regular, size: 11.5))
-                    .auLine(11.5, 1.5)
-                    .foregroundStyle(Color.auTextTertiary)
+                Text(
+                    String(
+                        localized:
+                            "Answer each question to reveal the line-by-line transcript — tap a line to hear it."
+                    )
+                )
+                .font(.figtree(.regular, size: 11.5))
+                .auLine(11.5, 1.5)
+                .foregroundStyle(Color.auTextTertiary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.bottom, 12)
@@ -919,6 +931,96 @@ struct PracticeScreenView: View {
             return String(localized: "Listen once, then choose your response.")
         }
         return String(localized: "Work from the main idea toward the details.")
+    }
+
+    /// Assessment rung tokens → learner-facing labels. Unknown tokens are
+    /// dropped rather than shown raw — “SPEAKER/TRANSFER” is authoring
+    /// vocabulary, not learner language (D-03).
+    private func learnerRungLabel(_ rung: String) -> String {
+        let tokens: [(token: String, label: String)] = [
+            ("GIST", String(localized: "Main idea")),
+            ("DETAIL", String(localized: "Details")),
+            ("RESPONSE", String(localized: "Your reply")),
+            ("SPEAKER", String(localized: "Who says it")),
+            ("TRANSFER", String(localized: "New situations")),
+        ]
+        return
+            tokens
+            .filter { rung.range(of: $0.token, options: .caseInsensitive) != nil }
+            .map(\.label)
+            .joined(separator: " · ")
+    }
+
+    // MARK: Post-answer transcript (testlet audio items — the promised reveal, D-02)
+
+    @ViewBuilder
+    private var responseTranscript: some View {
+        if case .testlet = m.cur?.screen.kind,
+            m.done || m.revealed,
+            let item = m.item,
+            let aud = item.aud,
+            let assetID = m.resolvedAudioID(aud),
+            let asset = m.playback?.catalog.asset(assetID),
+            !asset.lines.isEmpty
+        {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 8) {
+                    AUIcon(kind: .ear, size: 14, color: .auAccentText)
+                    Text(String(localized: "What you heard — tap a line to play it"))
+                        .font(.figtree(.bold, size: 9.5))
+                        .tracking(1.25)
+                        .textCase(.uppercase)
+                        .foregroundStyle(Color.auAccentText)
+                }
+                ForEach(Array(asset.lines.enumerated()), id: \.offset) { idx, line in
+                    Button {
+                        m.speak(line.text, audio: aud, lineIndex: idx)
+                    } label: {
+                        HStack(alignment: .top, spacing: 10) {
+                            Text(line.speaker)
+                                .font(.figtree(.bold, size: 10))
+                                .tracking(0.45)
+                                .foregroundStyle(Color.auTextTertiary)
+                                .frame(width: 52, alignment: .leading)
+                                .padding(.top, 12)
+                            KaraokeText(
+                                text: line.text,
+                                isSpoken: m.isSpeakingText(
+                                    line.text, speaker: line.speaker, audio: aud),
+                                spokenRange: m.playback?.spokenRange
+                            )
+                            .font(.figtree(.regular, size: 15))
+                            .auLine(15, 1.45)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .fill(Color.auFill)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .stroke(Color.auEdge, lineWidth: 1)
+                            )
+                        }
+                    }
+                    .buttonStyle(.auTap)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(line.speaker). \(line.text)")
+                    .accessibilityIdentifier("au.player.transcript.line.\(idx)")
+                }
+            }
+            .padding(15)
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .strokeBorder(
+                        Color.auAccent.opacity(0.34),
+                        style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
+            )
+            .padding(.bottom, 14)
+            .transition(
+                reduceMotion ? .opacity : .opacity.combined(with: .offset(y: 8)))
+        }
     }
 
     @ViewBuilder
@@ -1154,6 +1256,10 @@ struct PracticeScreenView: View {
         big: Bool = false
     ) -> some View {
         let quiet = m.isQuiet
+        // Image options must carry their meaning, not a positional label —
+        // “Picture A” told the learner nothing about the choice (D-01).
+        let illLabel = o.ill.flatMap { $0.alt.isEmpty ? nil : $0.alt }
+            ?? String(localized: "Picture \(o.id)")
         let radius: CGFloat = big ? 22 : 19
         // state colors (optionViews, lines 1223–1240)
         let bg: Color = {
@@ -1197,8 +1303,9 @@ struct PracticeScreenView: View {
                                 .frame(width: 112, height: 76)
                                 .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
                                 .accessibilityHidden(true)
-                            Text("Picture \(o.id)")
-                                .font(.figtree(.semibold, size: 14))
+                            Text(illLabel)
+                                .font(.figtree(.regular, size: 13.5))
+                                .auLine(13.5, 1.4)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else if let t = o.text {
                             Text(t)
