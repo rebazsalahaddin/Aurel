@@ -62,4 +62,34 @@ final class Stage6PlayerTests: XCTestCase {
         XCTAssertEqual(col.topPad, 24)
         XCTAssertEqual(col.bottomPad, 28)
     }
+
+    // MARK: Phase 6 — id-first key matching (single-letter option collision)
+
+    /// The C2 letter items key by option id while another option's TEXT is
+    /// that same letter (option A shows "B", the key is option B = "D").
+    /// The old id-OR-text rule graded both; id-first grades exactly the
+    /// authored one.
+    func testKeyMatchingPrefersOptionIdOverEchoingText() {
+        let opts = [
+            PracticeOption(id: "A", text: "B", ill: nil),
+            PracticeOption(id: "B", text: "D", ill: nil),
+            PracticeOption(id: "C", text: "P", ill: nil),
+        ]
+        // Key "B" names option B ("D") — not option A, whose text is "B".
+        XCTAssertTrue(PlayerModel.matchesKey(opts[1], key: "B", opts: opts))
+        XCTAssertFalse(PlayerModel.matchesKey(opts[0], key: "B", opts: opts))
+        XCTAssertFalse(PlayerModel.matchesKey(opts[2], key: "B", opts: opts))
+
+        // Text keys (warm-up frames) still match when no option id applies.
+        let frameOpts = [
+            PracticeOption(id: "A", text: "five", ill: nil),
+            PracticeOption(id: "B", text: "zero", ill: nil),
+        ]
+        XCTAssertTrue(PlayerModel.matchesKey(frameOpts[0], key: "five", opts: frameOpts))
+        XCTAssertFalse(PlayerModel.matchesKey(frameOpts[1], key: "five", opts: frameOpts))
+
+        // Empty keys never grade.
+        XCTAssertFalse(PlayerModel.matchesKey(opts[0], key: "", opts: opts))
+        XCTAssertFalse(PlayerModel.matchesKey(opts[0], key: nil, opts: opts))
+    }
 }

@@ -104,13 +104,22 @@ final class PlayerModel {
         return "\(chapterID)-\(reference)"
     }
 
+    /// Single-choice key match with id-first precedence. Authored keys are
+    /// option ids ("B"); text stays the fallback for banks that key by option
+    /// text (warm-up frames). Precedence matters when an option's text echoes
+    /// another option's id — a letter item whose keyed answer is option B
+    /// ("D") must not also grade the option showing the letter "B".
+    nonisolated static func matchesKey(_ option: PracticeOption, key: String?, opts: [PracticeOption]) -> Bool {
+        guard let key, !key.isEmpty else { return false }
+        if opts.contains(where: { $0.id == key }) { return option.id == key }
+        return option.text == key
+    }
+
     /// The authored text an audio-cued item should speak — the key option for
     /// listening items (the thing you hear), the headword for cards.
     var speakTextForItem: String? {
         guard let item else { return nil }
-        if let key = item.key?.single,
-            let answer = item.opts.first(where: { $0.id == key || $0.text == key })?.text
-        {
+        if let answer = item.opts.first(where: { item.isKey($0) })?.text {
             return answer
         }
         return item.word ?? item.prompt ?? nil
@@ -226,9 +235,9 @@ final class PlayerModel {
 
     // MARK: Meaning-first grammar pulses
 
-    func pickLearning(_ option: PracticeOption, key: String) {
+    func pickLearning(_ option: PracticeOption, key: String, opts: [PracticeOption]) {
         learningSelection = option.id
-        if option.id == key || option.text == key {
+        if Self.matchesKey(option, key: key, opts: opts) {
             AUFeedback.correct()
         } else {
             learningWrong += 1
@@ -409,7 +418,7 @@ final class PlayerModel {
         var matches: [Match] = []
 
         func isKey(_ o: PracticeOption) -> Bool {
-            o.id == key?.single || o.text == key?.single
+            PlayerModel.matchesKey(o, key: key?.single, opts: opts)
         }
     }
 
@@ -508,8 +517,9 @@ final class PlayerModel {
             return Self.joinTiles(sequence, tight: false)
         }
 
-        guard let key = item.key?.single,
-            let option = (item.opts ?? []).first(where: { $0.id == key || $0.text == key })
+        guard let key = item.key?.single else { return item.prompt.learnerFacing }
+        let opts = item.opts ?? []
+        guard let option = opts.first(where: { Self.matchesKey($0, key: key, opts: opts) })
         else { return item.prompt.learnerFacing }
         if let text = option.text.learnerFacing { return text }
         guard let alt = CourseTextContract.learnerText(option.ill?.alt) else {
@@ -639,7 +649,7 @@ final class PlayerModel {
             done = true
             return
         }
-        let correct = o.id == item.key?.single || o.text == item.key?.single
+        let correct = item.isKey(o)
         if correct {
             sel = o.id
             done = true

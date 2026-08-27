@@ -666,4 +666,35 @@ final class ContentConformanceTests: XCTestCase {
             parseSkipped.count, inScope.count + reportOnly.count,
             "every skipped block must be attributed to a known chapter scope")
     }
+
+    /// Phase 6 (exercise-accuracy audit): a single-choice key must grade
+    /// exactly one option. Authored keys are option ids, so an option whose
+    /// text echoes another option's id (the C2 letter items: option A shows
+    /// "B") used to grade both under the old id-OR-text rule. Grading is
+    /// id-first now (`PlayerModel.matchesKey`); this pins the content side —
+    /// every keyed item keys exactly one option under that rule.
+    func testSingleChoiceKeysGradeExactlyOneOption() {
+        for manifestChapter in manifestChapters {
+            let id = chapterId(manifestChapter)
+            for item in shippedItems(shippedChapter(id)) {
+                guard let key = str(item["key"]), (item["tiles"] as? [Any]) == nil,
+                    (item["pairs"] as? [Any]) == nil, (item["baskets"] as? [Any]) == nil
+                else { continue }
+                let opts = objs(item["opts"])
+                guard !opts.isEmpty else { continue }
+                let matching = opts.filter { opt in
+                    let optId = str(opt["id"]) ?? ""
+                    let text = str(opt["t"]) ?? ""
+                    if opts.contains(where: { str($0["id"]) == key }) {
+                        return optId == key
+                    }
+                    return text == key
+                }
+                XCTAssertEqual(
+                    matching.count, 1,
+                    "\(id) \(str(item["id"]) ?? "?"): key \"\(key)\" grades \(matching.count) "
+                        + "options — an option's text must not echo another option's id")
+            }
+        }
+    }
 }

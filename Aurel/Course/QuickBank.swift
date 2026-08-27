@@ -133,7 +133,10 @@ extension QuickItem {
                 it.kind != "speak"
             else { continue }
             let answer = max(
-                0, opts.firstIndex { $0.id == it.key?.single || $0.text == it.key?.single } ?? 0)
+                0,
+                opts.firstIndex {
+                    PlayerModel.matchesKey($0, key: it.key?.single, opts: opts)
+                } ?? 0)
             var base = QuickItem(
                 id: "\(src)-\(it.id)",
                 type: it.aud != nil ? .listen : .choice,
@@ -262,7 +265,9 @@ struct SceneScript: Sendable, Hashable {
                         replies: (it.opts ?? []).map { o in
                             Reply(
                                 t: o.text ?? "",
-                                reg: (o.id == it.key?.single || o.text == it.key?.single)
+                                reg: PlayerModel.matchesKey(
+                                    o, key: it.key?.single, opts: it.opts ?? []
+                                )
                                     ? (it.ok ?? "") : (it.no ?? ""))
                         }
                     )

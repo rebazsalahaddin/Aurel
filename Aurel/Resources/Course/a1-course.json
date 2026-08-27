@@ -7621,8 +7621,8 @@
        {
         "q": "You say:",
         "icon": "ear",
-        "aud": "AUD001",
-        "scene": "NINA: \"How are you?\"",
+        "aud": "A1-C01-AUD032",
+        "scene": "NINA: \"How are you?\" · stimulus: the C1 model take (AUD001's story has no How-are-you line)",
         "opts": [
          "I'm good, thank you.",
          "My name is Nina.",
@@ -8937,10 +8937,10 @@
         "key": "A B C D E F"
        },
        {
-        "q": "Listen. Choose.",
+        "q": "Listen. Tap the first number.",
         "icon": "ear",
-        "aud": "AUD032",
-        "scene": "Frame 2 — three one-tap rounds with the digit strip as reference",
+        "aud": "AUD030",
+        "scene": "Frame 2 — collapsed to one round: AUD030 opens with Five, so the first number heard is the key",
         "opts": [
          "three",
          "five",
@@ -14625,6 +14625,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
+        "aud": "A1-C01-AUD004",
         "scene": "WU1 — retrieves A1-C01-L01-V003 good morning · audio: \"Good morning.\"",
         "opts": [
          "Good morning.",
@@ -14636,6 +14637,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
+        "aud": "A1-C02-AUD008",
         "scene": "WU2 — retrieves the C2 alphabet + How do you spell that? · audio + photo of Maya",
         "opts": [
          "M-A-Y-A",
@@ -14647,6 +14649,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
+        "aud": "A1-C02-AUD078",
         "scene": "WU3 — retrieves C2 numbers · LEO: \"My phone number is six two zero … one five four.\"",
         "opts": [
          "6-2-0, 1-5-4",
@@ -21758,6 +21761,7 @@
        {
         "id": "LS001",
         "instr": "Listen. Choose.",
+        "aud": "A1-C04-AUD036",
         "prompt": "Who checks in?",
         "opts": [
          {
@@ -21780,6 +21784,7 @@
        {
         "id": "LS002",
         "instr": "Listen. Choose.",
+        "aud": "A1-C04-AUD036",
         "prompt": "Where are they?",
         "opts": [
          {
@@ -21802,6 +21807,7 @@
        {
         "id": "LS003",
         "instr": "Listen. Choose.",
+        "aud": "A1-C04-AUD037",
         "prompt": "Amara's phone number:",
         "opts": [
          {
@@ -21824,6 +21830,7 @@
        {
         "id": "LS004",
         "instr": "Listen. Tap.",
+        "aud": "A1-C04-AUD037",
         "prompt": "Tap the name.",
         "opts": [
          {
@@ -21846,6 +21853,7 @@
        {
         "id": "LS005",
         "instr": "Listen. Choose.",
+        "aud": "A1-C04-AUD036",
         "prompt": "Who says: \"This is my friend Sam.\"?",
         "opts": [
          {
@@ -21868,6 +21876,7 @@
        {
         "id": "LS006",
         "instr": "Listen. Choose.",
+        "aud": "A1-C04-AUD036",
         "prompt": "Amara says:",
         "opts": [
          {
@@ -22675,6 +22684,7 @@
        {
         "id": "A1-CP1-LS004",
         "instr": "Listen. Choose.",
+        "aud": "A1-CP1-AUD001",
         "prompt": "Time of day:",
         "opts": [
          {
@@ -22743,6 +22753,7 @@
        {
         "id": "A1-CP1-LS009",
         "instr": "Listen. Choose.",
+        "aud": "A1-CP1-AUD003",
         "prompt": "Kenji is a:",
         "opts": [
          {
@@ -22765,6 +22776,7 @@
        {
         "id": "A1-CP1-LS010",
         "instr": "Listen. Choose.",
+        "aud": "A1-CP1-AUD003",
         "prompt": "Kenji speaks:",
         "opts": [
          {

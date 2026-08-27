@@ -248,12 +248,13 @@ struct MeaningPulseSequenceView: View {
                 VStack(spacing: 9) {
                     ForEach(pulse.opts) { option in
                         let isSelected = selected == option.id
-                        let optionIsKey = option.id == pulse.key || option.text == pulse.key
+                        let optionIsKey = PlayerModel.matchesKey(
+                            option, key: pulse.key, opts: pulse.opts)
                         Button {
                             withAnimation(
                                 AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion)
                             ) {
-                                m.pickLearning(option, key: pulse.key)
+                                m.pickLearning(option, key: pulse.key, opts: pulse.opts)
                             }
                         } label: {
                             HStack(spacing: 11) {
@@ -660,6 +661,26 @@ struct PronPerceiveScreenView: View {
                                         .padding(.bottom, 12)
                                 }
 
+                                if let aud = it.aud {
+                                    HStack(spacing: 10) {
+                                        Text("MODEL")
+                                            .font(.figtree(.bold, size: 9))
+                                            .tracking(1)
+                                            .frame(width: 46, alignment: .leading)
+                                            .foregroundStyle(Color.auTextSecondary)
+                                        WaveForm(heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent)
+                                            .frame(height: 26)
+                                        Button {
+                                            m.speak(Self.perceiveFallbackText(for: it), audio: aud)
+                                        } label: {
+                                            AUIcon(kind: .play, size: 17, color: .auAccent)
+                                        }
+                                        .buttonStyle(.auTap)
+                                        .accessibilityLabel(Text("Play the model"))
+                                    }
+                                    .padding(.bottom, 12)
+                                }
+
                                 HStack(spacing: 9) {
                                     ForEach(it.opts ?? [], id: \.id) { o in
                                         Text(o.text ?? "")
@@ -704,6 +725,20 @@ struct PronPerceiveScreenView: View {
                     .padding(.top, 18)
             }
         }
+    }
+
+    /// The TTS fallback for a perceive item — the keyed option when the item
+    /// carries a key ("the thing you hear"), else the prompt line. `speak`
+    /// needs non-empty text even when the catalog asset exists.
+    private static func perceiveFallbackText(for it: PronPerceiveItem) -> String {
+        let opts = it.opts ?? []
+        if let key = it.key?.single,
+            let option = opts.first(where: { PlayerModel.matchesKey($0, key: key, opts: opts) }),
+            let text = option.text, !text.isEmpty
+        {
+            return text
+        }
+        return it.prompt ?? " "
     }
 }
 

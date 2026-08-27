@@ -471,6 +471,23 @@ final class MilestoneSuite: XCTestCase {
         assertUsable("au.settings.type.4")
     }
 
+    /// Path stops and the next-chapter card sit low in the 724-pt path
+    /// canvas and can end up behind the floating tab bar after a scroll —
+    /// XCUI's center-tap then hits the tab (the historical test2 flake class,
+    /// per the Phase-2 fix). Scroll the element clear of the bar before
+    /// tapping, exactly what a user does. Same discipline as SmokeSuite's
+    /// revealAndTap.
+    private func revealAndTap(_ id: String) {
+        let e = wait(id, timeout: 10)
+        let bar = app.buttons.matching(identifier: "au.tab.practice").firstMatch
+        if bar.exists, e.frame.maxY > bar.frame.minY - 8 {
+            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.82))
+            let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.62))
+            start.press(forDuration: 0.02, thenDragTo: end)
+        }
+        e.tap()
+    }
+
     // MARK: 4 — tab matrix + settings/paywall round trip
 
     func test4TabMatrixAndSettingsPaywall() {
@@ -491,11 +508,13 @@ final class MilestoneSuite: XCTestCase {
 
         // A locked chapter is never a dead end: its action opens the
         // subscription/access route, which remains truthful when commerce is unavailable.
+        // The swipe brings the low canvas card into the lazy hierarchy;
+        // revealAndTap then scrolls it clear of the floating tab bar.
         app.swipeUp()
         let next = app.buttons.matching(identifier: "au.home.next-chapter").firstMatch
         if next.waitForExistence(timeout: 6) {
             XCTAssertTrue(next.isEnabled, "locked chapter must offer a clear next action")
-            next.tap()
+            revealAndTap("au.home.next-chapter")
             XCTAssertTrue(
                 anyElement("au.capability.chapters-unavailable").waitForExistence(timeout: 8),
                 "Chapter 2 must open its access route")
