@@ -36,6 +36,20 @@ bash qa/run-ui-full.sh      # full UI matrix
 bash qa/run-ui-ax.sh        # accessibility pass
 ```
 
+## Offline course audio
+
+Approved lesson scripts are generated with Poe's `Gemini-3.1-Flash-TTS`
+bot and bundled as lossless WAV files. Put `POE_API_KEY` in the gitignored
+root `.env`, then run:
+
+```sh
+node tools/generate-audio.mjs --chapter all
+node tools/generate-audio.mjs --verify
+```
+
+The API key and temporary generation markers are never added to the app
+bundle or source control.
+
 ## Project layout
 
 ```

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// ElevenLabs course-audio generation through the Poe API.
+// Gemini 3.1 Flash TTS course-audio generation through the Poe API.
 //
 // The tool parses the approved scripts in Archive/english_course, generates
-// one offline AAC file per spoken line, and writes the catalog consumed by
+// one offline lossless PCM WAV file per spoken line, and writes the catalog consumed by
 // VoicePlayback. The Poe key is read from the gitignored root .env and is
 // never passed through a shell command or copied into the app bundle.
 //
@@ -33,22 +33,35 @@ const RAW_DIR = path.join(root, 'tools/.audio-raw');
 const ARCHIVE = path.join(root, 'Archive/english_course/04_A1_chapters');
 const COURSE_JSON = path.join(root, 'Aurel/Resources/Course/a1-course.json');
 const CATALOG_PATH = path.join(AUDIO_DIR, 'audio-catalog.json');
-const MODEL = 'ElevenLabs-v2.5-Turbo';
-const GENERATION_REVISION = 2;
+const MODEL = 'Gemini-3.1-Flash-TTS';
+const GENERATION_REVISION = 5;
 const CHAPTERS = ['A1-C01', 'A1-C02', 'A1-C03', 'A1-C04'];
 
-// Course character qualities mapped to voices supported by Poe's
-// ElevenLabs-v2.5-Turbo bot. This is the approved course cast.
+// Course character qualities mapped to Gemini 3.1's prebuilt voices. These
+// choices prioritize clear General American delivery and stable separation
+// between recurring characters over novelty or dramatic performance.
 const VOICES = {
-  GUIDE: 'Sarah',
-  ALEX: 'Lily',
-  MAYA: 'Jessica',
-  LEO: 'George',
-  NINA: 'Matilda',
-  SAM: 'Brian',
-  AMARA: 'River',
-  RAFAEL: 'Will',
-  KENJI: 'Monika Sogam',
+  GUIDE: 'Iapetus',      // clear, neutral instructional anchor
+  ALEX: 'Puck',          // upbeat and bright
+  MAYA: 'Sulafat',       // warm and calm
+  LEO: 'Achird',         // friendly and relaxed
+  NINA: 'Erinome',       // clear and patient
+  SAM: 'Sadachbia',      // lively and cheerful
+  AMARA: 'Autonoe',      // bright and welcoming
+  RAFAEL: 'Algieba',     // smooth, medium-low presence
+  KENJI: 'Schedar',      // even and measured
+};
+
+const VOICE_DIRECTIONS = {
+  GUIDE: 'Warm, unhurried, encouraging, and neutral. Never condescending.',
+  ALEX: 'Bright, upbeat, mid-high, and quick but very clear.',
+  MAYA: 'Warm, medium-pitched, calm, and reassuring.',
+  LEO: 'Lower-pitched, relaxed, and friendly.',
+  NINA: 'Clear, evenly paced, and patient.',
+  SAM: 'Mid-range, cheerful, and energetic while staying easy to follow.',
+  AMARA: 'Warm-bright, welcoming, and medium paced.',
+  RAFAEL: 'Lively, smooth, and medium-low pitched.',
+  KENJI: 'Even, friendly, and measured.',
 };
 
 const WPM_TARGET = {
@@ -482,21 +495,98 @@ function delay(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
-function authoredSpeechText(text) {
-  // Ellipses are the style guide's authored pause notation. Crucially, no
-  // delivery instruction is prepended: prose instructions are spoken by the
-  // v2.5 Poe bot and would contaminate the learner-facing take.
-  return text.replace(/\s*…\s*/g, ' ... ').replace(/\s+/g, ' ').trim();
+function authoredSpeechText(text, delivery) {
+  // Gemini's inline audio tags are non-spoken controls. Translate the course
+  // guide's 400–600 ms ellipsis notation to a model-native pause. Pace is a
+  // numeric generation control below; stacking it with [slow] made ordinary
+  // lines unnaturally slow in the measured pilot.
+  // Quote the literal learner word "slow" so Gemini does not confuse it with
+  // its reserved [slow] control (the unquoted word yields a provider error).
+  // This learner instruction also resembles a meta-command to the TTS bot;
+  // quoted clauses make it unambiguously spoken content.
+  // Quote every learner-facing clause around an authored pause. Gemini can
+  // otherwise interpret repetitions such as `No. … No.` or `Name. … Name.`
+  // as control instructions instead of text to speak.
+  const instructionSafeText = text.includes('…')
+    ? text.split('…').map((part) => `"${part.trim()}"`).join(' … ')
+    : text;
+  const isAlphabetChunk = /^(?:[A-Z],\s*){2,}[A-Z][.]?$/.test(instructionSafeText);
+  const isLabelPair = /\s+—\s+/.test(instructionSafeText);
+  let protectedText = (isAlphabetChunk
+    ? instructionSafeText
+      .replace(/[.]/g, '')
+      .split(',')
+      .map((letter) => `"${letter.trim()}."`)
+      .join(' [pause] ')
+    : isLabelPair
+      ? `"${instructionSafeText.replace(/\s+—\s+/g, ', ')}"`
+      : instructionSafeText)
+    // Spoken label pairs use a natural comma; the model intermittently treats
+    // a bare em dash (for example, "Kenji — Japan") as invalid prompt syntax.
+    .replace(/\s+—\s+/g, ', ')
+    .replace(/\bslow\b/gi, (word) => `"${word}"`)
+    // The provider also treats bare one-letter models ("N. … N.") as an
+    // invalid control-like prompt. Quotes preserve the spoken letter while
+    // keeping the learner-facing catalog text unchanged.
+    .replace(/\b([A-Z])\.(?=\s*(?:…|$))/g, '"$1."');
+  const shortWordCount = wordCount(text);
+  if (shortWordCount >= 1 && shortWordCount <= 3
+      && !protectedText.includes('[pause]') && !protectedText.startsWith('"')) {
+    protectedText = `"${protectedText}"`;
+  }
+  // Alphabet chunks look command-like to the provider parser; quoting the
+  // whole chunk keeps every written letter while preserving natural speech.
+  return protectedText
+    .replace(/\s*…!\s*/g, ' [emphasis] [pause] ')
+    .replace(/\s*…\s*/g, ' [pause] ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
-async function poeTts(text, voice) {
+function generationSpeed(text, delivery) {
+  if (delivery === 'challenge_natural_slow') return 1.5;
+  // Gemini naturally slows spelled contact details much more than prose.
+  // A fresh 1.7 take keeps these connected at about the guide's 100–110 WPM
+  // while remaining clear; no generated file is digitally time-stretched.
+  if (/\bdot\b/i.test(text) || /(?:[A-Z]-){2,}[A-Z]/.test(text) || /(?:\d[-,]\s*){2,}\d/.test(text)) {
+    return 1.7;
+  }
+  // Longer prose naturally accelerates in Gemini; ease it back so a full
+  // beginner sentence stays near the same pace as a five-word model.
+  if (wordCount(text) >= 8) return 1.2;
+  return 1.3;
+}
+
+function stylePrompt(speaker, delivery) {
+  const pace = delivery === 'challenge_natural_slow'
+    ? 'Natural connected speech at about 120 to 130 words per minute.'
+    : 'Slow-clear natural speech at about 100 to 110 words per minute.';
+  return [
+    'General American English for a complete beginner English learner.',
+    'Educational, natural, friendly, and easy to understand.',
+    'Use natural prosody; never sound robotic or isolate every word.',
+    VOICE_DIRECTIONS[speaker],
+    pace,
+    'Pronounce every name, number, time, price, and contraction exactly as written.',
+    'Speak only the supplied learner-facing text.',
+  ].join(' ');
+}
+
+async function poeTts(text, voice, speaker, delivery) {
+  const speed = generationSpeed(text, delivery);
   const body = {
     model: MODEL,
     stream: false,
-    messages: [{ role: 'user', content: `${authoredSpeechText(text)} --voice ${voice}` }],
+    messages: [{ role: 'user', content: authoredSpeechText(text, delivery) }],
+    mode: 'single',
+    language: 'en-US',
+    voice,
+    output_format: 'WAV',
+    speed,
+    style_prompt: stylePrompt(speaker, delivery),
   };
 
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  for (let attempt = 1; attempt <= 6; attempt++) {
     try {
       const response = await fetch('https://api.poe.com/v1/chat/completions', {
         method: 'POST',
@@ -514,9 +604,10 @@ async function poeTts(text, voice) {
       if (!url) throw new Error(`Poe returned no audio URL: ${String(content).slice(0, 180)}`);
       return url;
     } catch (error) {
-      if (attempt === 3) throw error;
-      const backoff = 4_000 * attempt;
-      console.log(`  retry ${attempt} in ${backoff / 1000}s: ${String(error.message).slice(0, 120)}`);
+      if (attempt === 6) throw error;
+      const backoff = Math.min(30_000, 3_000 * (2 ** (attempt - 1)))
+        + Math.floor(Math.random() * 1_000);
+      console.log(`  retry ${attempt} in ${(backoff / 1000).toFixed(1)}s: ${String(error.message).slice(0, 120)}`);
       await delay(backoff);
     }
   }
@@ -552,13 +643,14 @@ async function mapConcurrent(items, limit, operation) {
   return results;
 }
 
-function validGenerationMarker(file, output, line, voice) {
+function validGenerationMarker(file, output, line, voice, delivery) {
   if (!existsSync(file) || !existsSync(output)) return false;
   try {
     const marker = JSON.parse(readFileSync(file, 'utf8'));
     return marker.revision === GENERATION_REVISION
       && marker.text === line.text
       && marker.voice === voice
+      && marker.speed === generationSpeed(line.text, delivery)
       && marker.sha256 === sha256(output);
   } catch {
     return false;
@@ -582,23 +674,19 @@ const renderedLines = await mapConcurrent(lineJobs, concurrency, async ({ asset,
     if (!voice) throw new Error(`${asset.id}: no approved voice for speaker ${line.speaker}`);
 
     const base = `${asset.id}_L${index + 1}`;
-    const output = path.join(AUDIO_DIR, `${base}.m4a`);
-    const temporaryOutput = path.join(AUDIO_DIR, `${base}.tmp.m4a`);
-    const raw = path.join(RAW_DIR, `${base}.mp3`);
+    const output = path.join(AUDIO_DIR, `${base}.wav`);
+    const temporaryOutput = path.join(AUDIO_DIR, `${base}.tmp.wav`);
     const marker = path.join(RAW_DIR, `${base}.revision.json`);
 
     let duration = 0;
-    if (!force && validGenerationMarker(marker, output, line, voice)) {
+    if (!force && validGenerationMarker(marker, output, line, voice, asset.delivery)) {
       duration = fileDuration(output);
       if (duration < 0.15) throw new Error(`${base}: cached file is invalid; rerun with --force`);
       cached++;
     } else {
-      const audioURL = await poeTts(line.text, voice);
-      await download(audioURL, raw);
+      const audioURL = await poeTts(line.text, voice, line.speaker, asset.delivery);
       if (existsSync(temporaryOutput)) unlinkSync(temporaryOutput);
-      execFileSync('afconvert', [
-        '-f', 'm4af', '-d', 'aac', '-b', '96000', '-c', '1', raw, temporaryOutput,
-      ]);
+      await download(audioURL, temporaryOutput);
       duration = fileDuration(temporaryOutput);
       if (duration < 0.15) throw new Error(`${base}: generated take has no valid duration`);
       renameSync(temporaryOutput, output);
@@ -606,6 +694,7 @@ const renderedLines = await mapConcurrent(lineJobs, concurrency, async ({ asset,
         revision: GENERATION_REVISION,
         text: line.text,
         voice,
+        speed: generationSpeed(line.text, asset.delivery),
         sha256: sha256(output),
       }));
       generated++;
@@ -624,7 +713,7 @@ const renderedLines = await mapConcurrent(lineJobs, concurrency, async ({ asset,
     }
 
     const rendered = {
-      file: `${base}.m4a`,
+      file: `${base}.wav`,
       speaker: line.speaker,
       voice,
       text: line.text,

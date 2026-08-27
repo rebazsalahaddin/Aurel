@@ -41,6 +41,11 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     private(set) var spokenRange: NSRange?
     private var spokenChars: Double = 0
     private var totalChars: Double = 1
+    /// Identity of the utterance being spoken — asynchronous delegate hops
+    /// are validated against it, so a completion or range event from a
+    /// superseded utterance (a replay begun before the hop ran) can never
+    /// clear `speaking` or rewind the highlight mid-utterance.
+    private var utteranceID: ObjectIdentifier?
 
     private let synthesizer = AVSpeechSynthesizer()
     private var sessionConfigured = false
@@ -70,6 +75,7 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
             u.voice = voice
         }
         synthesizer.speak(u)
+        utteranceID = ObjectIdentifier(u)
         speaking = true
         progress = 0
         spokenRange = nil
@@ -78,6 +84,9 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     }
 
     func stop() {
+        // Drop the utterance's identity first: the didFinish callback that
+        // `stopSpeaking` triggers must not clear the state of a newer take.
+        utteranceID = nil
         synthesizer.stopSpeaking(at: .immediate)
         speaking = false
         progress = 0
@@ -88,7 +97,10 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     nonisolated func speechSynthesizer(
         _ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance
     ) {
-        Task { @MainActor in
+        let finished = ObjectIdentifier(utterance)
+        Task { @MainActor [weak self] in
+            guard let self, self.utteranceID == finished else { return }
+            self.utteranceID = nil
             self.speaking = false
             AUSound.shared.isDucked = false
         }
@@ -101,11 +113,14 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
     ) {
         let end = Double(characterRange.location + characterRange.length)
         let total = Double(max(1, utterance.speechString.count))
-        Task { @MainActor in
+        let voiced = ObjectIdentifier(utterance)
+        Task { @MainActor [weak self] in
+            guard let self, self.utteranceID == voiced else { return }
             // Monotonic: out-of-order delegate callbacks must not rewind it.
+            let newest = end >= self.spokenChars
             self.spokenChars = max(self.spokenChars, end)
             self.progress = min(1, self.spokenChars / max(total, self.totalChars, 1))
-            self.spokenRange = characterRange
+            if newest { self.spokenRange = characterRange }
         }
     }
 }

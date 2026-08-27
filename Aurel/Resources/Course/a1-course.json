@@ -7532,7 +7532,7 @@
       "displayTitle": "Story hook — the check-in desk",
       "label": "Story hook — the check-in desk",
       "step": "STEP 2 · 30–60 sec",
-      "scene": "The morning after the welcome event. A small check-in desk with a notebook and blank badges. Nina runs the desk; Alex waves at the door; Maya is registering too.",
+      "scene": "The morning after the welcome event. A small check-in desk with a notebook and blank badges. Nina runs the desk; Alex arrives to register; Maya waits behind him.",
       "aud": "AUD001",
       "delivery": "learning_slow_clear",
       "ill": {
@@ -7540,47 +7540,45 @@
        "alt": "Nina sits at a check-in desk with a notebook and blank badges; Alex waves from the door"
       },
       "lines": [
-       {
-        "sp": "ALEX",
-        "t": "Hello! … Good morning!",
-        "d": "waving from the door"
-       },
-       {
-        "sp": "NINA",
-        "t": "Good morning, Alex!",
-        "d": "at the desk, pen ready"
-       },
-       {
-        "sp": "NINA",
-        "t": "Welcome! … What's your name?",
-        "d": "turning to you, warm · Welcome! = CHUNK:survival"
-       },
-       {
-        "sp": "YOU",
-        "t": "Maya.",
-        "d": "tap-to-say; unvoiced in audio",
-        "learner": true
-       },
-       {
-        "sp": "NINA",
-        "t": "Maya! … How do you spell that?",
-        "d": "kind, pen over a blank badge — the chapter question"
-       },
-       {
-        "sp": "YOU",
-        "t": "M … A … Y … A.",
-        "d": "tap-to-say; unvoiced in audio",
-        "learner": true
-       },
-       {
-        "sp": "NINA",
-        "t": "Maya. … Thank you!",
-        "d": "writes, smiles"
-       }
+        {
+         "sp": "ALEX",
+         "t": "Hello! … Good morning!",
+         "d": "waving from the door"
+        },
+        {
+         "sp": "NINA",
+         "t": "Good morning! … Welcome!",
+         "d": "at the desk, pen ready · Welcome! = CHUNK:survival"
+        },
+        {
+         "sp": "NINA",
+         "t": "What's your name?",
+         "d": "warm — Chapter 1 retrieval"
+        },
+        {
+         "sp": "ALEX",
+         "t": "My name is Alex.",
+         "d": "stepping up to the desk"
+        },
+        {
+         "sp": "NINA",
+         "t": "Alex! … How do you spell that?",
+         "d": "kind, pen over a blank badge — the chapter question"
+        },
+        {
+         "sp": "ALEX",
+         "t": "A … L … E … X.",
+         "d": "clear, letter by letter — models the chapter task"
+        },
+        {
+         "sp": "NINA",
+         "t": "A-L-E-X. … Thank you, Alex!",
+         "d": "writes, smiles"
+        }
       ],
       "scored": false,
       "plant": "How do you spell that? appears here in context (encounter #0, story plant) and is formally taught at S09.",
-      "tip": "One-tap big ear button; speaker glow per line (Nina's teal cardigan edge lights on her lines, Alex's glasses on his). The learner's two lines are tap-to-say moments: the app shows the words, pulses the mouth icon, waits for an optional echo — never blocks, never scores.",
+      "tip": "One-tap big ear button; speaker glow per line (Nina's teal cardigan edge lights on her lines, Alex's glasses on his). All seven lines are fully voiced and karaoke-highlight in order — the spelled line models the exact check-in the learner performs in the L4 mission.",
       "assets": [
        "A1-C02-AUD001",
        "A1-C02-ILL002"

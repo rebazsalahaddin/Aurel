@@ -42,6 +42,12 @@ Statuses: `open → verified → fixing → fixed → retested-closed | deferred
 | S0-003 | AVAudioEngine RPC-abort at launch when audio server wedged (see detail above) | S0 | engine-free `AVAudioPlayer` AUSound; launch-time activation removed | no new crash reports post-fix; unit tests 68/68; UI gate `qa/run-ui-full.sh` |
 | S3-007 | Dormant: quick-practice match-item state (`matchSel`/`matched`/`matchWrong`) declared+reset but never wired — a `.match` QuickItem could never complete | S3 (dormant) | logged, not fixed: `QuickItem.bank` never emits `.match` today; prototype match logic documented at Aurel V4.dc.html:1784–1795 for whoever wires it | n/a — unreachable today |
 
+## Fixed (content correction — C2 story hook, learner report)
+
+| ID | Title | Sev | Found by | Fix summary | Retest |
+|---|---|---|---|---|---|
+| S1-010 | C2-L01-S02 hook corrupted: two unvoiced "YOU" rows spoke Maya's lines ("Maya." / "M … A … Y … A."), so the audio skipped them while NINA voiced the "Maya!" read-backs with no speaker, the spelling was never spoken, and Alex vanished after line 1 — text/audio/matching all broken | S1 | learner report | Authored script (A1_C02_L01_LESSON.md STEP 2 + audio index), shipped rows (a1-course.json S02), and A1-C02-AUD001 takes rewritten as a fully-voiced 7-turn Alex↔Nina check-in: name asked, given, spelled aloud ("A … L … E … X."), read back ("A-L-E-X. … Thank you, Alex!"); chapter-question plant and S03's "What's your name?" reference preserved | unit 177/177 green (AudioCatalogTests bundle check incl. new L6/L7); `generate-audio.mjs --verify` clean; simulator: rows 5→6 karaoke-highlight in sync mid-playback (12.5 s / 16.5 s captures) |
+
 ## Open (seeded from Phase 0 recon — to be verified/adjudicated in the loop)
 
 | ID | Title | Sev | Agent | Source ref | Status |

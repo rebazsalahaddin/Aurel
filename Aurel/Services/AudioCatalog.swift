@@ -3,10 +3,10 @@ import Foundation
 // MARK: - The bundled audio catalog (audio-upgrade phase, Enhancement doc §2)
 //
 // `tools/generate-audio.mjs` synthesizes the authored AUDIO_STYLE_GUIDE
-// scripts with the course's character→voice cast and writes, into the app
-// bundle:
+// scripts with Gemini 3.1 Flash TTS and the course's character→voice cast,
+// then writes into the app bundle:
 //
-//   Audio/<ASSET>_L<n>.m4a        one file per scripted line
+//   Audio/<ASSET>_L<n>.wav        one lossless PCM file per scripted line
 //   Audio/audio-catalog.json      asset → line files + speaker/voice/text/duration
 //
 // The app resolves its authored `aud` references ("AUD043") through this
@@ -36,6 +36,7 @@ struct AudioCatalog {
 
     private let byId: [String: Asset]
     private let bundle: Bundle
+    let model: String?
 
     /// Loads from the main bundle; an absent or malformed catalog yields an
     /// empty catalog (every lookup misses → TTS fallback) — launch-safe by
@@ -49,9 +50,11 @@ struct AudioCatalog {
             let decoded = try? JSONDecoder().decode(Assets.self, from: data)
         else {
             byId = [:]
+            model = nil
             return
         }
         byId = Dictionary(decoded.assets.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        model = decoded.model
     }
 
     /// Data initializer keeps catalog decoding independently testable without
@@ -60,9 +63,11 @@ struct AudioCatalog {
         self.bundle = bundle
         let decoded = try JSONDecoder().decode(Assets.self, from: data)
         byId = Dictionary(decoded.assets.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        model = decoded.model
     }
 
     private struct Assets: Decodable {
+        let model: String?
         let assets: [Asset]
     }
 
@@ -83,10 +88,12 @@ struct AudioCatalog {
 
     /// The on-disk URL for one bundled line take (bundle-root resources).
     func url(for line: Line) -> URL? {
-        let name = line.file.hasSuffix(".m4a") ? String(line.file.dropLast(4)) : line.file
-        return bundle.url(forResource: name, withExtension: "m4a")
-            ?? bundle.url(forResource: name, withExtension: "m4a", subdirectory: "Audio")
+        let fileURL = URL(fileURLWithPath: line.file)
+        let ext = fileURL.pathExtension.isEmpty ? "wav" : fileURL.pathExtension
+        let name = fileURL.deletingPathExtension().lastPathComponent
+        return bundle.url(forResource: name, withExtension: ext)
+            ?? bundle.url(forResource: name, withExtension: ext, subdirectory: "Audio")
             ?? bundle.url(
-                forResource: name, withExtension: "m4a", subdirectory: "Resources/Audio")
+                forResource: name, withExtension: ext, subdirectory: "Resources/Audio")
     }
 }
