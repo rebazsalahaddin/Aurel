@@ -5114,6 +5114,405 @@
       "duration": 4.17
     },
     {
+      "id": "A1-C03-AUD068",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD068_L1.wav",
+          "speaker": "GUIDE",
+          "voice": "Iapetus",
+          "text": "I'm from Canada. … from! … from",
+          "dur": 4.91,
+          "wpm": 61,
+          "sha256": "711ddce94ccdd6590a48d6e6c404ba50a3bdd272314fa91ee8c10ffda5a364a6"
+        }
+      ],
+      "text": "I'm from Canada. … from! … from",
+      "duration": 4.91
+    },
+    {
+      "id": "A1-C03-AUD069",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD069_L1.wav",
+          "speaker": "NINA",
+          "voice": "Erinome",
+          "text": "Hi! I'm Nina. I'm from Peru.",
+          "dur": 3.78,
+          "wpm": 95,
+          "sha256": "e03cfc8625afe6a6deceb8eb1126ca87347d464dd9777e56821ad66310f64a5f"
+        }
+      ],
+      "text": "Hi! I'm Nina. I'm from Peru.",
+      "duration": 3.78
+    },
+    {
+      "id": "A1-C03-AUD070",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD070_L1.wav",
+          "speaker": "MAYA",
+          "voice": "Sulafat",
+          "text": "Hi! I'm Maya. I'm from Egypt.",
+          "dur": 4.59,
+          "wpm": 79,
+          "sha256": "1f78b5e37dafb3df8e576cb30f0cad0439846a7b1626e44242c2a756214ebca1"
+        }
+      ],
+      "text": "Hi! I'm Maya. I'm from Egypt.",
+      "duration": 4.59
+    },
+    {
+      "id": "A1-C03-AUD071",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD071_L1.wav",
+          "speaker": "SAM",
+          "voice": "Sadachbia",
+          "text": "Hi! I'm Sam. I'm from Mexico.",
+          "dur": 3.94,
+          "wpm": 91,
+          "sha256": "4aae747d62e41520c39888634ddcbe64383447b57321864da0f1a40256319ba7"
+        }
+      ],
+      "text": "Hi! I'm Sam. I'm from Mexico.",
+      "duration": 3.94
+    },
+    {
+      "id": "A1-C03-AUD072",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD072_L1.wav",
+          "speaker": "MAYA",
+          "voice": "Sulafat",
+          "text": "Hi! I'm Maya. I'm a nurse.",
+          "dur": 4.1,
+          "wpm": 88,
+          "sha256": "595b875ace68cf33790c1672cd93e8f46a277480f22a0f09ed7bd8f85df029ee"
+        }
+      ],
+      "text": "Hi! I'm Maya. I'm a nurse.",
+      "duration": 4.1
+    },
+    {
+      "id": "A1-C03-AUD073",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD073_L1.wav",
+          "speaker": "NINA",
+          "voice": "Erinome",
+          "text": "Good morning! I'm Nina. I'm a teacher.",
+          "dur": 4.37,
+          "wpm": 96,
+          "sha256": "ebd978b091b0888cc857d7a1606b8e93257129c1db50be048c90cbb6c4dbd35c"
+        }
+      ],
+      "text": "Good morning! I'm Nina. I'm a teacher.",
+      "duration": 4.37
+    },
+    {
+      "id": "A1-C03-AUD074",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD074_L1.wav",
+          "speaker": "LEO",
+          "voice": "Achird",
+          "text": "Ah! I'm Leo. I'm a cook.",
+          "dur": 3.67,
+          "wpm": 98,
+          "sha256": "dc34e7affe4fa50bbafd47389faa100c28174a02baa93e416c592f4fd762e9ad"
+        }
+      ],
+      "text": "Ah! I'm Leo. I'm a cook.",
+      "duration": 3.67
+    },
+    {
+      "id": "A1-C03-AUD075",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD075_L1.wav",
+          "speaker": "ALEX",
+          "voice": "Puck",
+          "text": "Okay! I'm Alex. I'm a designer.",
+          "dur": 4.37,
+          "wpm": 82,
+          "sha256": "166d2ba372d0fc7644e205a630cd4430653e683a17189561fab0d4329f8ee0ad"
+        }
+      ],
+      "text": "Okay! I'm Alex. I'm a designer.",
+      "duration": 4.37
+    },
+    {
+      "id": "A1-C03-AUD076",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD076_L1.wav",
+          "speaker": "ALEX",
+          "voice": "Puck",
+          "text": "Okay! I'm Alex. I'm from Canada.",
+          "dur": 4.48,
+          "wpm": 80,
+          "sha256": "681dc31872ff268d7bd90e249c0d69679a67e88589edf43636d4b0d135e1aca0"
+        }
+      ],
+      "text": "Okay! I'm Alex. I'm from Canada.",
+      "duration": 4.48
+    },
+    {
+      "id": "A1-C03-AUD077",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD077_L1.wav",
+          "speaker": "GUIDE",
+          "voice": "Iapetus",
+          "text": "I'm from CANADA.",
+          "dur": 1.94,
+          "wpm": 93,
+          "sha256": "1d7bf8995406da1909f29db281877f55c4397a1314eb6b57a5f3bb219ae30c80"
+        }
+      ],
+      "text": "I'm from CANADA.",
+      "duration": 1.94
+    },
+    {
+      "id": "A1-C03-AUD078",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD078_L1.wav",
+          "speaker": "SAM",
+          "voice": "Sadachbia",
+          "text": "Where are you from?",
+          "dur": 2.05,
+          "wpm": 117,
+          "sha256": "1fb53a1be5a973336a73da03b72fbbd44ac0efa2ed12ae114b32752cdbe0a210"
+        }
+      ],
+      "text": "Where are you from?",
+      "duration": 2.05
+    },
+    {
+      "id": "A1-C03-AUD079",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD079_L1.wav",
+          "speaker": "ALEX",
+          "voice": "Puck",
+          "text": "What do you do?",
+          "dur": 1.89,
+          "wpm": 127,
+          "sha256": "cc6432abb77e688e24efeb7695dd4fb3712004f26ba806d5cacc4ad0b82521f9"
+        }
+      ],
+      "text": "What do you do?",
+      "duration": 1.89
+    },
+    {
+      "id": "A1-C03-AUD080",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD080_L1.wav",
+          "speaker": "SAM",
+          "voice": "Sadachbia",
+          "text": "This is my friend Maya.",
+          "dur": 2.8,
+          "wpm": 107,
+          "sha256": "38d912689a23ac02f5d30d137262525679ba46168d0ab3ed6c98d95189208834"
+        }
+      ],
+      "text": "This is my friend Maya.",
+      "duration": 2.8
+    },
+    {
+      "id": "A1-C03-AUD081",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD081_L1.wav",
+          "speaker": "SAM",
+          "voice": "Sadachbia",
+          "text": "Are you from Mexico?",
+          "dur": 2.05,
+          "wpm": 117,
+          "sha256": "b5dbb274db80ffe92ef8fcac2d9709279a8dab74b222dfffecd967b6dfee929a"
+        }
+      ],
+      "text": "Are you from Mexico?",
+      "duration": 2.05
+    },
+    {
+      "id": "A1-C03-AUD082",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD082_L1.wav",
+          "speaker": "ALEX",
+          "voice": "Puck",
+          "text": "Is Leo a cook?",
+          "dur": 1.89,
+          "wpm": 127,
+          "sha256": "9dfdc9c5e28563bfd0ffc9fbf0c67476c8cff31d020955284e8bd5ec246aef62"
+        }
+      ],
+      "text": "Is Leo a cook?",
+      "duration": 1.89
+    },
+    {
+      "id": "A1-C03-AUD083",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD083_L1.wav",
+          "speaker": "ALEX",
+          "voice": "Puck",
+          "text": "What do you do?",
+          "dur": 1.94,
+          "wpm": 124,
+          "sha256": "555ef8f953e787d927b5b82b8d0296cdc126f2a6b7b4194e5b694b4111914f3a"
+        }
+      ],
+      "text": "What do you do?",
+      "duration": 1.94
+    },
+    {
+      "id": "A1-C03-AUD084",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD084_L1.wav",
+          "speaker": "MAYA",
+          "voice": "Sulafat",
+          "text": "This is my friend Sam.",
+          "dur": 2.75,
+          "wpm": 109,
+          "sha256": "3c7aba22bee10b7f014f0871ec6eedf9b63bc0b2e49baddd840d9a7ca103a8af"
+        }
+      ],
+      "text": "This is my friend Sam.",
+      "duration": 2.75
+    },
+    {
+      "id": "A1-C03-AUD085",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD085_L1.wav",
+          "speaker": "NINA",
+          "voice": "Erinome",
+          "text": "Leo is my friend. He's a cook.",
+          "dur": 3.56,
+          "wpm": 118,
+          "sha256": "ee45df9fa387337c0492810cc40ba98736cf0f0bcdd9f71ee3dbdd9749e2be97"
+        }
+      ],
+      "text": "Leo is my friend. He's a cook.",
+      "duration": 3.56
+    },
+    {
+      "id": "A1-C03-AUD086",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD086_L1.wav",
+          "speaker": "GUIDE",
+          "voice": "Iapetus",
+          "text": "Maya and Leo aren't from Spain.",
+          "dur": 3.67,
+          "wpm": 98,
+          "sha256": "fc15a347e3522801f6c3aee8cff37fd65ad18d56801e1987a84917a0f9385ded"
+        }
+      ],
+      "text": "Maya and Leo aren't from Spain.",
+      "duration": 3.67
+    },
+    {
+      "id": "A1-C03-AUD087",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD087_L1.wav",
+          "speaker": "KENJI",
+          "voice": "Schedar",
+          "text": "Nina is my teacher. She's from Peru. Her class is great!",
+          "dur": 8.16,
+          "wpm": 81,
+          "sha256": "a87cdc1c77788a6bdd4702876aa7bd31dd31d43e2075221ce9d9a479864fb793"
+        }
+      ],
+      "text": "Nina is my teacher. She's from Peru. Her class is great!",
+      "duration": 8.16
+    },
+    {
+      "id": "A1-C03-AUD088",
+      "purpose": "listening_stimulus_fresh_take",
+      "delivery": "learning_slow_clear",
+      "src": "A1_C03 authored fresh-take stimuli",
+      "lines": [
+        {
+          "file": "A1-C03-AUD088_L1.wav",
+          "speaker": "SAM",
+          "voice": "Sadachbia",
+          "text": "Kenji is my friend. He isn't from Mexico. He's from Japan!",
+          "dur": 7.74,
+          "wpm": 85,
+          "sha256": "e7c68f00e2b49b1b711e9d5dff26945c0c7f1b959d9117f1db3667a3ae609852"
+        }
+      ],
+      "text": "Kenji is my friend. He isn't from Mexico. He's from Japan!",
+      "duration": 7.74
+    },
+    {
       "id": "A1-C04-AUD001",
       "purpose": "recap_narration_A",
       "delivery": "learning_slow_clear",

@@ -202,6 +202,47 @@ function c3WordAndQuizAssets(sourceFile) {
   return assets;
 }
 
+function c3FreshTakeAssets(sourceFile) {
+  // The 21 authored one-line "fresh take" listening stimuli (each lesson
+  // record's stimulus_audio field) that were never exported as audio assets.
+  // Texts are verbatim from A1_C03_L01–L03; parenthetical stage directions
+  // (PR-P003's "(country word stressed)") are pre-stripped, matching what
+  // spokenLines would remove from a table-scripted record. Owner-approved
+  // plan amendment, 2026-08-27 (exercise-meaningfulness plan §8 pulled
+  // forward into Phase 2).
+  const takes = {
+    '068': ['GUIDE', "I'm from Canada. … from! … from"],
+    '069': ['NINA', "Hi! I'm Nina. I'm from Peru."],
+    '070': ['MAYA', "Hi! I'm Maya. I'm from Egypt."],
+    '071': ['SAM', "Hi! I'm Sam. I'm from Mexico."],
+    '072': ['MAYA', "Hi! I'm Maya. I'm a nurse."],
+    '073': ['NINA', "Good morning! I'm Nina. I'm a teacher."],
+    '074': ['LEO', "Ah! I'm Leo. I'm a cook."],
+    '075': ['ALEX', "Okay! I'm Alex. I'm a designer."],
+    '076': ['ALEX', "Okay! I'm Alex. I'm from Canada."],
+    '077': ['GUIDE', "I'm from CANADA."],
+    '078': ['SAM', 'Where are you from?'],
+    '079': ['ALEX', 'What do you do?'],
+    '080': ['SAM', 'This is my friend Maya.'],
+    '081': ['SAM', 'Are you from Mexico?'],
+    '082': ['ALEX', 'Is Leo a cook?'],
+    '083': ['ALEX', 'What do you do?'],
+    '084': ['MAYA', 'This is my friend Sam.'],
+    '085': ['NINA', "Leo is my friend. He's a cook."],
+    '086': ['GUIDE', "Maya and Leo aren't from Spain."],
+    '087': ['KENJI', "Nina is my teacher. She's from Peru. Her class is great!"],
+    '088': ['SAM', "Kenji is my friend. He isn't from Mexico. He's from Japan!"],
+  };
+
+  return Object.entries(takes).map(([number, [speaker, text]]) => ({
+    id: `A1-C03-AUD${number}`,
+    purpose: 'listening_stimulus_fresh_take',
+    delivery: 'learning_slow_clear',
+    lines: [{ speaker, text }],
+    src: sourceFile,
+  }));
+}
+
 function yamlAudioAssets(content, sourceFile) {
   const assets = [];
   const blockPattern = /```yaml\n([\s\S]*?)```/g;
@@ -322,6 +363,9 @@ function parseScripts(chapterId) {
 
   if (chapterId === 'A1-C03') {
     for (const asset of c3WordAndQuizAssets('A1_C03 authored indexes and inline scripts')) {
+      if (!assets.has(asset.id)) assets.set(asset.id, asset);
+    }
+    for (const asset of c3FreshTakeAssets('A1_C03 authored fresh-take stimuli')) {
       if (!assets.has(asset.id)) assets.set(asset.id, asset);
     }
     // AUD051 is explicitly a fresh challenge performance of AUD050's ten

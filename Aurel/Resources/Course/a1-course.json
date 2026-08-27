@@ -4836,7 +4836,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD044",
-        "prompt": "Line model: “Nice to meet you, Nina!”",
+        "prompt": "You hear: “Nice to meet you, Nina!”",
         "opts": [
          {
           "id": "A",
@@ -4868,7 +4868,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD044",
-        "prompt": "Line model: “I'm Leo.”",
+        "prompt": "You hear: “I'm Leo.”",
         "opts": [
          {
           "id": "A",
@@ -4901,7 +4901,7 @@
         "icon": "ear",
         "aud": "AUD044",
         "kind": "image",
-        "prompt": "T8: “I'm fine! Excuse me, Nina — see you!” What happens next?",
+        "prompt": "You hear: “I'm fine! Excuse me, Nina — see you!” What happens next?",
         "opts": [
          {
           "id": "A",
@@ -4943,7 +4943,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD045",
-        "prompt": "C6: “I'm great, thank you! And you?” Leo answers:",
+        "prompt": "You hear: “I'm great, thank you! And you?” Leo answers:",
         "opts": [
          {
           "id": "A",
@@ -11953,7 +11953,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD069",
-        "prompt": "Maya's line at turn 8 — what does she want?",
+        "prompt": "Maya's last request — what does she want?",
         "opts": [
          {
           "id": "A",
@@ -14797,7 +14797,7 @@
         "id": "PR-V002",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "GUIDE: I'm from Canada. … from! … from",
+        "aud": "A1-C03-AUD068",
         "opts": [
          {
           "id": "A",
@@ -14878,7 +14878,7 @@
         "id": "PR-V005",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "NINA: Hi! I'm Nina. I'm from Peru.",
+        "aud": "A1-C03-AUD069",
         "kind": "image",
         "opts": [
          {
@@ -15076,7 +15076,7 @@
         "id": "PR-V008",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "MAYA: Hi! I'm Maya. I'm from Egypt.",
+        "aud": "A1-C03-AUD070",
         "kind": "image",
         "opts": [
          {
@@ -15190,7 +15190,7 @@
         "id": "PR-V012",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "SAM: Hi! I'm Sam. I'm from Mexico.",
+        "aud": "A1-C03-AUD071",
         "kind": "image",
         "opts": [
          {
@@ -15710,7 +15710,7 @@
         "id": "PR-V020",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "MAYA: Hi! I'm Maya. I'm a nurse.",
+        "aud": "A1-C03-AUD072",
         "opts": [
          {
           "id": "A",
@@ -15736,7 +15736,7 @@
         "id": "PR-V021",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "NINA: Good morning! I'm Nina. I'm a teacher.",
+        "aud": "A1-C03-AUD073",
         "kind": "image",
         "opts": [
          {
@@ -15829,7 +15829,7 @@
         "id": "PR-V024",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "LEO: Ah! I'm Leo. I'm a cook.",
+        "aud": "A1-C03-AUD074",
         "opts": [
          {
           "id": "A",
@@ -15855,7 +15855,7 @@
         "id": "PR-V025",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "ALEX: Okay! I'm Alex. I'm a designer.",
+        "aud": "A1-C03-AUD075",
         "kind": "image",
         "opts": [
          {
@@ -16324,7 +16324,7 @@
         "id": "PR-V034",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "ALEX: Okay! I'm Alex. I'm from Canada.",
+        "aud": "A1-C03-AUD076",
         "kind": "image",
         "opts": [
          {
@@ -16412,7 +16412,7 @@
         "id": "PR-P003",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "GUIDE: I'm from CANADA. (country word stressed)",
+        "aud": "A1-C03-AUD077",
         "prompt": "Three tiles: I'm · from · Canada — tap the STRONG word",
         "opts": [
          {
@@ -18035,7 +18035,7 @@
         "id": "PR-CV001",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "SAM: Where are you from?",
+        "aud": "A1-C03-AUD078",
         "opts": [
          {
           "id": "A",
@@ -18061,7 +18061,7 @@
         "id": "PR-CV002",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "ALEX: What do you do?",
+        "aud": "A1-C03-AUD079",
         "opts": [
          {
           "id": "A",
@@ -18087,7 +18087,7 @@
         "id": "PR-CV003",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "SAM: This is my friend Maya.",
+        "aud": "A1-C03-AUD080",
         "opts": [
          {
           "id": "A",
@@ -18111,9 +18111,9 @@
        },
        {
         "id": "PR-CV004",
-        "instr": "Listen. Choose.",
-        "icon": "ear",
-        "scene": "D01-T08 (Alex): Is she a nurse?",
+        "instr": "Read. Choose.",
+        "icon": "eye",
+        "scene": "ALEX: Is she a nurse?",
         "prompt": "What does Alex ask about?",
         "opts": [
          {
@@ -18138,9 +18138,9 @@
        },
        {
         "id": "PR-CV005",
-        "instr": "Listen. Choose.",
-        "icon": "ear",
-        "scene": "D01-T03 (Sam): And you? Where are you from?",
+        "instr": "Read. Choose.",
+        "icon": "eye",
+        "scene": "SAM: And you? Where are you from?",
         "prompt": "What does Sam ask about?",
         "opts": [
          {
@@ -18165,9 +18165,9 @@
        },
        {
         "id": "PR-CV006",
-        "instr": "Listen. Choose.",
-        "icon": "ear",
-        "scene": "D01-T10 (Alex): Your friends! They're from ten countries.",
+        "instr": "Read. Choose.",
+        "icon": "eye",
+        "scene": "ALEX: Your friends! They're from ten countries.",
         "prompt": "What does the line count?",
         "opts": [
          {
@@ -18238,8 +18238,8 @@
         "id": "PR-CV009",
         "instr": "Listen. Choose.",
         "icon": "ear",
+        "aud": "A1-C03-AUD081",
         "prompt": "YOU are from Japan. Sam asks…",
-        "scene": "SAM: Are you from Mexico?",
         "opts": [
          {
           "id": "A",
@@ -18265,8 +18265,8 @@
         "id": "PR-CV010",
         "instr": "Listen. Choose.",
         "icon": "ear",
+        "aud": "A1-C03-AUD082",
         "prompt": "About Leo — the café cook.",
-        "scene": "ALEX: Is Leo a cook?",
         "opts": [
          {
           "id": "A",
@@ -18292,8 +18292,8 @@
         "id": "PR-CV011",
         "instr": "Listen. Choose.",
         "icon": "ear",
+        "aud": "A1-C03-AUD083",
         "prompt": "Your card says: STUDENT.",
-        "scene": "ALEX: What do you do?",
         "opts": [
          {
           "id": "A",
@@ -18319,8 +18319,8 @@
         "id": "PR-CV012",
         "instr": "Listen. Choose.",
         "icon": "ear",
+        "aud": "A1-C03-AUD084",
         "prompt": "Maya shows you a photo: 'This is my friend Sam.'",
-        "scene": "MAYA: This is my friend Sam.",
         "opts": [
          {
           "id": "A",
@@ -18442,7 +18442,7 @@
         "instr": "Listen. Tap.",
         "icon": "ear",
         "aud": "AUD050",
-        "prompt": "Where is Alex from? (replay, T03–T04)",
+        "prompt": "Where is Alex from?",
         "kind": "image",
         "opts": [
          {
@@ -18480,7 +18480,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD050",
-        "prompt": "Alex is a ____. (replay, T05–T06)",
+        "prompt": "Alex is a ____.",
         "opts": [
          {
           "id": "A",
@@ -18507,7 +18507,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD050",
-        "prompt": "Maya is a ____. (replay, T07–T09)",
+        "prompt": "Maya is a ____.",
         "opts": [
          {
           "id": "A",
@@ -18590,7 +18590,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD052",
-        "prompt": "Is Leo from Australia? (replay, T02)",
+        "prompt": "Is Leo from Australia?",
         "opts": [
          {
           "id": "A",
@@ -18617,7 +18617,7 @@
         "instr": "Listen. Tap.",
         "icon": "ear",
         "aud": "AUD052",
-        "prompt": "Where is Alex from? (replay, T04–T05)",
+        "prompt": "Where is Alex from?",
         "kind": "image",
         "opts": [
          {
@@ -18654,7 +18654,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD052",
-        "prompt": "We're from ten countries — who is we? (replay, T06)",
+        "prompt": "We're from ten countries — who is we?",
         "opts": [
          {
           "id": "A",
@@ -18680,7 +18680,7 @@
         "id": "PR-LS010",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "Fresh single line — NINA: Leo is my friend. He's a cook.",
+        "aud": "A1-C03-AUD085",
         "prompt": "Leo's job?",
         "opts": [
          {
@@ -18722,7 +18722,7 @@
        {
         "id": "PR-P005",
         "instr": "Listen. Tap.",
-        "prompt": "Which one? (AUD053 line 1, item 3)",
+        "prompt": "Which one do you hear?",
         "aud": "AUD053",
         "opts": [
          {
@@ -18741,6 +18741,7 @@
         "id": "PR-P006",
         "instr": "Listen. Tap.",
         "prompt": "GUIDE: Maya and Leo aren't from Spain. — which word?",
+        "aud": "A1-C03-AUD086",
         "opts": [
          {
           "id": "A",
@@ -18766,7 +18767,7 @@
        {
         "id": "PR-P008",
         "instr": "Listen. Tap.",
-        "prompt": "Arrow up or arrow down? (AUD054 pair 1 — Is she a nurse?)",
+        "prompt": "Arrow up or arrow down.",
         "aud": "AUD054",
         "opts": [
          {
@@ -18783,7 +18784,7 @@
        },
        {
         "id": "PR-P009",
-        "instr": "Listen. Record. Play. Check.",
+        "instr": "Read. Record. Play. Check.",
         "prompt": "Record: No, he isn't. — with the DOWN voice. Model: GUIDE: Is Leo from Peru? … No, he isn't.",
         "opts": [],
         "key": "",
@@ -18792,7 +18793,7 @@
        {
         "id": "PR-P010",
         "instr": "Listen. Tap.",
-        "prompt": "Which one? (AUD053 line 2, item 2)",
+        "prompt": "Which one do you hear?",
         "aud": "AUD053",
         "opts": [
          {
@@ -19506,7 +19507,7 @@
         "instr": "Listen. Tap.",
         "icon": "ear",
         "aud": "AUD059",
-        "prompt": "Alex — where is Alex from? (replay, entry 3)",
+        "prompt": "Where is Alex from?",
         "kind": "image",
         "opts": [
          {
@@ -19543,7 +19544,7 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD059",
-        "prompt": "Leo is from ____. (replay, entry 4)",
+        "prompt": "Leo is from ____.",
         "opts": [
          {
           "id": "A",
@@ -19569,7 +19570,7 @@
         "id": "PR-LS015",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "Fresh take — KENJI: Nina is my teacher. She's from Peru. Her class is great!",
+        "aud": "A1-C03-AUD087",
         "prompt": "Who is the teacher?",
         "opts": [
          {
@@ -19597,7 +19598,7 @@
         "id": "PR-LS016",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "Fresh take — SAM: Kenji is my friend. He isn't from Mexico. He's from Japan!",
+        "aud": "A1-C03-AUD088",
         "prompt": "Where is Kenji from?",
         "kind": "image",
         "opts": [
@@ -21009,7 +21010,7 @@
         "id": "RT001",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "NINA: Good afternoon!",
+        "aud": "A1-C04-AUD006",
         "prompt": "Morning · afternoon · evening?",
         "opts": [
          {
@@ -21033,7 +21034,7 @@
         "id": "RT002",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "MAYA: My name is Maya Haddad.",
+        "aud": "A1-C04-AUD007",
         "prompt": "First name = ?",
         "opts": [
          {
@@ -21057,7 +21058,7 @@
         "id": "RT003",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "ALEX: Hi! How are you?",
+        "aud": "A1-C04-AUD008",
         "prompt": "You say:",
         "opts": [
          {
@@ -21081,7 +21082,7 @@
         "id": "RT004",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "NINA: Maya. M-A-Y-A.",
+        "aud": "A1-C04-AUD009",
         "prompt": "Tap the name.",
         "opts": [
          {
@@ -21105,7 +21106,7 @@
         "id": "RT005",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "LEO (quick): My phone number is 6-2-0… 1-5-4.",
+        "aud": "A1-C04-AUD010",
         "prompt": "Tap the phone number.",
         "opts": [
          {
@@ -21129,7 +21130,7 @@
         "id": "RT006",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "ALEX (fast): What's your email address?",
+        "aud": "A1-C04-AUD011",
         "prompt": "Fast! You say:",
         "opts": [
          {
@@ -21153,7 +21154,7 @@
         "id": "RT007",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "NINA: Maya — your phone number, please? MAYA: 5-5-5… 2-0-1.",
+        "aud": "A1-C04-AUD013",
         "prompt": "Tap Maya's card.",
         "opts": [
          {
@@ -21194,7 +21195,7 @@
         "id": "CL1-002",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "MAYA: She's Nina.",
+        "aud": "A1-C04-AUD017",
         "prompt": "Tap: she.",
         "opts": [
          {
@@ -21306,7 +21307,7 @@
         "id": "CL1-007",
         "instr": "Listen. Put in order.",
         "icon": "ear",
-        "scene": "LEO: I'm from Australia.",
+        "aud": "A1-C04-AUD022",
         "kind": "order",
         "tiles": [
          "Australia",
@@ -21383,7 +21384,7 @@
         "id": "RT009",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "SAM: Hi! I'm Sam. I'm from Mexico.",
+        "aud": "A1-C04-AUD027",
         "prompt": "Tap the country.",
         "opts": [
          {
@@ -21407,7 +21408,7 @@
         "id": "RT010",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "NINA: Alex is from Canada. They speak English… and French.",
+        "aud": "A1-C04-AUD028",
         "prompt": "Alex speaks:",
         "opts": [
          {
@@ -21521,7 +21522,7 @@
         "id": "RT015",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "ALEX: And you — what do you do?",
+        "aud": "A1-C04-AUD029",
         "prompt": "You say:",
         "opts": [
          {
@@ -21545,7 +21546,7 @@
         "id": "RT016",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "MAYA: Alex! This is my friend Sam.",
+        "aud": "A1-C04-AUD030",
         "prompt": "Alex says:",
         "opts": [
          {
@@ -21586,7 +21587,7 @@
         "id": "CL2-002",
         "instr": "Listen. Tap.",
         "icon": "ear",
-        "scene": "KENJI: I'm from Japan.",
+        "aud": "A1-C04-AUD033",
         "prompt": "Tap: a country · a job · a phone number",
         "opts": [
          {
@@ -21674,8 +21675,8 @@
        },
        {
         "id": "CL2-006",
-        "instr": "Listen. Put in order.",
-        "icon": "ear",
+        "instr": "Read. Put in order.",
+        "icon": "eye",
         "scene": "KENJI: I'm an engineer.",
         "kind": "order",
         "tiles": [
@@ -21695,7 +21696,7 @@
         "id": "CL2-007",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "NINA: Where are you from?",
+        "aud": "A1-C04-AUD034",
         "prompt": "You say:",
         "opts": [
          {
@@ -21719,7 +21720,7 @@
         "id": "CL2-008",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "scene": "NINA: And you — what do you do?",
+        "aud": "A1-C04-AUD035",
         "prompt": "You say:",
         "opts": [
          {
@@ -22659,7 +22660,8 @@
        {
         "id": "A1-CP1-LS001",
         "instr": "Listen. Choose.",
-        "scene": "SAM: Good morning, Nina! NINA: Good morning, Sam! How are you? SAM: I’m good, thank you! And you? NINA: I’m fine!",
+        "icon": "ear",
+        "aud": "A1-CP1-AUD001",
         "prompt": "How many people?",
         "opts": [
          {
@@ -22705,7 +22707,8 @@
        {
         "id": "A1-CP1-LS005",
         "instr": "Listen. Choose.",
-        "scene": "NINA: Your name, please? SAM: Sam. Sam Rivera. NINA: How do you spell that? SAM: S-A-M. R-I-V-E-R-A.",
+        "icon": "ear",
+        "aud": "A1-CP1-AUD002",
         "prompt": "Sam's last name:",
         "opts": [
          {
@@ -22728,7 +22731,8 @@
        {
         "id": "A1-CP1-LS008",
         "instr": "Listen. Choose.",
-        "scene": "KENJI: Hi. I’m Kenji. I’m from Japan. I speak Japanese and English. I’m an engineer.",
+        "icon": "ear",
+        "aud": "A1-CP1-AUD003",
         "prompt": "Kenji is from:",
         "opts": [
          {
@@ -22887,7 +22891,8 @@
        {
         "id": "A1-CP1-CN001",
         "instr": "Listen. Choose.",
-        "scene": "MAYA: Alex! This is my friend Sam.",
+        "icon": "ear",
+        "aud": "A1-C04-AUD030",
         "prompt": "Alex says:",
         "opts": [
          {

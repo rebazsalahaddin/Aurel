@@ -53,9 +53,11 @@
 		0FA2390B04864C4C2918086E1CF523A3 /* Figtree-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80593EE278AE9B371F189029707F27D5 /* Figtree-ExtraBold.ttf */; };
 		0FEEF45F50F336884DEB7846E69EDCD7 /* A1-C03-AUD045_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 915F320C890AEC5BA2DFBE1AA9347D57 /* A1-C03-AUD045_L2.wav */; };
 		1071A6951914A7F6A44066E7C4CF9B7B /* A1-C02-AUD009_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = A2BEA6D23B7A899DED635BD4E7F03B61 /* A1-C02-AUD009_L1.wav */; };
+		1072FA4008C98D2832F5ABC109E0C87D /* A1-C03-AUD068_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = DF2985F85EDF8A8D7A9D94F1536093A9 /* A1-C03-AUD068_L1.wav */; };
 		109718842175E52E657985D0CFF2B13C /* A1-C03-AUD051_L4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0E16CBE4521C18149BEDB4CDE9F704C3 /* A1-C03-AUD051_L4.wav */; };
 		10DDAC7AD903FAE13B5CB233006EF070 /* PH02JourneyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276C8A363BDB3093D96D43925B48F9CE /* PH02JourneyTests.swift */; };
 		10F84BEEABF9C6DB0EE1DA62E9A5EF78 /* A1-C03-AUD047_L3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9984E0C13D96F94F0C3EF6F90A6A1540 /* A1-C03-AUD047_L3.wav */; };
+		112944C34EEC779434AE7D2B9854A546 /* A1-C03-AUD087_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = CACB9CE1A6A07E9A5C5C0506F7C7C619 /* A1-C03-AUD087_L1.wav */; };
 		11DE04808BFA9CC7A7583B1F375B270B /* A1-C03-AUD047_L7.wav in Resources */ = {isa = PBXBuildFile; fileRef = 92BC290803D9513BB55DDA3AC98D6A3B /* A1-C03-AUD047_L7.wav */; };
 		121C29D95CFB5853A72113720B36C712 /* A1-C03-AUD047_L4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 39C15A967CA90296D38B1EADAD0D397A /* A1-C03-AUD047_L4.wav */; };
 		12517AD611349B6D1559E25519FAC435 /* A1-CP1-AUD003_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 652C92E15166565DF8024C1501EEB891 /* A1-CP1-AUD003_L1.wav */; };
@@ -80,6 +82,7 @@
 		1B5CC94F6192C46A7F5FBF679A408B12 /* A1-C02-AUD073_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = E8F056BD7CBA40B866191C0931E11004 /* A1-C02-AUD073_L1.wav */; };
 		1B7A060B340D45D35AE0A51BF9C94C19 /* A1-C02-AUD017_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = DE32B4272FC058589BFE720DBC61CA8F /* A1-C02-AUD017_L1.wav */; };
 		1BB623F45D1C2C812FCFF278BE317F48 /* A1-C02-AUD016_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = D15E5BE1108040D9C8CB05DF2AFB37BF /* A1-C02-AUD016_L1.wav */; };
+		1D396DACE60AC4A1BDF6E87705D474D0 /* A1-C03-AUD076_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 02040D68E7EB8B19D3C07318F6578F5D /* A1-C03-AUD076_L1.wav */; };
 		1DA362A698EFEBDB20F3AC4993CC4329 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB020B48DFB0E9B4211D154C58A6EC56 /* Assets.xcassets */; };
 		1F302C1EFE790702872B547CF328DE4E /* A1-C03-AUD034_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 283CF67DAB91C298B173329BF973C281 /* A1-C03-AUD034_L1.wav */; };
 		2048BD303F5C857AF4D9C1461A9D6554 /* A1-C04-AUD037_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9AF0D17263368DB22887D6170125D35E /* A1-C04-AUD037_L1.wav */; };
@@ -93,6 +96,7 @@
 		23395A514EAB7464BCEA0C5D614743C2 /* KaraokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00626BDFB688E06658C3CD60D11526 /* KaraokeTests.swift */; };
 		243470E94233DC60F986BF9283E76436 /* A1-C04-AUD036_L6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2AAE3B7BB978B91723E5FCB023D18239 /* A1-C04-AUD036_L6.wav */; };
 		2437097DABD6D8BFA4BBFEFEE11E20D6 /* AssemblyScreens.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9C297E535AF94479E90F3D74EADE50 /* AssemblyScreens.swift */; };
+		24BD715EA1E0D2D8176EB5B7371816FA /* A1-C03-AUD071_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4595AF8497FAA66D6860C597C525D517 /* A1-C03-AUD071_L1.wav */; };
 		25CBABBB1391D2A9C989BAFF945B6220 /* A1-C03-AUD043_L4.wav in Resources */ = {isa = PBXBuildFile; fileRef = F1B17D0295CA63AC9A59535DA77E379E /* A1-C03-AUD043_L4.wav */; };
 		26459323C6FD89055C19DBA50D6E7173 /* A1-C02-AUD068_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = C2120D33B14B2E634A1A949BB0F57012 /* A1-C02-AUD068_L1.wav */; };
 		26B53879F67D3AA3666CA9F0909997FD /* A1-C04-AUD042_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9036AF51472ABF4671B19F4544D4E7F6 /* A1-C04-AUD042_L2.wav */; };
@@ -100,6 +104,7 @@
 		28DFD8866F0F05364F312DA75E46735D /* A1-C02-AUD051_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = B23A1FAAE7CB2F2A7EC9E200EF2D4D02 /* A1-C02-AUD051_L1.wav */; };
 		2A00E2CF584136CC612336D7787DF953 /* A1-C04-AUD008_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 49B6DE3EC561A60A1F9C5A02A06312EA /* A1-C04-AUD008_L1.wav */; };
 		2A79C1D4DA03C2E20FC1D4D12D29711A /* A1-C03-AUD030_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3461A3D2BFD3F1C41D8C6619B42AE50F /* A1-C03-AUD030_L1.wav */; };
+		2A9AFCC035DF7B23AC66E5F95932D5CC /* A1-C03-AUD085_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4CCBD7CAC63E44F81E71C76663329CB5 /* A1-C03-AUD085_L1.wav */; };
 		2AB829A6E1CB50B703F8C4A035122DF9 /* A1-C02-AUD032_L5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8747341A7D5785FDECC33E8394214CEF /* A1-C02-AUD032_L5.wav */; };
 		2B64723D86C49227B1C9B97B52FED8B2 /* A1-CP1-AUD004_L4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8D01BCE52B0AADBA1CD6D9C1BC200C4B /* A1-CP1-AUD004_L4.wav */; };
 		2C217493E1E141EFDD15329E346E8A4A /* A1-C03-AUD001_L5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1F0897A34C4F3FB4B886051FA223E110 /* A1-C03-AUD001_L5.wav */; };
@@ -136,6 +141,7 @@
 		3AE029B4360C61AFDEC514C8E441388E /* A1-C02-AUD057_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0DCCB0976EA17B6F9435028B3DC77277 /* A1-C02-AUD057_L1.wav */; };
 		3B3F81BF8D822BB181A27B46BCEBB4AA /* A1-C03-AUD046_L3.wav in Resources */ = {isa = PBXBuildFile; fileRef = B485EA2FA1C5C7557DFA9DC5D2643F3B /* A1-C03-AUD046_L3.wav */; };
 		3B72F6945910074FA70B41487B529760 /* A1-C02-AUD001_L4.wav in Resources */ = {isa = PBXBuildFile; fileRef = A7A1E769265C784F545F6934F1218AD5 /* A1-C02-AUD001_L4.wav */; };
+		3BB6DB95B72D7814C7749235E6D8D1C3 /* A1-C03-AUD070_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2CAFDBD2FAD551D75D8D6EEA6C96E5E6 /* A1-C03-AUD070_L1.wav */; };
 		3BC9513E0CB99A3CFC37B529A5472DF9 /* A1-C03-AUD001_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = D44119DF7B7F2DDC344DF5AEDDD821CA /* A1-C03-AUD001_L2.wav */; };
 		3C99AE2296F1956A5DB277B0DDE880AA /* A1-C03-AUD050_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = CE41ADD7BE6236E3067BCDD8A515CE0E /* A1-C03-AUD050_L2.wav */; };
 		3E3C66D5B312BC66FEA525EB4E442FF3 /* Stage5SpeakTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4D0E3E5A77B0CDB3314788C22FAF39 /* Stage5SpeakTests.swift */; };
@@ -153,6 +159,7 @@
 		444D0A4CC62BE58FF0A5105FB7E99864 /* A1-C04-AUD025_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 46AF2AD3CF4AEFAAB9AD208BD62BCC4E /* A1-C04-AUD025_L2.wav */; };
 		446D5748EC6EB582C8932B4A432D7266 /* A1-C01-AUD006_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 34C7E91FD0FE861D4299497B5280B320 /* A1-C01-AUD006_L1.wav */; };
 		44A2F32E2034D18F5CC42130E163FF2B /* A1-C02-AUD072_L3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5B02B587CB97ACDB722DC450BB1FDBF2 /* A1-C02-AUD072_L3.wav */; };
+		457E049D06E683913D04FAEFE5923D2E /* A1-C03-AUD081_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 24AC57DCD9B3856EE64FC7E561231535 /* A1-C03-AUD081_L1.wav */; };
 		45B7459F32AC9139C0A1073114692EE5 /* A1-C02-AUD006_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 80E564081A4C44E83292E2AD93AD21A3 /* A1-C02-AUD006_L1.wav */; };
 		4611D4DE36CEC08CD3BC64712B94B5AC /* A1-C04-AUD035_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 027D2B9E9B8764C40F2923935D28518B /* A1-C04-AUD035_L1.wav */; };
 		469565D5F7EFA0FA8B7A1A1EECE65016 /* A1-C04-AUD043_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1BC58D939EF6B10755674FF3E8CBF8A6 /* A1-C04-AUD043_L1.wav */; };
@@ -179,7 +186,9 @@
 		5035BEF1E506D28D08A19AF2344CC9DC /* A1-C03-AUD052_L6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4D59447E04B24C926A3C171C608D63D3 /* A1-C03-AUD052_L6.wav */; };
 		50A65F16DEE75AFD0AE1B968D7A7DA33 /* A1-C01-AUD019_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = B520D4213B60B2555A8CD4B3748C7044 /* A1-C01-AUD019_L1.wav */; };
 		50F16A91286F07C3452EAA5DBC2A9A59 /* A1-C04-AUD037_L12.wav in Resources */ = {isa = PBXBuildFile; fileRef = F5C4CE9DE08F066C8BC1026D40129124 /* A1-C04-AUD037_L12.wav */; };
+		512757CB179128252AADD37D88B7D066 /* A1-C03-AUD079_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 666F03B06A00C3D0CCFCC55C75C698DA /* A1-C03-AUD079_L1.wav */; };
 		52332E132B3E8D7F341E88AADC714FFC /* A1-C02-AUD037_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = C4D6D77365582F7C5D7BABE3D08D865D /* A1-C02-AUD037_L1.wav */; };
+		523BEA17EA7C04E91AA3AA438580532E /* A1-C03-AUD080_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 258A2337025E4D8B2A8DBBBC257D1A13 /* A1-C03-AUD080_L1.wav */; };
 		525BF744AC0E2A0E279D99EF57557C86 /* A1-C01-AUD018_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = F1273C1E76B98CC8C9E4621BCE13572E /* A1-C01-AUD018_L2.wav */; };
 		5268A4DA5F9EB8E8B5195077C4D21927 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A938B1FCD011D2DAF01629688533D2 /* HomeView.swift */; };
 		52798D6B29F2536D665F2397CF0C038C /* A1-C01-AUD043_L8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 59CDC7206D3A451D96EAECEA669E11E1 /* A1-C01-AUD043_L8.wav */; };
@@ -199,6 +208,7 @@
 		59E9007AFFC1F8361D0DC1655104B07A /* A1-C03-AUD009_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1C39D552CF481991567F685AB09E65E6 /* A1-C03-AUD009_L1.wav */; };
 		59F9474C7DAFC3AB937630F69ED49859 /* A1-C02-AUD069_L7.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3A5C22E12D5188F86145713C6B4F47C5 /* A1-C02-AUD069_L7.wav */; };
 		5A39E1B0D35AE1B009D96FBA0C7B4732 /* A1-C02-AUD060_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 55D6D0FD34B690B8EF4CCB4753521EA8 /* A1-C02-AUD060_L2.wav */; };
+		5AA7A8977998B8137397D991A7D722FF /* A1-C03-AUD069_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 99EFED0E8510F76D10D83E326DDAB731 /* A1-C03-AUD069_L1.wav */; };
 		5AE0B7FD31742B427FD588CA250C3765 /* A1-CP1-AUD002_L3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2CD0EFDFCF5A372E9D16F5B197B18D4D /* A1-CP1-AUD002_L3.wav */; };
 		5B6D7C0735A7782BAAD005D3DC07C0D7 /* A1-CP1-AUD001_L4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 48ED7F6685A48C7133AC48BE929A5327 /* A1-CP1-AUD001_L4.wav */; };
 		5BA477ADE6A74DAD08D7D36F503D434C /* CourseDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */; };
@@ -259,6 +269,7 @@
 		7A9FFDA4F88ADD5F368C4064F64A1AF8 /* A1-C03-AUD010_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = DB8FC646A088A10AC110DCB4B4CC9AB1 /* A1-C03-AUD010_L1.wav */; };
 		7AE3DC806FF7926483198C6D6749DB1B /* A1-C03-AUD028_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 4F1017E27E0A04044CB0C193E4624359 /* A1-C03-AUD028_L1.wav */; };
 		7B123E93DA037DB2719362B764B94B37 /* A1-C03-AUD001_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = C85D7BBAD512E7C230D76C879D0373C7 /* A1-C03-AUD001_L1.wav */; };
+		7B2C70909CA2F7726448B87D6887B0BE /* A1-C03-AUD084_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = D5D3C81A76052EB404F001D481EF1AFB /* A1-C03-AUD084_L1.wav */; };
 		7B9E74E0B16515E86685AC78824181F6 /* A1-C02-AUD004_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = A64FCA1009010CA392381AA833D10862 /* A1-C02-AUD004_L1.wav */; };
 		7BBE425E15B02A4F8DCD5C1703B65F29 /* A1-C02-AUD071_L7.wav in Resources */ = {isa = PBXBuildFile; fileRef = B8BDED2FCDDE5144DA467669A45C17BE /* A1-C02-AUD071_L7.wav */; };
 		7C13338CB5164402CE2DE47DB243EF40 /* A1-C02-AUD060_L4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 729E8911ECD2BE00D7F77DC2CC8A1B71 /* A1-C02-AUD060_L4.wav */; };
@@ -269,6 +280,7 @@
 		7D1F299E27A234DEB9E6C4C2BA00757B /* AudioCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67C1C24CA12A48AE4072C1810B5E405 /* AudioCatalogTests.swift */; };
 		7D65C256AB393E7AF425647F7BFAA15E /* A1-C03-AUD019_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = AF09AE0FD3EDBC3D15E10729957BC009 /* A1-C03-AUD019_L1.wav */; };
 		7DD1C82BB6395CB3D0F6551C83221705 /* A1-C03-AUD016_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3FED17C3512DD3DBB3C861B364892CC5 /* A1-C03-AUD016_L1.wav */; };
+		7DE439EDD3044AD2C4E467846E1C74A6 /* A1-C03-AUD077_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = C5B6743D18476F7CB2DA63CD4FA63DA8 /* A1-C03-AUD077_L1.wav */; };
 		7E6E07DBA9C1612F774E68B6C384E1CB /* A1-C03-AUD013_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 81846EB019E365FA09EC76B98394BA84 /* A1-C03-AUD013_L1.wav */; };
 		7E949D87DCCF235BB508404ACF21D287 /* design-tokens.json in Resources */ = {isa = PBXBuildFile; fileRef = AA63B953F616151E262C391E0E332F41 /* design-tokens.json */; };
 		7EB717061317ADA0F54EAED3606C4BC4 /* A1-C03-AUD053_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 5F5A9297FE030B7C0639B521FF13ABFF /* A1-C03-AUD053_L2.wav */; };
@@ -343,6 +355,7 @@
 		9B021470EF8DF98935C30762DB620E08 /* Figtree-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E48D8C37FDA9F391136E44C2FB52A962 /* Figtree-Medium.ttf */; };
 		9B04E17D7EDBD398E0924435DC15663A /* A1-C03-AUD012_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = BB5BF103E2BD1B09C0B1D33A5C458586 /* A1-C03-AUD012_L1.wav */; };
 		9B3123600564998B6DCDF5E7A7BFC723 /* A1-C03-AUD050_L5.wav in Resources */ = {isa = PBXBuildFile; fileRef = AFB7A0B689E7BE2C9359453C6FCE0753 /* A1-C03-AUD050_L5.wav */; };
+		9B4AE5DAA5DBBF8FEB4E0BC52904C909 /* A1-C03-AUD074_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = D293B890518432FD95C87E700806F2E1 /* A1-C03-AUD074_L1.wav */; };
 		9BCA7756A1CC85C12B5E44CF6E8D1B5C /* VoicePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DA4F125605749B8072D24DA9D4A1DA /* VoicePlayback.swift */; };
 		9C30BB02D6285515377D2F295FEC528A /* A1-C01-AUD039_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 203535D2C422DFC7E676B65DDB132D7F /* A1-C01-AUD039_L2.wav */; };
 		9C6260369074BEFC545BB18A07A9026E /* A1-C03-AUD055_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8EC05500FFFC1E32D13371373316F096 /* A1-C03-AUD055_L1.wav */; };
@@ -396,6 +409,7 @@
 		B16F84D00E97B346AF9C8878C2ED58FC /* A1-C03-AUD050_L3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0603083A5F8D02F25493CBC3FA84DF91 /* A1-C03-AUD050_L3.wav */; };
 		B1DD4BD3F8C3EACC015969FC2C35E653 /* AudioCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F478314B0FA7005FBD4916B6824771B /* AudioCatalog.swift */; };
 		B21ADB085BB9DA6A6C93DC4BE9A635D6 /* A1-C03-AUD051_L9.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2A138AEBBB756EAAE6D887302E01A5DD /* A1-C03-AUD051_L9.wav */; };
+		B221B5673ACFA006C2D9FE015801C823 /* A1-C03-AUD075_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8BB1934482DDA4721F0332B4A3D093E6 /* A1-C03-AUD075_L1.wav */; };
 		B33BE06A1BC538123FEC0C851DB0B120 /* A1-C02-AUD074_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 23FEEC95D473A96214534559F3242B2B /* A1-C02-AUD074_L1.wav */; };
 		B44368638041818E0EC9E1A70CE9D1D6 /* A1-C02-AUD020_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = ADE640096067CB7D66C88964A05A1B9E /* A1-C02-AUD020_L1.wav */; };
 		B45591F42F79454331218A9012441786 /* A1-C04-AUD044_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9EA643E4EF1572819DFFDB70F79E3BE2 /* A1-C04-AUD044_L1.wav */; };
@@ -403,11 +417,13 @@
 		B5F17F032A9537D2617E8AE55029A36E /* A1-C04-AUD039_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 73AC2A9D47CE229F0A02ACC620756D64 /* A1-C04-AUD039_L1.wav */; };
 		B618A768B252617E4E2320482BA42A82 /* A1-C02-AUD067_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7C937716B1DE5E63C48C95D4DEAB1D3E /* A1-C02-AUD067_L1.wav */; };
 		B688EE81D040C06D01B3983E5369A83B /* A1-C01-AUD034_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 587DAA0E37AEB6CD2E86A8E2F50E5D9A /* A1-C01-AUD034_L1.wav */; };
+		B70B28AE3826DDE789D4500F411A43F9 /* A1-C03-AUD073_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 71DED5631123F07D0F5FB5A31D8B742A /* A1-C03-AUD073_L1.wav */; };
 		B740EC1DC2945A13099946B5F36D4692 /* A1-C01-AUD023_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = C8C5E3350B103D2CCB51954918B7878B /* A1-C01-AUD023_L1.wav */; };
 		B7EF06765F7A8FC08269C13EDBEADC89 /* A1-C03-AUD045_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = D40EED57461F03E6EEC44C916B797407 /* A1-C03-AUD045_L1.wav */; };
 		B81C45211660745D81EBC720A4940305 /* A1-CP1-AUD002_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8BCD15A62684A0022A41BFF6C4E332B9 /* A1-CP1-AUD002_L1.wav */; };
 		B9E3606BE0636E2A85626B43162B14F8 /* A1-C01-AUD029_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7FEE7327F685131448189D46D011EC4E /* A1-C01-AUD029_L1.wav */; };
 		BA344C053AAF5917C64C94F440225F81 /* A1-C04-AUD027_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = A6A95143B1AB8E44336096341AAECA8D /* A1-C04-AUD027_L1.wav */; };
+		BA4A3A84BEF6DA161238B450950BF479 /* A1-C03-AUD088_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 82BE4F8433289F8C3A808B2D35F4D1F3 /* A1-C03-AUD088_L1.wav */; };
 		BAC158E968549ED04BDE0ED53E2A4D5A /* A1-C02-AUD058_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 68F77F4BB0822B9E3CC773FA64F4C164 /* A1-C02-AUD058_L1.wav */; };
 		BB4ABA17FF82697AD691198CE47A447D /* A1-C02-AUD023_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8BB93624F8EAB0AA1D048C6228540108 /* A1-C02-AUD023_L1.wav */; };
 		BBC1ECB682603727C5ABC0E95AEE9399 /* A1-C01-AUD021_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 328C6A1CBE0B6250EB990042694D1C78 /* A1-C01-AUD021_L1.wav */; };
@@ -425,6 +441,7 @@
 		BF405BB2398947484F7377BE6E69A6C2 /* A1-C02-AUD022_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8A274718420AB08B0B9094EC61595CEC /* A1-C02-AUD022_L1.wav */; };
 		BF556759277779028C6DE45CBA59CFC9 /* A1-C01-AUD017_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9D092ABE5C09183606761C8B33FC04EF /* A1-C01-AUD017_L2.wav */; };
 		BFC128A185F6A490B9F00C654D5C2C54 /* A1-C01-AUD045_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 86E5E94A29EA650D731A9EF8E1FEAC39 /* A1-C01-AUD045_L2.wav */; };
+		BFE751ACB9248D4E061FEAE76A84299B /* A1-C03-AUD082_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 14C0A0D874AC21C96786A0CBC93190DA /* A1-C03-AUD082_L1.wav */; };
 		C1D0EDD2139148BD999FE0E741372328 /* A1-C01-AUD040_L5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9434F4BC1D0360F3D82202221E927EEC /* A1-C01-AUD040_L5.wav */; };
 		C27AF8F149D53AD36498943E1639791C /* A1-C03-AUD056_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 2268EEEFA64B9C57CF79567EB587CB98 /* A1-C03-AUD056_L2.wav */; };
 		C326746B65B22DF3712D3C61A232D74E /* A1-C03-AUD051_L6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 54CBBF97434FBC0E9C64BCB65A30FD6A /* A1-C03-AUD051_L6.wav */; };
@@ -436,6 +453,7 @@
 		C58DAAB6CAB1BF8527E377E929C72438 /* A1-C03-AUD059_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 135A6684D26A0E32C8FAEE90DC0E8C89 /* A1-C03-AUD059_L1.wav */; };
 		C5A193F2C3034B0E2265CE22D5FBE6F9 /* A1-C03-AUD011_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 9E99CAA8499F74A407E2CA84898B6DCE /* A1-C03-AUD011_L1.wav */; };
 		C7CBE9F75CA30B614F385FBDE92C8C02 /* A1-C02-AUD072_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3FFF3730BA951C922A9C196ACF7672BD /* A1-C02-AUD072_L2.wav */; };
+		C7CD938585FB5FB6388E6EC6D1251AB3 /* A1-C03-AUD078_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3B98E76216C6BD3C41B98021BBC09366 /* A1-C03-AUD078_L1.wav */; };
 		C805A80DF0144CA261544C5EEB0D5BB2 /* A1-C02-AUD024_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = B4FD0D533D8847093F46F0D7FA8A9D36 /* A1-C02-AUD024_L1.wav */; };
 		C8BF37C7C83A96B12F8114BCE947B176 /* A1-C04-AUD034_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = AE723F3D83830CE4C34AA9AE0FAD4F3A /* A1-C04-AUD034_L1.wav */; };
 		C958CACE7EF8B2A66CF7C68A9878802B /* A1-C02-AUD034_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 443089DD5F7FD8F3240FE7CC3053A0FE /* A1-C02-AUD034_L1.wav */; };
@@ -468,6 +486,7 @@
 		D56C402C21A2F27297C504914EC35B6C /* A1-C03-AUD047_L2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20884F70F8557D07F14D6AB0D2607AD5 /* A1-C03-AUD047_L2.wav */; };
 		D597DAAB7C20BE7EAD9F69E3F1148D26 /* A1-C03-AUD058_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = D4605A718A5A8ECBF7056EC5AAF15429 /* A1-C03-AUD058_L1.wav */; };
 		D61A886AD13B0F1131DC48FFD2F132F9 /* A1-C02-AUD038_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 005BD9D7F7A85215A84CC6600CEC3570 /* A1-C02-AUD038_L1.wav */; };
+		D76186744327A95AAFABC4F1DE3D8265 /* A1-C03-AUD072_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = F95C08865F453705FBCAD797FE01F90A /* A1-C03-AUD072_L1.wav */; };
 		D7888392AE91EC2B87518EAE9B48A542 /* A1-C03-AUD047_L6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1A5C833EE8FBFB39B806FF8A2B545F30 /* A1-C03-AUD047_L6.wav */; };
 		D8918001BBF1F6FDB4EBC4946D27016C /* A1-C01-AUD038_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 16FB4EDB0946E59D6B4BB6BD418698F7 /* A1-C01-AUD038_L1.wav */; };
 		D8E0DBE26D4E48DB76F647CDEB098A21 /* A1-C02-AUD071_L8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0716A24D439144CE7ACB5928817153D6 /* A1-C02-AUD071_L8.wav */; };
@@ -489,6 +508,7 @@
 		E0FE48CFDEF76DCEC4BDBF58C4A15529 /* A1-C03-AUD056_L4.wav in Resources */ = {isa = PBXBuildFile; fileRef = E34436A5D9EA7B55BFFD7EFC9827D73D /* A1-C03-AUD056_L4.wav */; };
 		E186F8DA2810515E8BD8450C9F6CDAFF /* A1-C01-AUD037_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7F41E35A2EA25014196417C273948989 /* A1-C01-AUD037_L1.wav */; };
 		E1947830828FA1C90CFC25ED1BA39EF3 /* A1-C03-AUD001_L13.wav in Resources */ = {isa = PBXBuildFile; fileRef = B9937D6A032020C3830CAE5D33FD6A96 /* A1-C03-AUD001_L13.wav */; };
+		E1DD7E141CE32D40738F4ABFDBB4EECD /* A1-C03-AUD083_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = E8460CFED64B42B095D5002ADCBA267D /* A1-C03-AUD083_L1.wav */; };
 		E2F771AE2E65576ADEDF613E75C2C150 /* A1-C02-AUD053_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = E4C689F2944CADBD5CC1E8E1CD4D3D5A /* A1-C02-AUD053_L1.wav */; };
 		E306BF8CB3CDD77FD9429951C0D2409D /* ArcSkyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFAB7BAEA689D85557BAC25BB91ED072 /* ArcSkyView.swift */; };
 		E37AF6071F4E4C10589DA8B86120B156 /* A1-C04-AUD015_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = D438D8984C2E79DE788818FEF6224C0C /* A1-C04-AUD015_L1.wav */; };
@@ -502,6 +522,7 @@
 		E6439EFC104A221F2C873872A208B0C6 /* A1-C03-AUD045_L5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8CC62DCE95C4E727E6C71FF44E1B988C /* A1-C03-AUD045_L5.wav */; };
 		E669F2A01D6D03147E5D5054CF9FC553 /* Stage7AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F4CA1BE6E51DA98F474AE36BFF169B /* Stage7AccountTests.swift */; };
 		E6B04E4B820EE902FABB08D32AAB0070 /* A1-C04-AUD053_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 070BB116837BA939682ADBE03D5BEDBA /* A1-C04-AUD053_L1.wav */; };
+		E6EA3F2D94EB7C0C568DE50D0619508D /* A1-C03-AUD086_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A27C84E7D0E10EF55612BF56651E5F7 /* A1-C03-AUD086_L1.wav */; };
 		E77BF59C986E4F00C5DF1A275B9AAFBD /* CourseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BEA9EC2CCC2CF2D55CD8F514C767117 /* CourseStore.swift */; };
 		E821FFC058718920BED8D6934BACF307 /* A1-C03-AUD021_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = D60673DB8F0E33F6DB327A0A4E9A19F5 /* A1-C03-AUD021_L1.wav */; };
 		E84F3FE292B1DA989B9958A6C4724BD9 /* A1-C03-AUD025_L1.wav in Resources */ = {isa = PBXBuildFile; fileRef = D87E078D81965ED4BE0CC76D62710A83 /* A1-C03-AUD025_L1.wav */; };
@@ -583,6 +604,7 @@
 		014DED445D86F8A6417B8BCE639ACA36 /* A1-C02-AUD072_L5.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD072_L5.wav"; sourceTree = "<group>"; };
 		015ACCE99CF90947068D38F73786DD36 /* A1-C01-AUD030_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD030_L1.wav"; sourceTree = "<group>"; };
 		0188159592B747512682ECA0220B4473 /* Stage6PlayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage6PlayerTests.swift; sourceTree = "<group>"; };
+		02040D68E7EB8B19D3C07318F6578F5D /* A1-C03-AUD076_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD076_L1.wav"; sourceTree = "<group>"; };
 		0244E54299A8A207B6784BCA4D71B5E6 /* A1-C04-AUD036_L3.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD036_L3.wav"; sourceTree = "<group>"; };
 		02485DC4A76A536F04D867DF12412B3B /* ContentConformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentConformanceTests.swift; sourceTree = "<group>"; };
 		027D2B9E9B8764C40F2923935D28518B /* A1-C04-AUD035_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD035_L1.wav"; sourceTree = "<group>"; };
@@ -603,6 +625,7 @@
 		0875CFFAD1B6B622E580B89EE1424284 /* AppRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouterTests.swift; sourceTree = "<group>"; };
 		0911E4C828C6E0E8255C4DA651326C84 /* A1-C02-AUD064_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD064_L1.wav"; sourceTree = "<group>"; };
 		0990748216B0670DE075A105AB65E9BC /* ScreenPayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenPayloads.swift; sourceTree = "<group>"; };
+		0A27C84E7D0E10EF55612BF56651E5F7 /* A1-C03-AUD086_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD086_L1.wav"; sourceTree = "<group>"; };
 		0A2DD433FDF592068275F611DD1409D9 /* A1-C02-AUD001_L5.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD001_L5.wav"; sourceTree = "<group>"; };
 		0A305075FA8403E58B1E629FC9749F08 /* A1-C01-AUD039_L3.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD039_L3.wav"; sourceTree = "<group>"; };
 		0A4D0E3E5A77B0CDB3314788C22FAF39 /* Stage5SpeakTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage5SpeakTests.swift; sourceTree = "<group>"; };
@@ -622,6 +645,7 @@
 		130E51236993140A39013C66C8812792 /* A1-C04-AUD052_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD052_L1.wav"; sourceTree = "<group>"; };
 		135A6684D26A0E32C8FAEE90DC0E8C89 /* A1-C03-AUD059_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD059_L1.wav"; sourceTree = "<group>"; };
 		1399818C8EE696F3690B7F2A34C09A20 /* A1-C03-AUD051_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD051_L1.wav"; sourceTree = "<group>"; };
+		14C0A0D874AC21C96786A0CBC93190DA /* A1-C03-AUD082_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD082_L1.wav"; sourceTree = "<group>"; };
 		14E208AF5B9D24AE11A66DBADA70BC13 /* A1-C03-AUD062_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD062_L1.wav"; sourceTree = "<group>"; };
 		16CE599A43474B7EFD0DD97A5D001944 /* A1-C01-AUD043_L7.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD043_L7.wav"; sourceTree = "<group>"; };
 		16FB4EDB0946E59D6B4BB6BD418698F7 /* A1-C01-AUD038_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD038_L1.wav"; sourceTree = "<group>"; };
@@ -654,9 +678,11 @@
 		23F31C765332124A3C3CD359AF52D52A /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		23FEEC95D473A96214534559F3242B2B /* A1-C02-AUD074_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD074_L1.wav"; sourceTree = "<group>"; };
 		24695DB1A900CD2C0E9373C5835F29E0 /* StoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoriesView.swift; sourceTree = "<group>"; };
+		24AC57DCD9B3856EE64FC7E561231535 /* A1-C03-AUD081_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD081_L1.wav"; sourceTree = "<group>"; };
 		24B1D12730113F16D44D792430ECF17B /* A1-C03-AUD003_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD003_L1.wav"; sourceTree = "<group>"; };
 		24CE555B79A1BB12960B3F044A0C7253 /* A1-C03-AUD065_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD065_L1.wav"; sourceTree = "<group>"; };
 		24F4CE90CDC9309D60409EE01C14DFF0 /* A1-C02-AUD031_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD031_L1.wav"; sourceTree = "<group>"; };
+		258A2337025E4D8B2A8DBBBC257D1A13 /* A1-C03-AUD080_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD080_L1.wav"; sourceTree = "<group>"; };
 		2602BC2EFBEE877681C847A444A80E54 /* A1-C02-AUD059_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD059_L1.wav"; sourceTree = "<group>"; };
 		260305929AE3CDD011CB7000F59791E9 /* A1-C03-AUD051_L8.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD051_L8.wav"; sourceTree = "<group>"; };
 		2664F9AB67D5182659BC7F927A7C3664 /* A1-CP1-AUD002_L7.wav */ = {isa = PBXFileReference; path = "A1-CP1-AUD002_L7.wav"; sourceTree = "<group>"; };
@@ -671,6 +697,7 @@
 		2A418D1B7DD85CC5322880A4EDE7C9B7 /* A1-C04-AUD037_L3.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD037_L3.wav"; sourceTree = "<group>"; };
 		2AAE3B7BB978B91723E5FCB023D18239 /* A1-C04-AUD036_L6.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD036_L6.wav"; sourceTree = "<group>"; };
 		2C05648840FB36D67D1691CC3B5D5275 /* A1-C01-AUD045_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD045_L1.wav"; sourceTree = "<group>"; };
+		2CAFDBD2FAD551D75D8D6EEA6C96E5E6 /* A1-C03-AUD070_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD070_L1.wav"; sourceTree = "<group>"; };
 		2CB1C72FCFD1F4F16A01FD303BEE1A8C /* A1-C02-AUD008_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD008_L1.wav"; sourceTree = "<group>"; };
 		2CD0EFDFCF5A372E9D16F5B197B18D4D /* A1-CP1-AUD002_L3.wav */ = {isa = PBXFileReference; path = "A1-CP1-AUD002_L3.wav"; sourceTree = "<group>"; };
 		2D6F663B69A9104CFB48C4A420E4B709 /* audio-catalog.json */ = {isa = PBXFileReference; path = "audio-catalog.json"; sourceTree = "<group>"; };
@@ -697,6 +724,7 @@
 		3AE02773E4F69F9A6821AEEA35F069C8 /* A1-CP1-AUD001_L2.wav */ = {isa = PBXFileReference; path = "A1-CP1-AUD001_L2.wav"; sourceTree = "<group>"; };
 		3B21AB699D68E2EB1DA82D1A44AB5B01 /* A1-C04-AUD015_L5.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD015_L5.wav"; sourceTree = "<group>"; };
 		3B869EE1433F58F9F1E3EF8121F91C4B /* A1-C04-AUD031_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD031_L1.wav"; sourceTree = "<group>"; };
+		3B98E76216C6BD3C41B98021BBC09366 /* A1-C03-AUD078_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD078_L1.wav"; sourceTree = "<group>"; };
 		3C4B1FE104F27C2FF9124FDF004D0A89 /* A1-C04-AUD037_L11.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD037_L11.wav"; sourceTree = "<group>"; };
 		3D109633C4D848C7C2B9E54DD974F4DD /* A1-C01-AUD002_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD002_L1.wav"; sourceTree = "<group>"; };
 		3EF9C5DB0578D093FAE2B56604CEAC86 /* A1-C01-AUD007_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD007_L1.wav"; sourceTree = "<group>"; };
@@ -721,6 +749,7 @@
 		4489AC447A37C941481C8F3249995EEF /* A1-C04-AUD036_L8.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD036_L8.wav"; sourceTree = "<group>"; };
 		44E530909B70A6BEC1FE9CFEF2F0944C /* OFL-Figtree.txt */ = {isa = PBXFileReference; path = "OFL-Figtree.txt"; sourceTree = "<group>"; };
 		453A03FA18C1570A09FE5BC9EC6598C6 /* A1-C03-AUD056_L3.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD056_L3.wav"; sourceTree = "<group>"; };
+		4595AF8497FAA66D6860C597C525D517 /* A1-C03-AUD071_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD071_L1.wav"; sourceTree = "<group>"; };
 		459855D3BE0EF5F8CD9EBAE8EEAA010E /* A1-C04-AUD025_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD025_L1.wav"; sourceTree = "<group>"; };
 		45FDD07A459AF14E6B0ABB52ADA48194 /* QuickBank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickBank.swift; sourceTree = "<group>"; };
 		469A90E8792C50FB1DF8EA4D9B8226F9 /* A1-C03-AUD001_L7.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD001_L7.wav"; sourceTree = "<group>"; };
@@ -737,6 +766,7 @@
 		4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		4B74ECAE75D944627B9F67CA49A0D840 /* A1-C01-AUD036_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD036_L1.wav"; sourceTree = "<group>"; };
 		4CBBFF026D03EFBABFD03BF555D7BF6B /* A1-C04-AUD017_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD017_L1.wav"; sourceTree = "<group>"; };
+		4CCBD7CAC63E44F81E71C76663329CB5 /* A1-C03-AUD085_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD085_L1.wav"; sourceTree = "<group>"; };
 		4CD8A1471CF0661857B756EBF3F0B8B8 /* A1-C02-AUD071_L4.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD071_L4.wav"; sourceTree = "<group>"; };
 		4D59447E04B24C926A3C171C608D63D3 /* A1-C03-AUD052_L6.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD052_L6.wav"; sourceTree = "<group>"; };
 		4E0AEA34A6AC0E4A3D3335D702DE651B /* A1-C02-AUD001_L7.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD001_L7.wav"; sourceTree = "<group>"; };
@@ -777,6 +807,7 @@
 		652C92E15166565DF8024C1501EEB891 /* A1-CP1-AUD003_L1.wav */ = {isa = PBXFileReference; path = "A1-CP1-AUD003_L1.wav"; sourceTree = "<group>"; };
 		656FD424D9B2BBABCF73E8AFBDDB83F0 /* A1-C02-AUD069_L9.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD069_L9.wav"; sourceTree = "<group>"; };
 		6605B8E7F8C9D3272A0EECB5532CCE9B /* A1-C03-AUD052_L3.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD052_L3.wav"; sourceTree = "<group>"; };
+		666F03B06A00C3D0CCFCC55C75C698DA /* A1-C03-AUD079_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD079_L1.wav"; sourceTree = "<group>"; };
 		66F1E1A01BCFF339D6DCF260B9B9B90E /* A1-C02-AUD061_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD061_L1.wav"; sourceTree = "<group>"; };
 		677ACF3D2869E4D9E82AA06F80C29551 /* A1-C04-AUD006_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD006_L1.wav"; sourceTree = "<group>"; };
 		67BBE801A594AB342021536850C8B0E5 /* A1-C03-AUD043_L2.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD043_L2.wav"; sourceTree = "<group>"; };
@@ -797,6 +828,7 @@
 		70D41A55BE5A55EBC63ABB0EBCB8CB19 /* A1-C03-AUD063_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD063_L1.wav"; sourceTree = "<group>"; };
 		71866447114E00ACCC716E04E354F161 /* A1-C01-AUD014_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD014_L1.wav"; sourceTree = "<group>"; };
 		719BF620D42C590029B403F2ABF49C56 /* PlayerModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModelTests.swift; sourceTree = "<group>"; };
+		71DED5631123F07D0F5FB5A31D8B742A /* A1-C03-AUD073_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD073_L1.wav"; sourceTree = "<group>"; };
 		71EC2FE876A72530C055E6683EFA047C /* A1-C01-AUD001_L3.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD001_L3.wav"; sourceTree = "<group>"; };
 		725F92962EC1A76FD628A46B7A984A4B /* A1-C03-AUD049_L2.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD049_L2.wav"; sourceTree = "<group>"; };
 		726C1FEF11BA50BDC2F6A61AAA6C55E8 /* A1-C01-AUD001_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD001_L1.wav"; sourceTree = "<group>"; };
@@ -837,6 +869,7 @@
 		81846EB019E365FA09EC76B98394BA84 /* A1-C03-AUD013_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD013_L1.wav"; sourceTree = "<group>"; };
 		8184FB0D194E18091559FB90AF81320F /* A1-C04-AUD047_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD047_L1.wav"; sourceTree = "<group>"; };
 		8291F4196D337E7EED47C85048EAF589 /* A1-C04-AUD023_L2.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD023_L2.wav"; sourceTree = "<group>"; };
+		82BE4F8433289F8C3A808B2D35F4D1F3 /* A1-C03-AUD088_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD088_L1.wav"; sourceTree = "<group>"; };
 		82CEC8FF5D713C322D10CA11A797EE3B /* A1-C01-AUD031_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD031_L1.wav"; sourceTree = "<group>"; };
 		83D53A52344BC31287E854936473F7BA /* A1-C01-AUD047_L3.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD047_L3.wav"; sourceTree = "<group>"; };
 		859BB9C70782B0186573020B37324F37 /* A1-C02-AUD065_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD065_L1.wav"; sourceTree = "<group>"; };
@@ -857,6 +890,7 @@
 		8B7D97E8073ABCAFA521DE60B716AB23 /* A1-C04-AUD016_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD016_L1.wav"; sourceTree = "<group>"; };
 		8B86F201D2CF53DE415EAD95D141E508 /* AUFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AUFeedback.swift; sourceTree = "<group>"; };
 		8BA2EFDD2A3F6626A26BDE0A87E4D554 /* A1-C02-AUD075_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD075_L1.wav"; sourceTree = "<group>"; };
+		8BB1934482DDA4721F0332B4A3D093E6 /* A1-C03-AUD075_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD075_L1.wav"; sourceTree = "<group>"; };
 		8BB93624F8EAB0AA1D048C6228540108 /* A1-C02-AUD023_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD023_L1.wav"; sourceTree = "<group>"; };
 		8BCD15A62684A0022A41BFF6C4E332B9 /* A1-CP1-AUD002_L1.wav */ = {isa = PBXFileReference; path = "A1-CP1-AUD002_L1.wav"; sourceTree = "<group>"; };
 		8BEA9EC2CCC2CF2D55CD8F514C767117 /* CourseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseStore.swift; sourceTree = "<group>"; };
@@ -892,6 +926,7 @@
 		98EE651741F0FBBD1EE3CA6A2215159F /* A1-C02-AUD014_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD014_L1.wav"; sourceTree = "<group>"; };
 		9984E0C13D96F94F0C3EF6F90A6A1540 /* A1-C03-AUD047_L3.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD047_L3.wav"; sourceTree = "<group>"; };
 		99B39055545A743C99740875E14A6192 /* A1-C02-AUD069_L3.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD069_L3.wav"; sourceTree = "<group>"; };
+		99EFED0E8510F76D10D83E326DDAB731 /* A1-C03-AUD069_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD069_L1.wav"; sourceTree = "<group>"; };
 		99FABA6AAB9D8D7E41799E480F52A47C /* A1-C01-AUD043_L3.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD043_L3.wav"; sourceTree = "<group>"; };
 		9A73D0931A5AC4434337F1CEA2F163AE /* A1-C03-AUD001_L6.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD001_L6.wav"; sourceTree = "<group>"; };
 		9AD009A76D947680FB5A2356A05CB85A /* A1-C02-AUD069_L4.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD069_L4.wav"; sourceTree = "<group>"; };
@@ -999,6 +1034,7 @@
 		C45A4D2ADF1967DC22A134C384FDCB41 /* PracticeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeScreen.swift; sourceTree = "<group>"; };
 		C4D6D77365582F7C5D7BABE3D08D865D /* A1-C02-AUD037_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD037_L1.wav"; sourceTree = "<group>"; };
 		C56C532E67AC5CF9F824FA4DB855F7E6 /* A1-CP1-AUD001_L3.wav */ = {isa = PBXFileReference; path = "A1-CP1-AUD001_L3.wav"; sourceTree = "<group>"; };
+		C5B6743D18476F7CB2DA63CD4FA63DA8 /* A1-C03-AUD077_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD077_L1.wav"; sourceTree = "<group>"; };
 		C5D2C071B0280A1BE05D257430550B71 /* A1-C02-AUD003_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD003_L1.wav"; sourceTree = "<group>"; };
 		C63795AC292EA984F19C55D956448A49 /* A1-C01-AUD046_L4.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD046_L4.wav"; sourceTree = "<group>"; };
 		C65F038E03918AB3CF11972D54713598 /* A1-C02-AUD039_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD039_L1.wav"; sourceTree = "<group>"; };
@@ -1014,6 +1050,7 @@
 		C8C5E3350B103D2CCB51954918B7878B /* A1-C01-AUD023_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD023_L1.wav"; sourceTree = "<group>"; };
 		C93D3BFE7BEF5DB05CA6EED774A29598 /* A1-C04-AUD007_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD007_L1.wav"; sourceTree = "<group>"; };
 		CA371BA46F2F6A752704CF712B78CB1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CACB9CE1A6A07E9A5C5C0506F7C7C619 /* A1-C03-AUD087_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD087_L1.wav"; sourceTree = "<group>"; };
 		CAF6B352DFB8BD8B8896D2D3D74FC5F5 /* A1-C04-AUD037_L8.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD037_L8.wav"; sourceTree = "<group>"; };
 		CBF3250CDE01EB5DD295C7AF67823C4A /* FeedbackServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackServicesTests.swift; sourceTree = "<group>"; };
 		CC20A5FA2AFF520BA3BDD703E029C43D /* GrammarConformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrammarConformanceTests.swift; sourceTree = "<group>"; };
@@ -1030,6 +1067,7 @@
 		D1C500DA204B19EA56C11884897E0C69 /* A1-CP1-AUD004_L3.wav */ = {isa = PBXFileReference; path = "A1-CP1-AUD004_L3.wav"; sourceTree = "<group>"; };
 		D1D00529D925E2549CD9E43BFB5456DA /* A1-C02-AUD071_L3.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD071_L3.wav"; sourceTree = "<group>"; };
 		D205B028CDF7F02400C1F349A7D302C9 /* A1-C04-AUD032_L2.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD032_L2.wav"; sourceTree = "<group>"; };
+		D293B890518432FD95C87E700806F2E1 /* A1-C03-AUD074_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD074_L1.wav"; sourceTree = "<group>"; };
 		D2DE5BCD699DF7C3F87B995631C9E65B /* A1-C04-AUD036_L4.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD036_L4.wav"; sourceTree = "<group>"; };
 		D2F823DCE6165DDA2171BB707FBF376F /* A1-C02-AUD078_L4.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD078_L4.wav"; sourceTree = "<group>"; };
 		D30C1C69EDC06E3D47A3CFA1A90D3735 /* A1-C01-AUD046_L2.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD046_L2.wav"; sourceTree = "<group>"; };
@@ -1041,6 +1079,7 @@
 		D44119DF7B7F2DDC344DF5AEDDD821CA /* A1-C03-AUD001_L2.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD001_L2.wav"; sourceTree = "<group>"; };
 		D4605A718A5A8ECBF7056EC5AAF15429 /* A1-C03-AUD058_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD058_L1.wav"; sourceTree = "<group>"; };
 		D5258E655EA0E561DE3D317FFB2B1F7F /* A1-C03-AUD027_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD027_L1.wav"; sourceTree = "<group>"; };
+		D5D3C81A76052EB404F001D481EF1AFB /* A1-C03-AUD084_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD084_L1.wav"; sourceTree = "<group>"; };
 		D5DA6D73DDCF1EBFE376E30571870FBB /* A1-C04-AUD024_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD024_L1.wav"; sourceTree = "<group>"; };
 		D60673DB8F0E33F6DB327A0A4E9A19F5 /* A1-C03-AUD021_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD021_L1.wav"; sourceTree = "<group>"; };
 		D64053A1E7E7AC67855184D35CB8B1EF /* A1-C01-AUD028_L1.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD028_L1.wav"; sourceTree = "<group>"; };
@@ -1069,6 +1108,7 @@
 		DE32B4272FC058589BFE720DBC61CA8F /* A1-C02-AUD017_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD017_L1.wav"; sourceTree = "<group>"; };
 		DEF0A759C98799F283D07B015ECBAF0A /* A1-C04-AUD013_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD013_L1.wav"; sourceTree = "<group>"; };
 		DF08D2E1BE3F12D1ED4DDCE8A4D510D7 /* A1-C02-AUD047_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD047_L1.wav"; sourceTree = "<group>"; };
+		DF2985F85EDF8A8D7A9D94F1536093A9 /* A1-C03-AUD068_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD068_L1.wav"; sourceTree = "<group>"; };
 		DF5B7483264F4F08A91FB062331F8BFB /* PlayerVerdictDock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerVerdictDock.swift; sourceTree = "<group>"; };
 		DF6B3CD7EE225CBBE3E9B28EE07FB9B8 /* A1-C01-AUD043_L6.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD043_L6.wav"; sourceTree = "<group>"; };
 		DF9E53A4FE8BD9D26C81CFC7F096CCE7 /* A1-C01-AUD040_L2.wav */ = {isa = PBXFileReference; path = "A1-C01-AUD040_L2.wav"; sourceTree = "<group>"; };
@@ -1095,6 +1135,7 @@
 		E6CC3CB352D3E7E0394ADA41F2C653BA /* A1-C02-AUD012_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD012_L1.wav"; sourceTree = "<group>"; };
 		E72368C7E409F6D4D1F841EEF95E8413 /* A1-C03-AUD040_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD040_L1.wav"; sourceTree = "<group>"; };
 		E730F518B882EBBFEA897E38649ED2D3 /* DesignTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokenTests.swift; sourceTree = "<group>"; };
+		E8460CFED64B42B095D5002ADCBA267D /* A1-C03-AUD083_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD083_L1.wav"; sourceTree = "<group>"; };
 		E8CA3511E63B2D23F88D5485251B69F9 /* A1-C02-AUD069_L5.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD069_L5.wav"; sourceTree = "<group>"; };
 		E8F056BD7CBA40B866191C0931E11004 /* A1-C02-AUD073_L1.wav */ = {isa = PBXFileReference; path = "A1-C02-AUD073_L1.wav"; sourceTree = "<group>"; };
 		E946BECD135DCC5FFFF4EFB5AAF8A527 /* A1-C03-AUD054_L4.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD054_L4.wav"; sourceTree = "<group>"; };
@@ -1121,6 +1162,7 @@
 		F71F6A77AEE869C99A4B2040508E59F0 /* A1-C03-AUD051_L2.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD051_L2.wav"; sourceTree = "<group>"; };
 		F75DBEFD3B042BEE46B55FF506C9F344 /* A1-C04-AUD012_L1.wav */ = {isa = PBXFileReference; path = "A1-C04-AUD012_L1.wav"; sourceTree = "<group>"; };
 		F93E4296C32FB0C19ECC3DD4D5EA5253 /* A1-C03-AUD041_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD041_L1.wav"; sourceTree = "<group>"; };
+		F95C08865F453705FBCAD797FE01F90A /* A1-C03-AUD072_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD072_L1.wav"; sourceTree = "<group>"; };
 		F9A938B1FCD011D2DAF01629688533D2 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		F9D35AB43663F038AA4B88BBB061AB84 /* A1-C03-AUD053_L3.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD053_L3.wav"; sourceTree = "<group>"; };
 		FA53A8C99800EF0E7B5A6A228FBEF129 /* A1-C03-AUD032_L1.wav */ = {isa = PBXFileReference; path = "A1-C03-AUD032_L1.wav"; sourceTree = "<group>"; };
@@ -1595,6 +1637,27 @@
 				24CE555B79A1BB12960B3F044A0C7253 /* A1-C03-AUD065_L1.wav */,
 				EEFEEE849DC13320636132B988E20181 /* A1-C03-AUD066_L1.wav */,
 				B966E0BD493B4FA034BFCA20EE152F55 /* A1-C03-AUD067_L1.wav */,
+				DF2985F85EDF8A8D7A9D94F1536093A9 /* A1-C03-AUD068_L1.wav */,
+				99EFED0E8510F76D10D83E326DDAB731 /* A1-C03-AUD069_L1.wav */,
+				2CAFDBD2FAD551D75D8D6EEA6C96E5E6 /* A1-C03-AUD070_L1.wav */,
+				4595AF8497FAA66D6860C597C525D517 /* A1-C03-AUD071_L1.wav */,
+				F95C08865F453705FBCAD797FE01F90A /* A1-C03-AUD072_L1.wav */,
+				71DED5631123F07D0F5FB5A31D8B742A /* A1-C03-AUD073_L1.wav */,
+				D293B890518432FD95C87E700806F2E1 /* A1-C03-AUD074_L1.wav */,
+				8BB1934482DDA4721F0332B4A3D093E6 /* A1-C03-AUD075_L1.wav */,
+				02040D68E7EB8B19D3C07318F6578F5D /* A1-C03-AUD076_L1.wav */,
+				C5B6743D18476F7CB2DA63CD4FA63DA8 /* A1-C03-AUD077_L1.wav */,
+				3B98E76216C6BD3C41B98021BBC09366 /* A1-C03-AUD078_L1.wav */,
+				666F03B06A00C3D0CCFCC55C75C698DA /* A1-C03-AUD079_L1.wav */,
+				258A2337025E4D8B2A8DBBBC257D1A13 /* A1-C03-AUD080_L1.wav */,
+				24AC57DCD9B3856EE64FC7E561231535 /* A1-C03-AUD081_L1.wav */,
+				14C0A0D874AC21C96786A0CBC93190DA /* A1-C03-AUD082_L1.wav */,
+				E8460CFED64B42B095D5002ADCBA267D /* A1-C03-AUD083_L1.wav */,
+				D5D3C81A76052EB404F001D481EF1AFB /* A1-C03-AUD084_L1.wav */,
+				4CCBD7CAC63E44F81E71C76663329CB5 /* A1-C03-AUD085_L1.wav */,
+				0A27C84E7D0E10EF55612BF56651E5F7 /* A1-C03-AUD086_L1.wav */,
+				CACB9CE1A6A07E9A5C5C0506F7C7C619 /* A1-C03-AUD087_L1.wav */,
+				82BE4F8433289F8C3A808B2D35F4D1F3 /* A1-C03-AUD088_L1.wav */,
 				C878315C75267DB95005FA2DD78DB9E7 /* A1-C04-AUD001_L1.wav */,
 				BA570F85CCF71B95C32C99486EE9FD33 /* A1-C04-AUD002_L1.wav */,
 				BEA56291E11C9029A6C9E10F1271A674 /* A1-C04-AUD003_L1.wav */,
@@ -2412,6 +2475,27 @@
 				945FF44DB2F7925A94F3F9666FDE367A /* A1-C03-AUD065_L1.wav in Resources */,
 				00C3EA2332D36FD044987B92A8E84FD7 /* A1-C03-AUD066_L1.wav in Resources */,
 				67317D0D91C25E8D77F130A6D868F35C /* A1-C03-AUD067_L1.wav in Resources */,
+				1072FA4008C98D2832F5ABC109E0C87D /* A1-C03-AUD068_L1.wav in Resources */,
+				5AA7A8977998B8137397D991A7D722FF /* A1-C03-AUD069_L1.wav in Resources */,
+				3BB6DB95B72D7814C7749235E6D8D1C3 /* A1-C03-AUD070_L1.wav in Resources */,
+				24BD715EA1E0D2D8176EB5B7371816FA /* A1-C03-AUD071_L1.wav in Resources */,
+				D76186744327A95AAFABC4F1DE3D8265 /* A1-C03-AUD072_L1.wav in Resources */,
+				B70B28AE3826DDE789D4500F411A43F9 /* A1-C03-AUD073_L1.wav in Resources */,
+				9B4AE5DAA5DBBF8FEB4E0BC52904C909 /* A1-C03-AUD074_L1.wav in Resources */,
+				B221B5673ACFA006C2D9FE015801C823 /* A1-C03-AUD075_L1.wav in Resources */,
+				1D396DACE60AC4A1BDF6E87705D474D0 /* A1-C03-AUD076_L1.wav in Resources */,
+				7DE439EDD3044AD2C4E467846E1C74A6 /* A1-C03-AUD077_L1.wav in Resources */,
+				C7CD938585FB5FB6388E6EC6D1251AB3 /* A1-C03-AUD078_L1.wav in Resources */,
+				512757CB179128252AADD37D88B7D066 /* A1-C03-AUD079_L1.wav in Resources */,
+				523BEA17EA7C04E91AA3AA438580532E /* A1-C03-AUD080_L1.wav in Resources */,
+				457E049D06E683913D04FAEFE5923D2E /* A1-C03-AUD081_L1.wav in Resources */,
+				BFE751ACB9248D4E061FEAE76A84299B /* A1-C03-AUD082_L1.wav in Resources */,
+				E1DD7E141CE32D40738F4ABFDBB4EECD /* A1-C03-AUD083_L1.wav in Resources */,
+				7B2C70909CA2F7726448B87D6887B0BE /* A1-C03-AUD084_L1.wav in Resources */,
+				2A9AFCC035DF7B23AC66E5F95932D5CC /* A1-C03-AUD085_L1.wav in Resources */,
+				E6EA3F2D94EB7C0C568DE50D0619508D /* A1-C03-AUD086_L1.wav in Resources */,
+				112944C34EEC779434AE7D2B9854A546 /* A1-C03-AUD087_L1.wav in Resources */,
+				BA4A3A84BEF6DA161238B450950BF479 /* A1-C03-AUD088_L1.wav in Resources */,
 				F34697EAC121173970C6D16FD1D0FE1F /* A1-C04-AUD001_L1.wav in Resources */,
 				A4DA70255BD9D57633313F7CAEF9E2DA /* A1-C04-AUD002_L1.wav in Resources */,
 				F9F8D9A3538BFF058DDCB34A5269E6EB /* A1-C04-AUD003_L1.wav in Resources */,
