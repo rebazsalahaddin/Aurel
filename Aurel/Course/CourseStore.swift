@@ -9,6 +9,9 @@ struct CourseStore: Sendable {
     /// Flattened navigation list — every authored screen in book order.
     let flat: [FlatScreen]
 
+    /// Dialogue lines keyed by chapter + audio id, used to clip Listen. Choose.
+    let listenStimulus: ListenStimulus
+
     struct FlatScreen: Sendable, Hashable {
         let chapterIdx: Int
         let lessonIdx: Int
@@ -38,6 +41,7 @@ struct CourseStore: Sendable {
 
     init(chapters: [CourseChapter]) {
         self.chapters = chapters
+        self.listenStimulus = ListenStimulus(chapters: chapters)
         var flat: [FlatScreen] = []
         for (x, ch) in chapters.enumerated() {
             for (y, lesson) in ch.lessons.enumerated() {

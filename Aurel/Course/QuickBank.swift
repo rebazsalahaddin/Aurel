@@ -47,7 +47,6 @@ extension QuickItem {
 
         for f in course.flat {
             let src = "\(f.chapter.id)-\(f.lesson.id)"
-            let lessonSrc = f.lesson.src ?? ""
             switch f.screen.payload {
             case .cards(let sc):
                 for c in sc.cards ?? [] {
@@ -67,19 +66,23 @@ extension QuickItem {
                 }
             case .practice(let sc):
                 append(
-                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    items: sc.items, src: src, chapterId: f.chapter.id,
+                    stimulus: course.listenStimulus,
                     into: &choice, &listen, &order)
             case .quiz(let sc):
                 append(
-                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    items: sc.items, src: src, chapterId: f.chapter.id,
+                    stimulus: course.listenStimulus,
                     into: &choice, &listen, &order)
             case .reading(let sc):
                 append(
-                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    items: sc.items, src: src, chapterId: f.chapter.id,
+                    stimulus: course.listenStimulus,
                     into: &choice, &listen, &order)
             case .testlet(let sc):
                 append(
-                    items: sc.items, src: src, chapterId: f.chapter.id, lessonSrc: lessonSrc,
+                    items: sc.items, src: src, chapterId: f.chapter.id,
+                    stimulus: course.listenStimulus,
                     into: &choice, &listen, &order)
             default:
                 break
@@ -110,7 +113,7 @@ extension QuickItem {
         items: [PracticeItem]?,
         src: String,
         chapterId: String,
-        lessonSrc: String,
+        stimulus: ListenStimulus,
         into choice: inout [QuickItem],
         _ listen: inout [QuickItem],
         _ order: inout [QuickItem]
@@ -146,8 +149,18 @@ extension QuickItem {
             base.hint = it.no ?? ""
             base.src = src
             if it.aud != nil {
-                base.audio =
-                    "not recorded yet — \(chapterId)-\(it.aud ?? "") is a script in \(lessonSrc)"
+                let keyText =
+                    opts.indices.contains(answer) ? opts[answer].text : nil
+                let cue = ListenCue.spoken(
+                    said: it.said,
+                    prompt: it.prompt,
+                    playLines: it.playLines,
+                    aud: it.aud,
+                    chapterID: chapterId,
+                    stimulus: stimulus,
+                    keyText: keyText,
+                    word: it.word)
+                base.audio = cue ?? it.prompt ?? "Listening prompt"
                 base.audioAsset = it.aud.map { "\(chapterId)-\($0)" } ?? ""
                 base.prompt = it.prompt ?? ""
                 listen.append(base)

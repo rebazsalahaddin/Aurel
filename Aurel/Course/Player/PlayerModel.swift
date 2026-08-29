@@ -53,14 +53,26 @@ final class PlayerModel {
         speaker?.speak(text, slow: slow)
     }
 
-    /// The authored text an audio-cued item should speak — the key option for
-    /// listening items (the thing you hear), the headword for cards.
+    /// The authored text an audio-cued item should speak — the stimulus line
+    /// (`said`, a quoted prompt, or `playLines`), not the keyed answer, for
+    /// reply / gist items. Identification items still speak the key option.
     var speakTextForItem: String? {
         guard let item else { return nil }
-        if let key = item.key?.single {
-            return item.opts.first { $0.id == key || $0.text == key }?.text
+        let keyText = item.key?.single.flatMap { key in
+            item.opts.first { $0.id == key || $0.text == key }?.text
         }
-        return item.word ?? item.prompt ?? nil
+        let fallback =
+            item.word
+            ?? item.key?.sequence.map { Self.joinTiles($0, tight: false) }
+        return ListenCue.spoken(
+            said: item.said,
+            prompt: item.prompt,
+            playLines: item.playLines,
+            aud: item.aud,
+            chapterID: cur?.chapter.id ?? "",
+            stimulus: course.listenStimulus,
+            keyText: keyText,
+            word: fallback)
     }
 
     init(
@@ -165,7 +177,8 @@ final class PlayerModel {
         var hints: [String]? = nil
         var unscored = false
         var bubbles = false
-        var said: (sp: String, t: String)? = nil
+        var said: SaidLine? = nil
+        var playLines: [Int]? = nil
         var word: String? = nil
         var digit: String? = nil
         var confusable: String? = nil
@@ -186,7 +199,7 @@ final class PlayerModel {
         case .warmup(let w): return warmupItems(w)
         case .practice(let pr): return normalized(pr.items)
         case .quiz(let q): return normalized(q.items)
-        case .testlet(let t): return normalized(t.items)
+        case .testlet(let t): return normalized(t.items, defaultAud: t.aud)
         case .reading(let r): return normalized(r.items)
         default: return []
         }
@@ -218,19 +231,22 @@ final class PlayerModel {
         return out
     }
 
-    private func normalized(_ list: [PracticeItem]?) -> [PlayerItem] {
+    private func normalized(_ list: [PracticeItem]?, defaultAud: String? = nil) -> [PlayerItem] {
         (list ?? []).map { it in
             PlayerItem(
                 id: it.id,
                 instr: it.instr,
                 icon: it.icon ?? "eye",
-                aud: it.aud,
+                aud: it.aud ?? defaultAud,
                 ill: it.ill,
                 opts: it.opts ?? [],
                 key: it.key,
                 ok: it.ok,
                 no: it.no,
                 hints: it.hints,
+                bubbles: it.bubbles ?? false,
+                said: it.said,
+                playLines: it.playLines,
                 word: it.word,
                 kind: it.kind,
                 big: it.big ?? false,

@@ -495,7 +495,7 @@ struct PracticeScreenView: View {
             .padding(.bottom, 14)
         }
 
-        if let said = item.said {
+        if item.bubbles, let said = item.said {
             HStack(alignment: .top, spacing: 10) {
                 Text(said.sp)
                     .font(.figtree(.bold, size: 11))

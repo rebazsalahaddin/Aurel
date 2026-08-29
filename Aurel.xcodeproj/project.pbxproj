@@ -38,6 +38,8 @@
 		60D8972117370C72416C713CA9D5205D /* Stage4DataHonestyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D878867CA9F5F3BF30892C3455528E /* Stage4DataHonestyTests.swift */; };
 		63D9B6DE759E1D2240EDFBD4B4A90E01 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D72008BB451DE64C4F92ED4776869E6 /* Shared.swift */; };
 		651CF039F5AEBA33E4CBD5CE71BE41E2 /* a1-course.json in Resources */ = {isa = PBXBuildFile; fileRef = AD5F6F16628FDE7E581608E1744F8314 /* a1-course.json */; };
+		7C1A9E24B0D84F1A9E3C5B8D2F6A0148 /* ListenStimulus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C1A9E24B0D84F1A9E3C5B8D2F6A0147 /* ListenStimulus.swift */; };
+		91D4E6B8C0A23F5719B4D8E2C6A01358 /* ListeningSanityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4E6B8C0A23F5719B4D8E2C6A01357 /* ListeningSanityTests.swift */; };
 		6ABC37B37BF5D4B83C4DC35BB313E626 /* AUMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7DABEFDB5698C1395B353F4BF4AEF7E /* AUMotion.swift */; };
 		7242BD8322619D646B6321BB72728278 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86DA4CDC85C8791C5428BC7CD78C608 /* LoginView.swift */; };
 		7499843242BAD7212ED22B548B2457B6 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACBF1846229488921DCD0B6A8B94970 /* RootView.swift */; };
@@ -124,8 +126,10 @@
 		6C84AC96FE52062FD9F3DB7755DD98B9 /* DesignTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTokens.swift; sourceTree = "<group>"; };
 		6D0C545AB62127EB46037434F3BBDC21 /* ColorLiteralTripwireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorLiteralTripwireTests.swift; sourceTree = "<group>"; };
 		6D22511BEADDAF97BFC6F325273B442C /* OFL-Caprasimo.txt */ = {isa = PBXFileReference; path = "OFL-Caprasimo.txt"; sourceTree = "<group>"; };
+		7C1A9E24B0D84F1A9E3C5B8D2F6A0147 /* ListenStimulus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListenStimulus.swift; sourceTree = "<group>"; };
 		719BF620D42C590029B403F2ABF49C56 /* PlayerModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModelTests.swift; sourceTree = "<group>"; };
 		74F4CA1BE6E51DA98F474AE36BFF169B /* Stage7AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage7AccountTests.swift; sourceTree = "<group>"; };
+		91D4E6B8C0A23F5719B4D8E2C6A01357 /* ListeningSanityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningSanityTests.swift; sourceTree = "<group>"; };
 		77B1AA8A58DCBE19036DC417E440EE56 /* QuickPracticeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickPracticeViews.swift; sourceTree = "<group>"; };
 		7A543CC6DED563E5EC66885E39EF424E /* Caprasimo-Regular.ttf */ = {isa = PBXFileReference; path = "Caprasimo-Regular.ttf"; sourceTree = "<group>"; };
 		7D0298E8BEF7B11B1D77167B71F06E6E /* LangScreens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangScreens.swift; sourceTree = "<group>"; };
@@ -251,6 +255,7 @@
 				A163327F20716F17C68ABEE02A4A9F4E /* CourseDecodingTests.swift */,
 				E730F518B882EBBFEA897E38649ED2D3 /* DesignTokenTests.swift */,
 				CBF3250CDE01EB5DD295C7AF67823C4A /* FeedbackServicesTests.swift */,
+				91D4E6B8C0A23F5719B4D8E2C6A01357 /* ListeningSanityTests.swift */,
 				719BF620D42C590029B403F2ABF49C56 /* PlayerModelTests.swift */,
 				A23A3E615721106AEA13CACAAD47A633 /* ServicesTests.swift */,
 				86DD1A40E95FE44F52FD4E9D2E411D64 /* SmokeTests.swift */,
@@ -452,6 +457,7 @@
 				B2B535682626FB64C20FB534BBF3B49E /* Models */,
 				B53A72553091F566F46A7A936068EE1B /* Player */,
 				8BEA9EC2CCC2CF2D55CD8F514C767117 /* CourseStore.swift */,
+				7C1A9E24B0D84F1A9E3C5B8D2F6A0147 /* ListenStimulus.swift */,
 				45FDD07A459AF14E6B0ABB52ADA48194 /* QuickBank.swift */,
 			);
 			path = Course;
@@ -611,6 +617,7 @@
 				2D3783DD8576188F909AD924B1C2F052 /* CourseModels.swift in Sources */,
 				0671D263F76C2ECA7563CF8E2B539257 /* CoursePlayerView.swift in Sources */,
 				E77BF59C986E4F00C5DF1A275B9AAFBD /* CourseStore.swift in Sources */,
+				7C1A9E24B0D84F1A9E3C5B8D2F6A0148 /* ListenStimulus.swift in Sources */,
 				827F3FF10004A9CDE36281E20D67BB28 /* DesignTokens.swift in Sources */,
 				5268A4DA5F9EB8E8B5195077C4D21927 /* HomeView.swift in Sources */,
 				A514AE3AD41455F42415430BB02456EA /* LangScreens.swift in Sources */,
@@ -646,6 +653,7 @@
 				5BA477ADE6A74DAD08D7D36F503D434C /* CourseDecodingTests.swift in Sources */,
 				42A8A242208F454B5A30C7A7B4190160 /* DesignTokenTests.swift in Sources */,
 				E5A60EACD0757D3E4A8B491FBF7CBB26 /* FeedbackServicesTests.swift in Sources */,
+				91D4E6B8C0A23F5719B4D8E2C6A01358 /* ListeningSanityTests.swift in Sources */,
 				EE3452188D50B780DD65FF2E0C3624E0 /* PlayerModelTests.swift in Sources */,
 				534AF064178C699DDDC27F7EB696F633 /* SVGPathShapeTests.swift in Sources */,
 				9F2A60D18FC61D93D3191B4596A1135C /* ServicesTests.swift in Sources */,
