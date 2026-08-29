@@ -5239,8 +5239,13 @@
         "id": "PR-CV001",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD002",
-        "prompt": "You hear: “Hello!”",
+        "aud": "AUD040",
+        "bubbles": true,
+        "said": {
+         "sp": "MAYA",
+         "t": "Hello! What's your name?"
+        },
+        "prompt": "What do you say?",
         "opts": [
          {
           "id": "A",
@@ -5248,7 +5253,7 @@
          },
          {
           "id": "B",
-          "t": "Hi!"
+          "t": "My name is Alex."
          },
          {
           "id": "C",
@@ -5256,11 +5261,11 @@
          }
         ],
         "key": "B",
-        "ok": "Yes — hello back!",
-        "no": "A hello wants a hello.",
+        "ok": "Yes — give your name!",
+        "no": "They asked for a NAME.",
         "hints": [
-         "Replay the greeting.",
-         "Remove the goodbye."
+         "They say hello, then ask for a name.",
+         "Give your name, not a goodbye."
         ],
         "secs": 15,
         "a11y": [
@@ -5770,7 +5775,7 @@
       "tip": "Chat-bubble stimulus with the two-face frame; options as three reply bubbles. Scene items keep their illustration; the two-blank item runs as its two authored blanks in sequence.",
       "assets": [
        "A1-C01-AUD044",
-       "A1-C01-AUD002",
+       "A1-C01-AUD040",
        "A1-C01-AUD030",
        "A1-C01-AUD032",
        "A1-C01-AUD033",

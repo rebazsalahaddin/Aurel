@@ -599,6 +599,14 @@ final class PlayerModelTests: XCTestCase {
 
     func testLesson3BestNextLineSpeaksTheQuestionNotTheAnswer() throws {
         let m = try conversationModel(chapter: "A1-C01", screen: "S25")
+        let greetingIdx = try XCTUnwrap(m.items.firstIndex { $0.id == "PR-CV001" })
+        m.i = greetingIdx
+        XCTAssertEqual(m.item?.said?.t, "Hello! What's your name?")
+        XCTAssertEqual(m.speakTextForItem, "Hello! What's your name?")
+        XCTAssertEqual(m.item?.prompt, "What do you say?")
+        XCTAssertEqual(
+            m.item?.opts.first { m.item?.isKey($0) == true }?.text, "My name is Alex.")
+
         let nameIdx = try XCTUnwrap(m.items.firstIndex { $0.id == "PR-CV007" })
         m.i = nameIdx
         XCTAssertEqual(m.item?.said?.t, "What's your name?")

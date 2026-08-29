@@ -772,9 +772,22 @@ final class ListeningSanityTests: XCTestCase {
         defer { playback.stop() }
         model.speaker = playback
 
-        let cases: [(id: String, cue: String, aud: String, answer: String)] = [
-            ("PR-CV007", "What's your name?", "A1-C01-AUD030", "My name is Sam."),
-            ("PR-CV008", "How are you?", "A1-C01-AUD032", "I'm okay, thank you!"),
+        let cases: [(
+            id: String, cue: String, aud: String, answer: String,
+            take: VoicePlayback.TakeSelection
+        )] = [
+            (
+                "PR-CV001", "Hello! What's your name?", "A1-C01-AUD040",
+                "My name is Alex.", .line(index: 0, clip: .full)
+            ),
+            (
+                "PR-CV007", "What's your name?", "A1-C01-AUD030",
+                "My name is Sam.", .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2))
+            ),
+            (
+                "PR-CV008", "How are you?", "A1-C01-AUD032",
+                "I'm okay, thank you!", .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2))
+            ),
         ]
         for test in cases {
             let index = try XCTUnwrap(model.items.firstIndex { $0.id == test.id })
@@ -785,7 +798,7 @@ final class ListeningSanityTests: XCTestCase {
             let asset = try XCTUnwrap(catalog.asset(test.aud))
             XCTAssertEqual(
                 VoicePlayback.selectTake(lines: asset.lines, requestedText: test.cue),
-                .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2)),
+                test.take,
                 test.id)
             model.speak(model.speakTextForItem, audio: model.item?.aud)
             XCTAssertEqual(playback.spokenAssetID, test.aud, test.id)
