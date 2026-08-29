@@ -1380,7 +1380,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD019",
+        "aud": "AUD002",
         "opts": [
          "hello",
          "goodbye",
@@ -1391,7 +1391,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD019",
+        "aud": "AUD011",
         "opts": [
          "excuse me",
          "thank you",
@@ -1402,7 +1402,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD019",
+        "aud": "AUD006",
         "opts": [
          "good evening",
          "good afternoon",
@@ -1413,7 +1413,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD019",
+        "aud": "AUD008",
         "opts": [
          "hi",
          "yes",
@@ -1424,7 +1424,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD019",
+        "aud": "AUD013",
         "opts": [
          "sorry",
          "thanks",
@@ -1435,7 +1435,7 @@
        {
         "q": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD019",
+        "aud": "AUD009",
         "opts": [
          "good evening",
          "see you",
@@ -1447,6 +1447,12 @@
       "bank": "AUD019 plays six L1 words in sequence: hello · thank you · good evening · bye · sorry · see you",
       "tip": "Reuse the S09 gallery visuals exactly (consistency signals \"you know this\"). One replay per word before hints; progress dots ×6. This screen proves memory, not teaching — keep it under 3 minutes even with retries.",
       "assets": [
+       "A1-C01-AUD002",
+       "A1-C01-AUD006",
+       "A1-C01-AUD008",
+       "A1-C01-AUD009",
+       "A1-C01-AUD011",
+       "A1-C01-AUD013",
        "A1-C01-AUD019"
       ]
      },
@@ -1485,7 +1491,8 @@
         "examples": [
          "Alex points to Alex: I."
         ],
-        "pattern": "I am Alex."
+        "pattern": "I am Alex.",
+        "aud": "AUD048"
        },
        {
         "id": "C1-L2-BRIDGE-2",
@@ -1514,7 +1521,8 @@
         "examples": [
          "Alex looks at Maya: you."
         ],
-        "pattern": "You are Maya."
+        "pattern": "You are Maya.",
+        "aud": "AUD049"
        },
        {
         "id": "C1-L2-BRIDGE-3",
@@ -1544,7 +1552,8 @@
          "Alex speaks: I am Alex.",
          "Maya speaks: I am Maya."
         ],
-        "pattern": "I = the person speaking"
+        "pattern": "I = the person speaking",
+        "aud": "AUD050"
        }
       ],
       "cards": [
@@ -1642,7 +1651,7 @@
         "aud": "AUD025",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank name badge pinned to a shirt, with two empty line shapes where names go"
+         "alt": "A name badge with fields labeled FIRST NAME and LAST NAME"
         },
         "fn": "the word someone is called",
         "badge": "both"
@@ -1654,7 +1663,7 @@
         "aud": "AUD026",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "On a blank name badge, the top shorter line is softly highlighted — the first name line"
+         "alt": "The FIRST NAME field on a name badge is softly highlighted"
         },
         "fn": "name chunk (first name)",
         "badge": "top"
@@ -1666,7 +1675,7 @@
         "aud": "AUD027",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "On a blank name badge, the lower longer line is softly highlighted — the last name line"
+         "alt": "The LAST NAME field on a name badge is softly highlighted"
         },
         "fn": "name chunk (family name)",
         "badge": "bottom"
@@ -1678,7 +1687,7 @@
         "aud": "AUD028",
         "ill": {
          "id": "A1-C01-ILL019",
-         "alt": "Alex gestures toward the blank badge on their own chest while speaking"
+         "alt": "Alex Kim gestures toward their own name badge while Maya Haddad wears hers"
         },
         "fn": "introduction chunk",
         "chunk": true
@@ -1721,7 +1730,7 @@
        }
       ],
       "badgeSchema": true,
-      "story": "Everyone clips on blank name badges.",
+      "story": "Everyone clips on name badges with first-name and last-name fields.",
       "tip": "Badges (ILL018) introduce a two-line schematic the app reuses for every \"identity\" visual in Chapters 1–3 — keep its geometry identical everywhere. Chunk cards show the whole chunk as one tappable unit (no word-by-word highlighting yet); the ear button plays the full chunk, never single words, so learners store it whole.",
       "assets": [
        "A1-C01-AUD025–031",
@@ -1762,7 +1771,8 @@
         "examples": [
          "I am Alex. I'm Alex."
         ],
-        "pattern": "I am → I'm"
+        "pattern": "I am → I'm",
+        "aud": "AUD051"
        },
        {
         "id": "C1-G001-2",
@@ -1791,7 +1801,8 @@
         "examples": [
          "You are Maya. You're Maya."
         ],
-        "pattern": "You are → You're"
+        "pattern": "You are → You're",
+        "aud": "AUD052"
        },
        {
         "id": "C1-G002-1",
@@ -1821,7 +1832,8 @@
          "Alex: My name is Alex.",
          "Alex to Maya: Your name is Maya."
         ],
-        "pattern": "my name = my badge · your name = your badge"
+        "pattern": "my name = my badge · your name = your badge",
+        "aud": "AUD053"
        },
        {
         "id": "C1-G003-1",
@@ -1851,7 +1863,8 @@
          "What's your name? — I'm Alex.",
          "How are you? — I'm fine. And you?"
         ],
-        "pattern": "ask → answer → ask back: And you?"
+        "pattern": "ask → answer → ask back: And you?",
+        "aud": "AUD054"
        }
       ],
       "notice": [
@@ -1989,7 +2002,7 @@
         "icon": "choose",
         "ill": {
          "id": "A1-C01-ILL019",
-         "alt": "Alex gestures with an open hand toward the blank badge on their own chest"
+         "alt": "Alex Kim gestures with an open hand toward their own name badge while Maya Haddad wears hers"
         },
         "prompt": "___ Alex.",
         "opts": [
@@ -2352,7 +2365,7 @@
         "icon": "choose",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank name badge with the speaker's own badge glowing softly"
+         "alt": "A name badge with FIRST NAME and LAST NAME fields, softly glowing"
         },
         "prompt": "___ name is Alex.",
         "opts": [
@@ -3112,6 +3125,7 @@
           "t": "I'm"
          }
         ],
+        "key": "A",
         "note": "Trial 1 plays the full form: I am."
        },
        {
@@ -3129,6 +3143,7 @@
           "t": "I'm"
          }
         ],
+        "key": "B",
         "note": "Trial 2 plays the joined form: I'm."
        },
        {
@@ -3146,6 +3161,7 @@
           "t": "You're"
          }
         ],
+        "key": "A",
         "note": "Trial 3 plays the full form: You are."
        },
        {
@@ -3163,6 +3179,7 @@
           "t": "You're"
          }
         ],
+        "key": "B",
         "note": "Trial 4 plays the joined form: You're."
        },
        {
@@ -3180,6 +3197,7 @@
           "t": "What's"
          }
         ],
+        "key": "A",
         "note": "Trial 5 plays the full form: What is."
        },
        {
@@ -3197,6 +3215,7 @@
           "t": "What's"
          }
         ],
+        "key": "B",
         "note": "Trial 6 plays the joined form: What's. “One joined word sounds shorter.”"
        }
       ],
@@ -3556,7 +3575,7 @@
         "icon": "eye",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank name badge pinned to a shirt with two empty line shapes"
+         "alt": "A name badge with fields labeled FIRST NAME and LAST NAME"
         },
         "opts": [
          {
@@ -3683,7 +3702,7 @@
         "icon": "eye",
         "ill": {
          "id": "A1-C01-ILL019",
-         "alt": "Alex gestures with an open hand toward the blank badge on their own chest"
+         "alt": "Alex Kim gestures with an open hand toward their own name badge while Maya Haddad wears hers"
         },
         "opts": [
          {
@@ -4114,7 +4133,7 @@
         "aud": "AUD025",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank name badge pinned to a shirt, with two empty line shapes where names go"
+         "alt": "A name badge with fields labeled FIRST NAME and LAST NAME"
         },
         "fn": "the word someone is called",
         "badge": "both"
@@ -4126,7 +4145,7 @@
         "aud": "AUD026",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "On a blank name badge, the top shorter line is softly highlighted — the first name line"
+         "alt": "The FIRST NAME field on a name badge is softly highlighted"
         },
         "fn": "name chunk (first name)",
         "badge": "top"
@@ -4138,7 +4157,7 @@
         "aud": "AUD027",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "On a blank name badge, the lower longer line is softly highlighted — the last name line"
+         "alt": "The LAST NAME field on a name badge is softly highlighted"
         },
         "fn": "name chunk (family name)",
         "badge": "bottom"
@@ -4150,7 +4169,7 @@
         "aud": "AUD028",
         "ill": {
          "id": "A1-C01-ILL019",
-         "alt": "Alex gestures toward the blank badge on their own chest while speaking"
+         "alt": "Alex Kim gestures toward their own name badge while Maya Haddad wears hers"
         },
         "fn": "introduction chunk",
         "chunk": true
@@ -4415,7 +4434,7 @@
         "id": "PR-LS003",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD043",
+        "aud": "AUD004",
         "kind": "image",
         "prompt": "What time of day is it?",
         "opts": [
@@ -4481,7 +4500,7 @@
         "aud": "AUD046",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank name badge with two empty lines"
+         "alt": "A name badge with FIRST NAME and LAST NAME fields"
         },
         "prompt": "First name:",
         "opts": [
@@ -4518,7 +4537,7 @@
         "aud": "AUD046",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank name badge, the lower longer line glowing"
+         "alt": "A name badge with the LAST NAME field glowing"
         },
         "prompt": "Last name:",
         "opts": [
@@ -4672,7 +4691,7 @@
         "id": "PR-LS008",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD045",
+        "aud": "AUD005",
         "ill": {
          "id": "A1-C01-ILL028",
          "alt": "A café terrace in bright afternoon light"
@@ -4835,7 +4854,7 @@
         "id": "PR-LS013 · transfer",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD031",
         "prompt": "You hear: “Nice to meet you, Nina!”",
         "opts": [
          {
@@ -4867,7 +4886,7 @@
         "id": "PR-LS014 · transfer",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD029",
         "prompt": "You hear: “I'm Leo.”",
         "opts": [
          {
@@ -4899,7 +4918,7 @@
         "id": "PR-LS015 · transfer",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD016",
         "kind": "image",
         "prompt": "You hear: “I'm fine! Excuse me, Nina — see you!” What happens next?",
         "opts": [
@@ -4942,7 +4961,7 @@
         "id": "PR-LS016 · transfer",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD045",
+        "aud": "AUD035",
         "prompt": "You hear: “I'm great, thank you! And you?” Leo answers:",
         "opts": [
          {
@@ -5776,7 +5795,7 @@
        {
         "id": "PR-CV016",
         "word": "Nice to meet you, Nina!",
-        "aud": "AUD044",
+        "aud": "AUD046",
         "note": "Make MEET the big word. Ungraded — record, play both, compare. Skip costs nothing."
        },
        {
@@ -6102,7 +6121,7 @@
         "icon": "eye",
         "ill": {
          "id": "A1-C01-ILL018",
-         "alt": "A blank badge under the written question"
+         "alt": "A name badge with FIRST NAME and LAST NAME fields under the written question"
         },
         "prompt": "Written: “What's your name?” · Your line:",
         "opts": [
@@ -6621,7 +6640,7 @@
         "icon": "choose",
         "ill": {
          "id": "A1-C01-ILL033",
-         "alt": "A blank name badge with two empty lines pinned to a green t-shirt"
+         "alt": "Sam's name badge with FIRST NAME and LAST NAME field labels on a green t-shirt"
         },
         "prompt": "Sam's badge. Sam says: ‘____ name is Sam.’",
         "opts": [
@@ -6802,7 +6821,7 @@
         "aud": "AUD047",
         "ill": {
          "id": "A1-C01-ILL033",
-         "alt": "Sam's blank badge on a green t-shirt"
+         "alt": "Sam's name badge with FIRST NAME and LAST NAME field labels on a green t-shirt"
         },
         "prompt": "First name:",
         "opts": [
@@ -7540,41 +7559,41 @@
        "alt": "Nina sits at a check-in desk with a notebook and blank badges; Alex waves from the door"
       },
       "lines": [
-        {
-         "sp": "ALEX",
-         "t": "Hello! … Good morning!",
-         "d": "waving from the door"
-        },
-        {
-         "sp": "NINA",
-         "t": "Good morning! … Welcome!",
-         "d": "at the desk, pen ready · Welcome! = CHUNK:survival"
-        },
-        {
-         "sp": "NINA",
-         "t": "What's your name?",
-         "d": "warm — Chapter 1 retrieval"
-        },
-        {
-         "sp": "ALEX",
-         "t": "My name is Alex.",
-         "d": "stepping up to the desk"
-        },
-        {
-         "sp": "NINA",
-         "t": "Alex! … How do you spell that?",
-         "d": "kind, pen over a blank badge — the chapter question"
-        },
-        {
-         "sp": "ALEX",
-         "t": "A … L … E … X.",
-         "d": "clear, letter by letter — models the chapter task"
-        },
-        {
-         "sp": "NINA",
-         "t": "A-L-E-X. … Thank you, Alex!",
-         "d": "writes, smiles"
-        }
+       {
+        "sp": "ALEX",
+        "t": "Hello! … Good morning!",
+        "d": "waving from the door"
+       },
+       {
+        "sp": "NINA",
+        "t": "Good morning! … Welcome!",
+        "d": "at the desk, pen ready · Welcome! = CHUNK:survival"
+       },
+       {
+        "sp": "NINA",
+        "t": "What's your name?",
+        "d": "warm — Chapter 1 retrieval"
+       },
+       {
+        "sp": "ALEX",
+        "t": "My name is Alex.",
+        "d": "stepping up to the desk"
+       },
+       {
+        "sp": "NINA",
+        "t": "Alex! … How do you spell that?",
+        "d": "kind, pen over a blank badge — the chapter question"
+       },
+       {
+        "sp": "ALEX",
+        "t": "A … L … E … X.",
+        "d": "clear, letter by letter — models the chapter task"
+       },
+       {
+        "sp": "NINA",
+        "t": "A-L-E-X. … Thank you, Alex!",
+        "d": "writes, smiles"
+       }
       ],
       "scored": false,
       "plant": "How do you spell that? appears here in context (encounter #0, story plant) and is formally taught at S09.",
@@ -9279,7 +9298,8 @@
         "examples": [
          "Are you Maya? — Yes, I am."
         ],
-        "pattern": "Are you ___? → Yes, I am."
+        "pattern": "Are you ___? → Yes, I am.",
+        "aud": "AUD079"
        },
        {
         "id": "C2-G004-2",
@@ -9312,7 +9332,8 @@
         "examples": [
          "Are you Leo? — No, I'm not."
         ],
-        "pattern": "Are you ___? → No, I'm not."
+        "pattern": "Are you ___? → No, I'm not.",
+        "aud": "AUD080"
        },
        {
         "id": "C2-G005-1",
@@ -9347,7 +9368,8 @@
          "It's five-five-five, two-zero-one.",
          "It's maya dot haddad at aroa dot com."
         ],
-        "pattern": "Nina asks for one detail → It's ___."
+        "pattern": "Nina asks for one detail → It's ___.",
+        "aud": "AUD081"
        },
        {
         "id": "C2-G006-1",
@@ -9376,7 +9398,8 @@
         "examples": [
          "Listen. Say. Repeat. Choose. Match."
         ],
-        "pattern": "Listen · Say · Repeat · Choose · Match"
+        "pattern": "Listen · Say · Repeat · Choose · Match",
+        "aud": "AUD082"
        }
       ],
       "notice": [
@@ -16617,7 +16640,8 @@
         "examples": [
          "Leo → he · Maya → she"
         ],
-        "pattern": "Leo → he · Maya → she"
+        "pattern": "Leo → he · Maya → she",
+        "aud": "AUD089"
        },
        {
         "id": "C3-G007-2",
@@ -16646,7 +16670,8 @@
         "examples": [
          "Alex → they"
         ],
-        "pattern": "Alex (one person) → they"
+        "pattern": "Alex (one person) → they",
+        "aud": "AUD090"
        },
        {
         "id": "C3-G007-3",
@@ -16679,7 +16704,8 @@
         "examples": [
          "two people → they · the class → we"
         ],
-        "pattern": "Nina and Maya → they · the class → we"
+        "pattern": "Nina and Maya → they · the class → we",
+        "aud": "AUD091"
        },
        {
         "id": "C3-G007-4",
@@ -16712,7 +16738,8 @@
         "examples": [
          "Leo is … · Nina and Maya are …"
         ],
-        "pattern": "one person → is · you/we/they → are"
+        "pattern": "one person → is · you/we/they → are",
+        "aud": "AUD092"
        }
       ]
      },
@@ -16850,7 +16877,8 @@
         "examples": [
          "Sam isn't … · They aren't …"
         ],
-        "pattern": "one person → isn't · two people → aren't"
+        "pattern": "one person → isn't · two people → aren't",
+        "aud": "AUD093"
        },
        {
         "id": "C3-G007-6",
@@ -16884,7 +16912,8 @@
         "examples": [
          "Is she …? ↑ · Are they …? ↑"
         ],
-        "pattern": "one person → Is …? · two people → Are …?"
+        "pattern": "one person → Is …? · two people → Are …?",
+        "aud": "AUD094"
        },
        {
         "id": "C3-G007-7",
@@ -16918,7 +16947,8 @@
         "examples": [
          "Is she …? — Yes, she is. · Are they …? — Yes, they are."
         ],
-        "pattern": "Is …? → is · Are …? → are"
+        "pattern": "Is …? → is · Are …? → are",
+        "aud": "AUD095"
        }
       ]
      },

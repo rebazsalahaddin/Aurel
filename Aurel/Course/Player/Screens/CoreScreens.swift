@@ -488,6 +488,14 @@ struct CardsScreenView: View {
                     cornerRadius: 24,
                     captionSize: 11.5
                 )
+                .overlay {
+                    if let badgeState = card.badge {
+                        BadgeSchemaHighlight(state: badgeState)
+                            .clipShape(
+                                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            )
+                    }
+                }
                 .padding(.bottom, 18)
             }
 
@@ -565,7 +573,7 @@ struct CardsScreenView: View {
                 .buttonStyle(.auTap)
 
                 Button {
-                    m.say.toggle(target: card.main)
+                    Task { await m.say.toggle(target: card.main) }
                 } label: {
                     ZStack {
                         if isTargetRecording {
@@ -693,6 +701,41 @@ struct CardsScreenView: View {
             }
             }
         }
+    }
+}
+
+/// The Lesson 2 badge artwork deliberately contains two quiet, empty slots.
+/// Authored card data selects which slot carries meaning; keeping the tint in
+/// SwiftUI lets one stable illustration teach name, first name, and last name.
+private struct BadgeSchemaHighlight: View {
+    let state: String
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                if state == "both" || state == "top" {
+                    Capsule()
+                        .fill(Color.auAccent.opacity(0.20))
+                        .overlay {
+                            Capsule().strokeBorder(Color.auAccent.opacity(0.48), lineWidth: 1)
+                        }
+                        .frame(width: proxy.size.width * 0.235, height: proxy.size.height * 0.045)
+                        .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.48)
+                }
+
+                if state == "both" || state == "bottom" {
+                    Capsule()
+                        .fill(Color.auAccent.opacity(0.20))
+                        .overlay {
+                            Capsule().strokeBorder(Color.auAccent.opacity(0.48), lineWidth: 1)
+                        }
+                        .frame(width: proxy.size.width * 0.332, height: proxy.size.height * 0.045)
+                        .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.615)
+                }
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 

@@ -153,16 +153,19 @@ struct PlayerVerdictDock: View {
     // MARK: CTA
 
     private var cta: some View {
-        APillButton(
-            // Craft overhaul L9: one verb for the advance control (was
-            // "Next" mid-lesson / "Go on" at the end — same role, two names).
-            title: "Go on",
+        let isQuizMode = model.isQuiet && !model.done
+        return APillButton(
+            title: isQuizMode ? String(localized: "Confirm answer") : String(localized: "Go on"),
             icon: .arrow,
             player: true,
             disabled: !model.itemCanGo,
-            aid: "au.player.go-on"
+            aid: isQuizMode ? "au.player.quiz-confirm" : "au.player.go-on"
         ) {
-            model.advance()
+            if isQuizMode {
+                model.confirmQuizAnswer()
+            } else {
+                model.advance()
+            }
         }
     }
 }

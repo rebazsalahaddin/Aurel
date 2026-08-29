@@ -46,6 +46,7 @@ struct HomeView: View {
                     lessonPath
                 }
                 .padding(.bottom, 160)
+                .animation(.spring(response: 0.46, dampingFraction: 0.82), value: env.router.chapterIdx)
                 // Clearance for the floating glass tab (design bottom:26 + bar ~72)
                 // plus enough room that the first locked stop is not buried.
                 .background(
@@ -222,21 +223,30 @@ struct HomeView: View {
         // One clean lesson card (Enhancement doc Phase 1): first-time users
         // see "Start Lesson 1", returning users "Resume Lesson N" — with the
         // restart affordance inside the same card, never a second card.
-        let chapterDone = r.currentPathIndex >= ch.count && r.pending == nil
+        let chapterDone = isViewingCompletedChapter || (r.currentPathIndex >= ch.count && r.pending == nil)
 
         return HomeNextActionCard(
             title: r.pending != nil
                 ? String(localized: "Resume Lesson \(currentLessonNumber)")
                 : (chapterDone
-                    ? next.title : String(localized: "Start Lesson \(currentLessonNumber)")),
+                    ? (isViewingCompletedChapter ? String(localized: "Chapter Complete") : next.title)
+                    : String(localized: "Start Lesson \(currentLessonNumber)")),
             lessonTitle: r.pending?.title
-                ?? (chapterDone ? nil : ch.lessons.indices.contains(nextLessonIndex) ? ch.lessons[nextLessonIndex] : nil),
+                ?? (isViewingCompletedChapter
+                    ? String(localized: "All lessons checked · Ready for next chapter")
+                    : (chapterDone ? nil : ch.lessons.indices.contains(nextLessonIndex) ? ch.lessons[nextLessonIndex] : nil)),
             progress: r.pending.map { String(localized: "Step \($0.at) of \($0.of)") },
-            buttonTitle: r.pending == nil ? next.buttonTitle : String(localized: "Resume lesson"),
+            buttonTitle: r.pending == nil
+                ? (isViewingCompletedChapter ? String(localized: "Open next chapter") : next.buttonTitle)
+                : String(localized: "Resume lesson"),
             buttonAid: r.pending == nil ? "au.home.today" : "au.home.resume",
             restart: r.pending != nil ? { showRestartConfirmation = true } : nil
         ) {
-            r.perform(next)
+            if isViewingCompletedChapter && r.pending == nil {
+                r.openNextChapter()
+            } else {
+                r.perform(next)
+            }
         }
         .padding(.horizontal, 24)
         .padding(.top, 14)
@@ -705,11 +715,18 @@ struct HomeView: View {
         let action: () -> Void
     }
 
+    private var isViewingCompletedChapter: Bool {
+        env.router.chapterIdx < env.router.unlockedChapterIdx || env.router.chapterComplete(env.router.chapterIdx)
+    }
+
     /// mkNode (lines 2122–2141) mapped onto the five authored stop positions.
     private var pathNodes: [PathNode] {
         let r = env.router
+        let isComplete = isViewingCompletedChapter
+
         func state(_ i: Int) -> LessonPathNode.NodeState {
-            i < pathAt ? .done : (i == pathAt ? .open : .locked)
+            if isComplete { return .done }
+            return i < pathAt ? .done : (i == pathAt ? .open : .locked)
         }
         func meta(_ i: Int) -> String {
             let st = state(i)
@@ -722,7 +739,7 @@ struct HomeView: View {
             return st == .done ? "Complete" : ""
         }
         func act(_ i: Int) -> () -> Void {
-            guard state(i) == .locked else {
+            if isComplete || state(i) != .locked {
                 return {
                     // Any open explainer steps aside when a playable stop is tapped.
                     withAnimation(AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion)) {

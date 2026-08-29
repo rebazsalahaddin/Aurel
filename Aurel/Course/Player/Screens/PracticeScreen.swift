@@ -95,6 +95,9 @@ struct PracticeScreenView: View {
                 AUAX.verdict(correct: false)
             }
         }
+        .onAppear {
+            m.say.refreshPermission()
+        }
     }
 
     // MARK: rung (testlet) + groups
@@ -359,22 +362,40 @@ struct PracticeScreenView: View {
     @ViewBuilder
     private var badges: some View {
         if case .reading(let r) = m.cur?.screen.payload, r.kind == "badges", let badges = r.badges {
-            HStack(spacing: 11) {
-                ForEach(badges, id: \.first) { b in
-                    ACard(radius: 16) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(b.first)
-                                .font(.caprasimo(size: 19))
-                                .tracking(-0.19)
-                            Text(b.last)
-                                .font(.figtree(.regular, size: 14))
-                                .foregroundStyle(Color.auText.opacity(0.62))
+            if let artworkID = readingArtworkID {
+                IllustrationPlaceholder(
+                    ill: IllustrationRef(
+                        id: artworkID,
+                        alt: "Two name badges for Maya Haddad and Leo Novak"
+                    ),
+                    aspectRatio: 16.0 / 9.0,
+                    cornerRadius: 18,
+                    captionSize: 11.5
+                )
+                .overlay { ReadingBadgePairOverlay(badges: badges) }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    "Name badges. "
+                        + badges.map { "\($0.first) \($0.last)" }.joined(separator: ". "))
+                .padding(.bottom, 16)
+            } else {
+                HStack(spacing: 11) {
+                    ForEach(badges, id: \.first) { b in
+                        ACard(radius: 16) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(b.first)
+                                    .font(.caprasimo(size: 19))
+                                    .tracking(-0.19)
+                                Text(b.last)
+                                    .font(.figtree(.regular, size: 14))
+                                    .foregroundStyle(Color.auText.opacity(0.62))
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
+                .padding(.bottom, 16)
             }
-            .padding(.bottom, 16)
         }
     }
 
@@ -383,18 +404,40 @@ struct PracticeScreenView: View {
     @ViewBuilder
     private var cardBlock: some View {
         if case .reading(let r) = m.cur?.screen.payload, r.kind == "card", let lines = r.card {
-            ACard(radius: 18) {
-                VStack(spacing: 0) {
-                    ForEach(lines, id: \.self) { t in
-                        Text(t)
-                            .font(.caprasimo(size: 21))
-                            .tracking(-0.25)
-                            .multilineTextAlignment(.center)
+            if let artworkID = readingArtworkID {
+                IllustrationPlaceholder(
+                    ill: IllustrationRef(
+                        id: artworkID,
+                        alt: "A blank welcome card with two reading lines"
+                    ),
+                    aspectRatio: 16.0 / 9.0,
+                    cornerRadius: 18,
+                    captionSize: 11.5
+                )
+                .overlay { ReadingWelcomeCardOverlay(lines: lines) }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(lines.joined(separator: " "))
+                .padding(.bottom, 16)
+            } else {
+                ACard(radius: 18) {
+                    VStack(spacing: 0) {
+                        ForEach(lines, id: \.self) { t in
+                            Text(t)
+                                .font(.caprasimo(size: 21))
+                                .tracking(-0.25)
+                                .multilineTextAlignment(.center)
+                        }
                     }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
+                .padding(.bottom, 16)
             }
-            .padding(.bottom, 16)
+        }
+    }
+
+    private var readingArtworkID: String? {
+        m.cur?.screen.debug.assetIDs.first {
+            $0.contains("-ILL") && !$0.contains("–")
         }
     }
 
@@ -487,14 +530,38 @@ struct PracticeScreenView: View {
         }
 
         if let ill = item.ill {
-            IllustrationPlaceholder(
-                ill: ill,
-                height: 186,
-                aspectRatio: m.cur?.chapter.n == 1 ? 16.0 / 9.0 : nil,
-                cornerRadius: 20,
-                captionSize: 11.5
-            )
-            .padding(.bottom, 14)
+            if ill.id == "A1-C01-ILL033" {
+                let showsCredentialValues = item.id == "QZ-RD001"
+                IllustrationPlaceholder(
+                    ill: ill,
+                    height: 186,
+                    aspectRatio: m.cur?.chapter.n == 1 ? 16.0 / 9.0 : nil,
+                    cornerRadius: 20,
+                    captionSize: 11.5
+                )
+                .overlay { SamBadgeCredentialOverlay(showValues: showsCredentialValues) }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    showsCredentialValues
+                        ? "Sam Rivera badge"
+                        : "Name badge fields. First name. Last name."
+                )
+                .accessibilityIdentifier(
+                    showsCredentialValues
+                        ? "au.player.badge.sam-rivera"
+                        : "au.player.badge.fields"
+                )
+                .padding(.bottom, 14)
+            } else {
+                IllustrationPlaceholder(
+                    ill: ill,
+                    height: 186,
+                    aspectRatio: m.cur?.chapter.n == 1 ? 16.0 / 9.0 : nil,
+                    cornerRadius: 20,
+                    captionSize: 11.5
+                )
+                .padding(.bottom, 14)
+            }
         }
 
         if let digit = item.digit {
@@ -1089,34 +1156,218 @@ struct PracticeScreenView: View {
 
     @ViewBuilder
     private func speakCard(_ item: PlayerModel.PlayerItem) -> some View {
-        VStack(spacing: 0) {
-            Text(item.word ?? "")
-                .font(.caprasimo(size: 32))
-                .tracking(-0.48)
-                .padding(.bottom, 18)
+        let word = item.word ?? item.prompt ?? "hello"
+        let isRecording = m.say.recording && m.say.activeTarget == word
+        let isAssessing = m.say.assessing && m.say.activeTarget == word
+        let rec = m.say.record(for: word)
+        let isModelPlaying = m.isSpeakingText(word, audio: item.aud)
+        let isLearnerPlaying = m.say.isPlayingLearnerTake
 
-            WaveForm(heights: [10, 20, 28, 16, 24, 12, 22], color: Color.auText.opacity(0.26))
-                .frame(height: 30)
-                .padding(.bottom, 16)
+        VStack(spacing: 0) {
+            KaraokeText(
+                text: word,
+                isSpoken: isModelPlaying,
+                spokenRange: m.playback?.spokenRange
+            )
+            .font(.caprasimo(size: 34))
+            .tracking(-0.48)
+            .padding(.bottom, 16)
+
+            VStack(spacing: 9) {
+                // MODEL Row
+                HStack(spacing: 12) {
+                    Text("MODEL")
+                        .font(.figtree(.bold, size: 9.5))
+                        .tracking(1)
+                        .frame(width: 48, alignment: .leading)
+                        .foregroundStyle(Color.auTextSecondary)
+
+                    WaveForm(
+                        heights: [10, 20, 26, 14, 22, 12, 18, 24, 16, 20],
+                        color: isModelPlaying ? .auAccent : Color.auText.opacity(0.28)
+                    )
+                    .frame(height: 26)
+
+                    Button {
+                        m.speak(word, audio: item.aud)
+                    } label: {
+                        AUIcon(
+                            kind: isModelPlaying ? .loop : .play,
+                            size: 16,
+                            color: .auAccent
+                        )
+                        .frame(width: 34, height: 34)
+                        .background(Circle().fill(Color.auTintBg))
+                    }
+                    .buttonStyle(.auTap)
+                    .accessibilityLabel("Play model pronunciation")
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(isModelPlaying ? Color.auTintBg.opacity(0.6) : Color.auFill.opacity(0.4))
+                )
+
+                // YOU Row
+                HStack(spacing: 12) {
+                    Text("YOU")
+                        .font(.figtree(.bold, size: 9.5))
+                        .tracking(1)
+                        .frame(width: 48, alignment: .leading)
+                        .foregroundStyle(Color.auTextSecondary)
+
+                    if isRecording || rec.takes > 0 {
+                        LiveWaveform(
+                            samples: isRecording ? m.say.samples : [0.2, 0.45, 0.7, 0.4, 0.6, 0.35],
+                            tint: isRecording ? .auErr : .auAccent2,
+                            barCount: 16
+                        )
+                        .frame(height: 26)
+                    } else {
+                        WaveForm(
+                            heights: [8, 14, 20, 12, 16, 10, 14, 18, 12, 16],
+                            color: Color.auText.opacity(0.22)
+                        )
+                        .frame(height: 26)
+                    }
+
+                    if rec.takes > 0 && m.say.lastTakeData != nil {
+                        Button {
+                            Task { await m.say.playLearnerTake() }
+                        } label: {
+                            AUIcon(
+                                kind: isLearnerPlaying ? .loop : .play,
+                                size: 16,
+                                color: .auAccent2
+                            )
+                            .frame(width: 34, height: 34)
+                            .background(Circle().fill(Color.auOkBg))
+                        }
+                        .buttonStyle(.auTap)
+                        .accessibilityLabel("Play your recorded voice")
+                    } else {
+                        AUIcon(kind: .play, size: 16, color: Color.auText.opacity(0.2))
+                            .frame(width: 34, height: 34)
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(isLearnerPlaying ? Color.auOkBg.opacity(0.6) : Color.auFill.opacity(0.4))
+                )
+            }
+            .padding(.bottom, 16)
 
             Button {
-                m.rec = m.rec >= 2 ? 0 : m.rec + 1
+                Task { await m.say.toggle(target: word) }
             } label: {
-                AUIcon(kind: .mic, size: 30, color: .auPrimaryButtonText)
+                ZStack {
+                    if isRecording {
+                        RecordingRing()
+                            .frame(width: 86, height: 86)
+                    }
+                    AUIcon(
+                        kind: isRecording ? .close : .mic,
+                        size: 30,
+                        color: .auPrimaryButtonText
+                    )
                     .frame(width: 74, height: 74)
-                    .background(Circle().fill(Color.auAccentRamp(600)))
+                    .background(
+                        Circle().fill(
+                            isRecording ? Color.auErr : Color.auAccentRamp(600)
+                        )
+                    )
+                    .shadow(
+                        color: isRecording ? Color.auErr.opacity(0.35) : Color.auAccent.opacity(0.25),
+                        radius: 8, y: 3
+                    )
+                }
             }
             .buttonStyle(.auTap)
+            .disabled(isAssessing)
+            .accessibilityIdentifier("au.player.speak.mic")
+            .accessibilityLabel(isRecording ? "Stop recording" : "Record voice")
 
-            Text(
-                "\(m.rec == 0 ? "Say it" : (m.rec == 1 ? "Listening…" : "Recorded — play both")) · ungraded"
-            )
-            .font(.figtree(.semibold, size: 12.5))
-            .foregroundStyle(Color.auTextSecondary)
-            .padding(.top, 12)
+            if m.say.micDenied {
+                HStack(spacing: 8) {
+                    AUIcon(kind: .lock, size: 14, color: .auErrText)
+                    Text("Microphone is off. Enable in Settings or skip.")
+                        .font(.figtree(.medium, size: 12.5))
+                        .foregroundStyle(Color.auErrText)
+                }
+                .padding(.top, 12)
+            } else if isRecording {
+                Text("Listening… Say “\(word)”")
+                    .font(.figtree(.semibold, size: 13))
+                    .foregroundStyle(Color.auAccentText)
+                    .padding(.top, 12)
+            } else if isAssessing {
+                Text("Checking your pronunciation…")
+                    .font(.figtree(.medium, size: 13))
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.top, 12)
+            } else if let verdict = rec.verdict {
+                let isClear = verdict == .clear
+                HStack(spacing: 8) {
+                    AUIcon(
+                        kind: isClear ? .check : .warning,
+                        size: 15,
+                        color: isClear ? .auOkText : .auTintText
+                    )
+                    Text(
+                        isClear
+                            ? "Clear — great pronunciation!"
+                            : (verdict == .near
+                                ? "\(rec.matchedWords) of \(rec.totalWords) words matched. Closer each time."
+                                : "Try saying “\(word)” clearly.")
+                    )
+                    .font(.figtree(.medium, size: 13))
+                    .foregroundStyle(isClear ? Color.auOkText : Color.auTintText)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .fill(isClear ? Color.auOkBg : Color.auTintBg)
+                )
+                .padding(.top, 12)
+            } else if rec.takes > 0 {
+                Text("Recorded — play both to compare")
+                    .font(.figtree(.semibold, size: 12.5))
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.top, 12)
+            } else {
+                Text("Tap mic to say it · ungraded")
+                    .font(.figtree(.semibold, size: 12.5))
+                    .foregroundStyle(Color.auTextSecondary)
+                    .padding(.top, 12)
+            }
+
+            if rec.takes > 0 && m.say.lastTakeData != nil {
+                Button {
+                    playBoth(word: word, audio: item.aud)
+                } label: {
+                    HStack(spacing: 7) {
+                        AUIcon(kind: .play, size: 13, color: .auAccent)
+                        Text("Play both (Model + You)")
+                            .font(.figtree(.semibold, size: 13))
+                    }
+                    .padding(.horizontal, 15)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .strokeBorder(Color.auAccent.opacity(0.4), lineWidth: 1)
+                    )
+                    .foregroundStyle(Color.auAccent)
+                }
+                .buttonStyle(.auTap)
+                .padding(.top, 10)
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(24)
+        .padding(20)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .fill(Color.auFill)
@@ -1145,17 +1396,44 @@ struct PracticeScreenView: View {
         }
     }
 
+    private func playBoth(word: String, audio: String?) {
+        m.say.stopLearnerTake()
+        m.speak(word, audio: audio)
+        Task { @MainActor in
+            for _ in 0..<10 {
+                if m.playback?.isSpeaking == true { break }
+                try? await Task.sleep(for: .milliseconds(50))
+            }
+            var waited = 0
+            while m.playback?.isSpeaking == true && waited < 60 {
+                try? await Task.sleep(for: .milliseconds(100))
+                waited += 1
+            }
+            try? await Task.sleep(for: .milliseconds(300))
+            await m.say.playLearnerTake()
+        }
+    }
+
     // MARK: Order items (lines 472–482)
 
     private func orderView(_ item: PlayerModel.PlayerItem) -> some View {
         let task = m.tileTask
 
         return VStack(spacing: 0) {
+            if let target = task.target, !target.contains("___") && !target.isEmpty {
+                Text(target)
+                    .font(.figtree(.semibold, size: 15))
+                    .auLine(15, 1.45)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 10)
+            }
+
             if m.usesLineAssembly {
                 OrderedLineAssemblyField(lines: m.orderedTileTexts)
                     .padding(.bottom, 14)
             } else {
-                Text(m.tileLine.isEmpty ? " " : m.tileLine)
+                Text(m.displayTileLine(target: task.target))
                     .font(.caprasimo(size: 20))
                     .tracking(-0.2)
                     .auHeadLine(20, 1.4)
@@ -1256,10 +1534,6 @@ struct PracticeScreenView: View {
         big: Bool = false
     ) -> some View {
         let quiet = m.isQuiet
-        // Image options must carry their meaning, not a positional label —
-        // “Picture A” told the learner nothing about the choice (D-01).
-        let illLabel = o.ill.flatMap { $0.alt.isEmpty ? nil : $0.alt }
-            ?? String(localized: "Picture \(o.id)")
         let radius: CGFloat = big ? 22 : 19
         // state colors (optionViews, lines 1223–1240)
         let bg: Color = {
@@ -1294,25 +1568,42 @@ struct PracticeScreenView: View {
                         .font(.caprasimo(size: 42))
                         .tracking(-0.63)
                         .frame(maxWidth: .infinity, minHeight: 104)
-                } else {
-                    HStack(spacing: 12) {
-                        if let ill = o.ill {
-                            Image(ill.id)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 112, height: 76)
-                                .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
-                                .accessibilityHidden(true)
-                            Text(illLabel)
-                                .font(.figtree(.regular, size: 13.5))
-                                .auLine(13.5, 1.4)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        } else if let t = o.text {
-                            Text(t)
-                                .font(.figtree(.regular, size: 16))
-                                .auLine(16, 1.4)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                } else if let ill = o.ill {
+                    ZStack(alignment: .topTrailing) {
+                        Image(ill.id)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity, alignment: .top)
+                            .frame(height: 120, alignment: .top)
+                            .clipped()
+                            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                            .accessibilityHidden(true)
+
+                        if m.done && isKey && !quiet {
+                            AUIcon(kind: .check, size: 18, color: .auOkText)
+                                .frame(width: 32, height: 32)
+                                .background(Circle().fill(Color.auOkBg))
+                                .overlay(Circle().strokeBorder(Color.auAccent2, lineWidth: 1.5))
+                                .shadow(color: Color.black.opacity(0.12), radius: 3, y: 1)
+                                .padding(8)
+                        } else if picked && !isKey && !quiet && m.done {
+                            AUIcon(kind: .loop, size: 16, color: .auErrText)
+                                .frame(width: 32, height: 32)
+                                .background(Circle().fill(Color.auErrBg))
+                                .overlay(Circle().strokeBorder(Color.auErr, lineWidth: 1.5))
+                                .shadow(color: Color.black.opacity(0.12), radius: 3, y: 1)
+                                .padding(8)
                         }
+                    }
+                    .padding(6)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                } else if let t = o.text {
+                    HStack(spacing: 12) {
+                        Text(t)
+                            .font(.figtree(.regular, size: 16))
+                            .auLine(16, 1.4)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
                         if m.done && isKey && !quiet {
                             AUIcon(kind: .check, size: 19, color: .auOkText)
                         } else if picked && !isKey && !quiet && m.done {
@@ -1347,6 +1638,101 @@ struct PracticeScreenView: View {
         guard picked || (m.done && correct && !quiet) else { return "" }
         if quiet { return String(localized: "Selected") }
         return correct ? String(localized: "Correct") : String(localized: "Try again")
+    }
+}
+
+private struct ReadingBadgePairOverlay: View {
+    let badges: [ReadingBadge]
+
+    var body: some View {
+        GeometryReader { proxy in
+            ForEach(Array(badges.prefix(2).enumerated()), id: \.offset) { index, badge in
+                let centerX = proxy.size.width * (index == 0 ? 0.28 : 0.72)
+
+                Text(badge.first)
+                    .font(.caprasimo(size: proxy.size.width * 0.040))
+                    .tracking(-0.15)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+                    .foregroundStyle(Color.auText.opacity(0.88))
+                    .frame(width: proxy.size.width * 0.21)
+                    .position(x: centerX, y: proxy.size.height * 0.43)
+
+                Text(badge.last)
+                    .font(.figtree(.semibold, size: proxy.size.width * 0.027))
+                    .tracking(0.55)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.70)
+                    .foregroundStyle(Color.auText.opacity(0.78))
+                    .frame(width: proxy.size.width * 0.27)
+                    .position(x: centerX, y: proxy.size.height * 0.56)
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
+private struct ReadingWelcomeCardOverlay: View {
+    let lines: [String]
+
+    var body: some View {
+        GeometryReader { proxy in
+            if let first = lines.first {
+                Text(first)
+                    .font(.caprasimo(size: proxy.size.width * 0.048))
+                    .tracking(-0.18)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+                    .foregroundStyle(Color.auText.opacity(0.88))
+                    .frame(width: proxy.size.width * 0.34)
+                    .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.39)
+            }
+
+            if lines.count > 1 {
+                Text(lines[1])
+                    .font(.figtree(.semibold, size: proxy.size.width * 0.036))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
+                    .foregroundStyle(Color.auText.opacity(0.82))
+                    .frame(width: proxy.size.width * 0.43)
+                    .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.62)
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+}
+
+private struct SamBadgeCredentialOverlay: View {
+    let showValues: Bool
+
+    var body: some View {
+        GeometryReader { proxy in
+            Text(showValues ? "SAM" : "FIRST NAME")
+                .font(
+                    showValues
+                        ? .caprasimo(size: proxy.size.width * 0.040)
+                        : .figtree(.bold, size: proxy.size.width * 0.018)
+                )
+                .tracking(showValues ? -0.12 : 0.15)
+                .lineLimit(1)
+                .minimumScaleFactor(0.55)
+                .foregroundStyle(Color.auText.opacity(0.88))
+                .frame(width: proxy.size.width * (showValues ? 0.17 : 0.25))
+                .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.548)
+
+            Text(showValues ? "RIVERA" : "LAST NAME")
+                .font(.figtree(.semibold, size: proxy.size.width * 0.027))
+                .tracking(showValues ? 0.52 : 0.20)
+                .lineLimit(1)
+                .minimumScaleFactor(0.55)
+                .foregroundStyle(Color.auText.opacity(0.78))
+                .frame(width: proxy.size.width * 0.27)
+                .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.661)
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 }
 

@@ -78,8 +78,11 @@ final class AppRouterTests: XCTestCase {
         r.say.micPermissionProbe = { .granted }
         r.say.transcriber = { _ in .text("hello world") }
         r.toggleSpeak(target: "hello world")  // take 1 starts
+        try await Task.sleep(for: .milliseconds(20))  // let the async take begin
         r.toggleSpeak(target: "hello world")  // manual stop
+        try await Task.sleep(for: .milliseconds(20))
         r.toggleSpeak(target: "hello world")  // take 2 starts — must get its own 2.6 s window
+        try await Task.sleep(for: .milliseconds(20))
         XCTAssertTrue(r.speaking, "the restarted take must run")
         r.stopSpeak()
         try await Task.sleep(for: .milliseconds(50))

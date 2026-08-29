@@ -1,0 +1,39 @@
+Application, 0x116c3a800, pid: 39300, label: 'Aurel' <App element pid: 39300>
+  Window (Main), 0x116c38f00, {{0.0, 0.0}, {402.0, 874.0}} <AX element pid: 39300, elementOrHash.elementID: 4343957504.4>
+    Other, 0x116c3b0c0, {{0.0, 0.0}, {402.0, 874.0}} <AX element pid: 39300, elementOrHash.elementID: 4405293568.5>
+      Other, 0x116c3b200, {{0.0, 0.0}, {402.0, 874.0}} <AX element pid: 39300, elementOrHash.elementID: 4404984832.6>
+        Other, 0x116c388c0, {{0.0, 0.0}, {402.0, 874.0}} <AX element pid: 39300, elementOrHash.elementID: 4343956480.7>
+          Other, 0x116c3b480, {{0.0, 0.0}, {402.0, 874.0}} <AX element pid: 39300, elementOrHash.elementID: 4404303104.8>
+            Other, 0x116c38640, {{0.0, 0.0}, {402.0, 874.0}} <AX element pid: 39300, elementOrHash.elementID: 4345283904.9>
+            Button, 0x116c3a080, {{20.0, 74.0}, {44.0, 44.0}}, identifier: 'au.player.close', label: 'Close the lesson' <AX element pid: 39300, elementOrHash.elementID: 4345295104.10>
+              Other, 0x116c3b5c0, {{37.6, 91.6}, {9.1, 9.1}} <AX element pid: 39300, elementOrHash.elementID: 4345294208.14>
+            StaticText, 0x116c3bc00, {{74.0, 85.3}, {267.3, 13.3}}, label: 'CHAPTER 1 · LESSON 2 · YOU AND YOUR NAME' <AX element pid: 39300, elementOrHash.elementID: 4345296000.11>
+            Other, 0x116c3a300, {{74.0, 103.7}, {308.0, 3.0}}, label: 'Lesson progress', value: 6 of 10 <AX element pid: 39300, elementOrHash.elementID: 4345231808.12>
+            ScrollView, 0x116c3a440, {{0.0, 118.0}, {402.0, 756.0}} <AX element pid: 39300, elementOrHash.elementID: 4344053760.13>
+              Other, 0x116c38a00, {{0.0, 118.0}, {402.0, 722.0}} <AX element pid: 39300, elementOrHash.elementID: 4411131904.15>
+                Other, 0x116c39f40, {{22.0, 138.0}, {358.0, 676.0}}, identifier: 'au.player.kind.cards' <AX element pid: 39300, elementOrHash.elementID: 4404181440.16>
+                  StaticText, 0x116c3bac0, {{34.0, 144.0}, {123.0, 13.3}}, label: 'ask → answer → ask back' <AX element pid: 39300, elementOrHash.elementID: 4345067968.17>
+                  Other, 0x116c3a580, {{318.0, 138.7}, {62.0, 24.0}}, label: 'Item 2 of 3' <AX element pid: 39300, elementOrHash.elementID: 4404084736.18>
+                    StaticText, 0x116c3aa80, {{336.3, 143.7}, {25.3, 14.0}}, label: '2 / 3' <AX element pid: 39300, elementOrHash.elementID: 4345114880.28>
+                  Other, 0x116c3bd40, {{22.0, 177.3}, {358.0, 201.3}}, label: 'A smiling face card anchors the I'm good answer family' <AX element pid: 39300, elementOrHash.elementID: 4404098176.19>
+                    Image, 0x116c39b80, {{22.0, 177.3}, {358.0, 201.3}} <AX element pid: 39300, elementOrHash.elementID: 4404085184.29>
+                    Other, 0x116c38500, {{22.0, 177.3}, {358.0, 201.4}} <AX element pid: 39300, elementOrHash.elementID: 4404380992.45>
+                  Other, 0x116c383c0, {{22.0, 396.7}, {358.0, 172.7}}, identifier: 'au.surface.task' <AX element pid: 39300, elementOrHash.elementID: 4404143296.20>
+                    Other, 0x116c3b700, {{133.9, 429.2}, {9.4, 4.9}} <AX element pid: 39300, elementOrHash.elementID: 4404135232.34>
+                    StaticText, 0x116c3a940, {{150.7, 425.7}, {118.7, 12.0}}, label: 'SAY IT AS ONE THING' <AX element pid: 39300, elementOrHash.elementID: 4404137024.35>
+                    StaticText, 0x116c3b980, {{45.8, 452.7}, {310.3, 39.0}}, label: 'I'm good/fine/okay' <AX element pid: 39300, elementOrHash.elementID: 4404139712.36>
+                    StaticText, 0x116c39900, {{171.3, 500.8}, {59.3, 15.7}}, label: '/aɪm ɡʊd/' <AX element pid: 39300, elementOrHash.elementID: 4404141504.37>
+                    StaticText, 0x116c3ad00, {{129.3, 528.3}, {143.3, 15.0}}, label: 'state answer chunk family' <AX element pid: 39300, elementOrHash.elementID: 4404142400.38>
+                  Button, 0x116c3ae40, {{22.0, 585.3}, {173.0, 62.0}}, label: 'Listen' <AX element pid: 39300, elementOrHash.elementID: 4404148672.21>
+                    Other, 0x116c397c0, {{77.6, 606.9}, {12.9, 17.2}} <AX element pid: 39300, elementOrHash.elementID: 4404145536.39>
+                    StaticText, 0x116c3be80, {{104.8, 607.5}, {40.3, 17.7}}, label: 'Listen' <AX element pid: 39300, elementOrHash.elementID: 4404146432.40>
+                  Button, 0x117570000, {{207.0, 585.3}, {173.0, 62.0}}, label: 'Say it' <AX element pid: 39300, elementOrHash.elementID: 4404169344.22>
+                    Other, 0x117570140, {{262.1, 611.1}, {16.4, 10.5}} <AX element pid: 39300, elementOrHash.elementID: 4404167552.41>
+                    StaticText, 0x117570280, {{290.2, 607.5}, {37.7, 17.7}}, label: 'Say it' <AX element pid: 39300, elementOrHash.elementID: 4404168448.42>
+                  StaticText, 0x1175703c0, {{41.0, 661.2}, {16.7, 13.3}}, label: 'ask' <AX element pid: 39300, elementOrHash.elementID: 4404171584.23>
+                  StaticText, 0x117570500, {{163.0, 661.2}, {36.0, 13.3}}, label: 'answer' <AX element pid: 39300, elementOrHash.elementID: 4404174720.24>
+                  StaticText, 0x117570640, {{285.0, 661.2}, {43.3, 13.3}}, label: 'ask back' <AX element pid: 39300, elementOrHash.elementID: 4404175616.25>
+                  Button, 0x117570780, {{22.0, 760.0}, {84.0, 54.0}}, label: 'Back' <AX element pid: 39300, elementOrHash.elementID: 4404176512.26>
+                  Button, 0x1175708c0, {{118.0, 761.3}, {262.0, 51.3}}, identifier: 'au.btn.next-card', label: 'Next card' <AX element pid: 39300, elementOrHash.elementID: 4404179200.27>
+                    Other, 0x117570a00, {{201.3, 781.9}, {12.4, 10.1}} <AX element pid: 39300, elementOrHash.elementID: 4404177408.43>
+                    StaticText, 0x117570b40, {{225.2, 777.3}, {73.7, 19.3}}, label: 'Next card' <AX element pid: 39300, elementOrHash.elementID: 4404178304.44>

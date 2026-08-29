@@ -11,7 +11,7 @@ final class FakeTakeRecorder: TakeRecording {
         "fake-take.m4a")
     var discardedURLs: [URL] = []
 
-    func start() throws {
+    func start() async throws {
         isRecording = true
     }
 
@@ -76,29 +76,29 @@ final class Stage5SpeakTests: XCTestCase {
 
     // MARK: - SayCoach Take Coordinator
 
-    func testSayCoachPermissionDenied() {
+    func testSayCoachPermissionDenied() async {
         let coach = SayCoach()
         coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .denied }
 
-        coach.toggle(target: "Hello")
+        await coach.toggle(target: "Hello")
         XCTAssertTrue(coach.micDenied)
         XCTAssertFalse(coach.recording)
     }
 
-    func testSayCoachPermissionGrantedStartsTake() {
+    func testSayCoachPermissionGrantedStartsTake() async {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
         coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
 
-        coach.toggle(target: "Hello")
+        await coach.toggle(target: "Hello")
         XCTAssertFalse(coach.micDenied)
         XCTAssertTrue(coach.recording)
         XCTAssertEqual(coach.activeTarget, "Hello")
 
-        coach.toggle(target: "Hello")  // manual stop
+        await coach.toggle(target: "Hello")  // manual stop
         XCTAssertFalse(coach.recording)
     }
 
@@ -110,7 +110,7 @@ final class Stage5SpeakTests: XCTestCase {
         coach.micPermissionProbe = { .granted }
         coach.transcriber = { _ in .text("hello world") }
 
-        coach.toggle(target: "hello world")
+        await coach.toggle(target: "hello world")
         XCTAssertTrue(coach.recording)
         coach.finish()
         XCTAssertFalse(coach.recording)
@@ -130,7 +130,7 @@ final class Stage5SpeakTests: XCTestCase {
         coach.micPermissionProbe = { .granted }
         coach.transcriber = { _ in .unavailable }  // both tiers failed
 
-        coach.toggle(target: "hello world")
+        await coach.toggle(target: "hello world")
         coach.finish()
 
         try await Task.sleep(for: .milliseconds(50))
@@ -150,7 +150,7 @@ final class Stage5SpeakTests: XCTestCase {
         // no-verdict state.
         coach.transcriber = { _ in .text("") }
 
-        coach.toggle(target: "hello world")
+        await coach.toggle(target: "hello world")
         coach.finish()
 
         try await Task.sleep(for: .milliseconds(50))
@@ -171,7 +171,7 @@ final class Stage5SpeakTests: XCTestCase {
         coach.micPermissionProbe = { .granted }
         coach.transcriber = { _ in .text("hello world") }
 
-        coach.toggle(target: "hello world")
+        await coach.toggle(target: "hello world")
         XCTAssertTrue(coach.recording, "an authorized take records without on-device support")
         coach.finish()
 
@@ -190,7 +190,7 @@ final class Stage5SpeakTests: XCTestCase {
         coach.recognitionRequest = { false }
         coach.micPermissionProbe = { .granted }
 
-        coach.toggle(target: "hello world")
+        await coach.toggle(target: "hello world")
         try await Task.sleep(for: .milliseconds(30))
 
         let rec = coach.record(for: "hello world")
@@ -214,18 +214,71 @@ final class Stage5SpeakTests: XCTestCase {
         XCTAssertFalse(once.claim())
     }
 
-    func testSayCoachResetCancelsRunningTake() {
+    func testSayCoachResetCancelsRunningTake() async {
         let coach = SayCoach()
         let fake = FakeTakeRecorder()
         coach.recorder = fake
         coach.recognitionProbe = { true }
         coach.micPermissionProbe = { .granted }
 
-        coach.toggle(target: "test")
+        await coach.toggle(target: "test")
         XCTAssertTrue(coach.recording)
         coach.reset()
         XCTAssertFalse(coach.recording)
         XCTAssertFalse(coach.assessing)
         XCTAssertEqual(fake.discardedURLs.count, 1, "leaving deletes a running take")
+    }
+
+    // MARK: - Two-tier watchdog (the "comparison never appears" regression)
+
+    /// Server-tier recognition is slow; a short watchdog cut it off and every
+    /// take came back "unavailable" — the comparison never appeared.
+    func testServerWatchdogOutlivesOnDeviceWatchdog() {
+        XCTAssertEqual(SpeechToText.onDeviceWatchdog, .seconds(4))
+        XCTAssertEqual(SpeechToText.serverWatchdog, .seconds(8))
+        XCTAssertGreaterThan(SpeechToText.serverWatchdog, SpeechToText.onDeviceWatchdog)
+    }
+
+    /// A speech-authorization callback that never arrives (a known hang) must
+    /// not wedge the flow: the timeout resolves it, the honest no-verdict
+    /// state is recorded, and the button becomes usable again.
+    func testRecognitionRequestTimeoutRecoversTheFlow() async throws {
+        let coach = SayCoach()
+        coach.recorder = FakeTakeRecorder()
+        coach.recognitionProbe = { false }
+        coach.recognitionRequest = {
+            try? await Task.sleep(for: .seconds(5))  // the wedged callback
+            return true
+        }
+        coach.recognitionRequestTimeout = .milliseconds(80)
+
+        await coach.toggle(target: "hello world")
+        try await Task.sleep(for: .milliseconds(250))
+
+        XCTAssertFalse(coach.preparingRecognition, "a dropped auth callback must not wedge the flow")
+        XCTAssertFalse(coach.recording)
+        XCTAssertTrue(coach.record(for: "hello world").unavailable)
+    }
+
+    /// The same guarantee on the mic-permission path: no take, no invented
+    /// denial — the flow simply stays usable when the callback never lands
+    /// and the live permission is still undetermined.
+    func testMicPermissionTimeoutRecoversWithoutInventedState() async throws {
+        let coach = SayCoach()
+        coach.recorder = FakeTakeRecorder()
+        coach.recognitionProbe = { true }
+        coach.micPermissionProbe = { .undetermined }
+        coach.micPermissionRequest = {
+            try? await Task.sleep(for: .seconds(5))  // the wedged callback
+            return .granted
+        }
+        coach.micPermissionTimeout = .milliseconds(80)
+
+        await coach.toggle(target: "hello world")
+        try await Task.sleep(for: .milliseconds(250))
+
+        XCTAssertFalse(coach.recording)
+        XCTAssertFalse(coach.micDenied)
+        XCTAssertFalse(coach.preparingRecognition)
     }
 }

@@ -45,7 +45,7 @@ final class PH03LaunchHardeningTests: XCTestCase {
         XCTAssertTrue(ordered.accessibilityAnnouncement.contains("Go on"))
     }
 
-    func testRecordingHandoffStopsPlaybackAndInterruptionDiscardsTake() {
+    func testRecordingHandoffStopsPlaybackAndInterruptionDiscardsTake() async {
         let recorder = PH03Recorder()
         var events: [String] = []
         recorder.onStart = { events.append("record") }
@@ -56,7 +56,7 @@ final class PH03LaunchHardeningTests: XCTestCase {
         coach.micPermissionProbe = { .granted }
         coach.onCaptureWillBegin = { events.append("stop playback") }
 
-        coach.toggle(target: "Good morning")
+        await coach.toggle(target: "Good morning")
 
         XCTAssertEqual(events, ["stop playback", "record"])
         XCTAssertTrue(coach.recording)
@@ -118,7 +118,7 @@ private final class PH03Recorder: TakeRecording {
     private(set) var stopCount = 0
     private(set) var discardCount = 0
 
-    func start() throws {
+    func start() async throws {
         onStart()
         isRecording = true
     }

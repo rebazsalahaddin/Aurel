@@ -180,10 +180,16 @@ struct ResultsScreenView: View {
     var body: some View {
         ScreenColumn(topPad: 24, bottomPad: 26) {
             if case .results(let r) = m.cur?.screen.payload {
+                let hasLiveScore = m.quizTotal > 0
+                let isPassed = hasLiveScore ? m.quizPassed : true
+                let scoreText = hasLiveScore
+                    ? "Score: \(m.quizCorrect) / \(m.quizTotal) (\(m.quizScorePercentage)%)"
+                    : (r.score ?? "Pass: 86% overall")
+
                 // rings (first 4 lit)
                 HStack(alignment: .top, spacing: 10) {
                     ForEach(Array((r.rings ?? []).enumerated()), id: \.offset) { k, t in
-                        let on = k < 4
+                        let on = isPassed ? (k < 4) : (k < 2)
                         VStack(spacing: 7) {
                             Circle()
                                 .strokeBorder(
@@ -205,24 +211,65 @@ struct ResultsScreenView: View {
                 }
                 .padding(.bottom, 22)
 
-                VStack(alignment: .leading, spacing: 7) {
-                    Text("Strong")
-                        .font(.figtree(.bold, size: 9.5))
-                        .tracking(1.3)
-                        .textCase(.uppercase)
-                        .foregroundStyle(Color.auOkText.opacity(0.8))
-                    Text(r.strong ?? "")
-                        .font(.figtree(.regular, size: 15.5))
-                        .auLine(15.5, 1.5)
+                // Mastery score card
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 8) {
+                        AUIcon(
+                            kind: isPassed ? .check : .close,
+                            size: 16,
+                            color: isPassed ? .auOkText : .auErrText
+                        )
+                        Text(isPassed ? "Mastery Passed (≥75%)" : "Mastery Review Needed (<75%)")
+                            .font(.figtree(.bold, size: 10))
+                            .tracking(1.2)
+                            .textCase(.uppercase)
+                            .foregroundStyle(isPassed ? Color.auOkText : Color.auErrText)
+                    }
+
+                    Text(scoreText)
+                        .font(.caprasimo(size: 24))
+                        .foregroundStyle(isPassed ? Color.auOkText : Color.auErrText)
+
+                    Text(
+                        isPassed
+                            ? "Great job! You achieved mastery and unlocked the next chapter."
+                            : "You need at least 75% to pass mastery and unlock the next chapter. Please review and try again."
+                    )
+                    .font(.figtree(.regular, size: 13.5))
+                    .auLine(13.5, 1.45)
+                    .foregroundStyle(
+                        isPassed ? Color.auOkText.opacity(0.85) : Color.auErrText.opacity(0.85)
+                    )
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 19)
                 .padding(.vertical, 17)
                 .background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auOkBg)
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(isPassed ? Color.auOkBg : Color.auErrBg)
                 )
-                .foregroundStyle(Color.auOkText)
                 .padding(.bottom, 11)
+
+                if let strong = r.strong, !strong.isEmpty {
+                    VStack(alignment: .leading, spacing: 7) {
+                        Text("Strong")
+                            .font(.figtree(.bold, size: 9.5))
+                            .tracking(1.3)
+                            .textCase(.uppercase)
+                            .foregroundStyle(Color.auOkText.opacity(0.8))
+                        Text(strong)
+                            .font(.figtree(.regular, size: 15.5))
+                            .auLine(15.5, 1.5)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 19)
+                    .padding(.vertical, 17)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous).fill(Color.auOkBg)
+                    )
+                    .foregroundStyle(Color.auOkText)
+                    .padding(.bottom, 11)
+                }
 
                 ACard(radius: 20) {
                     VStack(alignment: .leading, spacing: 7) {
@@ -254,36 +301,24 @@ struct ResultsScreenView: View {
                 }
                 .padding(.bottom, 14)
 
-                Button {
-                    m.showScore.toggle()
-                } label: {
-                    Text(m.showScore ? "Hide the number" : "Show the number")
-                        .font(.figtree(.semibold, size: 12.5))
-                        .padding(.horizontal, 15)
-                        .padding(.vertical, 9)
-                        .background(Capsule().strokeBorder(Color.auDivider, lineWidth: 1))
-                        .foregroundStyle(Color.auTextSecondary)
-                }
-                .buttonStyle(.auTap)
-                // Craft overhaul L14: expand the capsule's hit area to 44pt.
-                .auMinHitTarget()
-
-                if m.showScore {
-                    Text("\(r.score ?? "") — \(r.gate ?? "")")
-                        .font(.figtree(.regular, size: 12.5))
-                        .auLine(12.5, 1.55)
-                        .foregroundStyle(Color.auTextSecondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top, 11)
-                }
-
                 Spacer(minLength: 12)
 
                 HStack(spacing: 12) {
-                    APillButton(title: "Try again", variant: .quiet, player: true) {
-                        m.goto(m.p + 1)
+                    if !isPassed {
+                        APillButton(title: "Try again", role: .primary, player: true) {
+                            m.goto(max(0, m.p - 1))
+                        }
+                        APillButton(title: "Review", variant: .quiet, player: true) {
+                            m.goto(m.p + 1)
+                        }
+                    } else {
+                        APillButton(title: "Review", variant: .quiet, player: true) {
+                            m.goto(m.p + 1)
+                        }
+                        APillButton(title: "Go on", role: .primary, player: true) {
+                            m.goto(m.p + 1)
+                        }
                     }
-                    APillButton(title: "Go on", player: true) { m.goto(m.p + 1) }
                 }
                 .padding(.top, 18)
             }

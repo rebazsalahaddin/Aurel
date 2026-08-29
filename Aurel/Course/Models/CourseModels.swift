@@ -190,11 +190,12 @@ struct PronProduceItem: Decodable, Hashable, Identifiable {
     let note: String?
 }
 
-/// pronunciation perceive item — `{id, instr, prompt, aud, opts, key, note}`.
+/// pronunciation perceive item — `{id, instr, prompt, word, aud, opts, key, note}`.
 struct PronPerceiveItem: Decodable, Hashable, Identifiable {
     let id: String
     let instr: String
     let prompt: String?
+    let word: String?
     let aud: String?
     let opts: [PracticeOption]?
     let key: AnswerKey?

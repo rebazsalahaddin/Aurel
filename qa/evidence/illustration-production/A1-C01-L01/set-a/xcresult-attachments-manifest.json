@@ -1,0 +1,80 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "0EE8335C-9141-4AC6-9F9D-D3F9CDEF5759.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-a-8-see you_0_B22A77F9-43BC-49EA-9EB9-975CFA8EF700.png",
+        "timestamp" : 1787866396.003
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "2EB8AEF2-96D0-49F0-9FF9-EF7D18FBB2DC.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-a-7-bye_0_74077FA8-9FB7-4F6E-86FA-0AF11557D603.png",
+        "timestamp" : 1787866393.395
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "CCFA70F5-96F6-450D-AEBE-63FE07900DF1.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-a-6-goodbye_0_9CD4BFF6-BA34-4D54-98F0-65B2B9299AB0.png",
+        "timestamp" : 1787866390.777
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "2EE57944-960C-4A05-A962-425402E9ED41.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-a-5-good evening_0_99E6E7A3-0E24-4998-82D5-2A268BCD9443.png",
+        "timestamp" : 1787866388.16
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "F013FBF4-3319-4214-93DD-083AD0F770CA.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-a-4-good afternoon_0_5CE54C96-4A0D-4CE1-84A3-26F427AA6786.png",
+        "timestamp" : 1787866385.537
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "042D87C4-D76E-49B1-9978-32B96BF9358C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-a-3-good morning_0_C65A7F05-8AB0-43A8-92C6-64511BC3FF25.png",
+        "timestamp" : 1787866382.911
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "C77DFF12-5854-4A9D-8925-1F6BCE6FC1FA.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-a-2-hi_0_05C5633D-885E-4D3E-9F52-43328B133E0E.png",
+        "timestamp" : 1787866380.288
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "3A0D81A3-86FF-425B-90C3-81E13B2424B9.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-a-1-hello_0_192886FB-1D13-45A3-BF1B-5B58B66CE988.png",
+        "timestamp" : 1787866377.56
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonOneGreetingCardArtworkPagesRenderAndNavigate()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonOneGreetingCardArtworkPagesRenderAndNavigate"
+  }
+]

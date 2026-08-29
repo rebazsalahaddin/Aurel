@@ -1,0 +1,92 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "00640118-62E4-4B51-BF69-99594A35539F.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-cafe-challenge_0_D5C99E8D-419B-4830-BF5C-0BF403314155.png",
+        "timestamp" : 1787927009.743
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonThreeCafeChallengeArtworkRenders()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonThreeCafeChallengeArtworkRenders"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "D493FC16-28FE-4C6A-A596-DE26F4824382.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-welcome-card_0_47F67EC1-B4B7-4045-82FC-FD8BE4A0A3D3.png",
+        "timestamp" : 1787927030.385
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "60EAB41C-2044-47C8-9A21-AD50201EED54.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-badge-reading_0_2D454C96-771E-498A-9459-8B6811CAF188.png",
+        "timestamp" : 1787927020.267
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonThreeReadingSurfaceArtworkAndOverlaysRender()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonThreeReadingSurfaceArtworkAndOverlaysRender"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "7EDB20B6-6474-4C3C-A76B-1774D7C87F68.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-5_0_D68BBCCE-0B2B-4DB9-BE4B-90612DDB5603.png",
+        "timestamp" : 1787927046.786
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "3C88ADEA-7FF2-4DA8-BC84-6D496D71DC6C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-4_0_8E68B70E-0356-45FF-A93B-9895DB8940D2.png",
+        "timestamp" : 1787927044.492
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "5C14FEF2-2553-482A-ACD9-DCCB2D230589.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-3_0_23FCBDC3-822D-40B9-B580-E6131C17ED65.png",
+        "timestamp" : 1787927042.173
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "9834F2E8-4893-4DA3-8136-BE755ED6EF22.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-2_0_7338D330-2ED7-4FA4-B98C-DC27440EEC85.png",
+        "timestamp" : 1787927039.847
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "79322C58-4E76-43CB-B77B-230124174C90.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-1_0_0A5F4469-1ED8-486F-991B-189244116130.png",
+        "timestamp" : 1787927037.503
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonThreeStoryboardArtworkPanelsRenderAndSelect()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonThreeStoryboardArtworkPanelsRenderAndSelect"
+  }
+]

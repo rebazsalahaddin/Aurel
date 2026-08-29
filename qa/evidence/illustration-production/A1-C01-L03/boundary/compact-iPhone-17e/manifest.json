@@ -1,0 +1,92 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "EB463138-8ED2-4057-BA58-0D180219A599",
+        "deviceName" : "iPhone 17e",
+        "exportedFileName" : "18E1F911-51B7-4969-8303-25753785E577.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-cafe-challenge_0_CDC6B0E2-AA91-42A0-BFA1-6E6B67574A24.png",
+        "timestamp" : 1787927518.29
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonThreeCafeChallengeArtworkRenders()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonThreeCafeChallengeArtworkRenders"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "EB463138-8ED2-4057-BA58-0D180219A599",
+        "deviceName" : "iPhone 17e",
+        "exportedFileName" : "826CD6F0-E0A1-4930-A462-0A70C23C9F75.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-welcome-card_0_20EBDFBF-558D-49B5-B189-716EC81C723D.png",
+        "timestamp" : 1787927539.88
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "EB463138-8ED2-4057-BA58-0D180219A599",
+        "deviceName" : "iPhone 17e",
+        "exportedFileName" : "372D7803-7B1A-437F-92D7-72189E1CD4B1.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-badge-reading_0_F3A947C3-AB1D-4900-B4A6-2DA3D2ED7B26.png",
+        "timestamp" : 1787927529.218
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonThreeReadingSurfaceArtworkAndOverlaysRender()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonThreeReadingSurfaceArtworkAndOverlaysRender"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "EB463138-8ED2-4057-BA58-0D180219A599",
+        "deviceName" : "iPhone 17e",
+        "exportedFileName" : "C12C4594-3B63-436F-A44B-59DBF912824C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-5_0_36F5D991-74DE-4178-B3FB-42654AC0FF89.png",
+        "timestamp" : 1787927559.238
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "EB463138-8ED2-4057-BA58-0D180219A599",
+        "deviceName" : "iPhone 17e",
+        "exportedFileName" : "420A6BC0-76DF-4B9F-AFB9-D601A4B75797.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-4_0_3B165A03-BAC4-4ED9-B769-E6C00CCF1AEF.png",
+        "timestamp" : 1787927556.345
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "EB463138-8ED2-4057-BA58-0D180219A599",
+        "deviceName" : "iPhone 17e",
+        "exportedFileName" : "C6A8FD62-D4DA-491C-9AE7-8285750B4FFC.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-3_0_DD02458C-2370-4380-B884-F85C72229F5D.png",
+        "timestamp" : 1787927553.441
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "EB463138-8ED2-4057-BA58-0D180219A599",
+        "deviceName" : "iPhone 17e",
+        "exportedFileName" : "8E2FE848-350F-43AC-8BA4-4C334ACA973C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-2_0_F5933258-11F0-43D6-8532-4C92FEB30E6E.png",
+        "timestamp" : 1787927550.492
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "EB463138-8ED2-4057-BA58-0D180219A599",
+        "deviceName" : "iPhone 17e",
+        "exportedFileName" : "B39C0FBC-46FA-4ED7-AE45-21696E1614E9.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-3-storyboard-1_0_87350804-D2B7-44FB-ADE5-9BF1356CD5B4.png",
+        "timestamp" : 1787927547.572
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonThreeStoryboardArtworkPanelsRenderAndSelect()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonThreeStoryboardArtworkPanelsRenderAndSelect"
+  }
+]

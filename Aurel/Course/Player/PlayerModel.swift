@@ -37,6 +37,17 @@ final class PlayerModel {
     var teachShut = false
     var rec = 0
     var showScore = false
+    var quizCorrect = 0
+    var quizTotal = 0
+
+    var quizScorePercentage: Int {
+        quizTotal > 0 ? Int(round(Double(quizCorrect) / Double(quizTotal) * 100)) : 0
+    }
+
+    var quizPassed: Bool {
+        quizScorePercentage >= 75
+    }
+
     var flip: [String: Bool] = [:]
     var turn = 1  // conversation playback turn
     var matchSelection: Int? = nil
@@ -239,6 +250,12 @@ final class PlayerModel {
         }
         // Craft overhaul L7: remember travel direction so the screen-swap
         // transition slides the correct way on back navigation.
+        if let next = course.flat.indices.contains(n) ? course.flat[n] : nil {
+            if next.screen.kind == .quizIntro || (next.screen.kind == .quiz && cur?.screen.kind != .quiz) {
+                quizCorrect = 0
+                quizTotal = 0
+            }
+        }
         lastDelta = n - p
         onScreen(n)
         p = n
@@ -356,13 +373,15 @@ final class PlayerModel {
     func restartRoleplay() {
         say.reset()
         speaker?.stop()
-        roleplayLines = []
-        roleplayUsedGroups = []
-        roleplayUserTurns = 0
-        roleplayFinished = false
-        roleplayStarted = false
-        roleplayLineSerial = 0
-        prepareRoleplay()
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+            roleplayLines = []
+            roleplayUsedGroups = []
+            roleplayUserTurns = 0
+            roleplayFinished = false
+            roleplayStarted = false
+            roleplayLineSerial = 0
+            prepareRoleplay()
+        }
         AUFeedback.press()
     }
 
@@ -378,25 +397,33 @@ final class PlayerModel {
         else { return }
 
         say.reset()
-        appendRoleplayLine(speaker: "YOU", text: text, learner: true)
-        roleplayUsedGroups.insert(group)
-        roleplayUserTurns += 1
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.82)) {
+            appendRoleplayLine(speaker: "YOU", text: text, learner: true)
+            roleplayUsedGroups.insert(group)
+            roleplayUserTurns += 1
+        }
+        AUFeedback.selection()
 
         let hitTurnLimit = roleplayUserTurns >= (roleplay.turnLimit ?? 8)
         let nextGroup = roleplayActiveGroup
-        roleplayFinished = nextGroup == nil || hitTurnLimit
-        done = roleplayFinished
+        let willFinish = nextGroup == nil || hitTurnLimit
 
-        appendRoleplayLine(
-            speaker: Self.roleplayPartnerName(roleplay),
-            text: Self.roleplayPartnerReply(nextGroup: nextGroup, finished: roleplayFinished),
-            learner: false)
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(460))
+            guard !Task.isCancelled else { return }
+            withAnimation(.spring(response: 0.48, dampingFraction: 0.84)) {
+                self.appendRoleplayLine(
+                    speaker: Self.roleplayPartnerName(roleplay),
+                    text: Self.roleplayPartnerReply(nextGroup: nextGroup, finished: willFinish),
+                    learner: false)
+                self.roleplayFinished = willFinish
+                self.done = willFinish
+            }
 
-        if roleplayFinished {
-            AUFeedback.correct()
-            AUAX.announce("Roleplay complete. Go on when you are ready.")
-        } else {
-            AUFeedback.selection()
+            if willFinish {
+                AUFeedback.correct()
+                AUAX.announce("Roleplay complete. Go on when you are ready.")
+            }
         }
     }
 
@@ -665,8 +692,14 @@ final class PlayerModel {
     /// gated on `done` (which only `pick()` sets) and lessons stalled forever.
     var itemCanGo: Bool {
         guard let it = item else { return false }
-        if it.kind == "order" { return tileCorrect }
-        return done || isQuiet
+        if it.kind == "order" {
+            if isQuiet { return tileComplete }
+            return tileCorrect
+        }
+        if isQuiet {
+            return sel != nil
+        }
+        return done
     }
 
     func selectMatchCue(_ id: Int) {
@@ -699,7 +732,7 @@ final class PlayerModel {
         guard !done else { return }
         if isQuiet {
             sel = o.id
-            done = true
+            AUFeedback.selection()
             return
         }
         let correct = item.isKey(o)
@@ -712,6 +745,35 @@ final class PlayerModel {
         sel = o.id
         done = wrong >= 3
         revealed = wrong >= 3
+    }
+
+    func confirmQuizAnswer() {
+        guard isQuiet, !done, let it = item else { return }
+        if it.kind == "order" {
+            guard tileComplete else { return }
+            quizTotal += 1
+            if tileCorrect {
+                quizCorrect += 1
+                AUFeedback.correct()
+            } else {
+                AUFeedback.miss()
+            }
+            done = true
+            advance()
+            return
+        }
+
+        guard let s = sel, let opt = it.opts.first(where: { $0.id == s }) else { return }
+        quizTotal += 1
+        let correct = it.isKey(opt)
+        if correct {
+            quizCorrect += 1
+            AUFeedback.correct()
+        } else {
+            AUFeedback.miss()
+        }
+        done = true
+        advance()
     }
 
     // MARK: advance (lines 1242–1246)
@@ -743,6 +805,7 @@ final class PlayerModel {
         var aud: String? = nil
         var id = ""
         var chunk = false
+        var badge: String? = nil
         var moment = ""
         var symbol = ""
         var digit: String? = nil
@@ -779,7 +842,7 @@ final class PlayerModel {
             return (s.cards ?? []).map { c in
                 PlayerCard(
                     main: c.w, ipa: c.ipa ?? "", sub: c.fn ?? "", ill: c.ill, aud: c.aud, id: c.id,
-                    chunk: c.chunk ?? false, moment: c.frame ?? "")
+                    chunk: c.chunk ?? false, badge: c.badge, moment: c.frame ?? "")
             }
         default:
             return []
@@ -841,10 +904,20 @@ final class PlayerModel {
 
     struct TileTaskState {
         let instr: String
+        let target: String?
         let tiles: [String]
         let key: [String]
         let ok: String
         let no: String
+
+        init(instr: String, target: String? = nil, tiles: [String], key: [String], ok: String, no: String) {
+            self.instr = instr
+            self.target = target
+            self.tiles = tiles
+            self.key = key
+            self.ok = ok
+            self.no = no
+        }
     }
 
     private func normalizedTileTask(_ task: TileTask, seed: String) -> TileTaskState {
@@ -864,6 +937,7 @@ final class PlayerModel {
             TileTaskState(
                 instr: CourseTextContract.learnerText(task.instr)
                     ?? String(localized: "Put in order."),
+                target: task.target.learnerFacing,
                 tiles: tiles, key: key,
                 ok: task.ok.learnerFacing ?? "", no: task.no.learnerFacing ?? ""), seed: seed)
     }
@@ -879,6 +953,7 @@ final class PlayerModel {
                 TileTaskState(
                     instr: CourseTextContract.learnerText(it.instr)
                         ?? String(localized: "Put in order."),
+                    target: it.prompt.learnerFacing,
                     tiles: it.tiles, key: it.key?.sequence ?? [],
                     ok: it.ok.learnerFacing ?? "", no: it.no.learnerFacing ?? ""),
                 seed: "\(s.id)|\(it.id)")
@@ -896,6 +971,7 @@ final class PlayerModel {
             return mixedTileTask(
                 TileTaskState(
                     instr: e.instr.learnerFacing ?? String(localized: "Put in order."),
+                    target: e.spoken?.learnerFacing,
                     tiles: e.tiles ?? [], key: e.key ?? [],
                     ok: e.ok.learnerFacing ?? "", no: e.no.learnerFacing ?? ""), seed: s.id)
         default:
@@ -910,6 +986,16 @@ final class PlayerModel {
         return Self.joinTiles(
             order.map { tiles.indices.contains($0) ? tiles[$0] : "" },
             tight: cur?.screen.kind == .emailAssembly)
+    }
+
+    func displayTileLine(target: String?) -> String {
+        if let target, target.contains("___") {
+            if tileLine.isEmpty {
+                return target
+            }
+            return target.replacingOccurrences(of: "___", with: tileLine)
+        }
+        return tileLine.isEmpty ? " " : tileLine
     }
 
     var orderedTileTexts: [String] {
@@ -967,6 +1053,7 @@ final class PlayerModel {
     private func mixedTileTask(_ task: TileTaskState, seed: String) -> TileTaskState {
         TileTaskState(
             instr: task.instr,
+            target: task.target,
             tiles: Self.mixedTiles(task.tiles, answer: task.key, seed: seed),
             key: task.key,
             ok: task.ok,

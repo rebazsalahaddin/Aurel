@@ -48,6 +48,12 @@ Statuses: `open → verified → fixing → fixed → retested-closed | deferred
 |---|---|---|---|---|---|
 | S1-010 | C2-L01-S02 hook corrupted: two unvoiced "YOU" rows spoke Maya's lines ("Maya." / "M … A … Y … A."), so the audio skipped them while NINA voiced the "Maya!" read-backs with no speaker, the spelling was never spoken, and Alex vanished after line 1 — text/audio/matching all broken | S1 | learner report | Authored script (A1_C02_L01_LESSON.md STEP 2 + audio index), shipped rows (a1-course.json S02), and A1-C02-AUD001 takes rewritten as a fully-voiced 7-turn Alex↔Nina check-in: name asked, given, spelled aloud ("A … L … E … X."), read back ("A-L-E-X. … Thank you, Alex!"); chapter-question plant and S03's "What's your name?" reference preserved | unit 177/177 green (AudioCatalogTests bundle check incl. new L6/L7); `generate-audio.mjs --verify` clean; simulator: rows 5→6 karaoke-highlight in sync mid-playback (12.5 s / 16.5 s captures) |
 
+## Fixed (content correction — C1-L02 warm-up audio, learner report)
+
+| ID | Title | Sev | Found by | Fix summary | Retest |
+|---|---|---|---|---|---|
+| S1-011 | C1-L02-S10 warm-up mis-wired: all six "Listen. Choose." frames referenced the same sequence take A1-C01-AUD019 ("Hello … Thank you … Good evening … Bye … Sorry … See you."), so every exercise replayed the whole six-word stream — the played audio had nothing to do with the three choices and the listening task was unsolvable (the screen's own authoring note says "One replay per word") | S1 | learner report | Each frame rewired to its own bundled word-model take (the S09 gallery audio): hello→AUD002, thank you→AUD011, good evening→AUD006, bye→AUD008, sorry→AUD013, see you→AUD009; screen `bank`/`assets` authoring meta updated. a1-course.json only — no code change, no audio regeneration | `ListeningSanityTests.testC1L02WarmupFramesEachVoiceTheirOwnWord` (per-frame take resolves, speaks its answer, never shared) + `testWarmupListenFramesCarryAudio` (frame-level Listen-needs-audio guard); full AurelTests re-run |
+
 ## Open (seeded from Phase 0 recon — to be verified/adjudicated in the loop)
 
 | ID | Title | Sev | Agent | Source ref | Status |
@@ -62,6 +68,8 @@ Statuses: `open → verified → fixing → fixed → retested-closed | deferred
 | S2-004 | Alt-text parity drift: `course-c1.js:21` (V003 context) paraphrases the authored ILL002 alt; `course-c2.js:229` paraphrases ILL033 | S2 | content-fidelity | english_course alt_text records | open (source-side: fix belongs in the app's export pipeline, not design/) |
 | S2-005 | ILL036 registered complete (36/36) in C2/C3 blocks but referenced by no screen in the banks | S2 | content-fidelity | ILLUSTRATION_ID_REGISTER.csv | open |
 | S2-006 | Stale shell copy: Home "Chapters 1–3 are authored; 4–12 planned" and paywall "Twenty-four chapters" vs course reality (C4 done, 12-chapter arc) | S2 | content-fidelity | STATE.md / A1_COURSE_OVERVIEW.md | source-staleness (owner decision 3: keep design verbatim, log) |
+| S2-013 | C3-L01-S02 warm-up frames 2–3: "Listen. Choose." audio never speaks the keyed answer — frame 2 keys `M-A-Y-A` but A1-C02-AUD008 says "How do you spell that?"; frame 3 keys `6-2-0, 1-5-4` but A1-C02-AUD078 is a full check-in dialogue (solvable by memory, not by listening). May be intentional prompt→reply retrieval; A1-C02-AUD028 ("Maya. … M … A … Y … A. … Maya.") exists if the owner rules it a hearing task | S2 | content-fidelity (S1-011 audit) | a1-course.json A1-C03 L01 S02 | open — owner adjudication |
+| S2-014 | C4-L01-S02 warm-up frames 2–3 carry `icon: "ear"` but no `aud` — no Listen control renders, yet the icon promises audio | S2 | content-fidelity (S1-011 audit) | a1-course.json A1-C04 L01 S02 | open |
 | S3-001 | Empty AppIcon (1024 slot, no image) | S3 | device-matrix | — | backlog |
 | S3-002 | `nextLine` player type handled but unused by any bank (dead branch) | S3 | architecture | CourseScreen.dc.html:1202 | backlog |
 | S3-003 | CourseScreen dark-token subset (10 `--au-*` names + shadow overrides missing vs shell) — player dark-modes on a smaller surface | S3 | design-fidelity | CourseScreen.dc.html:20 | backlog (owner ruling: intentional-looking asymmetry) |

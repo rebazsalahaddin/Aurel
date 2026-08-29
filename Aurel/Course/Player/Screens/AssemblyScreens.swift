@@ -59,6 +59,15 @@ struct OrderScreenView: View {
         }
         .padding(.bottom, 8)
 
+        if let target = task.target, !target.isEmpty {
+            Text(target)
+                .font(.figtree(.semibold, size: 15))
+                .auLine(15, 1.45)
+                .foregroundStyle(Color.auTextSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 8)
+        }
+
         // the ordered list (order shows numbered rows)
         VStack(spacing: 9) {
             ForEach(Array(task.tiles.enumerated()), id: \.offset) { k, t in
@@ -162,12 +171,21 @@ struct TilesScreenView: View {
                 .padding(.bottom, 14)
             }
 
+            if let target = task.target, !target.contains("___") && !target.isEmpty {
+                Text(target)
+                    .font(.figtree(.semibold, size: 15))
+                    .auLine(15, 1.45)
+                    .foregroundStyle(Color.auTextSecondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.bottom, 12)
+            }
+
             // Keep complete dialogue lines separate; word-order tasks remain inline.
             if m.usesLineAssembly {
                 OrderedLineAssemblyField(lines: m.orderedTileTexts)
                     .padding(.bottom, 16)
             } else {
-                Text(m.tileLine.isEmpty ? " " : m.tileLine)
+                Text(m.displayTileLine(target: task.target))
                     .font(.caprasimo(size: 21))
                     .tracking(-0.21)
                     .auHeadLine(21, 1.4)
@@ -484,6 +502,8 @@ struct SubOptionChip: View {
 
 struct RoleplayScreenView: View {
     let m: PlayerModel
+    @Namespace private var roleplayAnimation
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScreenColumn(topPad: 18, bottomPad: 22, hPad: 20) {
@@ -564,6 +584,22 @@ struct RoleplayScreenView: View {
                                 )
                                 .foregroundStyle(line.learner ? Color.auTintText : Color.auText)
                         }
+                        .matchedGeometryEffect(
+                            id: "roleplay_bubble_\(line.text)",
+                            in: roleplayAnimation,
+                            properties: .position,
+                            isSource: true
+                        )
+                        .transition(
+                            reduceMotion
+                                ? .opacity
+                                : .asymmetric(
+                                    insertion: .opacity
+                                        .combined(with: .scale(scale: 0.94, anchor: line.learner ? .bottomTrailing : .bottomLeading))
+                                        .combined(with: .offset(y: 8)),
+                                    removal: .opacity
+                                )
+                        )
                         .frame(
                             maxWidth: .infinity,
                             alignment: line.learner ? .trailing : .leading)
@@ -606,6 +642,12 @@ struct RoleplayScreenView: View {
                                                 .strokeBorder(Color.auEdge, lineWidth: 1)
                                         )
                                 }
+                                .matchedGeometryEffect(
+                                    id: "roleplay_bubble_\(reply)",
+                                    in: roleplayAnimation,
+                                    properties: .position,
+                                    isSource: false
+                                )
                                 .buttonStyle(.auTap)
                                 .accessibilityIdentifier(
                                     "au.player.roleplay.tile.\(group.g.auSlug).\(index)")
@@ -695,7 +737,7 @@ struct RoleplayScreenView: View {
                             disabled: target.isEmpty || m.say.assessing
                                 || m.say.preparingRecognition
                         ) {
-                            m.say.toggle(target: target)
+                            Task { await m.say.toggle(target: target) }
                         }
                     }
                     .padding(.top, 14)

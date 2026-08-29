@@ -287,6 +287,20 @@ final class AppRouter {
                 coursePos = course.lessonFixtures[index].position
                 screen = .course
             }
+            // Production-art QA needs to exercise later screens without
+            // completing the preceding lesson interactions. Resolve the
+            // authored identity triplet instead of relying on a brittle flat
+            // index; lesson and screen IDs intentionally repeat by chapter.
+            if let i = args.firstIndex(of: "-AUREL_COURSE_SCREEN"), i + 3 < args.count,
+                let position = course.flat.firstIndex(where: {
+                    $0.chapter.id == args[i + 1]
+                        && $0.lesson.id == args[i + 2]
+                        && $0.screen.id == args[i + 3]
+                })
+            {
+                coursePos = position
+                screen = .course
+            }
             // PH-02 deterministic chapter fixture. Parks the shell on an
             // authored chapter with the same re-base goToChapter uses — but
             // never persists: a debug route must not write the store. The
@@ -618,16 +632,21 @@ final class AppRouter {
     /// A completed course lesson lands in LessonRecord (§3.18) — idempotent
     /// per (chapter, lesson) so re-runs never double-count.
     func recordLessonCompletion(now: Date = Date()) {
+        recordSpecificLessonCompletion(chapterIdx: chapterIdx, lessonIdx: courseLesson, now: now)
+    }
+
+    /// Idempotently records a specific lesson completion in LessonRecord.
+    func recordSpecificLessonCompletion(chapterIdx chIdx: Int, lessonIdx lIdx: Int, now: Date = Date()) {
         guard let modelContext else { return }
         let existing = (try? modelContext.fetch(FetchDescriptor<LessonRecord>())) ?? []
         guard
             !existing.contains(where: {
-                $0.chapterIdx == chapterIdx && $0.lessonIdx == courseLesson
+                $0.chapterIdx == chIdx && $0.lessonIdx == lIdx
             })
         else { return }
         modelContext.insert(
             LessonRecord(
-                chapterIdx: chapterIdx, lessonIdx: courseLesson, endPos: coursePos,
+                chapterIdx: chIdx, lessonIdx: lIdx, endPos: coursePos,
                 wasReview: false, learner: fetchOrCreateProfile()))
     }
 
@@ -1214,7 +1233,7 @@ final class AppRouter {
     /// unavailable.
     func toggleSpeak(target: String) {
         speakTypedCheck = false
-        say.toggle(target: target)
+        Task { await say.toggle(target: target) }
     }
 
     /// Manual/auto stop of the running take (kept for the ported callers).

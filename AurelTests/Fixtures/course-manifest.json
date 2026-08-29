@@ -3374,7 +3374,7 @@
             "line": 159
           },
           "stimulus": {
-            "audio": "A1-C01-AUD043"
+            "audio": "A1-C01-AUD004"
           },
           "subskill": "identify_time_of_day"
         },
@@ -3585,7 +3585,7 @@
             "line": 255
           },
           "stimulus": {
-            "audio": "A1-C01-AUD045",
+            "audio": "A1-C01-AUD005",
             "illustration": "A1-C01-ILL028"
           },
           "subskill": "identify_time_of_day_challenge"
@@ -3794,7 +3794,7 @@
             "line": 349
           },
           "stimulus": {
-            "audio": "A1-C01-AUD044"
+            "audio": "A1-C01-AUD031"
           },
           "subskill": "respond_to_meeting_chunk"
         },
@@ -3836,7 +3836,7 @@
             "line": 367
           },
           "stimulus": {
-            "audio": "A1-C01-AUD044"
+            "audio": "A1-C01-AUD029"
           },
           "subskill": "follow_up_after_introduction"
         },
@@ -3879,7 +3879,7 @@
             "line": 385
           },
           "stimulus": {
-            "audio": "A1-C01-AUD044"
+            "audio": "A1-C01-AUD016"
           },
           "subskill": "predict_next_action"
         },
@@ -3921,7 +3921,7 @@
             "line": 403
           },
           "stimulus": {
-            "audio": "A1-C01-AUD045"
+            "audio": "A1-C01-AUD035"
           },
           "subskill": "infer_next_speaker_answer"
         },

@@ -112,8 +112,45 @@ final class VoicePlayback: NSObject, AudioPlaying {
             // Line-scoped playback (a single conversation turn).
             chosen = [chosen[at]]
             base = at
+        } else if !text.isEmpty {
+            let heardText = Self.heardWords(text)
+            let fullAssetHeard = Self.heardWords(chosen.map(\.text).joined(separator: " "))
+
+            if let exactIndex = chosen.firstIndex(where: { Self.heardWords($0.text) == heardText }) {
+                chosen = [chosen[exactIndex]]
+                base = exactIndex
+            } else if chosen.count > 1 {
+                if let matchedIndex = chosen.firstIndex(where: {
+                    let lineHeard = Self.heardWords($0.text)
+                    return lineHeard == heardText || (lineHeard.contains(heardText) && lineHeard.count <= heardText.count + 5)
+                }) {
+                    chosen = [chosen[matchedIndex]]
+                    base = matchedIndex
+                } else if heardText.count < fullAssetHeard.count / 2 {
+                    beginFallback(text, slow: slow)
+                    return
+                }
+            } else if chosen.count == 1 {
+                let lineHeard = Self.heardWords(chosen[0].text)
+                if lineHeard != heardText && lineHeard.contains(heardText) && lineHeard.count > heardText.count + 5 {
+                    beginFallback(text, slow: slow)
+                    return
+                }
+            }
         }
         begin(chosen, assetID: audioID, lineBase: base)
+    }
+
+    /// Letters/digits/spaces lowercase fold for audio-text containment:
+    /// “Hello … Thank you.” → "hello thank you", “A, B, C” → "a b c".
+    static func heardWords(_ text: String) -> String {
+        let folded = text.lowercased().unicodeScalars.map { scalar -> Character in
+            CharacterSet.alphanumerics.contains(scalar) ? Character(scalar) : " "
+        }
+        return String(folded)
+            .components(separatedBy: .whitespaces)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
     }
 
     func stop() {
@@ -197,9 +234,9 @@ final class VoicePlayback: NSObject, AudioPlaying {
     private func configureSessionIfNeeded() {
         guard !sessionConfigured else { return }
         sessionConfigured = true
-        let session = AVAudioSession.sharedInstance()
-        try? session.setCategory(.playback, mode: .spokenAudio)
-        try? session.setActive(true)
+        // Off the main thread (S0-003): the player spins up while the
+        // session activates beside it.
+        AudioSessionGate.enqueuePlaybackActivation()
     }
 
     private func beginFallback(_ text: String, slow: Bool) {

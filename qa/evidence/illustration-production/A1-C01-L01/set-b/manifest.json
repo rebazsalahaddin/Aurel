@@ -1,0 +1,71 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "39585ABC-03DE-4E4C-9A20-CD36BEF4EEBD.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-b-7-no_0_0A60F6A3-BF6D-4E22-8655-53BE46510F63.png",
+        "timestamp" : 1787905394.833
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "2EB714F9-DB08-44E3-B083-97D2EA0C2562.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-b-6-yes_0_CEA567BE-6EEC-46B2-833D-969E69300F9B.png",
+        "timestamp" : 1787905391.651
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "4449848B-EB9B-4047-8438-40D0386A09F8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-b-5-excuse me_0_625A9AAF-E50D-4FAD-9EA8-E7D66B3EA12B.png",
+        "timestamp" : 1787905388.484
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "2860A856-7977-4AC9-BD19-5A9129EB735E.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-b-4-sorry_0_AA184C32-8F74-45AF-AE09-2027FD102E38.png",
+        "timestamp" : 1787905385.223
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "9D0059F0-5F60-4B32-840A-31E1CF6F9706.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-b-3-thanks_0_21FAE6BD-F21D-4FBA-BCE4-9129AD382297.png",
+        "timestamp" : 1787905382.025
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "458C3E55-B368-4BFD-9279-3F559FD0B59B.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-b-2-thank you_0_8AE6471B-A146-4034-8A02-5F6B8ED143C4.png",
+        "timestamp" : 1787905378.813
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "B61BB53B-4763-40EA-8369-63CDA5EDF26A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-1-set-b-1-please_0_AFE3005B-2D8E-411A-B2C1-7E61D2050FAA.png",
+        "timestamp" : 1787905375.458
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonOnePoliteWordCardArtworkPagesRenderAndNavigate()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonOnePoliteWordCardArtworkPagesRenderAndNavigate"
+  }
+]

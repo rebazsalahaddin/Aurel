@@ -243,6 +243,124 @@ function c3FreshTakeAssets(sourceFile) {
   }));
 }
 
+function c1MeaningPulseAssets(sourceFile) {
+  const pulses = [
+    { id: 'A1-C01-AUD048', purpose: 'meaning_pulse_bridge_1', delivery: 'learning_slow_clear', lines: [{ speaker: 'ALEX', text: 'I. I am Alex.' }] },
+    { id: 'A1-C01-AUD049', purpose: 'meaning_pulse_bridge_2', delivery: 'learning_slow_clear', lines: [{ speaker: 'ALEX', text: 'You. You are Maya.' }] },
+    { id: 'A1-C01-AUD050', purpose: 'meaning_pulse_bridge_3', delivery: 'learning_slow_clear', lines: [{ speaker: 'MAYA', text: 'I. I am Maya.' }] },
+    { id: 'A1-C01-AUD051', purpose: 'meaning_pulse_g001_1', delivery: 'learning_slow_clear', lines: [{ speaker: 'ALEX', text: "I am Alex. I'm Alex." }] },
+    { id: 'A1-C01-AUD052', purpose: 'meaning_pulse_g001_2', delivery: 'learning_slow_clear', lines: [{ speaker: 'ALEX', text: "You are Maya. You're Maya." }] },
+    { id: 'A1-C01-AUD053', purpose: 'meaning_pulse_g002_1', delivery: 'learning_slow_clear', lines: [{ speaker: 'ALEX', text: 'My name is Alex.' }] },
+    { id: 'A1-C01-AUD054', purpose: 'meaning_pulse_g003_1', delivery: 'learning_slow_clear', lines: [{ speaker: 'MAYA', text: 'How are you?' }] },
+  ];
+  return pulses.map((p) => ({ ...p, src: sourceFile }));
+}
+
+function c2MeaningPulseAssets(sourceFile) {
+  const pulses = [
+    {
+      id: 'A1-C02-AUD079',
+      purpose: 'meaning_pulse_g004_1',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'NINA', text: 'Are you Maya?' },
+        { speaker: 'MAYA', text: 'Yes, I am!' },
+      ],
+    },
+    {
+      id: 'A1-C02-AUD080',
+      purpose: 'meaning_pulse_g004_2',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'NINA', text: 'Are you Leo?' },
+        { speaker: 'MAYA', text: "No, I'm not!" },
+      ],
+    },
+    {
+      id: 'A1-C02-AUD081',
+      purpose: 'meaning_pulse_g005_1',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'NINA', text: "What's your phone number?" },
+        { speaker: 'MAYA', text: "It's five-five-five, two-zero-one." },
+      ],
+    },
+    {
+      id: 'A1-C02-AUD082',
+      purpose: 'meaning_pulse_g006_1',
+      delivery: 'learning_slow_clear',
+      lines: [{ speaker: 'NINA', text: 'Listen!' }],
+    },
+  ];
+  return pulses.map((p) => ({ ...p, src: sourceFile }));
+}
+
+function c3MeaningPulseAssets(sourceFile) {
+  const pulses = [
+    {
+      id: 'A1-C03-AUD089',
+      purpose: 'meaning_pulse_g007_1',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'SAM', text: "Leo is my friend. He's from Australia." },
+        { speaker: 'SAM', text: "Maya is my friend. She's from Egypt." },
+      ],
+    },
+    {
+      id: 'A1-C03-AUD090',
+      purpose: 'meaning_pulse_g007_2',
+      delivery: 'learning_slow_clear',
+      lines: [{ speaker: 'SAM', text: "Alex is my friend. They're from Canada." }],
+    },
+    {
+      id: 'A1-C03-AUD091',
+      purpose: 'meaning_pulse_g007_3',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'SAM', text: "Nina and Maya are friends. They're from Peru and Egypt." },
+        { speaker: 'SAM', text: "And we — the class! … We're from ten countries!" },
+      ],
+    },
+    {
+      id: 'A1-C03-AUD092',
+      purpose: 'meaning_pulse_g007_4',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'SAM', text: "Leo is from Australia." },
+        { speaker: 'SAM', text: "Nina and Maya are friends." },
+      ],
+    },
+    {
+      id: 'A1-C03-AUD093',
+      purpose: 'meaning_pulse_g007_5',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'MAYA', text: "Sam isn't from Peru. He's from Mexico." },
+        { speaker: 'SAM', text: "Two people? Use aren't. … They aren't from Spain." },
+      ],
+    },
+    {
+      id: 'A1-C03-AUD094',
+      purpose: 'meaning_pulse_g007_6',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'ALEX', text: "Is Leo from Australia?" },
+        { speaker: 'MAYA', text: "Yes, he is!" },
+      ],
+    },
+    {
+      id: 'A1-C03-AUD095',
+      purpose: 'meaning_pulse_g007_7',
+      delivery: 'learning_slow_clear',
+      lines: [
+        { speaker: 'ALEX', text: "Are they from Kenya?" },
+        { speaker: 'MAYA', text: "Yes, they are." },
+      ],
+    },
+  ];
+  return pulses.map((p) => ({ ...p, src: sourceFile }));
+}
+
 function yamlAudioAssets(content, sourceFile) {
   const assets = [];
   const blockPattern = /```yaml\n([\s\S]*?)```/g;
@@ -361,11 +479,26 @@ function parseScripts(chapterId) {
     }
   }
 
+  if (chapterId === 'A1-C01') {
+    for (const asset of c1MeaningPulseAssets('A1_C01 authored meaning pulses')) {
+      if (!assets.has(asset.id)) assets.set(asset.id, asset);
+    }
+  }
+
+  if (chapterId === 'A1-C02') {
+    for (const asset of c2MeaningPulseAssets('A1_C02 authored meaning pulses')) {
+      if (!assets.has(asset.id)) assets.set(asset.id, asset);
+    }
+  }
+
   if (chapterId === 'A1-C03') {
     for (const asset of c3WordAndQuizAssets('A1_C03 authored indexes and inline scripts')) {
       if (!assets.has(asset.id)) assets.set(asset.id, asset);
     }
     for (const asset of c3FreshTakeAssets('A1_C03 authored fresh-take stimuli')) {
+      if (!assets.has(asset.id)) assets.set(asset.id, asset);
+    }
+    for (const asset of c3MeaningPulseAssets('A1_C03 authored meaning pulses')) {
       if (!assets.has(asset.id)) assets.set(asset.id, asset);
     }
     // AUD051 is explicitly a fresh challenge performance of AUD050's ten
@@ -574,7 +707,7 @@ function authoredSpeechText(text, delivery) {
     // keeping the learner-facing catalog text unchanged.
     .replace(/\b([A-Z])\.(?=\s*(?:…|$))/g, '"$1."');
   const shortWordCount = wordCount(text);
-  if (shortWordCount >= 1 && shortWordCount <= 3
+  if (shortWordCount >= 1 && shortWordCount <= 8
       && !protectedText.includes('[pause]') && !protectedText.startsWith('"')) {
     protectedText = `"${protectedText}"`;
   }
@@ -661,8 +794,11 @@ async function poeTts(text, voice, speaker, delivery) {
 async function download(url, destination) {
   const response = await fetch(url, { redirect: 'follow', signal: AbortSignal.timeout(120_000) });
   if (!response.ok) throw new Error(`Audio download HTTP ${response.status}`);
-  const bytes = Buffer.from(await response.arrayBuffer());
+  let bytes = Buffer.from(await response.arrayBuffer());
   if (bytes.length < 2_000) throw new Error(`Audio download was only ${bytes.length} bytes`);
+  if (bytes.subarray(0, 4).toString() === 'RIFF' && bytes.subarray(44, 48).toString() === 'RIFF') {
+    bytes = bytes.subarray(44);
+  }
   writeFileSync(destination, bytes);
 }
 

@@ -40,14 +40,14 @@ final class Stage6PlayerTests: XCTestCase {
         XCTAssertNotNil(loadingView)
     }
 
-    func testSayCoachRecordResetOnScreenAdvance() {
+    func testSayCoachRecordResetOnScreenAdvance() async {
         let say = SayCoach()
         let recorder = FakeTakeRecorder()
         say.recorder = recorder
         say.recognitionProbe = { true }
         say.micPermissionProbe = { .granted }
 
-        say.toggle(target: "bonjour")
+        await say.toggle(target: "bonjour")
         XCTAssertTrue(say.recording)
         XCTAssertEqual(say.activeTarget, "bonjour")
 

@@ -143,12 +143,42 @@ extension AppRouter {
 // MARK: - Chapter progression
 
 extension AppRouter {
+    /// Highest unlocked chapter index (0 = Chapter 1, 1 = Chapter 2, etc.)
+    var unlockedChapterIdx: Int {
+        get {
+            UserDefaults.standard.integer(forKey: "au.unlockedChapterIdx")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "au.unlockedChapterIdx")
+            persist()
+        }
+    }
+
+    /// Checks if a chapter has been unlocked for the learner.
+    func isChapterUnlocked(_ idx: Int) -> Bool {
+        idx <= max(unlockedChapterIdx, chapterIdx)
+    }
+
+    /// Records mastery completion for a chapter and unlocks the next chapter.
+    func recordChapterMastery(chapterIdx idx: Int) {
+        guard course.chapters.indices.contains(idx) else { return }
+        let chapter = course.chapters[idx]
+        for lIdx in 0..<chapter.lessons.count {
+            recordSpecificLessonCompletion(chapterIdx: idx, lessonIdx: lIdx)
+        }
+        if idx + 1 > unlockedChapterIdx {
+            unlockedChapterIdx = idx + 1
+        }
+        persist()
+    }
+
     /// True when every authored lesson of the chapter has a learner completion
     /// record (review-only runs don't count). Derived from LessonRecord —
     /// never stored twice — so it stays data-honest with the Progress
     /// aggregates that read the same records (§3.18).
     func chapterComplete(_ idx: Int) -> Bool {
         guard course.chapters.indices.contains(idx) else { return false }
+        if idx < unlockedChapterIdx { return true }
         let done = Set(
             lessonRecords()
                 .filter { !$0.wasReview && $0.chapterIdx == idx }
@@ -184,6 +214,7 @@ extension AppRouter {
         guard chapterComplete(chapterIdx),
             course.chapters.indices.contains(chapterIdx + 1)
         else { return }
+        recordChapterMastery(chapterIdx: chapterIdx)
         goToChapter(chapterIdx + 1)
     }
 
@@ -201,6 +232,9 @@ extension AppRouter {
     /// position); a plan-only successor keeps the authored paywall route.
     func openNextChapter() {
         if let next = nextAuthoredChapterIdx {
+            if next > unlockedChapterIdx {
+                unlockedChapterIdx = next
+            }
             goToChapter(next)
         } else {
             nav(.paywall)

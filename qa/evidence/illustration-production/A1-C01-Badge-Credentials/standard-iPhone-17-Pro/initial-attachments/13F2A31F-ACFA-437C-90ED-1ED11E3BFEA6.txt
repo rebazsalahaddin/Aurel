@@ -1,0 +1,5 @@
+Query chain:
+ →Find: Target Application 'com.aurel.app'
+  ↪︎Find: Descendants matching type Any
+    ↪︎Find: Elements matching predicate 'label CONTAINS[c] "Badges: Leo Novak and Maya Haddad."'
+      ↪︎Find: First Match

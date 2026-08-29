@@ -664,7 +664,7 @@ struct PronPerceiveScreenView: View {
                                         .padding(.bottom, 12)
                                 }
 
-                                if let aud = it.aud {
+                                if it.aud != nil {
                                     HStack(spacing: 10) {
                                         Text("MODEL")
                                             .font(.figtree(.bold, size: 9))
@@ -674,7 +674,7 @@ struct PronPerceiveScreenView: View {
                                         WaveForm(heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent)
                                             .frame(height: 26)
                                         Button {
-                                            m.speak(Self.perceiveFallbackText(for: it), audio: aud)
+                                            m.speak(Self.perceiveFallbackText(for: it))
                                         } label: {
                                             AUIcon(kind: .play, size: 17, color: .auAccent)
                                         }
@@ -734,6 +734,9 @@ struct PronPerceiveScreenView: View {
     /// carries a key ("the thing you hear"), else the prompt line. `speak`
     /// needs non-empty text even when the catalog asset exists.
     private static func perceiveFallbackText(for it: PronPerceiveItem) -> String {
+        if let word = it.word, !word.isEmpty {
+            return word
+        }
         let opts = it.opts ?? []
         if let key = it.key?.single,
             let option = opts.first(where: { PlayerModel.matchesKey($0, key: key, opts: opts) }),
@@ -741,7 +744,16 @@ struct PronPerceiveScreenView: View {
         {
             return text
         }
-        return it.prompt ?? " "
+        if let prompt = it.prompt {
+            if prompt.localizedCaseInsensitiveContains("tap the strong word:") {
+                let parts = prompt.components(separatedBy: ":")
+                if parts.count > 1 {
+                    return parts.dropFirst().joined(separator: ":").trimmingCharacters(in: .whitespacesAndNewlines)
+                }
+            }
+            return prompt
+        }
+        return " "
     }
 }
 
@@ -796,7 +808,7 @@ private struct PronProduceItemCard: View {
             VStack(alignment: .leading, spacing: 0) {
                 KaraokeText(
                     text: it.word,
-                    isSpoken: m.isSpeakingText(it.word, audio: it.aud),
+                    isSpoken: m.isSpeakingText(Self.spokenModelText(for: it), audio: it.aud),
                     spokenRange: m.playback?.spokenRange
                 )
                 .font(.caprasimo(size: 22))
@@ -837,7 +849,7 @@ private struct PronProduceItemCard: View {
             WaveForm(heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent)
                 .frame(height: 26)
             Button {
-                m.speak(it.word, audio: it.aud)
+                m.speak(Self.spokenModelText(for: it), audio: it.aud)
             } label: {
                 AUIcon(kind: .play, size: 17, color: .auAccent)
             }
@@ -867,7 +879,21 @@ private struct PronProduceItemCard: View {
                 )
                 .frame(height: 26)
             }
-            AUIcon(kind: .play, size: 17, color: .auText.opacity(0.35))
+            if rec.takes > 0 && m.say.lastTakeData != nil {
+                Button {
+                    Task { await m.say.playLearnerTake() }
+                } label: {
+                    AUIcon(
+                        kind: m.say.isPlayingLearnerTake ? .loop : .play,
+                        size: 17,
+                        color: .auAccent2
+                    )
+                }
+                .buttonStyle(.auTap)
+                .accessibilityLabel("Play your recorded voice")
+            } else {
+                AUIcon(kind: .play, size: 17, color: .auText.opacity(0.35))
+            }
         }
         .padding(.bottom, 13)
     }
@@ -885,7 +911,7 @@ private struct PronProduceItemCard: View {
     private var actionButtons: some View {
         HStack(spacing: 11) {
             Button {
-                m.say.toggle(target: it.word)
+                Task { await m.say.toggle(target: it.word) }
             } label: {
                 ZStack {
                     if isRecording {
@@ -972,6 +998,17 @@ private struct PronProduceItemCard: View {
             .foregroundStyle(Color.auTintText)
             .padding(.top, 12)
     }
+
+    static func spokenModelText(for it: CourseItem) -> String {
+        var text = it.word.replacingOccurrences(of: "·", with: "")
+        if text.contains("___") {
+            text = text.replacingOccurrences(of: "___", with: "Alex")
+        }
+        if it.word == "H-A-D-D-A-D" {
+            return "H. A. D. D. A. D."
+        }
+        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 // MARK: Conversation
@@ -1000,29 +1037,9 @@ struct ConversationScreenView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.bottom, 14)
 
-                if let panels = c.panels {
-                    HStack(spacing: 6) {
-                        ForEach(Array(panels.enumerated()), id: \.offset) { index, _ in
-                            Text("Scene \(index + 1)")
-                                .font(.figtree(.bold, size: 8))
-                                .tracking(0.5)
-                                .frame(height: 52)
-                                .frame(maxWidth: .infinity)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 11, style: .continuous)
-                                        .fill(Color.auTintBg.opacity(0.4))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 11, style: .continuous)
-                                        .strokeBorder(
-                                            Color.auAccent.opacity(0.30),
-                                            style: StrokeStyle(lineWidth: 1, dash: [5, 4]))
-                                )
-                                .foregroundStyle(Color.auAccentText)
-                                .minimumScaleFactor(0.5)
-                        }
-                    }
-                    .padding(.bottom, 14)
+                if let panels = c.panels, !panels.isEmpty {
+                    conversationStoryboard(panels: panels, turns: c.turns ?? [])
+                        .padding(.bottom, 14)
                 }
 
                 HStack(spacing: 11) {
@@ -1145,5 +1162,98 @@ struct ConversationScreenView: View {
                     .padding(.top, 16)
             }
         }
+    }
+
+    private func conversationStoryboard(
+        panels: [String], turns: [ConversationScreen.ConversationTurn]
+    ) -> some View {
+        let active = activePanelIndex(
+            turn: m.turn, panelCount: panels.count, turnCount: turns.count)
+
+        return VStack(spacing: 9) {
+            IllustrationPlaceholder(
+                ill: IllustrationRef(
+                    id: resolvedPanelID(panels[active]),
+                    alt: "Scene \(active + 1) of the conversation"
+                ),
+                aspectRatio: 16.0 / 9.0,
+                cornerRadius: 18,
+                captionSize: 11.5
+            )
+            .id(active)
+            .transition(.opacity)
+
+            HStack(spacing: 6) {
+                ForEach(Array(panels.enumerated()), id: \.offset) { index, panel in
+                    Button {
+                        AUFeedback.press()
+                        m.turn = firstTurn(forPanel: index, panelCount: panels.count, turns: turns)
+                    } label: {
+                        IllustrationPlaceholder(
+                            ill: IllustrationRef(
+                                id: resolvedPanelID(panel),
+                                alt: "Scene \(index + 1) of the conversation"
+                            ),
+                            aspectRatio: 16.0 / 9.0,
+                            cornerRadius: 8,
+                            captionSize: 7.5
+                        )
+                        .overlay(alignment: .topLeading) {
+                            Text("\(index + 1)")
+                                .font(.figtree(.bold, size: 8))
+                                .frame(width: 18, height: 18)
+                                .background(Circle().fill(Color.auFill.opacity(0.92)))
+                                .foregroundStyle(Color.auText)
+                                .padding(4)
+                        }
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .strokeBorder(
+                                    index == active ? Color.auAccent : Color.clear,
+                                    lineWidth: 2)
+                        }
+                    }
+                    .buttonStyle(.auTap)
+                    .accessibilityLabel("Show conversation scene \(index + 1)")
+                    .accessibilityAddTraits(index == active ? .isSelected : [])
+                }
+            }
+        }
+        .animation(
+            AUMotion.animation(.easeInOut(duration: 0.25), reduceMotion: reduceMotion),
+            value: active)
+    }
+
+    private func resolvedPanelID(_ panel: String) -> String {
+        if panel.contains("-ILL") { return panel }
+        guard let chapterID = m.cur?.chapter.id else { return panel }
+        return "\(chapterID)-\(panel)"
+    }
+
+    private func activePanelIndex(turn: Int, panelCount: Int, turnCount: Int) -> Int {
+        guard panelCount > 1 else { return 0 }
+        if panelCount == 5, turnCount == 8 {
+            switch turn {
+            case ...1: return 0
+            case 2: return 1
+            case 3...4: return 2
+            case 5...7: return 3
+            default: return 4
+            }
+        }
+
+        let progress = Double(max(0, turn - 1)) / Double(max(1, turnCount - 1))
+        return min(panelCount - 1, Int((progress * Double(panelCount - 1)).rounded(.down)))
+    }
+
+    private func firstTurn(
+        forPanel panel: Int, panelCount: Int, turns: [ConversationScreen.ConversationTurn]
+    ) -> Int {
+        if panelCount == 5, turns.count == 8 {
+            return [1, 2, 3, 5, 8][panel]
+        }
+        guard panelCount > 1 else { return 1 }
+        let progress = Double(panel) / Double(panelCount - 1)
+        return min(turns.count, max(1, Int((progress * Double(max(1, turns.count - 1))).rounded()) + 1))
     }
 }

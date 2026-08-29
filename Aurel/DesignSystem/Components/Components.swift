@@ -1164,9 +1164,14 @@ struct IllustrationPlaceholder: View {
                 Image(uiImage: artwork)
                     .resizable()
                     .scaledToFit()
+
+                IllustrationCredentialOverlay(artworkID: ill.id)
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(learnerAlt)
+            .accessibilityLabel(
+                IllustrationCredentialOverlay.accessibilitySummary(for: ill.id)
+                    .map { "\(learnerAlt). \($0)" } ?? learnerAlt
+            )
         } else {
             // Honest placeholder (IMPROVEMENT_PLAN §2.8): the authored alt
             // caption stays visible so the learner knows what the scene will
@@ -1236,6 +1241,156 @@ struct IllustrationPlaceholder: View {
                 .allowsHitTesting(false)
             }
         }
+    }
+}
+
+/// Deterministic app-layer credentials for commissioned badge artwork. The
+/// bitmap remains a reusable, text-free surface; names stay exact, accessible,
+/// and independent of image-generation spelling.
+private struct IllustrationCredentialOverlay: View {
+    let artworkID: String
+
+    private struct Placement: Identifiable {
+        let id: String
+        let first: String
+        let last: String
+        let x: CGFloat
+        let firstY: CGFloat
+        let lastY: CGFloat
+        let firstWidth: CGFloat
+        let lastWidth: CGFloat
+        let firstScale: CGFloat
+        let lastScale: CGFloat
+    }
+
+    var body: some View {
+        GeometryReader { proxy in
+            ForEach(placements) { placement in
+                Text(placement.first)
+                    .font(.figtree(.bold, size: proxy.size.width * placement.firstScale))
+                    .tracking(0.05)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.35)
+                    .foregroundStyle(Color.auText.opacity(0.86))
+                    .frame(width: proxy.size.width * placement.firstWidth)
+                    .position(
+                        x: proxy.size.width * placement.x,
+                        y: proxy.size.height * placement.firstY)
+
+                Text(placement.last)
+                    .font(.figtree(.semibold, size: proxy.size.width * placement.lastScale))
+                    .tracking(0.20)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.32)
+                    .foregroundStyle(Color.auText.opacity(0.78))
+                    .frame(width: proxy.size.width * placement.lastWidth)
+                    .position(
+                        x: proxy.size.width * placement.x,
+                        y: proxy.size.height * placement.lastY)
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
+    static func accessibilitySummary(for artworkID: String) -> String? {
+        switch artworkID {
+        case "A1-C01-ILL018":
+            return "Badge fields: first name and last name."
+        case "A1-C01-ILL019", "A1-C01-ILL020":
+            return "Badges: Alex Kim and Maya Haddad."
+        case "A1-C01-ILL021":
+            return "Badges: Nina Petrova and Leo Novak."
+        case "A1-C01-ILL022":
+            return "Badges: Leo Novak and Maya Haddad."
+        case "A1-C01-ILL023", "A1-C01-ILL024", "A1-C01-ILL025",
+            "A1-C01-ILL026", "A1-C01-ILL027":
+            return "Badges: Nina Petrova and Maya Haddad."
+        case "A1-C01-ILL031":
+            return "Badge: Sam Rivera."
+        case "A1-C01-ILL032":
+            return "Badges: Sam Rivera and Nina Petrova."
+        default:
+            return nil
+        }
+    }
+
+    private var placements: [Placement] {
+        switch artworkID {
+        case "A1-C01-ILL018":
+            return [
+                Placement(
+                    id: "schema", first: "FIRST NAME", last: "LAST NAME",
+                    x: 0.500, firstY: 0.480, lastY: 0.615,
+                    firstWidth: 0.235, lastWidth: 0.332,
+                    firstScale: 0.0148, lastScale: 0.0148)
+            ]
+        case "A1-C01-ILL019":
+            return [
+                person("alex", "ALEX", "KIM", 0.299, 0.474, 0.501, 0.056),
+                person("maya", "MAYA", "HADDAD", 0.720, 0.548, 0.581, 0.058),
+            ]
+        case "A1-C01-ILL020":
+            return [
+                person("alex", "ALEX", "KIM", 0.249, 0.445, 0.476, 0.060),
+                person("maya", "MAYA", "HADDAD", 0.720, 0.535, 0.568, 0.057),
+            ]
+        case "A1-C01-ILL021":
+            return [
+                person("nina", "NINA", "PETROVA", 0.296, 0.468, 0.493, 0.052),
+                person("leo", "LEO", "NOVAK", 0.698, 0.416, 0.441, 0.054),
+            ]
+        case "A1-C01-ILL022":
+            return [
+                person("leo", "LEO", "NOVAK", 0.245, 0.388, 0.414, 0.054),
+                person("maya", "MAYA", "HADDAD", 0.717, 0.526, 0.551, 0.054),
+            ]
+        case "A1-C01-ILL023":
+            return [
+                person("nina", "NINA", "PETROVA", 0.283, 0.329, 0.356, 0.037),
+                person("maya", "MAYA", "HADDAD", 0.730, 0.335, 0.364, 0.040),
+            ]
+        case "A1-C01-ILL024":
+            return [
+                person("nina", "NINA", "PETROVA", 0.289, 0.367, 0.397, 0.038),
+                person("maya", "MAYA", "HADDAD", 0.716, 0.402, 0.437, 0.043),
+            ]
+        case "A1-C01-ILL025":
+            return [
+                person("nina", "NINA", "PETROVA", 0.333, 0.399, 0.432, 0.040),
+                person("maya", "MAYA", "HADDAD", 0.699, 0.418, 0.452, 0.044),
+            ]
+        case "A1-C01-ILL026":
+            return [
+                person("nina", "NINA", "PETROVA", 0.337, 0.402, 0.435, 0.040),
+                person("maya", "MAYA", "HADDAD", 0.699, 0.418, 0.452, 0.044),
+            ]
+        case "A1-C01-ILL027":
+            return [
+                person("nina", "NINA", "PETROVA", 0.253, 0.347, 0.376, 0.038),
+                person("maya", "MAYA", "HADDAD", 0.719, 0.342, 0.374, 0.040),
+            ]
+        case "A1-C01-ILL031":
+            return [person("sam", "SAM", "RIVERA", 0.421, 0.397, 0.419, 0.040)]
+        case "A1-C01-ILL032":
+            return [
+                person("sam", "SAM", "RIVERA", 0.348, 0.544, 0.569, 0.044),
+                person("nina", "NINA", "PETROVA", 0.691, 0.503, 0.529, 0.044),
+            ]
+        default:
+            return []
+        }
+    }
+
+    private func person(
+        _ id: String, _ first: String, _ last: String,
+        _ x: CGFloat, _ firstY: CGFloat, _ lastY: CGFloat, _ width: CGFloat
+    ) -> Placement {
+        Placement(
+            id: id, first: first, last: last,
+            x: x, firstY: firstY, lastY: lastY,
+            firstWidth: width, lastWidth: width * 1.10,
+            firstScale: 0.0095, lastScale: 0.0080)
     }
 }
 

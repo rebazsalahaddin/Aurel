@@ -1,15 +1,16 @@
 {
   "images" : [
     {
-      "filename" : "A1-C01-ILL020.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "A1-C01-ILL020@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "A1-C01-ILL020@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -1,0 +1,53 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "C4B261D3-0397-4B1F-9F72-465EC399C390.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-2-set-c-5-not bad_0_E5DF50A0-E44E-4B21-AD84-5776F1EBF0E4.png",
+        "timestamp" : 1787906999.464
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "8EBE72A2-2221-44EE-9AAC-A1F4DD411576.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-2-set-c-4-great_0_536C0689-884C-4B5C-86FF-8A4CA186FC22.png",
+        "timestamp" : 1787906992.35
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "5355993B-874A-4607-8851-A48E1428B9E8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-2-set-c-3-okay_0_20889F29-A8F2-4229-AD69-E0C4F4C7C4CD.png",
+        "timestamp" : 1787906985.22
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "E281F913-90E9-4FF1-A487-2F863DA122D5.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-2-set-c-2-fine_0_E3814594-F6E0-4222-BD36-DF9CE783E109.png",
+        "timestamp" : 1787906978.097
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "16BBA9C7-3924-4E1F-9B94-F44E448B664E.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "lesson-2-set-c-1-good_0_7EAEE0E7-3D03-4E82-925D-8B4687360D0A.png",
+        "timestamp" : 1787906970.956
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testLessonTwoStateCardArtworkPagesRenderAndNavigate()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testLessonTwoStateCardArtworkPagesRenderAndNavigate"
+  }
+]

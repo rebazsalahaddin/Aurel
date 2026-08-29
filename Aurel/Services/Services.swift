@@ -3,6 +3,70 @@ import Foundation
 import Network
 import Speech
 
+// MARK: - Audio session gate (S0-003: never block the app on the audio server)
+
+/// Every `AVAudioSession` mutation in the app funnels through this one serial
+/// queue. `setCategory`/`setActive` are synchronous IPC to the audio server;
+/// calling them on the main actor while a speech-recognition request talks to
+/// the same server is what froze the app mid-take (the take flow flips the
+/// session between play and record on every take). Serializing here also
+/// orders those flips — a restore can never land after the next take's record
+/// configuration.
+enum AudioSessionGate {
+    private static let queue = DispatchQueue(label: "aurel.audio-session", qos: .userInitiated)
+
+    /// Record mode for a take. Async + throwing: `MicRecorder.start()` awaits
+    /// it off the main actor and fails soft on error.
+    static func activateForRecording() async throws {
+        try await withCheckedThrowingContinuation { cont in
+            queue.async {
+                do {
+                    let session = AVAudioSession.sharedInstance()
+                    try session.setCategory(
+                        .playAndRecord, mode: .default, options: [.defaultToSpeaker])
+                    try session.setActive(true)
+                    cont.resume()
+                } catch {
+                    cont.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    /// Playback category + activation, awaited — the learner-take compare
+    /// playback wants the session standing before its player starts.
+    static func activateForPlayback() async {
+        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+            queue.async {
+                let session = AVAudioSession.sharedInstance()
+                try? session.setCategory(.playback, mode: .spokenAudio)
+                try? session.setActive(true)
+                cont.resume()
+            }
+        }
+    }
+
+    /// Playback category + activation, fire-and-forget: enqueued in order but
+    /// never awaited (first model speech / TTS — the engine spins up while the
+    /// session activates beside it).
+    static func enqueuePlaybackActivation() {
+        queue.async {
+            let session = AVAudioSession.sharedInstance()
+            try? session.setCategory(.playback, mode: .spokenAudio)
+            try? session.setActive(true)
+        }
+    }
+
+    /// Restore the standing playback category after a take. Fire-and-forget
+    /// on purpose: enqueued at `stop()` time it stays ordered around the
+    /// take's own mutations, without making stop asynchronous.
+    static func enqueuePlaybackRestore() {
+        queue.async {
+            try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+        }
+    }
+}
+
 // MARK: - Audio playback
 //
 // Governance: recordings are "scripts only" — nothing may be fabricated.
@@ -59,9 +123,10 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
         stop()
         if !sessionConfigured {
             sessionConfigured = true
-            let session = AVAudioSession.sharedInstance()
-            try? session.setCategory(.playback, mode: .spokenAudio)
-            try? session.setActive(true)
+            // Off the main thread (S0-003): session activation is synchronous
+            // audio-server IPC. The synthesizer spins up while the session
+            // activates beside it.
+            AudioSessionGate.enqueuePlaybackActivation()
         }
         // Feedback sounds never talk over the voice (IMPROVEMENT_PLAN §2.6).
         AUSound.shared.isDucked = true
@@ -242,14 +307,19 @@ final class SpeechToText {
     /// A finished take's transcription — the honest distinction the verdict
     /// UI renders: text (possibly empty — the recognizer ran and heard
     /// nothing) versus recognition that could not run at all.
-    enum Transcription: Equatable {
+    enum Transcription: Equatable, Sendable {
         case text(String)
         case unavailable
     }
 
-    /// How long a wedged recognizer may hold the take flow (server-tier
-    /// requests can be slow; the old 4 s watchdog cut them off).
-    static let transcriptionWatchdog: Duration = .seconds(8)
+    /// How long the on-device recognizer may process a take before failing
+    /// soft — the local model resolves a 2.6 s take well inside this.
+    static let onDeviceWatchdog: Duration = .seconds(4)
+    /// How long the server-tier recognizer may process a take before failing
+    /// soft. Server-tier requests can be slow (a 4 s watchdog once cut them
+    /// off; 2 s guaranteed it — the "comparison never appears" regression).
+    /// Partial text collected by then is still scored.
+    static let serverWatchdog: Duration = .seconds(8)
 
     private(set) var authorized = false
 
@@ -262,16 +332,29 @@ final class SpeechToText {
     }
 
     /// Recognition may run at all — the speech permission is the gate;
-    /// on-device support only picks the tier, never blocks the check.
-    var canRecognize: Bool { Self.permitsCapture(authorized: authorized) }
+    /// on-device support only picks the tier, never blocks the check. The
+    /// live system status is consulted alongside the published flag: a
+    /// dropped authorization callback (a known hang) must not wedge the
+    /// take flow when the permission is in fact already granted.
+    var canRecognize: Bool {
+        Self.permitsCapture(
+            authorized: authorized || SFSpeechRecognizer.authorizationStatus() == .authorized)
+    }
 
     static func permitsCapture(authorized: Bool) -> Bool { authorized }
 
     @discardableResult
     func requestAuthorization() async -> Bool {
-        let status: SFSpeechRecognizerAuthorizationStatus = await withCheckedContinuation { cont in
-            SFSpeechRecognizer.requestAuthorization { cont.resume(returning: $0) }
-        }
+        // SFSpeechRecognizer.requestAuthorization must never be called from
+        // the main thread: its completion handler is known to simply never
+        // fire there, which wedged `preparingRecognition` forever. Hop off,
+        // request, hop back to publish.
+        let status: SFSpeechRecognizerAuthorizationStatus =
+            await withCheckedContinuation { cont in
+                Task.detached(priority: .userInitiated) {
+                    SFSpeechRecognizer.requestAuthorization { cont.resume(returning: $0) }
+                }
+            }
         authorized = status == .authorized
         return canRecognize
     }
@@ -281,18 +364,18 @@ final class SpeechToText {
     /// recognition where supported (audio stays on the device); tier 2 is
     /// Apple's speech service. `.unavailable` only when both fail —
     /// unauthorized, an error on both tiers, or the watchdog.
-    func transcribe(
-        url: URL, watchdog: Duration = SpeechToText.transcriptionWatchdog
-    ) async -> Transcription {
+    func transcribe(url: URL) async -> Transcription {
         guard let recognizer, canRecognize else { return .unavailable }
         if supportsOnDeviceRecognition,
             case .text(let text) = await attempt(
-                url: url, recognizer: recognizer, requiresOnDevice: true, watchdog: watchdog)
+                url: url, recognizer: recognizer, requiresOnDevice: true,
+                watchdog: Self.onDeviceWatchdog)
         {
             return .text(text)
         }
         return await attempt(
-            url: url, recognizer: recognizer, requiresOnDevice: false, watchdog: watchdog)
+            url: url, recognizer: recognizer, requiresOnDevice: false,
+            watchdog: Self.serverWatchdog)
     }
 
     private func attempt(
@@ -301,27 +384,40 @@ final class SpeechToText {
         let request = SFSpeechURLRecognitionRequest(url: url)
         request.requiresOnDeviceRecognition = requiresOnDevice
         return await withCheckedContinuation { cont in
-            // The recognition callback arrives on a service queue while the
-            // watchdog sleeps on the main actor — both race to finish, and
-            // exactly one may resume the continuation.
             let once = ResumeOnce()
+            var latestText: String?
             let task = recognizer.recognitionTask(with: request) { result, error in
-                if let result, result.isFinal {
-                    if once.claim() {
-                        cont.resume(
-                            returning: .text(result.bestTranscription.formattedString))
+                if let result {
+                    let formatted = result.bestTranscription.formattedString
+                    if !formatted.isEmpty {
+                        latestText = formatted
                     }
-                } else if let error, once.claim() {
-                    cont.resume(returning: .unavailable)
+                    if result.isFinal {
+                        if once.claim() {
+                            cont.resume(returning: .text(formatted))
+                        }
+                        return
+                    }
                 }
-                // Partial results keep waiting; a short take resolves fast.
+                if error != nil {
+                    if once.claim() {
+                        if let text = latestText, !text.isEmpty {
+                            cont.resume(returning: .text(text))
+                        } else {
+                            cont.resume(returning: .unavailable)
+                        }
+                    }
+                }
             }
-            // A wedged recognizer must not hang the take flow forever.
             Task { @MainActor in
                 try? await Task.sleep(for: watchdog)
                 guard once.claim() else { return }
                 task.cancel()
-                cont.resume(returning: .unavailable)
+                if let text = latestText, !text.isEmpty {
+                    cont.resume(returning: .text(text))
+                } else {
+                    cont.resume(returning: .unavailable)
+                }
             }
         }
     }
@@ -343,6 +439,36 @@ final class ResumeOnce: @unchecked Sendable {
     }
 }
 
+/// A non-Sendable value knowingly confined to the main actor: `withTimeout`
+/// moves its body into a task that hops to the main actor before touching it,
+/// so the closure never actually crosses isolation unsynchronized.
+private struct MainActorBox<T>: @unchecked Sendable {
+    let value: T
+}
+
+/// Race `body` against `timeout`: its value if it finished first, nil when
+/// the timeout fired. Used only to recover wedged system callbacks — the
+/// honest outcomes are unchanged; a timeout merely resolves what never
+/// would have arrived. MainActor-confined: the body never leaves the
+/// caller's isolation, only the box does.
+@MainActor
+private func withTimeout<T: Sendable>(
+    _ body: @escaping () async -> T, timeout: Duration
+) async -> T? {
+    let boxed = MainActorBox(value: body)
+    return await withCheckedContinuation { cont in
+        let once = ResumeOnce()
+        Task { @MainActor in
+            let value = await boxed.value()
+            if once.claim() { cont.resume(returning: value) }
+        }
+        Task { @MainActor in
+            try? await Task.sleep(for: timeout)
+            if once.claim() { cont.resume(returning: nil) }
+        }
+    }
+}
+
 // MARK: - Microphone metering + take recording (IMPROVEMENT_PLAN.md §3.16)
 
 /// The mic-permission tri-state (§3.16d) — a denial is a state to render,
@@ -357,7 +483,7 @@ protocol TakeRecording: AnyObject {
     var level: Double { get }
     var samples: [Double] { get }
     var isRecording: Bool { get }
-    func start() throws
+    func start() async throws
     @discardableResult func stop() -> URL?
     func discardTake(_ url: URL?)
 }
@@ -404,12 +530,13 @@ final class MicRecorder {
     }
 
     /// Begin a take: records to the temp file and meters amplitude until
-    /// `stop()`. Throws only on construction failures — callers degrade.
-    func start() throws {
+    /// `stop()`. The session flips to record mode through the gate — off the
+    /// main thread, because `setCategory`/`setActive` are synchronous
+    /// audio-server IPC that once froze the app mid-take (S0-003). Throws
+    /// only on failures — callers degrade.
+    func start() async throws {
         stop()
-        let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
-        try session.setActive(true)
+        try await AudioSessionGate.activateForRecording()
         try? FileManager.default.removeItem(at: fileURL)
         let settings: [String: Any] = [
             AVFormatIDKey: kAudioFormatMPEG4AAC,
@@ -454,8 +581,9 @@ final class MicRecorder {
         recorder?.stop()
         recorder = nil
         isRecording = false
-        // Restore the Speaker's standing session (playback / spoken audio).
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+        // Restore the Speaker's standing session (playback / spoken audio) —
+        // ordered through the gate, never on the main thread.
+        AudioSessionGate.enqueuePlaybackRestore()
         guard wasRecording else { return nil }
         return url
     }
@@ -562,6 +690,15 @@ final class SayCoach {
     var micPermissionRequest: () async -> MicPermission = {
         await MicRecorder.requestMicPermission()
     }
+    /// System permission callbacks that never arrive (a known hang on both
+    /// the speech and mic paths) must not wedge the take flow: each request
+    /// races these bounds, and the honest outcomes are unchanged — a timeout
+    /// only resolves what never would.
+    var recognitionRequestTimeout: Duration = .seconds(12)
+    var micPermissionTimeout: Duration = .seconds(12)
+    /// Belt-and-braces bound on the whole post-take assessment: the
+    /// "Checking your pronunciation…" state can never stick.
+    var assessmentTimeout: Duration = .seconds(15)
 
     private let speech = SpeechToText()
 
@@ -575,6 +712,9 @@ final class SayCoach {
     private(set) var records: [String: Record] = [:]
     /// The target of the running / last take.
     private(set) var activeTarget = ""
+    private(set) var lastTakeData: Data?
+    private(set) var isPlayingLearnerTake = false
+    private var learnerPlayer: AVAudioPlayer?
     private var stopTask: Task<Void, Never>?
     private var recognitionPreparationGeneration = 0
 
@@ -600,37 +740,44 @@ final class SayCoach {
     // MARK: Flow
 
     /// Toggle a take for `target` — start when idle, stop when running.
-    func toggle(target: String) {
+    func toggle(target: String) async {
         if recording {
             finish()
             return
         }
-        begin(target: target)
+        await begin(target: target)
     }
 
-    private func begin(target: String) {
+    private func begin(target: String) async {
         guard !preparingRecognition else { return }
         guard recognitionProbe() else {
             preparingRecognition = true
             recognitionPreparationGeneration += 1
             let generation = recognitionPreparationGeneration
             let request = recognitionRequest
+            let timeout = recognitionRequestTimeout
             Task { @MainActor in
-                let available = await request()
+                // A system authorization callback that never arrives (a
+                // known hang) must not wedge the flow: race it, then fall
+                // back to the live permission — no invented verdicts either
+                // way.
+                let available = await withTimeout(request, timeout: timeout)
+                    ?? self.recognitionProbe()
                 guard self.recognitionPreparationGeneration == generation else { return }
                 self.preparingRecognition = false
                 guard available else {
                     self.markRecognitionUnavailable(target: target)
                     return
                 }
-                self.beginWithMicrophone(target: target)
+                await self.beginWithMicrophone(target: target)
             }
             return
         }
-        beginWithMicrophone(target: target)
+        await beginWithMicrophone(target: target)
     }
 
-    private func beginWithMicrophone(target: String) {
+    private func beginWithMicrophone(target: String) async {
+        stopLearnerTake()
         switch micPermissionProbe() {
         case .denied:
             micDenied = true
@@ -638,16 +785,22 @@ final class SayCoach {
         case .undetermined:
             let probe = micPermissionProbe
             let request = micPermissionRequest
+            let timeout = micPermissionTimeout
             Task { @MainActor in
-                switch await request() {
-                case .granted:
+                switch await withTimeout(request, timeout: timeout) {
+                case .some(.granted):
                     guard probe() != .denied else {
                         micDenied = true
                         return
                     }
-                    self.begin(target: target)
-                default:
+                    await self.begin(target: target)
+                case .some:
                     self.micDenied = true
+                case nil:
+                    // The permission callback never arrived (a known hang):
+                    // recover from the live system state, honestly.
+                    guard probe() == .granted else { return }
+                    await self.begin(target: target)
                 }
             }
             return
@@ -656,14 +809,18 @@ final class SayCoach {
         }
         micDenied = false
         onCaptureWillBegin()
-        do {
-            try recorder.start()
-        } catch {
-            // Fail soft: a wedged audio server can cost a take, never the app.
-            return
-        }
+        // Claim the take synchronously, before the first suspension: a rapid
+        // second toggle must see a running take and stop it, never race a
+        // second start against the pending one.
         activeTarget = target
         recording = true
+        do {
+            try await recorder.start()
+        } catch {
+            // Fail soft: a wedged audio server can cost a take, never the app.
+            recording = false
+            return
+        }
         // The 2.6 s take window (line 1890): restarting supersedes the
         // pending auto-stop instead of stacking a second timer.
         stopTask?.cancel()
@@ -700,9 +857,14 @@ final class SayCoach {
         let target = activeTarget
         assessing = true
         let transcribe = transcriber
+        let timeout = assessmentTimeout
         Task { @MainActor in
-            let outcome = await transcribe(url)
-            recorder.discardTake(url)  // nothing the learner says is kept
+            self.lastTakeData = try? Data(contentsOf: url)
+            // Belt-and-braces: a wedged transcriber must not leave the
+            // "Checking…" state up forever.
+            let outcome = await withTimeout({ await transcribe(url) }, timeout: timeout)
+                ?? .unavailable
+            recorder.discardTake(url)  // nothing the learner says is kept on disk
             var rec = records[target] ?? Record()
             switch outcome {
             case .text(let transcript):
@@ -738,12 +900,47 @@ final class SayCoach {
         }
     }
 
+    /// Plays back the learner's last recorded take for comparison against the model audio.
+    func playLearnerTake() async {
+        guard let data = lastTakeData else { return }
+        stopLearnerTake()
+        // Session mode first, off the main thread (S0-003), then the player.
+        await AudioSessionGate.activateForPlayback()
+        do {
+            let player = try AVAudioPlayer(data: data, fileTypeHint: AVFileType.m4a.rawValue)
+            learnerPlayer = player
+            isPlayingLearnerTake = true
+            player.prepareToPlay()
+            player.play()
+            Task { @MainActor in
+                while player.isPlaying {
+                    try? await Task.sleep(for: .milliseconds(80))
+                }
+                if self.learnerPlayer === player {
+                    self.isPlayingLearnerTake = false
+                    self.learnerPlayer = nil
+                }
+            }
+        } catch {
+            isPlayingLearnerTake = false
+        }
+    }
+
+    /// Stops any ongoing playback of the learner's recorded take.
+    func stopLearnerTake() {
+        learnerPlayer?.stop()
+        learnerPlayer = nil
+        isPlayingLearnerTake = false
+    }
+
     /// Leaving the surface: any running take ends without a verdict, and
     /// nothing the learner said is kept.
     func reset() {
         stopTask?.cancel()
         stopTask = nil
         recognitionPreparationGeneration += 1
+        stopLearnerTake()
+        lastTakeData = nil
         if recording {
             let url = recorder.stop()
             recorder.discardTake(url)

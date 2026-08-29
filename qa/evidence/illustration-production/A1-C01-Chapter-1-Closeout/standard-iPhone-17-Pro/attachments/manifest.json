@@ -1,0 +1,53 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "2AC9FB9A-92B2-4056-A874-C9CCF3D1C4B6.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "chapter-1-closeout-badge-sam-rivera_0_92E13048-7F9B-4184-994F-0E762A51B280.png",
+        "timestamp" : 1787945493.344
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "A8F6F15B-7EFA-484A-88BA-0193957756A5.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "chapter-1-closeout-badge-blank_0_5C364FEB-75D8-43B5-AF13-CE4334707E07.png",
+        "timestamp" : 1787945466.405
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "76B01BE4-EC54-4B71-9BC4-7C48DAF1E6C0.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "chapter-1-closeout-time-triptych_0_272322C1-0A15-48BA-AF33-2437211086FC.png",
+        "timestamp" : 1787945462.91
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "5EC24A15-89CB-4EE9-9BB0-473D843443FC.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "chapter-1-closeout-box-exchange_0_4A2BDB62-991F-4F88-BB87-85E6DA1A33F0.png",
+        "timestamp" : 1787945456.956
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "89552850-37B3-46C6-A222-9FFA61004997",
+        "deviceName" : "iPhone 17 Pro",
+        "exportedFileName" : "9F5F755D-02C4-48DE-82E4-7BBCE81B1C5A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "chapter-1-closeout-sam-arrives_0_7022B4F5-0025-4ECB-AE07-4D6B06A53673.png",
+        "timestamp" : 1787945451.006
+      }
+    ],
+    "testIdentifier" : "RendererCoverageSuite/testChapterOneCloseoutQuizArtworkAndBadgeStatesRender()",
+    "testIdentifierURL" : "test://com.apple.xcode/Aurel/AurelUITests/RendererCoverageSuite/testChapterOneCloseoutQuizArtworkAndBadgeStatesRender"
+  }
+]
