@@ -4886,7 +4886,7 @@
         "id": "PR-LS014 · transfer",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD029",
+        "aud": "AUD045",
         "prompt": "You hear: “I'm Leo.”",
         "opts": [
          {
@@ -4918,7 +4918,7 @@
         "id": "PR-LS015 · transfer",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD016",
+        "aud": "AUD043",
         "kind": "image",
         "prompt": "You hear: “I'm fine! Excuse me, Nina — see you!” What happens next?",
         "opts": [

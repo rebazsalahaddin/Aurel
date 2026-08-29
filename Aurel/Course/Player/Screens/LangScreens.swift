@@ -999,7 +999,7 @@ private struct PronProduceItemCard: View {
             .padding(.top, 12)
     }
 
-    static func spokenModelText(for it: CourseItem) -> String {
+    static func spokenModelText(for it: PronProduceItem) -> String {
         var text = it.word.replacingOccurrences(of: "·", with: "")
         if text.contains("___") {
             text = text.replacingOccurrences(of: "___", with: "Alex")

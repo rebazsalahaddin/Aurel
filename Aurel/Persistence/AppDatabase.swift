@@ -9,10 +9,18 @@ enum AppSchema {
         MistakeItem.self,
     ]
 
+    /// Default on-disk store location (`Application Support/default.store`).
+    static var defaultStoreURL: URL {
+        URL.applicationSupportDirectory.appendingPathComponent("default.store")
+    }
+
     /// The app's single on-disk store.
     static func makeContainer(inMemory: Bool = false) throws -> ModelContainer {
-        let config = ModelConfiguration(isStoredInMemoryOnly: inMemory)
-        return try ModelContainer(for: Schema(all), configurations: [config])
+        if inMemory {
+            let config = ModelConfiguration(isStoredInMemoryOnly: true)
+            return try ModelContainer(for: Schema(all), configurations: [config])
+        }
+        return try makeContainer(at: nil)
     }
 
     // MARK: Startup recovery (S1-003)
@@ -50,9 +58,12 @@ enum AppSchema {
     }
 
     static func makeContainer(at url: URL?) throws -> ModelContainer {
-        let config =
-            url.map { ModelConfiguration(url: $0) }
-            ?? ModelConfiguration(isStoredInMemoryOnly: false)
+        let storeURL = url ?? defaultStoreURL
+        try FileManager.default.createDirectory(
+            at: storeURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        let config = ModelConfiguration(url: storeURL)
         return try ModelContainer(for: Schema(all), configurations: [config])
     }
 
@@ -62,8 +73,7 @@ enum AppSchema {
     /// resetting within the same second as the previous move) never collide
     /// on the destination and silently keep the stale store.
     static func moveStoreAside(_ url: URL?, now: Date = Date()) {
-        let base =
-            url ?? URL.applicationSupportDirectory.appendingPathComponent("default.store")
+        let base = url ?? defaultStoreURL
         let stamp = Int(now.timeIntervalSince1970 * 1000)
         for suffix in ["", "-wal", "-shm"] {
             let src = URL(fileURLWithPath: base.path + suffix)

@@ -230,6 +230,18 @@ final class ContentConformanceTests: XCTestCase {
             key: "A1-C01 PR-LS003.hints",
             shipped: "Play again and listen to the first line."
                 + "␟Two greetings are said. Which time?"),
+        Drift(
+            key: "A1-C01 V021.cardAlt",
+            shipped: "A name badge with fields labeled FIRST NAME and LAST NAME"),
+        Drift(
+            key: "A1-C01 V022.cardAlt",
+            shipped: "The FIRST NAME field on a name badge is softly highlighted"),
+        Drift(
+            key: "A1-C01 V023.cardAlt",
+            shipped: "The LAST NAME field on a name badge is softly highlighted"),
+        Drift(
+            key: "A1-C01 V024.cardAlt",
+            shipped: "Alex Kim gestures toward their own name badge while Maya Haddad wears hers"),
     ]
 
     /// The registry slice a given test owns, by record-field suffix.
@@ -559,9 +571,9 @@ final class ContentConformanceTests: XCTestCase {
             "A1-C01-ILL001": 4, "A1-C01-ILL002": 6, "A1-C01-ILL003": 3, "A1-C01-ILL004": 5,
             "A1-C01-ILL005": 3, "A1-C01-ILL006": 2, "A1-C01-ILL007": 2, "A1-C01-ILL009": 2,
             "A1-C01-ILL013": 6, "A1-C01-ILL015": 3, "A1-C01-ILL016": 4,
-            "A1-C01-ILL017": 3, "A1-C01-ILL018": 8, "A1-C01-ILL019": 4, "A1-C01-ILL020": 5,
+            "A1-C01-ILL017": 3, "A1-C01-ILL018": 7, "A1-C01-ILL019": 4, "A1-C01-ILL020": 5,
             "A1-C01-ILL021": 3, "A1-C01-ILL022": 4, "A1-C01-ILL027": 2, "A1-C01-ILL028": 2,
-            "A1-C01-ILL032": 2, "A1-C01-ILL033": 3,
+            "A1-C01-ILL032": 2, "A1-C01-ILL033": 2,
         ],
         "A1-C02": [
             "A1-C02-ILL002": 3, "A1-C02-ILL010": 4, "A1-C02-ILL012": 3, "A1-C02-ILL013": 2,

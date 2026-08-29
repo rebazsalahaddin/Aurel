@@ -1,4 +1,6 @@
+import SwiftData
 import XCTest
+
 @testable import Aurel
 
 /// Listening-exercise integrity guards (Exercise-Meaningfulness plan, Phase 4).
@@ -12,6 +14,7 @@ import XCTest
 ///    frames each voice exactly their own word (defect S1-011).
 /// Reads the shipped bank with JSONSerialization — the same join style
 /// ContentConformanceTests uses, so every item-bearing surface is covered.
+@MainActor
 final class ListeningSanityTests: XCTestCase {
 
     private lazy var chapters: [[String: Any]] = {
@@ -412,11 +415,23 @@ final class ListeningSanityTests: XCTestCase {
     /// Verifies that when a chapter is completed/passed, all lessons in that chapter
     /// are marked completed and unlocked.
     func testCompletedChapterLessonsState() throws {
-        let router = AppRouter(mock: true)
+        let container = try AppSchema.makeContainer(inMemory: true)
+        let context = ModelContext(container)
+        let router = AppRouter(course: CourseDecodingTests.store, modelContext: context)
+        let previousUnlock = UserDefaults.standard.object(forKey: "au.unlockedChapterIdx")
+        defer {
+            if let previousUnlock {
+                UserDefaults.standard.set(previousUnlock, forKey: "au.unlockedChapterIdx")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "au.unlockedChapterIdx")
+            }
+        }
+
         router.recordChapterMastery(chapterIdx: 0)
 
         XCTAssertTrue(router.chapterComplete(0), "Chapter 0 must be marked complete after mastery")
-        XCTAssertGreaterThanOrEqual(router.unlockedChapterIdx, 1, "Chapter 1 must be unlocked after Chapter 0 mastery")
+        XCTAssertGreaterThanOrEqual(
+            router.unlockedChapterIdx, 1, "Chapter 1 must be unlocked after Chapter 0 mastery")
         XCTAssertTrue(router.isChapterUnlocked(1), "Chapter 1 must report as unlocked")
     }
 

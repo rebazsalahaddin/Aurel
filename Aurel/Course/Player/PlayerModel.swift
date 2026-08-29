@@ -971,7 +971,7 @@ final class PlayerModel {
             return mixedTileTask(
                 TileTaskState(
                     instr: e.instr.learnerFacing ?? String(localized: "Put in order."),
-                    target: e.spoken?.learnerFacing,
+                    target: e.spoken.learnerFacing,
                     tiles: e.tiles ?? [], key: e.key ?? [],
                     ok: e.ok.learnerFacing ?? "", no: e.no.learnerFacing ?? ""), seed: s.id)
         default:

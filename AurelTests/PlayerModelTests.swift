@@ -269,7 +269,7 @@ final class PlayerModelTests: XCTestCase {
         XCTAssertTrue(m.tileCorrect)
     }
 
-    func testEveryGuidedRoleplayCompletesOneTileAtATimeAndCanAdvance() throws {
+    func testEveryGuidedRoleplayCompletesOneTileAtATimeAndCanAdvance() async throws {
         let store = CourseDecodingTests.store
         var roleplayCount = 0
 
@@ -292,10 +292,12 @@ final class PlayerModelTests: XCTestCase {
                 m.chooseRoleplayReply(reply, group: group.g)
 
                 XCTAssertEqual(m.roleplayProgressCount, oldProgress + 1)
+                XCTAssertEqual(m.roleplayLines.suffix(1).first?.text, reply)
+
+                try await Task.sleep(for: .milliseconds(700))
                 XCTAssertEqual(
                     m.roleplayLines.count, oldLineCount + 2,
                     "one tile must add one learner line and one partner line")
-                XCTAssertEqual(m.roleplayLines.suffix(2).first?.text, reply)
                 taps += 1
             }
 

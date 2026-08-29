@@ -178,7 +178,6 @@ extension AppRouter {
     /// aggregates that read the same records (§3.18).
     func chapterComplete(_ idx: Int) -> Bool {
         guard course.chapters.indices.contains(idx) else { return false }
-        if idx < unlockedChapterIdx { return true }
         let done = Set(
             lessonRecords()
                 .filter { !$0.wasReview && $0.chapterIdx == idx }
