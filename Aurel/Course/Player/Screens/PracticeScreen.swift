@@ -358,10 +358,17 @@ struct PracticeScreenView: View {
     }
 
     // MARK: name badges
+    //
+    // Screen-level badge/card art is the reading surface for items that
+    // ask about it. Items that already ship their own illustration (the
+    // greeting-board scenes, the shirt badge) drop that chrome so it
+    // does not sit extra above the prompt.
 
     @ViewBuilder
     private var badges: some View {
-        if case .reading(let r) = m.cur?.screen.payload, r.kind == "badges", let badges = r.badges {
+        if case .reading(let r) = m.cur?.screen.payload, r.kind == "badges", let badges = r.badges,
+            m.item?.ill == nil
+        {
             if let artworkID = readingArtworkID {
                 IllustrationPlaceholder(
                     ill: IllustrationRef(
@@ -403,7 +410,9 @@ struct PracticeScreenView: View {
 
     @ViewBuilder
     private var cardBlock: some View {
-        if case .reading(let r) = m.cur?.screen.payload, r.kind == "card", let lines = r.card {
+        if case .reading(let r) = m.cur?.screen.payload, r.kind == "card", let lines = r.card,
+            m.item?.ill == nil
+        {
             if let artworkID = readingArtworkID {
                 IllustrationPlaceholder(
                     ill: IllustrationRef(
