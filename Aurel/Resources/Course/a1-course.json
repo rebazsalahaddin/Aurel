@@ -5272,23 +5272,23 @@
         "instr": "Listen. Choose.",
         "icon": "ear",
         "aud": "AUD030",
-        "prompt": "What does she want?",
+        "prompt": "What does he want?",
         "opts": [
          {
           "id": "A",
-          "t": "she wants a name"
+          "t": "he wants a name"
          },
          {
           "id": "B",
-          "t": "she wants to leave"
+          "t": "he wants to leave"
          },
          {
           "id": "C",
-          "t": "she says thank you"
+          "t": "he says thank you"
          }
         ],
         "key": "A",
-        "ok": "Yes — she asks for a name!",
+        "ok": "Yes — he asks for a name!",
         "no": "Listen to the question word.",
         "hints": [
          "Replay; listen for name.",

@@ -244,6 +244,11 @@ final class ContentConformanceTests: XCTestCase {
             shipped: "Alex Kim gestures toward their own name badge while Maya Haddad wears hers"),
         // Lesson 3 “Best next line”: hear the question, pick the matching reply.
         Drift(
+            key: "A1-C01 PR-CV002.options",
+            shipped: "A:he wants a name|B:he wants to leave|C:he says thank you"),
+        Drift(key: "A1-C01 PR-CV002.key", shipped: "A → he wants a name"),
+        Drift(key: "A1-C01 PR-CV002.ok", shipped: "Yes — he asks for a name!"),
+        Drift(
             key: "A1-C01 PR-CV007.options",
             shipped: "A:My name is Sam.|B:I'm good, thank you!|C:See you!"),
         Drift(key: "A1-C01 PR-CV007.key", shipped: "A → My name is Sam."),
