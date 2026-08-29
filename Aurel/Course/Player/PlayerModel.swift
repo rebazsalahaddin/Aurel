@@ -69,8 +69,12 @@ final class PlayerModel {
     var roleplayUsedGroups: Set<String> = []
     var roleplayUserTurns = 0
     var roleplayFinished = false
+    /// Partner is composing the next line — tiles stay hidden so the chat
+    /// can settle instead of jumping to the next prompt mid-breath.
+    var roleplayPartnerThinking = false
     private var roleplayStarted = false
     private var roleplayLineSerial = 0
+    private var roleplayReplyTask: Task<Void, Never>?
 
     /// Shared say-aloud take coordinator for pronunciation screens (§3.11c).
     let say = SayCoach()
@@ -530,10 +534,12 @@ final class PlayerModel {
         conversationRevealed = 1
         matchSelection = nil
         matched = []
+        cancelRoleplayReply()
         roleplayLines = []
         roleplayUsedGroups = []
         roleplayUserTurns = 0
         roleplayFinished = false
+        roleplayPartnerThinking = false
         roleplayStarted = false
         roleplayLineSerial = 0
         tk = 0
@@ -592,7 +598,8 @@ final class PlayerModel {
     }
 
     var roleplayActiveGroup: TileGroup? {
-        roleplayRequiredGroups.first { !roleplayUsedGroups.contains($0.g) }
+        guard !roleplayPartnerThinking else { return nil }
+        return roleplayRequiredGroups.first { !roleplayUsedGroups.contains($0.g) }
     }
 
     var roleplayProgressCount: Int {
@@ -619,13 +626,15 @@ final class PlayerModel {
     }
 
     func restartRoleplay() {
+        cancelRoleplayReply()
         say.reset()
         speaker?.stop()
-        withAnimation(.spring(response: 0.4, dampingFraction: 0.85)) {
+        withAnimation(AUMotion.flow) {
             roleplayLines = []
             roleplayUsedGroups = []
             roleplayUserTurns = 0
             roleplayFinished = false
+            roleplayPartnerThinking = false
             roleplayStarted = false
             roleplayLineSerial = 0
             prepareRoleplay()
@@ -638,6 +647,7 @@ final class PlayerModel {
     func chooseRoleplayReply(_ text: String, group: String) {
         prepareRoleplay()
         guard !roleplayFinished,
+            !roleplayPartnerThinking,
             let active = roleplayActiveGroup,
             active.g == group,
             active.t.contains(text),
@@ -645,25 +655,36 @@ final class PlayerModel {
         else { return }
 
         say.reset()
-        withAnimation(.spring(response: 0.42, dampingFraction: 0.82)) {
+        withAnimation(AUMotion.flow) {
             appendRoleplayLine(speaker: "YOU", text: text, learner: true)
             roleplayUsedGroups.insert(group)
             roleplayUserTurns += 1
+            roleplayPartnerThinking = true
         }
         AUFeedback.selection()
 
+        let spokenPartnerLines = roleplayLines.filter { !$0.learner }.map(\.text)
         let hitTurnLimit = roleplayUserTurns >= (roleplay.turnLimit ?? 8)
-        let nextGroup = roleplayActiveGroup
+        let nextGroup = roleplayRequiredGroups.first { !roleplayUsedGroups.contains($0.g) }
         let willFinish = nextGroup == nil || hitTurnLimit
+        let partnerLine = Self.roleplayPartnerReply(
+            completedGroup: group,
+            nextGroup: nextGroup,
+            finished: willFinish,
+            spokenPartnerLines: spokenPartnerLines,
+            lastLearnerText: text,
+            partnerGivenName: Self.roleplayPartnerGivenName(roleplay)
+        )
+        let partnerSpeaker = Self.roleplayPartnerName(roleplay)
 
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(460))
+        roleplayReplyTask?.cancel()
+        roleplayReplyTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(380))
             guard !Task.isCancelled else { return }
-            withAnimation(.spring(response: 0.48, dampingFraction: 0.84)) {
+            withAnimation(AUMotion.flow) {
                 self.appendRoleplayLine(
-                    speaker: Self.roleplayPartnerName(roleplay),
-                    text: Self.roleplayPartnerReply(nextGroup: nextGroup, finished: willFinish),
-                    learner: false)
+                    speaker: partnerSpeaker, text: partnerLine, learner: false)
+                self.roleplayPartnerThinking = false
                 self.roleplayFinished = willFinish
                 self.done = willFinish
             }
@@ -673,6 +694,11 @@ final class PlayerModel {
                 AUAX.announce("Roleplay complete. Go on when you are ready.")
             }
         }
+    }
+
+    private func cancelRoleplayReply() {
+        roleplayReplyTask?.cancel()
+        roleplayReplyTask = nil
     }
 
     private func appendRoleplayLine(speaker: String, text: String, learner: Bool) {
@@ -692,22 +718,132 @@ final class PlayerModel {
             ?? String(localized: "PARTNER")
     }
 
-    private static func roleplayPartnerReply(nextGroup: TileGroup?, finished: Bool) -> String {
-        if finished { return String(localized: "Thank you! See you!") }
+    private static func roleplayPartnerGivenName(_ roleplay: RoleplayScreen) -> String {
+        roleplay.partner?.split(separator: " ").first.map(String.init) ?? ""
+    }
 
+    /// Partner lines follow the conversation already on screen: acknowledge
+    /// the learner, prompt the next step, and never repeat a question Maya
+    /// (or the opener) already asked.
+    private static func roleplayPartnerReply(
+        completedGroup: String,
+        nextGroup: TileGroup?,
+        finished: Bool,
+        spokenPartnerLines: [String],
+        lastLearnerText: String,
+        partnerGivenName: String
+    ) -> String {
+        if finished {
+            return roleplayClosingLine(avoiding: lastLearnerText)
+        }
+
+        let completed = completedGroup.lowercased()
         let next = nextGroup?.g.lowercased() ?? ""
-        if next.contains("confirm") { return String(localized: "Is that right?") }
-        if next.contains("spell") { return String(localized: "How do you spell that?") }
-        if next.contains("name") { return String(localized: "What's your name?") }
-        if next.contains("origin") { return String(localized: "Where are you from?") }
-        if next.contains("job") { return String(localized: "What do you do?") }
-        if next.contains("state") { return String(localized: "How are you?") }
-        if next.contains("detail") { return String(localized: "One detail, please.") }
-        if next.contains("repair") { return String(localized: "Could you repeat that, please?") }
-        if next.contains("introduce") { return String(localized: "Who is your friend?") }
-        if next.contains("close") { return String(localized: "It was nice talking with you.") }
-        if next.contains("greet") { return String(localized: "Hello!") }
+        let prompt = roleplayPrompt(for: next)
+
+        if let combined = roleplayLeadIn(
+            completed: completed, next: next, prompt: prompt)
+        {
+            return combined
+        }
+
+        if let prompt, roleplayAlreadyAsked(prompt, in: spokenPartnerLines) {
+            return roleplayAcknowledgment(
+                completed: completed, partnerGivenName: partnerGivenName)
+        }
+
+        return prompt ?? String(localized: "What would you like to say next?")
+    }
+
+    private static func roleplayPrompt(for nextGroup: String) -> String? {
+        if nextGroup.isEmpty { return nil }
+        if nextGroup.contains("confirm") { return String(localized: "Is that right?") }
+        if nextGroup.contains("spell") { return String(localized: "How do you spell that?") }
+        if nextGroup.contains("name") { return String(localized: "What's your name?") }
+        if nextGroup.contains("origin") { return String(localized: "Where are you from?") }
+        if nextGroup.contains("job") { return String(localized: "What do you do?") }
+        if nextGroup.contains("state") { return String(localized: "How are you?") }
+        if nextGroup.contains("detail") { return String(localized: "One detail, please.") }
+        if nextGroup.contains("repair") {
+            return String(localized: "Could you repeat that, please?")
+        }
+        if nextGroup.contains("introduce") { return String(localized: "Who is your friend?") }
+        if nextGroup.contains("close") {
+            return String(localized: "It was nice talking with you.")
+        }
+        if nextGroup.contains("greet") { return String(localized: "Hello!") }
         return String(localized: "What would you like to say next?")
+    }
+
+    private static func roleplayLeadIn(
+        completed: String, next: String, prompt: String?
+    ) -> String? {
+        if completed.contains("name"), !completed.contains("confirm"),
+            next.contains("state")
+        {
+            return String(localized: "Nice to meet you! How are you?")
+        }
+        if completed.contains("state"), next.contains("close") {
+            return String(localized: "I'm fine! It was nice talking with you.")
+        }
+        if completed.contains("confirm"), next.contains("spell"),
+            let prompt
+        {
+            return String(localized: "Great!") + " " + prompt
+        }
+        return nil
+    }
+
+    private static func roleplayAcknowledgment(
+        completed: String, partnerGivenName: String
+    ) -> String {
+        if completed.contains("greet") {
+            guard !partnerGivenName.isEmpty else {
+                return String(localized: "Nice to meet you!")
+            }
+            return String(format: String(localized: "I'm %@."), partnerGivenName)
+        }
+        if completed.contains("name"), !completed.contains("confirm") {
+            return String(localized: "Nice to meet you!")
+        }
+        if completed.contains("state") {
+            return String(localized: "I'm fine!")
+        }
+        if completed.contains("confirm") {
+            return String(localized: "Great!")
+        }
+        return String(localized: "Nice to meet you!")
+    }
+
+    private static func roleplayClosingLine(avoiding lastLearnerText: String) -> String {
+        let seeYou = String(localized: "See you!")
+        let bye = String(localized: "Bye!")
+        if lastLearnerText.localizedCaseInsensitiveContains("see you") { return bye }
+        if lastLearnerText.localizedCaseInsensitiveContains("bye") { return seeYou }
+        if lastLearnerText.compare(seeYou, options: [.caseInsensitive, .diacriticInsensitive])
+            == .orderedSame
+        {
+            return bye
+        }
+        return seeYou
+    }
+
+    private static func roleplayAlreadyAsked(_ prompt: String, in spoken: [String]) -> Bool {
+        let needle = roleplayNormalized(prompt)
+        guard needle.count >= 4 else { return false }
+        return spoken.contains { roleplayNormalized($0).contains(needle) }
+    }
+
+    private static func roleplayNormalized(_ text: String) -> String {
+        text.lowercased()
+            .replacingOccurrences(of: "…", with: " ")
+            .replacingOccurrences(of: "...", with: " ")
+            .replacingOccurrences(of: "’", with: "'")
+            .replacingOccurrences(of: "?", with: "")
+            .replacingOccurrences(of: "!", with: "")
+            .replacingOccurrences(of: ",", with: "")
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: Item normalization (lines 1192–1211)

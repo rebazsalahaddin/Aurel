@@ -502,13 +502,15 @@ struct SubOptionChip: View {
 
 struct RoleplayScreenView: View {
     let m: PlayerModel
-    @Namespace private var roleplayAnimation
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ScreenColumn(topPad: 18, bottomPad: 22, hPad: 20) {
             if case .roleplay(let rp) = m.cur?.screen.payload {
                 let groups = m.roleplayRequiredGroups
+                let partnerSpeaker = rp.partner?
+                    .split(separator: " ").first.map { String($0).uppercased() }
+                    ?? "PARTNER"
 
                 // partner header
                 HStack(spacing: 10) {
@@ -563,46 +565,12 @@ struct RoleplayScreenView: View {
                 // transcript bubbles
                 VStack(spacing: 10) {
                     ForEach(m.roleplayLines) { line in
-                        VStack(alignment: line.learner ? .trailing : .leading, spacing: 4) {
-                            Text(line.speaker)
-                                .font(.figtree(.bold, size: 8.5))
-                                .tracking(1)
-                                .foregroundStyle(Color.auText.opacity(0.38))
-                            Text(line.text)
-                                .font(.figtree(.regular, size: 15))
-                                .auLine(15, 1.45)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 13)
-                                .frame(maxWidth: 276, alignment: .leading)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 19, style: .continuous)
-                                        .fill(line.learner ? Color.auTintBg : Color.auFill)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 19, style: .continuous)
-                                        .strokeBorder(Color.auEdge, lineWidth: 1)
-                                )
-                                .foregroundStyle(line.learner ? Color.auTintText : Color.auText)
-                        }
-                        .matchedGeometryEffect(
-                            id: "roleplay_bubble_\(line.text)",
-                            in: roleplayAnimation,
-                            properties: .position,
-                            isSource: true
-                        )
-                        .transition(
-                            reduceMotion
-                                ? .opacity
-                                : .asymmetric(
-                                    insertion: .opacity
-                                        .combined(with: .scale(scale: 0.94, anchor: line.learner ? .bottomTrailing : .bottomLeading))
-                                        .combined(with: .offset(y: 8)),
-                                    removal: .opacity
-                                )
-                        )
-                        .frame(
-                            maxWidth: .infinity,
-                            alignment: line.learner ? .trailing : .leading)
+                        RoleplayTranscriptBubble(line: line)
+                            .transition(roleplayBubbleTransition)
+                    }
+                    if m.roleplayPartnerThinking {
+                        RoleplayTypingBubble(speaker: partnerSpeaker)
+                            .transition(roleplayBubbleTransition)
                     }
                 }
 
@@ -642,12 +610,6 @@ struct RoleplayScreenView: View {
                                                 .strokeBorder(Color.auEdge, lineWidth: 1)
                                         )
                                 }
-                                .matchedGeometryEffect(
-                                    id: "roleplay_bubble_\(reply)",
-                                    in: roleplayAnimation,
-                                    properties: .position,
-                                    isSource: false
-                                )
                                 .buttonStyle(.auTap)
                                 .accessibilityIdentifier(
                                     "au.player.roleplay.tile.\(group.g.auSlug).\(index)")
@@ -657,6 +619,12 @@ struct RoleplayScreenView: View {
                         roleplaySpeechStatus(target: group.t.first ?? "")
                     }
                     .padding(.top, 16)
+                    .transition(
+                        reduceMotion
+                            ? .opacity
+                            : .opacity.combined(with: .offset(y: 8))
+                    )
+                    .id(group.g)
                 }
 
                 if m.roleplayFinished, let fb = rp.feedback {
@@ -774,6 +742,92 @@ struct RoleplayScreenView: View {
             Text("You can practice the first reply aloud, then tap your choice.")
                 .font(.figtree(.regular, size: 11.5))
                 .foregroundStyle(Color.auTextTertiary)
+        }
+    }
+
+    private var roleplayBubbleTransition: AnyTransition {
+        guard !reduceMotion else { return .opacity }
+        return .asymmetric(
+            insertion: .opacity.combined(with: .offset(y: 10)),
+            removal: .opacity
+        )
+    }
+}
+
+private struct RoleplayTranscriptBubble: View {
+    let line: PlayerModel.RoleplayLine
+
+    var body: some View {
+        VStack(alignment: line.learner ? .trailing : .leading, spacing: 4) {
+            Text(line.speaker)
+                .font(.figtree(.bold, size: 8.5))
+                .tracking(1)
+                .foregroundStyle(Color.auText.opacity(0.38))
+            Text(line.text)
+                .font(.figtree(.regular, size: 15))
+                .auLine(15, 1.45)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 13)
+                .frame(maxWidth: 276, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 19, style: .continuous)
+                        .fill(line.learner ? Color.auTintBg : Color.auFill)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 19, style: .continuous)
+                        .strokeBorder(Color.auEdge, lineWidth: 1)
+                )
+                .foregroundStyle(line.learner ? Color.auTintText : Color.auText)
+        }
+        .frame(maxWidth: .infinity, alignment: line.learner ? .trailing : .leading)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(line.speaker), \(line.text)")
+    }
+}
+
+private struct RoleplayTypingBubble: View {
+    let speaker: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(speaker)
+                .font(.figtree(.bold, size: 8.5))
+                .tracking(1)
+                .foregroundStyle(Color.auText.opacity(0.38))
+            RoleplayTypingDots()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 16)
+                .frame(minWidth: 72, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 19, style: .continuous)
+                        .fill(Color.auFill)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 19, style: .continuous)
+                        .strokeBorder(Color.auEdge, lineWidth: 1)
+                )
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityLabel("\(speaker) is responding")
+    }
+}
+
+private struct RoleplayTypingDots: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: reduceMotion ? 10 : 0.28, paused: reduceMotion)) {
+            context in
+            let phase = reduceMotion
+                ? 1
+                : Int(context.date.timeIntervalSinceReferenceDate / 0.28) % 3
+            HStack(spacing: 5) {
+                ForEach(0..<3, id: \.self) { index in
+                    Circle()
+                        .fill(Color.auText.opacity(index == phase ? 0.46 : 0.18))
+                        .frame(width: 6, height: 6)
+                }
+            }
         }
     }
 }

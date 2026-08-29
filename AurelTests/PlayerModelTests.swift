@@ -411,6 +411,54 @@ final class PlayerModelTests: XCTestCase {
         XCTAssertEqual(roleplayCount, 4)
     }
 
+    func testWelcomeRoleplayDoesNotRepeatMayaNameQuestionOrStealTheClose() async throws {
+        let m = try conversationModel(chapter: "A1-C01", screen: "S31")
+        m.prepareRoleplay()
+
+        XCTAssertEqual(m.roleplayLines.first?.speaker, "MAYA")
+        XCTAssertEqual(m.roleplayLines.first?.text, "Hello! Welcome! What's your name?")
+        XCTAssertEqual(m.roleplayLines.first?.learner, false)
+
+        m.chooseRoleplayReply("Hello!", group: "greeting")
+        try await Task.sleep(for: .milliseconds(700))
+
+        let afterGreeting = m.roleplayLines.filter { !$0.learner }.map(\.text)
+        XCTAssertEqual(afterGreeting.filter { $0.localizedCaseInsensitiveContains("What's your name?") }.count, 1)
+        XCTAssertEqual(m.roleplayLines.last?.learner, false)
+        XCTAssertNotEqual(m.roleplayLines.last?.text, "What's your name?")
+        XCTAssertEqual(m.roleplayLines.filter(\.learner).last?.speaker, "YOU")
+        XCTAssertNotEqual(m.roleplayLines.last?.speaker, "YOU")
+
+        m.chooseRoleplayReply("My name is …", group: "name")
+        try await Task.sleep(for: .milliseconds(700))
+        XCTAssertTrue(
+            m.roleplayLines.last?.text.localizedCaseInsensitiveContains("How are you") == true,
+            "after a name, Maya should ask how you are — not repeat the name question")
+
+        m.chooseRoleplayReply("I'm good, thank you!", group: "state")
+        try await Task.sleep(for: .milliseconds(700))
+
+        m.chooseRoleplayReply("Thank you! See you!", group: "close")
+        try await Task.sleep(for: .milliseconds(700))
+
+        XCTAssertTrue(m.roleplayFinished)
+        let last = try XCTUnwrap(m.roleplayLines.last)
+        XCTAssertFalse(last.learner)
+        XCTAssertEqual(last.speaker, "MAYA")
+        XCTAssertNotEqual(last.text, "Thank you! See you!")
+        XCTAssertFalse(
+            last.text.localizedCaseInsensitiveContains("What's your name?"),
+            "the close must not fall back to a reused name prompt")
+
+        for line in m.roleplayLines {
+            if line.learner {
+                XCTAssertEqual(line.speaker, "YOU")
+            } else {
+                XCTAssertNotEqual(line.speaker, "YOU")
+            }
+        }
+    }
+
     func testYesAndNoCardsUseDistinctMeaningfulArtwork() {
         let store = CourseDecodingTests.store
         var artworkByWord: [String: Set<String>] = [:]
