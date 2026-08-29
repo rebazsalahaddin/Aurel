@@ -32,6 +32,18 @@ struct CoursePlayerView: View {
                 onExit: { env.router.leaveCourse() },
                 onFinish: { env.router.finishCourse() }
             )
+            #if AUREL_VERIFICATION
+                // Production-art QA can open one authored practice/quiz item
+                // without answering every preceding item. This is routing
+                // only: it never writes progress or changes learner behavior.
+                let args = ProcessInfo.processInfo.arguments
+                if let argument = args.firstIndex(of: "-AUREL_COURSE_ITEM"),
+                    argument + 1 < args.count,
+                    let item = m.items.firstIndex(where: { $0.id == args[argument + 1] })
+                {
+                    m.i = item
+                }
+            #endif
             m.speaker = env.speaker
             env.router.trackCourse(m.p)
             model = m

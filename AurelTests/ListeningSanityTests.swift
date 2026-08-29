@@ -446,4 +446,490 @@ final class ListeningSanityTests: XCTestCase {
         .filter { !$0.isEmpty }
         .joined(separator: " ")
     }
+
+    // MARK: - Card Listen takes (wrong-file / TTS / doubled-play)
+    // Walks every shipped cards / letterCards / numbers screen.
+
+    /// Every vocabulary, letter, and number card must resolve to a bundled
+    /// take that actually says the card's word — never system TTS, never a
+    /// neighboring number or family chant played in full.
+    func testEveryCardListenResolvesToMatchingRecordedTake() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+        var failures: [String] = []
+        var cardCount = 0
+
+        for position in store.flat.indices {
+            let screen = store.flat[position].screen
+            guard screen.kind == .cards || screen.kind == .letterCards || screen.kind == .numbers
+            else { continue }
+            let model = PlayerModel(course: store, start: position)
+            for (index, card) in model.cardList.enumerated() {
+                cardCount += 1
+                model.c = index
+                let spoken = model.speakText(for: card)
+                let location =
+                    "\(store.flat[position].chapter.id)/\(screen.id)/\(card.id.isEmpty ? card.main : card.id)"
+                guard let assetID = model.resolvedAudioID(card.aud),
+                    let asset = catalog.asset(assetID)
+                else {
+                    failures.append("\(location): no catalog take for aud=\(card.aud ?? "nil")")
+                    continue
+                }
+                guard
+                    let take = VoicePlayback.selectTake(
+                        lines: asset.lines, requestedText: spoken)
+                else {
+                    failures.append(
+                        "\(location): “\(spoken)” falls back to TTS against \(asset.id) “\(asset.text)”"
+                    )
+                    continue
+                }
+                switch take {
+                case .allLines:
+                    let heard = VoicePlayback.heardWords(spoken)
+                    let full = VoicePlayback.heardWords(asset.text)
+                    if !full.contains(heard) {
+                        failures.append(
+                            "\(location): all-lines take \(asset.id) says “\(asset.text)”, not “\(spoken)”"
+                        )
+                    }
+                case .line(let lineIndex, _):
+                    let line = asset.lines[lineIndex]
+                    let heard = VoicePlayback.heardWords(spoken)
+                    let lineHeard = VoicePlayback.heardWords(line.text)
+                    let tokens = VoicePlayback.commaTokens(
+                        VoicePlayback.ellipsisSegments(line.text).first ?? line.text)
+                    let ok =
+                        lineHeard.contains(heard)
+                        || tokens.contains(where: { VoicePlayback.heardWords($0) == heard })
+                    if !ok {
+                        failures.append(
+                            "\(location): line \(lineIndex) of \(asset.id) says “\(line.text)”, not “\(spoken)”"
+                        )
+                    }
+                }
+            }
+        }
+
+        XCTAssertGreaterThan(cardCount, 80, "must walk every shipped vocabulary, letter, and number card")
+        XCTAssertEqual(failures, [], failures.joined(separator: "\n"))
+    }
+
+    func testWordModelTakesClipToASingleUtterance() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let hello = try XCTUnwrap(catalog.asset("A1-C01-AUD002"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: hello.lines, requestedText: "hello"),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2)))
+
+        let hi = try XCTUnwrap(catalog.asset("A1-C01-AUD003"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: hi.lines, requestedText: "hi"),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2)))
+
+        let canada = try XCTUnwrap(catalog.asset("A1-C03-AUD008"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: canada.lines, requestedText: "Canada"),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 3)))
+
+        let one = try XCTUnwrap(catalog.asset("A1-C02-AUD027"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: one.lines, requestedText: "one"),
+            .line(index: 0, clip: .commaToken(index: 1, count: 6)))
+
+        let letterA = try XCTUnwrap(catalog.asset("A1-C02-AUD011"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: letterA.lines, requestedText: "A"),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 6)))
+
+        let morning = try XCTUnwrap(catalog.asset("A1-C01-AUD004"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: morning.lines, requestedText: "morning"),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2)))
+
+        let evening = try XCTUnwrap(catalog.asset("A1-C01-AUD006"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: evening.lines, requestedText: "evening"),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2)))
+    }
+
+    /// Image-choice Listen items (Listen. Match / Choose / Tap) must play the
+    /// authored WAV, even when the cue is a picture-alt fragment like “morning”.
+    func testImageChoiceListenUsesRecordedTakeNotTTS() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+        let playback = VoicePlayback(catalog: catalog)
+        defer { playback.stop() }
+        var failures: [String] = []
+        var count = 0
+
+        for position in store.flat.indices {
+            let model = PlayerModel(course: store, start: position)
+            for itemIndex in model.items.indices where model.items[itemIndex].kind == "image" {
+                let item = model.items[itemIndex]
+                guard item.aud != nil else { continue }
+                count += 1
+                model.i = itemIndex
+                let location =
+                    "\(store.flat[position].chapter.id)/\(store.flat[position].screen.id)/\(item.id)"
+                guard let text = model.speakTextForItem,
+                    !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                else {
+                    failures.append("\(location): silent Listen cue")
+                    continue
+                }
+                guard let assetID = model.resolvedAudioID(item.aud) else {
+                    failures.append("\(location): no catalog take for aud=\(item.aud ?? "nil")")
+                    continue
+                }
+                playback.speak(audioID: assetID, text: text, slow: false)
+                if playback.spokenAssetID != assetID {
+                    failures.append(
+                        "\(location): cue “\(text)” fell back to TTS against \(assetID)")
+                }
+            }
+        }
+
+        XCTAssertGreaterThan(count, 5, "must walk image-choice Listen items")
+        XCTAssertEqual(failures, [], failures.joined(separator: "\n"))
+    }
+
+    func testContactWordCardsPointAtPhoneEmailTakesNotNumbers() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+        let pos = try XCTUnwrap(
+            store.flat.firstIndex {
+                $0.chapter.id == "A1-C02" && $0.screen.id == "S16"
+            })
+        let model = PlayerModel(course: store, start: pos)
+        let expected = [
+            "phone", "phone number", "email", "email address", "address", "at", "dot",
+            "What's your phone number?", "What's your email address?",
+        ]
+        XCTAssertEqual(model.cardList.map(\.main), expected)
+        for card in model.cardList {
+            let spoken = model.speakText(for: card)
+            let asset = try XCTUnwrap(catalog.asset(model.resolvedAudioID(card.aud) ?? ""))
+            let take = try XCTUnwrap(
+                VoicePlayback.selectTake(lines: asset.lines, requestedText: spoken))
+            guard case .line(let index, _) = take else {
+                return XCTFail("\(card.main) should clip to its word-model line")
+            }
+            XCTAssertTrue(
+                VoicePlayback.heardWords(asset.lines[index].text)
+                    .contains(VoicePlayback.heardWords(spoken)),
+                "\(card.main) resolved to “\(asset.text)”")
+        }
+    }
+
+    // MARK: - Pronunciation MODEL + other recorded play controls
+
+    /// Perceive MODEL used to call `speak` without the item's `aud`, so every
+    /// card voiced system TTS. Every shipped perceive/produce MODEL must now
+    /// resolve to its authored WAV.
+    func testEveryPronunciationModelUsesRecordedTakeNotTTS() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+        let playback = VoicePlayback(catalog: catalog)
+        defer { playback.stop() }
+        var failures: [String] = []
+        var count = 0
+
+        for position in store.flat.indices {
+            let model = PlayerModel(course: store, start: position)
+            model.speaker = playback
+            let chapter = store.flat[position].chapter.id
+            let screen = store.flat[position].screen.id
+            switch store.flat[position].screen.payload {
+            case .pronPerceive(let payload):
+                for item in payload.items ?? [] {
+                    guard item.aud != nil else { continue }
+                    count += 1
+                    let location = "\(chapter)/\(screen)/\(item.id)"
+                    model.listenToPerceiveModel(item)
+                    guard let assetID = model.resolvedAudioID(item.aud) else {
+                        failures.append("\(location): unresolved aud=\(item.aud ?? "nil")")
+                        continue
+                    }
+                    if playback.spokenAssetID != assetID {
+                        failures.append(
+                            "\(location): cue “\(model.speakText(forPerceive: item))” "
+                                + "fell back to TTS against \(assetID)")
+                    }
+                }
+            case .pronProduce(let payload):
+                for item in payload.items ?? [] {
+                    guard item.aud != nil else { continue }
+                    count += 1
+                    let location = "\(chapter)/\(screen)/\(item.id)"
+                    model.listenToProduceModel(item)
+                    guard let assetID = model.resolvedAudioID(item.aud) else {
+                        failures.append("\(location): unresolved aud=\(item.aud ?? "nil")")
+                        continue
+                    }
+                    if playback.spokenAssetID != assetID {
+                        failures.append(
+                            "\(location): cue “\(model.speakText(forProduce: item))” "
+                                + "fell back to TTS against \(assetID)")
+                    }
+                }
+            default:
+                break
+            }
+        }
+
+        XCTAssertGreaterThan(count, 20, "must walk every shipped pronunciation MODEL card")
+        XCTAssertEqual(failures, [], failures.joined(separator: "\n"))
+    }
+
+    /// C1-L3 “Pronunciation block — stress and intonation”: each MODEL play
+    /// voices that card's take, not a neighbor and not system TTS.
+    func testLesson3StressBlockPlaysAuthoredTakes() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+        let pos = try XCTUnwrap(
+            store.flat.firstIndex {
+                $0.chapter.id == "A1-C01" && $0.screen.id == "S23b"
+            })
+        let model = PlayerModel(course: store, start: pos)
+        let playback = VoicePlayback(catalog: catalog)
+        defer { playback.stop() }
+        model.speaker = playback
+
+        guard case .pronPerceive(let payload) = store.flat[pos].screen.payload else {
+            return XCTFail("S23b must be a perceive screen")
+        }
+        let items = try XCTUnwrap(payload.items)
+        XCTAssertEqual(items.map(\.id), ["PR-P005", "PR-P006", "PR-P009"])
+
+        model.listenToPerceiveModel(items[0])
+        XCTAssertEqual(model.speakText(forPerceive: items[0]), "What's your name?")
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD030")
+        XCTAssertEqual(
+            VoicePlayback.selectTake(
+                lines: try XCTUnwrap(catalog.asset("A1-C01-AUD030")).lines,
+                requestedText: model.speakText(forPerceive: items[0])),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2)))
+
+        model.listenToPerceiveModel(items[1])
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD044")
+
+        model.listenToPerceiveModel(items[2])
+        XCTAssertEqual(model.speakText(forPerceive: items[2]), "Nice to meet you.")
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD031")
+    }
+
+    /// Intonation pairs that share a folded spelling (“You're Maya.” / “?”)
+    /// must clip to different phrases of AUD041.
+    func testIntonationPairsClipStatementVersusQuestion() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let asset = try XCTUnwrap(catalog.asset("A1-C01-AUD041"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: asset.lines, requestedText: "You're Maya."),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 6)))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: asset.lines, requestedText: "You're Maya?"),
+            .line(index: 0, clip: .ellipsisSegment(index: 1, count: 6)))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: asset.lines, requestedText: "I'm Leo."),
+            .line(index: 0, clip: .ellipsisSegment(index: 2, count: 6)))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: asset.lines, requestedText: "I'm Leo?"),
+            .line(index: 0, clip: .ellipsisSegment(index: 3, count: 6)))
+
+        let store = CourseDecodingTests.store
+        let pos = try XCTUnwrap(
+            store.flat.firstIndex {
+                $0.chapter.id == "A1-C01" && $0.screen.id == "S16"
+            })
+        let model = PlayerModel(course: store, start: pos)
+        guard case .pronPerceive(let payload) = store.flat[pos].screen.payload else {
+            return XCTFail("C1 S16 must be a perceive screen")
+        }
+        let items = try XCTUnwrap(payload.items)
+        XCTAssertEqual(model.speakText(forPerceive: items[0]), "You're Maya.")
+        XCTAssertEqual(model.speakText(forPerceive: items[1]), "You're Maya?")
+        XCTAssertEqual(model.speakText(forPerceive: items[6]), "I am")
+        XCTAssertEqual(model.speakText(forPerceive: items[7]), "I'm")
+
+        let contractions = try XCTUnwrap(catalog.asset("A1-C01-AUD042"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(
+                lines: contractions.lines, requestedText: "I am"),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 6)))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(
+                lines: contractions.lines, requestedText: "I'm"),
+            .line(index: 0, clip: .ellipsisSegment(index: 1, count: 6)))
+    }
+
+    /// Produce MODEL cards that used to point at a neighboring take now clip
+    /// to the line that actually says the prompt.
+    func testProduceModelsClipToTheAuthoredLine() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+
+        let namePos = try XCTUnwrap(
+            store.flat.firstIndex {
+                $0.chapter.id == "A1-C01" && $0.screen.id == "S26b"
+            })
+        let nameModel = PlayerModel(course: store, start: namePos)
+        guard case .pronProduce(let nameScreen) = store.flat[namePos].screen.payload,
+            let nameItem = nameScreen.items?.first(where: { $0.id == "PR-P010" })
+        else {
+            return XCTFail("S26b PR-P010 missing")
+        }
+        XCTAssertEqual(nameModel.speakText(forProduce: nameItem), "My name is Alex. I'm Alex.")
+        let nameAsset = try XCTUnwrap(catalog.asset(nameModel.resolvedAudioID(nameItem.aud) ?? ""))
+        XCTAssertEqual(nameAsset.id, "A1-C01-AUD040")
+        XCTAssertEqual(
+            VoicePlayback.selectTake(
+                lines: nameAsset.lines, requestedText: nameModel.speakText(forProduce: nameItem)),
+            .line(index: 1, clip: .full))
+
+        let spellPos = try XCTUnwrap(
+            store.flat.firstIndex {
+                $0.chapter.id == "A1-C02" && $0.screen.id == "S31b"
+            })
+        let spellModel = PlayerModel(course: store, start: spellPos)
+        guard case .pronProduce(let spellScreen) = store.flat[spellPos].screen.payload,
+            let spellItem = spellScreen.items?.first(where: { $0.id == "PR-P008" })
+        else {
+            return XCTFail("S31b PR-P008 missing")
+        }
+        XCTAssertEqual(spellModel.speakText(forProduce: spellItem), "H. A. D. D. A. D.")
+        let spellAsset = try XCTUnwrap(
+            catalog.asset(spellModel.resolvedAudioID(spellItem.aud) ?? ""))
+        XCTAssertEqual(spellAsset.id, "A1-C02-AUD069")
+        XCTAssertEqual(
+            VoicePlayback.selectTake(
+                lines: spellAsset.lines, requestedText: spellModel.speakText(forProduce: spellItem)),
+            .line(index: 3, clip: .full))
+    }
+
+    /// Cards, practice Listen, hooks, conversations, and meaning pulses must
+    /// play the bundled take — never system TTS — when an `aud` is authored.
+    func testEveryDialogueAndCardPlayControlUsesRecordedTakeNotTTS() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+        let playback = VoicePlayback(catalog: catalog)
+        defer { playback.stop() }
+        var failures: [String] = []
+        var count = 0
+
+        for position in store.flat.indices {
+            let model = PlayerModel(course: store, start: position)
+            model.speaker = playback
+            let locationBase =
+                "\(store.flat[position].chapter.id)/\(store.flat[position].screen.id)"
+
+            switch store.flat[position].screen.payload {
+            case .hook(let hook):
+                guard hook.aud != nil else { continue }
+                count += 1
+                let text = (hook.lines ?? []).map(\.t).joined(separator: ". ")
+                assertRecorded(
+                    model: model, playback: playback, text: text, audio: hook.aud,
+                    location: "\(locationBase)/hook", failures: &failures)
+
+            case .conversation(let conversation):
+                let audio = conversation.aud ?? conversation.lineAud
+                guard audio != nil else { continue }
+                count += 1
+                let text = (conversation.turns ?? []).map(\.t).joined(separator: " ")
+                assertRecorded(
+                    model: model, playback: playback, text: text, audio: audio,
+                    location: "\(locationBase)/conversation", failures: &failures)
+
+            case .cards(let cards):
+                for pulse in cards.meaningPulses ?? [] where pulse.aud != nil {
+                    count += 1
+                    let text = (pulse.chat ?? []).map(\.t).joined(separator: " ")
+                    assertRecorded(
+                        model: model, playback: playback,
+                        text: text.isEmpty ? pulse.prompt : text, audio: pulse.aud,
+                        location: "\(locationBase)/\(pulse.id)", failures: &failures)
+                }
+
+            case .grammarModel(let grammar):
+                for pulse in grammar.meaningPulses ?? [] where pulse.aud != nil {
+                    count += 1
+                    let text = (pulse.chat ?? []).map(\.t).joined(separator: " ")
+                    assertRecorded(
+                        model: model, playback: playback,
+                        text: text.isEmpty ? pulse.prompt : text, audio: pulse.aud,
+                        location: "\(locationBase)/\(pulse.id)", failures: &failures)
+                }
+                for (index, notice) in (grammar.notice ?? []).enumerated() where notice.aud != nil {
+                    count += 1
+                    let transcript = (notice.chat ?? []).map(\.t).joined(separator: " ")
+                    assertRecorded(
+                        model: model, playback: playback,
+                        text: transcript.isEmpty ? notice.task : transcript, audio: notice.aud,
+                        location: "\(locationBase)/notice-\(index)", failures: &failures)
+                }
+
+            case .practice(let practice):
+                for pulse in practice.teach?.meaningPulses ?? [] where pulse.aud != nil {
+                    count += 1
+                    let text = (pulse.chat ?? []).map(\.t).joined(separator: " ")
+                    assertRecorded(
+                        model: model, playback: playback,
+                        text: text.isEmpty ? pulse.prompt : text, audio: pulse.aud,
+                        location: "\(locationBase)/\(pulse.id)", failures: &failures)
+                }
+
+            default:
+                break
+            }
+
+            for itemIndex in model.items.indices where model.items[itemIndex].aud != nil {
+                count += 1
+                model.i = itemIndex
+                let item = model.items[itemIndex]
+                assertRecorded(
+                    model: model, playback: playback, text: model.speakTextForItem,
+                    audio: item.aud,
+                    location: "\(locationBase)/\(item.id)", failures: &failures)
+            }
+
+            if store.flat[position].screen.kind == .cards
+                || store.flat[position].screen.kind == .letterCards
+                || store.flat[position].screen.kind == .numbers
+            {
+                for (index, card) in model.cardList.enumerated() where card.aud != nil {
+                    count += 1
+                    model.c = index
+                    assertRecorded(
+                        model: model, playback: playback, text: model.speakText(for: card),
+                        audio: card.aud,
+                        location: "\(locationBase)/\(card.id.isEmpty ? card.main : card.id)",
+                        failures: &failures)
+                }
+            }
+        }
+
+        XCTAssertGreaterThan(count, 80, "must walk every shipped playable model surface")
+        XCTAssertEqual(failures, [], failures.joined(separator: "\n"))
+    }
+
+    private func assertRecorded(
+        model: PlayerModel, playback: VoicePlayback, text: String?, audio: String?,
+        location: String, failures: inout [String]
+    ) {
+        guard let audio, !audio.isEmpty else { return }
+        guard let text, !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            failures.append("\(location): silent cue")
+            return
+        }
+        guard let assetID = model.resolvedAudioID(audio) else {
+            failures.append("\(location): unresolved aud=\(audio)")
+            return
+        }
+        playback.speak(audioID: assetID, text: text, slow: false)
+        if playback.spokenAssetID != assetID {
+            failures.append("\(location): cue “\(text)” fell back to TTS against \(assetID)")
+        }
+    }
 }

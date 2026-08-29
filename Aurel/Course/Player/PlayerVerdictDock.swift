@@ -152,9 +152,10 @@ struct PlayerVerdictDock: View {
 
     // MARK: CTA
 
+    @ViewBuilder
     private var cta: some View {
         let isQuizMode = model.isQuiet && !model.done
-        return APillButton(
+        let goOn = APillButton(
             title: isQuizMode ? String(localized: "Confirm answer") : String(localized: "Go on"),
             icon: .arrow,
             player: true,
@@ -166,6 +167,23 @@ struct PlayerVerdictDock: View {
             } else {
                 model.advance()
             }
+        }
+
+        if model.item?.kind == "speak" {
+            HStack(spacing: 12) {
+                APillButton(
+                    title: String(localized: "Skip — say it later"),
+                    variant: .quiet,
+                    player: true,
+                    disabled: !model.itemCanGo,
+                    aid: "au.player.speak.skip"
+                ) {
+                    model.advance()
+                }
+                goOn
+            }
+        } else {
+            goOn
         }
     }
 }

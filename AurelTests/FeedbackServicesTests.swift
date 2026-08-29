@@ -96,4 +96,33 @@ final class FeedbackServicesTests: XCTestCase {
             source.contains("accessibilityLabel(learnerAlt)"),
             "VoiceOver must receive the descriptive alternative text")
     }
+
+    /// Image-choice options (Listen. Match / Listen. Choose / Listen. Tap)
+    /// must size the field to the artwork so the full scene fills the card.
+    func testImageChoiceOptionsFillWithoutCropping() throws {
+        let repoRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let practice = try String(
+            contentsOf: repoRoot
+                .appendingPathComponent("Aurel/Course/Player/Screens/PracticeScreen.swift"),
+            encoding: .utf8
+        )
+        XCTAssertTrue(
+            practice.contains("IllustrationChoiceFill"),
+            "practice/quiz image options must use the full-scene choice field")
+        XCTAssertFalse(
+            practice.contains(".scaledToFill()"),
+            "image-choice options must not crop the scene to a fixed height")
+
+        let components = try String(
+            contentsOf: repoRoot
+                .appendingPathComponent("Aurel/DesignSystem/Components/Components.swift"),
+            encoding: .utf8
+        )
+        XCTAssertTrue(components.contains("struct IllustrationChoiceFill"))
+        XCTAssertTrue(
+            components.contains("contentMode: .fit"),
+            "choice art must keep the full image, not a cropped fill")
+    }
 }

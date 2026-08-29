@@ -78,6 +78,8 @@ final class VoicePlayback: NSObject, AudioPlaying {
     private var spokenPrefix = 0
     private var ticker: Task<Void, Never>?
     private var sessionConfigured = false
+    /// Stop time for a clipped first-utterance play; nil plays the whole take.
+    private var clipEnd: TimeInterval?
 
     init(catalog: AudioCatalog = AudioCatalog(), tts: Speaker = Speaker()) {
         self.catalog = catalog
@@ -106,39 +108,35 @@ final class VoicePlayback: NSObject, AudioPlaying {
             return
         }
 
-        var chosen = asset.lines
-        var base = 0
-        if let at, chosen.indices.contains(at) {
+        if let at, asset.lines.indices.contains(at) {
             // Line-scoped playback (a single conversation turn).
-            chosen = [chosen[at]]
-            base = at
-        } else if !text.isEmpty {
-            let heardText = Self.heardWords(text)
-            let fullAssetHeard = Self.heardWords(chosen.map(\.text).joined(separator: " "))
-
-            if let exactIndex = chosen.firstIndex(where: { Self.heardWords($0.text) == heardText }) {
-                chosen = [chosen[exactIndex]]
-                base = exactIndex
-            } else if chosen.count > 1 {
-                if let matchedIndex = chosen.firstIndex(where: {
-                    let lineHeard = Self.heardWords($0.text)
-                    return lineHeard == heardText || (lineHeard.contains(heardText) && lineHeard.count <= heardText.count + 5)
-                }) {
-                    chosen = [chosen[matchedIndex]]
-                    base = matchedIndex
-                } else if heardText.count < fullAssetHeard.count / 2 {
-                    beginFallback(text, slow: slow)
-                    return
-                }
-            } else if chosen.count == 1 {
-                let lineHeard = Self.heardWords(chosen[0].text)
-                if lineHeard != heardText && lineHeard.contains(heardText) && lineHeard.count > heardText.count + 5 {
-                    beginFallback(text, slow: slow)
-                    return
-                }
-            }
+            begin([asset.lines[at]], assetID: audioID, lineBase: at, clip: .full)
+            return
         }
-        begin(chosen, assetID: audioID, lineBase: base)
+
+        if text.isEmpty {
+            begin(asset.lines, assetID: audioID, lineBase: 0, clip: .full)
+            return
+        }
+
+        guard let take = Self.selectTake(lines: asset.lines, requestedText: text) else {
+            // The item authored this take. A cue that does not map to a clip
+            // (picture-alt fragments, answer text vs a question take) must
+            // still play the file — never a robotic system voice.
+            begin(asset.lines, assetID: audioID, lineBase: 0, clip: .full)
+            return
+        }
+
+        switch take {
+        case .allLines:
+            begin(asset.lines, assetID: audioID, lineBase: 0, clip: .full)
+        case .line(let index, let clip):
+            guard asset.lines.indices.contains(index) else {
+                beginFallback(text, slow: slow)
+                return
+            }
+            begin([asset.lines[index]], assetID: audioID, lineBase: index, clip: clip)
+        }
     }
 
     /// Letters/digits/spaces lowercase fold for audio-text containment:
@@ -151,6 +149,150 @@ final class VoicePlayback: NSObject, AudioPlaying {
             .components(separatedBy: .whitespaces)
             .filter { !$0.isEmpty }
             .joined(separator: " ")
+    }
+
+    /// Ellipsis-separated scripted phrases: “Hello. … Hello.” → ["Hello.", "Hello."].
+    static func ellipsisSegments(_ text: String) -> [String] {
+        text.components(separatedBy: "…")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
+
+    /// Comma-separated tokens from a count-along or alphabet chant.
+    static func commaTokens(_ text: String) -> [String] {
+        text.split(separator: ",").map {
+            $0.trimmingCharacters(in: .whitespacesAndNewlines)
+                .trimmingCharacters(in: CharacterSet.punctuationCharacters)
+        }
+        .filter { !$0.isEmpty }
+    }
+
+    /// Learner-facing card copy with slash-alternates and ellipsis blanks removed.
+    static func cleanCardWord(_ word: String) -> String {
+        var text = word
+        if let slash = text.firstIndex(of: "/") {
+            text = String(text[..<slash])
+        }
+        text = text.replacingOccurrences(of: "…", with: "")
+        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Which catalog take (and which phrase inside it) should voice `requestedText`.
+    /// `nil` means no clip mapped; `speak` still plays the full bundled take.
+    static func selectTake(
+        lines: [AudioCatalog.Line], requestedText: String
+    ) -> TakeSelection? {
+        guard !lines.isEmpty else { return nil }
+        let heard = heardWords(requestedText)
+        let fullHeard = heardWords(lines.map(\.text).joined(separator: " "))
+        if heard.isEmpty || heard == fullHeard {
+            return .allLines
+        }
+
+        if let index = lines.firstIndex(where: { heardWords($0.text) == heard }) {
+            let segs = ellipsisSegments(lines[index].text)
+            if segs.count >= 2, Set(segs.map(heardWords)).count == 1 {
+                return .line(index: index, clip: .ellipsisSegment(index: 0, count: segs.count))
+            }
+            return .line(index: index, clip: .full)
+        }
+
+        for (index, line) in lines.enumerated() {
+            let segs = ellipsisSegments(line.text)
+            if let segment = ellipsisSegmentIndex(
+                matching: heard, in: segs, requestedText: requestedText)
+            {
+                if segs.count == 1 {
+                    return .line(index: index, clip: .full)
+                }
+                return .line(
+                    index: index, clip: .ellipsisSegment(index: segment, count: segs.count))
+            }
+        }
+
+        for (index, line) in lines.enumerated() {
+            let segs = ellipsisSegments(line.text)
+            guard let first = segs.first else { continue }
+            let tokens = commaTokens(first)
+            if tokens.count >= 3,
+                let token = tokens.firstIndex(where: { heardWords($0) == heard })
+            {
+                return .line(
+                    index: index, clip: .commaToken(index: token, count: tokens.count))
+            }
+        }
+
+        let requestTokens = heard.split(separator: " ").map(String.init)
+        for (index, line) in lines.enumerated() {
+            let segs = ellipsisSegments(line.text)
+            guard let first = segs.first else { continue }
+            let firstHeard = heardWords(first)
+            let firstTokens = firstHeard.split(separator: " ").map(String.init)
+            let isPrefix =
+                firstHeard.hasPrefix(heard + " ")
+                || (firstTokens.starts(with: requestTokens) && firstTokens.count > requestTokens.count)
+            guard isPrefix, !requestTokens.isEmpty else { continue }
+            return .line(
+                index: index,
+                clip: segs.count > 1 ? .ellipsisSegment(index: 0, count: segs.count) : .full)
+        }
+
+        for (index, line) in lines.enumerated() {
+            let segs = ellipsisSegments(line.text)
+            if let segment = segs.firstIndex(where: {
+                containsHeardRun(in: $0, heardNeedle: heard)
+            }) {
+                if segs.count == 1 {
+                    return .line(index: index, clip: .full)
+                }
+                return .line(
+                    index: index, clip: .ellipsisSegment(index: segment, count: segs.count))
+            }
+        }
+
+        if fullHeard.contains(heard), heard.count >= fullHeard.count / 2 {
+            return .allLines
+        }
+        return nil
+    }
+
+    /// When several ellipsis phrases fold to the same words, keep statement vs
+    /// question distinct (“You're Maya.” vs “You're Maya?”).
+    static func ellipsisSegmentIndex(
+        matching heard: String, in segs: [String], requestedText: String
+    ) -> Int? {
+        let matches = segs.indices.filter { heardWords(segs[$0]) == heard }
+        guard let first = matches.first else { return nil }
+        if matches.count == 1 { return first }
+        let wantQuestion = requestedText.trimmingCharacters(in: .whitespacesAndNewlines)
+            .hasSuffix("?")
+        return matches.first(where: {
+            segs[$0].trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix("?")
+                == wantQuestion
+        }) ?? first
+    }
+
+    /// True when `heardNeedle` (already `heardWords`-folded) is a consecutive
+    /// token run inside `haystack` — so “morning” maps to “Good morning.”.
+    static func containsHeardRun(in haystack: String, heardNeedle: String) -> Bool {
+        let hay = heardWords(haystack).split(separator: " ").map(String.init)
+        let need = heardNeedle.split(separator: " ").map(String.init)
+        guard !need.isEmpty, hay.count >= need.count else { return false }
+        for start in 0...(hay.count - need.count) {
+            if hay[start..<(start + need.count)].elementsEqual(need) { return true }
+        }
+        return false
+    }
+
+    enum TakeSelection: Equatable {
+        case allLines
+        case line(index: Int, clip: Clip)
+
+        enum Clip: Equatable {
+            case full
+            case ellipsisSegment(index: Int, count: Int)
+            case commaToken(index: Int, count: Int)
+        }
     }
 
     func stop() {
@@ -169,6 +311,7 @@ final class VoicePlayback: NSObject, AudioPlaying {
         spokenLineText = nil
         spokenSpeaker = nil
         spokenAssetID = nil
+        clipEnd = nil
         AUSound.shared.isDucked = false
     }
 
@@ -207,7 +350,10 @@ final class VoicePlayback: NSObject, AudioPlaying {
 
     // MARK: Recorded queue
 
-    private func begin(_ lines: [AudioCatalog.Line], assetID: String, lineBase: Int) {
+    private func begin(
+        _ lines: [AudioCatalog.Line], assetID: String, lineBase: Int,
+        clip: TakeSelection.Clip
+    ) {
         guard let url = catalog.url(for: lines[0]) else {
             // Missing file for a cataloged line — degrade to TTS.
             beginFallback(lines.map(\.text).joined(separator: " "), slow: true)
@@ -228,7 +374,7 @@ final class VoicePlayback: NSObject, AudioPlaying {
 
         // Feedback sounds never talk over the voice (IMPROVEMENT_PLAN §2.6).
         AUSound.shared.isDucked = true
-        playLine(at: 0, url: url)
+        playLine(at: 0, url: url, clip: clip)
     }
 
     private func configureSessionIfNeeded() {
@@ -267,10 +413,17 @@ final class VoicePlayback: NSObject, AudioPlaying {
         }
     }
 
-    private func playLine(at index: Int, url: URL) {
+    private func playLine(at index: Int, url: URL, clip: TakeSelection.Clip = .full) {
         do {
             let p = try AVAudioPlayer(contentsOf: url)
             p.delegate = self
+            p.prepareToPlay()
+            if let range = Self.playbackRange(url: url, clip: clip, duration: p.duration) {
+                p.currentTime = range.lowerBound
+                clipEnd = range.upperBound
+            } else {
+                clipEnd = nil
+            }
             p.play()
             player = p
             playerID = ObjectIdentifier(p)
@@ -292,6 +445,34 @@ final class VoicePlayback: NSObject, AudioPlaying {
         }
     }
 
+    private static func playbackRange(
+        url: URL, clip: TakeSelection.Clip, duration: TimeInterval
+    ) -> Range<TimeInterval>? {
+        switch clip {
+        case .full:
+            return nil
+        case .ellipsisSegment(let index, let count):
+            let ranges = AudioUtteranceLocator.ellipsisRanges(
+                url: url, expectedSegments: count, duration: duration)
+            guard ranges.indices.contains(index) else { return nil }
+            return padded(ranges[index], duration: duration)
+        case .commaToken(let index, let count):
+            let islands = AudioUtteranceLocator.speechIslands(url: url)
+            let group = islands.count >= count * 2 - 1 ? Array(islands.prefix(count)) : islands
+            guard group.indices.contains(index) else { return nil }
+            return padded(group[index], duration: duration)
+        }
+    }
+
+    private static func padded(
+        _ range: Range<TimeInterval>, duration: TimeInterval
+    ) -> Range<TimeInterval> {
+        let start = max(0, range.lowerBound - 0.04)
+        let end = min(duration, range.upperBound + 0.14)
+        guard end - start > 0.08 else { return range }
+        return start..<end
+    }
+
     private func startTicker() {
         ticker?.cancel()
         // The class is @MainActor and Task inherits the actor — tick() runs
@@ -308,6 +489,14 @@ final class VoicePlayback: NSObject, AudioPlaying {
     /// Change-guarded: an unchanged sample never invalidates a view.
     private func tick() {
         guard let player, speaking else { return }
+        if let clipEnd, player.currentTime >= clipEnd {
+            playerID = nil
+            player.stop()
+            self.player = nil
+            self.clipEnd = nil
+            advanceOrFinish()
+            return
+        }
         let dur = max(0.01, player.duration)
         let ratio = min(1, max(0, player.currentTime / dur))
         setLineProgress(ratio)
@@ -336,7 +525,7 @@ final class VoicePlayback: NSObject, AudioPlaying {
             finish()
             return
         }
-        playLine(at: lineIndex + 1, url: url)
+        playLine(at: lineIndex + 1, url: url, clip: .full)
     }
 
     private func finish() {
@@ -384,5 +573,129 @@ extension VoicePlayback: AVAudioPlayerDelegate {
             guard let self, self.playerID == finished else { return }
             self.advanceOrFinish()
         }
+    }
+}
+
+// MARK: - Phrase windows inside a word-model take
+
+/// Finds the spoken islands and ellipsis pauses of a bundled WAV so a doubled
+/// word model (“Hello. … Hello.”) can play the first phrase only.
+@MainActor
+enum AudioUtteranceLocator {
+    private static var rmsCache: [String: (duration: TimeInterval, windows: [(TimeInterval, Float)])] =
+        [:]
+
+    static func speechIslands(url: URL) -> [Range<TimeInterval>] {
+        guard let rms = rmsWindows(url: url) else { return [] }
+        var islands: [Range<TimeInterval>] = []
+        var inSpeech = false
+        var start: TimeInterval = 0
+        var lastVoice: TimeInterval = 0
+        let thresh: Float = 0.025
+        let minGap: TimeInterval = 0.35
+        let minSpeech: TimeInterval = 0.12
+
+        for (time, level) in rms.windows {
+            if level >= thresh {
+                if !inSpeech {
+                    inSpeech = true
+                    start = time
+                }
+                lastVoice = time
+            } else if inSpeech, time - lastVoice >= minGap {
+                if lastVoice - start >= minSpeech {
+                    islands.append(start..<lastVoice)
+                }
+                inSpeech = false
+            }
+        }
+        if inSpeech, lastVoice - start >= minSpeech {
+            islands.append(start..<lastVoice)
+        }
+        return islands
+    }
+
+    static func ellipsisRanges(
+        url: URL, expectedSegments: Int, duration: TimeInterval
+    ) -> [Range<TimeInterval>] {
+        guard expectedSegments > 1, duration > 0, let rms = rmsWindows(url: url) else {
+            return duration > 0 ? [0..<duration] : []
+        }
+
+        var gaps: [Range<TimeInterval>] = []
+        var gapStart: TimeInterval?
+        for (time, level) in rms.windows {
+            if level < 0.025 {
+                if gapStart == nil { gapStart = time }
+            } else if let start = gapStart {
+                if time - start >= 0.35 { gaps.append(start..<time) }
+                gapStart = nil
+            }
+        }
+
+        let internalGaps = gaps.filter {
+            $0.lowerBound > 0.15 && $0.upperBound < duration - 0.12
+        }
+        let picked = Array(
+            internalGaps.sorted { ($0.upperBound - $0.lowerBound) > ($1.upperBound - $1.lowerBound) }
+                .prefix(expectedSegments - 1)
+        )
+        .sorted { $0.lowerBound < $1.lowerBound }
+
+        guard picked.count == expectedSegments - 1 else {
+            let islands = speechIslands(url: url)
+            if islands.count == expectedSegments { return islands }
+            return duration > 0 ? [0..<duration] : []
+        }
+
+        var ranges: [Range<TimeInterval>] = []
+        var cursor: TimeInterval = 0
+        for gap in picked {
+            ranges.append(cursor..<gap.lowerBound)
+            cursor = gap.upperBound
+        }
+        ranges.append(cursor..<duration)
+        return ranges
+    }
+
+    private static func rmsWindows(
+        url: URL, windowMs: Double = 20
+    ) -> (duration: TimeInterval, windows: [(TimeInterval, Float)])? {
+        let key = url.path
+        if let cached = rmsCache[key] { return cached }
+        guard let file = try? AVAudioFile(forReading: url) else { return nil }
+        let format = file.processingFormat
+        let frames = AVAudioFrameCount(file.length)
+        guard frames > 0,
+            let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frames)
+        else { return nil }
+        do {
+            try file.read(into: buffer)
+        } catch {
+            return nil
+        }
+        guard let samples = buffer.floatChannelData?[0] else { return nil }
+        let count = Int(buffer.frameLength)
+        let sampleRate = format.sampleRate
+        let window = max(1, Int(sampleRate * windowMs / 1000.0))
+        var windows: [(TimeInterval, Float)] = []
+        var offset = 0
+        while offset < count {
+            let end = min(count, offset + window)
+            var sum: Float = 0
+            var i = offset
+            while i < end {
+                let s = samples[i]
+                sum += s * s
+                i += 1
+            }
+            let n = Float(end - offset)
+            windows.append((TimeInterval(offset) / sampleRate, sqrt(sum / n)))
+            offset = end
+        }
+        let duration = TimeInterval(count) / sampleRate
+        let result = (duration, windows)
+        rmsCache[key] = result
+        return result
     }
 }

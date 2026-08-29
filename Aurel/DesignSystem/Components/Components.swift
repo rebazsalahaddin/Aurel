@@ -1161,11 +1161,18 @@ struct IllustrationPlaceholder: View {
             ZStack {
                 Color.auFill
 
-                Image(uiImage: artwork)
-                    .resizable()
-                    .scaledToFit()
-
-                IllustrationCredentialOverlay(artworkID: ill.id)
+                GeometryReader { proxy in
+                    let rect = fittedImageRect(imageSize: artwork.size, in: proxy.size)
+                    ZStack {
+                        Image(uiImage: artwork)
+                            .resizable()
+                            .frame(width: rect.width, height: rect.height)
+                        IllustrationCredentialOverlay(artworkID: ill.id)
+                            .frame(width: rect.width, height: rect.height)
+                    }
+                    .frame(width: rect.width, height: rect.height)
+                    .position(x: rect.midX, y: rect.midY)
+                }
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(
@@ -1244,10 +1251,62 @@ struct IllustrationPlaceholder: View {
     }
 }
 
+/// Image-choice field used by listen/match (and every other `kind: "image"`
+/// item). The card grows to the artwork's own aspect ratio so the full
+/// scene fills the field — no crop, no letterboxing. Missing art keeps
+/// the honest placeholder at 16:9.
+struct IllustrationChoiceFill: View {
+    let ill: IllustrationRef
+    var cornerRadius: CGFloat = 19
+
+    var body: some View {
+        if let artwork = UIImage(named: ill.id), artwork.size.height > 0 {
+            ZStack {
+                Image(uiImage: artwork)
+                    .resizable()
+                    .scaledToFit()
+
+                IllustrationCredentialOverlay(artworkID: ill.id)
+            }
+                .aspectRatio(artwork.size.width / artwork.size.height, contentMode: .fit)
+                .frame(maxWidth: .infinity)
+                .clipShape(
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                )
+                .accessibilityHidden(true)
+        } else {
+            IllustrationPlaceholder(
+                ill: ill,
+                aspectRatio: 16.0 / 9.0,
+                cornerRadius: cornerRadius,
+                kickerSize: 8.5,
+                captionSize: 10.5
+            )
+            .accessibilityHidden(true)
+        }
+    }
+}
+
+/// Letterbox-aware rect so badge typography tracks the fitted artwork, not
+/// the taller or wider container around it.
+private func fittedImageRect(imageSize: CGSize, in bounds: CGSize) -> CGRect {
+    guard imageSize.width > 0, imageSize.height > 0, bounds.width > 0, bounds.height > 0 else {
+        return CGRect(origin: .zero, size: bounds)
+    }
+    let scale = min(bounds.width / imageSize.width, bounds.height / imageSize.height)
+    let size = CGSize(width: imageSize.width * scale, height: imageSize.height * scale)
+    return CGRect(
+        x: (bounds.width - size.width) / 2,
+        y: (bounds.height - size.height) / 2,
+        width: size.width,
+        height: size.height
+    )
+}
+
 /// Deterministic app-layer credentials for commissioned badge artwork. The
 /// bitmap remains a reusable, text-free surface; names stay exact, accessible,
 /// and independent of image-generation spelling.
-private struct IllustrationCredentialOverlay: View {
+struct IllustrationCredentialOverlay: View {
     let artworkID: String
 
     private struct Placement: Identifiable {
@@ -1261,6 +1320,15 @@ private struct IllustrationCredentialOverlay: View {
         let lastWidth: CGFloat
         let firstScale: CGFloat
         let lastScale: CGFloat
+    }
+
+    private struct TextPlacement: Identifiable {
+        let id: String
+        let text: String
+        let x: CGFloat
+        let y: CGFloat
+        let width: CGFloat
+        let scale: CGFloat
     }
 
     var body: some View {
@@ -1288,6 +1356,19 @@ private struct IllustrationCredentialOverlay: View {
                         x: proxy.size.width * placement.x,
                         y: proxy.size.height * placement.lastY)
             }
+
+            ForEach(textPlacements) { placement in
+                Text(placement.text)
+                    .font(.figtree(.semibold, size: proxy.size.width * placement.scale))
+                    .tracking(0.12)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.35)
+                    .foregroundStyle(Color.auText.opacity(0.82))
+                    .frame(width: proxy.size.width * placement.width, alignment: .leading)
+                    .position(
+                        x: proxy.size.width * placement.x,
+                        y: proxy.size.height * placement.y)
+            }
         }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
@@ -1310,6 +1391,18 @@ private struct IllustrationCredentialOverlay: View {
             return "Badge: Sam Rivera."
         case "A1-C01-ILL032":
             return "Badges: Sam Rivera and Nina Petrova."
+        case "A1-C02-ILL010", "A1-C02-ILL025":
+            return "Badge: Maya Haddad."
+        case "A1-C02-ILL023":
+            return "Badge fields: first name and last name."
+        case "A1-C02-ILL026":
+            return "Badge: Alex Kim."
+        case "A1-C02-ILL027":
+            return "Badge: Sam Rivera."
+        case "A1-C02-ILL031":
+            return "Badges: Maya Haddad and Leo Novak."
+        case "A1-C02-ILL034":
+            return "Register: Sam Rivera, phone 4-0-1, 7-3-2. Badge: Nina Petrova."
         default:
             return nil
         }
@@ -1376,6 +1469,66 @@ private struct IllustrationCredentialOverlay: View {
             return [
                 person("sam", "SAM", "RIVERA", 0.348, 0.544, 0.569, 0.044),
                 person("nina", "NINA", "PETROVA", 0.691, 0.503, 0.529, 0.044),
+            ]
+        case "A1-C02-ILL010":
+            return [person("maya", "MAYA", "HADDAD", 0.703, 0.478, 0.519, 0.084)]
+        case "A1-C02-ILL023":
+            return [
+                Placement(
+                    id: "schema", first: "FIRST NAME", last: "LAST NAME",
+                    x: 0.678, firstY: 0.405, lastY: 0.453,
+                    firstWidth: 0.104, lastWidth: 0.104,
+                    firstScale: 0.0083, lastScale: 0.0080)
+            ]
+        case "A1-C02-ILL025":
+            return [person("maya", "MAYA", "HADDAD", 0.500, 0.477, 0.527, 0.076)]
+        case "A1-C02-ILL026":
+            return [
+                Placement(
+                    id: "alex", first: "ALEX", last: "KIM",
+                    x: 0.578, firstY: 0.738, lastY: 0.758,
+                    firstWidth: 0.046, lastWidth: 0.046,
+                    firstScale: 0.0056, lastScale: 0.0050)
+            ]
+        case "A1-C02-ILL027":
+            return [
+                Placement(
+                    id: "sam", first: "SAM", last: "RIVERA",
+                    x: 0.352, firstY: 0.495, lastY: 0.520,
+                    firstWidth: 0.034, lastWidth: 0.038,
+                    firstScale: 0.0080, lastScale: 0.0066)
+            ]
+        case "A1-C02-ILL031":
+            return [
+                person("maya", "MAYA", "HADDAD", 0.426, 0.798, 0.828, 0.092),
+                person("leo", "LEO", "NOVAK", 0.720, 0.812, 0.838, 0.096),
+            ]
+        case "A1-C02-ILL034":
+            return [
+                Placement(
+                    id: "nina", first: "NINA", last: "PETROVA",
+                    x: 0.786, firstY: 0.391, lastY: 0.548,
+                    firstWidth: 0.220, lastWidth: 0.220,
+                    firstScale: 0.0200, lastScale: 0.0170)
+            ]
+        default:
+            return []
+        }
+    }
+
+    private var textPlacements: [TextPlacement] {
+        switch artworkID {
+        case "A1-C02-ILL034":
+            return [
+                TextPlacement(
+                    id: "name", text: "NAME:  SAM RIVERA",
+                    x: 0.220, y: 0.285, width: 0.280, scale: 0.0140),
+                TextPlacement(
+                    id: "phone", text: "PHONE:  4-0-1, 7-3-2",
+                    x: 0.220, y: 0.446, width: 0.280, scale: 0.0140),
+                TextPlacement(
+                    id: "email", text: "EMAIL:",
+                    x: 0.220, y: 0.608, width: 0.280, scale: 0.0140),
             ]
         default:
             return []

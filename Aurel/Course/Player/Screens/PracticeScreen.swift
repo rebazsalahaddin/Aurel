@@ -414,7 +414,7 @@ struct PracticeScreenView: View {
                     cornerRadius: 18,
                     captionSize: 11.5
                 )
-                .overlay { ReadingWelcomeCardOverlay(lines: lines) }
+                .overlay { ReadingWelcomeCardOverlay(lines: lines, artworkID: artworkID) }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(lines.joined(separator: " "))
                 .padding(.bottom, 16)
@@ -504,7 +504,8 @@ struct PracticeScreenView: View {
         }
         .padding(.bottom, 16)
 
-        if item.aud != nil {
+        // Speak items hear the model from the MODEL play control, not this pill.
+        if item.aud != nil, item.kind != "speak" {
             Button {
                 m.plays += 1
                 m.speak(
@@ -551,6 +552,19 @@ struct PracticeScreenView: View {
                         ? "au.player.badge.sam-rivera"
                         : "au.player.badge.fields"
                 )
+                .padding(.bottom, 14)
+            } else if ill.id == "A1-C01-ILL030" {
+                let lines = welcomeCardLines(for: item)
+                IllustrationPlaceholder(
+                    ill: ill,
+                    height: 186,
+                    aspectRatio: 16.0 / 9.0,
+                    cornerRadius: 20,
+                    captionSize: 11.5
+                )
+                .overlay { ReadingWelcomeCardOverlay(lines: lines, artworkID: ill.id) }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(lines.joined(separator: " "))
                 .padding(.bottom, 14)
             } else {
                 IllustrationPlaceholder(
@@ -1189,7 +1203,7 @@ struct PracticeScreenView: View {
                     .frame(height: 26)
 
                     Button {
-                        m.speak(word, audio: item.aud)
+                        m.listenToSpeakModel()
                     } label: {
                         AUIcon(
                             kind: isModelPlaying ? .loop : .play,
@@ -1201,6 +1215,7 @@ struct PracticeScreenView: View {
                     }
                     .buttonStyle(.auTap)
                     .accessibilityLabel("Play model pronunciation")
+                    .accessibilityIdentifier("au.player.speak.model")
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
@@ -1232,7 +1247,7 @@ struct PracticeScreenView: View {
                         .frame(height: 26)
                     }
 
-                    if rec.takes > 0 && m.say.lastTakeData != nil {
+                    if rec.takes > 0 && m.say.canPlayLearnerTake {
                         Button {
                             Task { await m.say.playLearnerTake() }
                         } label: {
@@ -1246,6 +1261,7 @@ struct PracticeScreenView: View {
                         }
                         .buttonStyle(.auTap)
                         .accessibilityLabel("Play your recorded voice")
+                        .accessibilityIdentifier("au.player.speak.learner")
                     } else {
                         AUIcon(kind: .play, size: 16, color: Color.auText.opacity(0.2))
                             .frame(width: 34, height: 34)
@@ -1345,7 +1361,7 @@ struct PracticeScreenView: View {
                     .padding(.top, 12)
             }
 
-            if rec.takes > 0 && m.say.lastTakeData != nil {
+            if rec.takes > 0 && m.say.canPlayLearnerTake {
                 Button {
                     playBoth(word: word, audio: item.aud)
                 } label: {
@@ -1377,23 +1393,6 @@ struct PracticeScreenView: View {
                 .strokeBorder(Color.auEdge, lineWidth: 1)
         )
         .padding(.bottom, 14)
-
-        // below the card
-        HStack(spacing: 12) {
-            Button {
-                m.advance()
-            } label: {
-                Text("Skip — say it later")
-                    .font(.figtree(.semibold, size: 16.5))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 17)
-                    .background(
-                        RoundedRectangle(cornerRadius: AURadius.btn, style: .continuous)
-                            .strokeBorder(Color.auDivider, lineWidth: 1))
-            }
-            .buttonStyle(.auTap)
-            APillButton(title: "Go on", player: true) { m.advance() }
-        }
     }
 
     private func playBoth(word: String, audio: String?) {
@@ -1570,14 +1569,7 @@ struct PracticeScreenView: View {
                         .frame(maxWidth: .infinity, minHeight: 104)
                 } else if let ill = o.ill {
                     ZStack(alignment: .topTrailing) {
-                        Image(ill.id)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity, alignment: .top)
-                            .frame(height: 120, alignment: .top)
-                            .clipped()
-                            .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
-                            .accessibilityHidden(true)
+                        IllustrationChoiceFill(ill: ill, cornerRadius: radius)
 
                         if m.done && isKey && !quiet {
                             AUIcon(kind: .check, size: 18, color: .auOkText)
@@ -1595,8 +1587,7 @@ struct PracticeScreenView: View {
                                 .padding(8)
                         }
                     }
-                    .padding(6)
-                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(maxWidth: .infinity)
                 } else if let t = o.text {
                     HStack(spacing: 12) {
                         Text(t)
@@ -1619,6 +1610,7 @@ struct PracticeScreenView: View {
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .fill(bg)
             )
+            .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .strokeBorder(bd, lineWidth: 1.5)
@@ -1675,33 +1667,76 @@ private struct ReadingBadgePairOverlay: View {
 
 private struct ReadingWelcomeCardOverlay: View {
     let lines: [String]
+    var artworkID: String = ""
 
     var body: some View {
         GeometryReader { proxy in
-            if let first = lines.first {
-                Text(first)
-                    .font(.caprasimo(size: proxy.size.width * 0.048))
-                    .tracking(-0.18)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.65)
-                    .foregroundStyle(Color.auText.opacity(0.88))
-                    .frame(width: proxy.size.width * 0.34)
-                    .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.39)
-            }
+            if artworkID == "A1-C02-ILL029" {
+                ForEach(Array(lines.prefix(5).enumerated()), id: \.offset) { index, line in
+                    let ys: [CGFloat] = [0.28, 0.40, 0.52, 0.64, 0.76]
+                    let scales: [CGFloat] = [0.026, 0.018, 0.016, 0.015, 0.022]
+                    let widths: [CGFloat] = [0.42, 0.52, 0.54, 0.56, 0.42]
+                    Text(line)
+                        .font(
+                            index == 0 || index + 1 == min(lines.count, 5)
+                                ? .caprasimo(size: proxy.size.width * scales[index])
+                                : .figtree(.semibold, size: proxy.size.width * scales[index])
+                        )
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.55)
+                        .foregroundStyle(Color.auText.opacity(0.86))
+                        .frame(width: proxy.size.width * widths[index])
+                        .position(x: proxy.size.width * 0.50, y: proxy.size.height * ys[index])
+                }
+            } else {
+                if let first = lines.first {
+                    Text(first)
+                        .font(.caprasimo(size: proxy.size.width * 0.048))
+                        .tracking(-0.18)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.65)
+                        .foregroundStyle(Color.auText.opacity(0.88))
+                        .frame(width: proxy.size.width * 0.34)
+                        .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.39)
+                }
 
-            if lines.count > 1 {
-                Text(lines[1])
-                    .font(.figtree(.semibold, size: proxy.size.width * 0.036))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.65)
-                    .foregroundStyle(Color.auText.opacity(0.82))
-                    .frame(width: proxy.size.width * 0.43)
-                    .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.62)
+                if lines.count > 1 {
+                    Text(lines[1])
+                        .font(.figtree(.semibold, size: proxy.size.width * 0.036))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.65)
+                        .foregroundStyle(Color.auText.opacity(0.82))
+                        .frame(width: proxy.size.width * 0.43)
+                        .position(x: proxy.size.width * 0.50, y: proxy.size.height * 0.62)
+                }
             }
         }
         .allowsHitTesting(false)
         .accessibilityHidden(true)
     }
+}
+
+private func welcomeCardLines(for item: PlayerModel.PlayerItem) -> [String] {
+    if let lines = quotedCardLines(from: item.prompt), !lines.isEmpty {
+        if lines.count <= 2 { return Array(lines) }
+        let name = lines.first { $0.localizedCaseInsensitiveContains("my name") } ?? lines[1]
+        return [lines[0], name]
+    }
+    return ["Welcome!", "My name is Maya."]
+}
+
+private func quotedCardLines(from prompt: String?) -> [String]? {
+    guard let prompt else { return nil }
+    let pattern = #"Card:\s*[“"](.+?)[”"]"#
+    guard let regex = try? NSRegularExpression(pattern: pattern),
+          let match = regex.firstMatch(
+            in: prompt, range: NSRange(prompt.startIndex..., in: prompt)),
+          let range = Range(match.range(at: 1), in: prompt)
+    else { return nil }
+    return prompt[range]
+        .split(separator: "/")
+        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .filter { !$0.isEmpty }
 }
 
 private struct SamBadgeCredentialOverlay: View {

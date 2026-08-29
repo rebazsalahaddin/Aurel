@@ -486,6 +486,12 @@ protocol TakeRecording: AnyObject {
     func start() async throws
     @discardableResult func stop() -> URL?
     func discardTake(_ url: URL?)
+    /// Bytes of the take `stop()` just closed, once the file is fully written.
+    func takeBytes() async -> Data?
+}
+
+extension TakeRecording {
+    func takeBytes() async -> Data? { nil }
 }
 
 extension MicRecorder: TakeRecording {}
@@ -508,6 +514,9 @@ final class MicRecorder {
 
     private var recorder: AVAudioRecorder?
     private var meterTask: Task<Void, Never>?
+    /// Held for the recorder's weak `delegate` until the m4a is closed.
+    private var finishWatcher: RecorderFinishWatcher?
+    private var finalizedTakeData: Data?
     private var fileURL: URL {
         URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("aurel-take.m4a")
     }
@@ -535,9 +544,10 @@ final class MicRecorder {
     /// audio-server IPC that once froze the app mid-take (S0-003). Throws
     /// only on failures — callers degrade.
     func start() async throws {
-        stop()
+        abandonRecorder()
         try await AudioSessionGate.activateForRecording()
         try? FileManager.default.removeItem(at: fileURL)
+        finalizedTakeData = nil
         let settings: [String: Any] = [
             AVFormatIDKey: kAudioFormatMPEG4AAC,
             AVSampleRateKey: 44100,
@@ -546,7 +556,14 @@ final class MicRecorder {
         ]
         let rec = try AVAudioRecorder(url: fileURL, settings: settings)
         rec.isMeteringEnabled = true
+        let watcher = RecorderFinishWatcher()
+        watcher.onFinish = { [weak self] success in
+            self?.handleRecorderFinished(success: success)
+        }
+        rec.delegate = watcher
+        finishWatcher = watcher
         guard rec.record() else {
+            abandonRecorder()
             throw NSError(
                 domain: "aurel.mic", code: 1,
                 userInfo: [NSLocalizedDescriptionKey: "recorder failed to start"])
@@ -569,9 +586,9 @@ final class MicRecorder {
     }
 
     /// End the take. Returns the take's file URL (nil when the recorder
-    /// never captured), and discards the recorder. The session returns to
-    /// the standing playback category so TTS and feedback sounds stay
-    /// themselves after a take.
+    /// never captured). The recorder is kept alive until its finish
+    /// callback closes the m4a — releasing it here left an unreadable file
+    /// and a dead YOU play control.
     @discardableResult
     func stop() -> URL? {
         meterTask?.cancel()
@@ -579,20 +596,107 @@ final class MicRecorder {
         let url = recorder?.url
         let wasRecording = recorder?.isRecording ?? false
         recorder?.stop()
-        recorder = nil
         isRecording = false
-        // Restore the Speaker's standing session (playback / spoken audio) —
-        // ordered through the gate, never on the main thread.
-        AudioSessionGate.enqueuePlaybackRestore()
-        guard wasRecording else { return nil }
+        guard wasRecording else {
+            abandonRecorder()
+            AudioSessionGate.enqueuePlaybackRestore()
+            return nil
+        }
         return url
     }
 
+    /// Wait until `AVAudioRecorder` has closed the take file, then return
+    /// its bytes. Times out rather than wedging the take flow.
+    func takeBytes() async -> Data? {
+        if let data = finalizedTakeData, !data.isEmpty { return data }
+        for _ in 0..<20 {
+            if let data = finalizedTakeData, !data.isEmpty { return data }
+            if recorder == nil { return readableTakeData() }
+            try? await Task.sleep(for: .milliseconds(40))
+        }
+        return finalizedTakeData ?? readableTakeData()
+    }
+
     /// The take file is handed to the recognizer, then deleted — nothing
-    /// the learner says is ever kept.
+    /// the learner says is ever kept. In-memory `lastTakeData` is what
+    /// the YOU play control uses after this.
     func discardTake(_ url: URL?) {
+        abandonRecorder()
         guard let url else { return }
         try? FileManager.default.removeItem(at: url)
+    }
+
+    private func handleRecorderFinished(success: Bool) {
+        if success {
+            finalizedTakeData = readableTakeData()
+        } else if let data = readableTakeData(), !data.isEmpty {
+            finalizedTakeData = data
+        }
+        recorder = nil
+        finishWatcher = nil
+    }
+
+    private func readableTakeData() -> Data? {
+        let url = recorder?.url ?? fileURL
+        guard let data = try? Data(contentsOf: url), !data.isEmpty else { return nil }
+        return data
+    }
+
+    private func abandonRecorder() {
+        meterTask?.cancel()
+        meterTask = nil
+        recorder?.delegate = nil
+        if recorder?.isRecording == true {
+            recorder?.stop()
+        }
+        recorder = nil
+        finishWatcher = nil
+        isRecording = false
+    }
+}
+
+/// `AVAudioRecorder.delegate` is weak — this object is retained by
+/// `MicRecorder` until the take file is closed.
+@MainActor
+private final class RecorderFinishWatcher: NSObject, AVAudioRecorderDelegate {
+    var onFinish: ((Bool) -> Void)?
+
+    nonisolated func audioRecorderDidFinishRecording(
+        _ recorder: AVAudioRecorder, successfully flag: Bool
+    ) {
+        Task { @MainActor [weak self] in
+            self?.onFinish?(flag)
+        }
+    }
+}
+
+/// Keeps `AVAudioPlayer` alive for the learner-take compare play. The
+/// player's delegate is weak, so this object is the retain root.
+@MainActor
+private final class LearnerTakePlayback: NSObject, AVAudioPlayerDelegate {
+    var player: AVAudioPlayer?
+    var onEnd: (() -> Void)?
+
+    func stop() {
+        player?.delegate = nil
+        player?.stop()
+        player = nil
+    }
+
+    nonisolated func audioPlayerDidFinishPlaying(
+        _ player: AVAudioPlayer, successfully flag: Bool
+    ) {
+        Task { @MainActor [weak self] in
+            self?.onEnd?()
+        }
+    }
+
+    nonisolated func audioPlayerDecodeErrorDidOccur(
+        _ player: AVAudioPlayer, error: Error?
+    ) {
+        Task { @MainActor [weak self] in
+            self?.onEnd?()
+        }
     }
 }
 
@@ -714,7 +818,7 @@ final class SayCoach {
     private(set) var activeTarget = ""
     private(set) var lastTakeData: Data?
     private(set) var isPlayingLearnerTake = false
-    private var learnerPlayer: AVAudioPlayer?
+    private var learnerPlayback: LearnerTakePlayback?
     private var stopTask: Task<Void, Never>?
     private var recognitionPreparationGeneration = 0
 
@@ -736,6 +840,13 @@ final class SayCoach {
     /// The live metering the waveform renders.
     var samples: [Double] { recorder.samples }
     var level: Double { recorder.level }
+
+    /// The YOU play control is enabled only when the last take's audio is
+    /// actually in memory — a counted take with no bytes stays disabled.
+    var canPlayLearnerTake: Bool {
+        guard let lastTakeData else { return false }
+        return !lastTakeData.isEmpty
+    }
 
     // MARK: Flow
 
@@ -859,7 +970,8 @@ final class SayCoach {
         let transcribe = transcriber
         let timeout = assessmentTimeout
         Task { @MainActor in
-            self.lastTakeData = try? Data(contentsOf: url)
+            self.lastTakeData = await Self.loadTakeData(url: url, recorder: self.recorder)
+            AudioSessionGate.enqueuePlaybackRestore()
             // Belt-and-braces: a wedged transcriber must not leave the
             // "Checking…" state up forever.
             let outcome = await withTimeout({ await transcribe(url) }, timeout: timeout)
@@ -902,35 +1014,63 @@ final class SayCoach {
 
     /// Plays back the learner's last recorded take for comparison against the model audio.
     func playLearnerTake() async {
-        guard let data = lastTakeData else { return }
+        guard canPlayLearnerTake, let data = lastTakeData else { return }
         stopLearnerTake()
+        onCaptureWillBegin()
         // Session mode first, off the main thread (S0-003), then the player.
         await AudioSessionGate.activateForPlayback()
         do {
-            let player = try AVAudioPlayer(data: data, fileTypeHint: AVFileType.m4a.rawValue)
-            learnerPlayer = player
+            let player: AVAudioPlayer
+            if let hinted = try? AVAudioPlayer(
+                data: data, fileTypeHint: AVFileType.m4a.rawValue)
+            {
+                player = hinted
+            } else {
+                player = try AVAudioPlayer(data: data)
+            }
+            player.volume = 1
+            let playback = LearnerTakePlayback()
+            playback.player = player
+            playback.onEnd = { [weak self, weak playback] in
+                guard let self, self.learnerPlayback === playback else { return }
+                self.isPlayingLearnerTake = false
+                self.learnerPlayback = nil
+            }
+            player.delegate = playback
+            learnerPlayback = playback
             isPlayingLearnerTake = true
             player.prepareToPlay()
-            player.play()
-            Task { @MainActor in
-                while player.isPlaying {
-                    try? await Task.sleep(for: .milliseconds(80))
-                }
-                if self.learnerPlayer === player {
-                    self.isPlayingLearnerTake = false
-                    self.learnerPlayer = nil
-                }
+            guard player.play() else {
+                isPlayingLearnerTake = false
+                learnerPlayback = nil
+                return
             }
         } catch {
             isPlayingLearnerTake = false
+            learnerPlayback = nil
         }
     }
 
     /// Stops any ongoing playback of the learner's recorded take.
     func stopLearnerTake() {
-        learnerPlayer?.stop()
-        learnerPlayer = nil
+        learnerPlayback?.stop()
+        learnerPlayback = nil
         isPlayingLearnerTake = false
+    }
+
+    /// Stops learner playback and any in-progress capture so the model line
+    /// can play. Keeps the last finished take — `reset()` is what forgets it.
+    func interruptForModelPlayback() {
+        stopLearnerTake()
+        guard recording else { return }
+        stopTask?.cancel()
+        stopTask = nil
+        recognitionPreparationGeneration += 1
+        let url = recorder.stop()
+        recording = false
+        assessing = false
+        recorder.discardTake(url)
+        AudioSessionGate.enqueuePlaybackRestore()
     }
 
     /// Leaving the surface: any running take ends without a verdict, and
@@ -948,6 +1088,16 @@ final class SayCoach {
         recording = false
         assessing = false
         preparingRecognition = false
+        AudioSessionGate.enqueuePlaybackRestore()
+    }
+
+    private static func loadTakeData(url: URL, recorder: any TakeRecording) async -> Data? {
+        if let data = await recorder.takeBytes(), !data.isEmpty { return data }
+        for _ in 0..<12 {
+            if let data = try? Data(contentsOf: url), !data.isEmpty { return data }
+            try? await Task.sleep(for: .milliseconds(40))
+        }
+        return try? Data(contentsOf: url)
     }
 
     /// §3.16(d): re-check the permission (on appear / returning from

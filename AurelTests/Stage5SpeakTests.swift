@@ -18,7 +18,15 @@ final class FakeTakeRecorder: TakeRecording {
     func stop() -> URL? {
         guard isRecording else { return nil }
         isRecording = false
+        if let url = urlToReturn {
+            try? Data(repeating: 0x7F, count: 256).write(to: url)
+        }
         return urlToReturn
+    }
+
+    func takeBytes() async -> Data? {
+        guard let url = urlToReturn else { return nil }
+        return try? Data(contentsOf: url)
     }
 
     func discardTake(_ url: URL?) {
@@ -280,5 +288,31 @@ final class Stage5SpeakTests: XCTestCase {
         XCTAssertFalse(coach.recording)
         XCTAssertFalse(coach.micDenied)
         XCTAssertFalse(coach.preparingRecognition)
+    }
+
+    func testFinishedTakeStaysPlayableAfterModelPlayback() async throws {
+        let coach = SayCoach()
+        let fake = FakeTakeRecorder()
+        coach.recorder = fake
+        coach.recognitionProbe = { true }
+        coach.micPermissionProbe = { .granted }
+        coach.transcriber = { _ in .text("hello world") }
+
+        await coach.toggle(target: "hello world")
+        coach.finish()
+        try await Task.sleep(for: .milliseconds(80))
+
+        XCTAssertTrue(coach.canPlayLearnerTake, "a finished take must keep playable audio")
+        XCTAssertNotNil(coach.lastTakeData)
+        XCTAssertFalse(coach.lastTakeData?.isEmpty ?? true)
+
+        coach.interruptForModelPlayback()
+        XCTAssertTrue(
+            coach.canPlayLearnerTake,
+            "hearing the model must not wipe the learner take")
+
+        coach.reset()
+        XCTAssertFalse(coach.canPlayLearnerTake)
+        XCTAssertNil(coach.lastTakeData)
     }
 }

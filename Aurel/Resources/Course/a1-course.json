@@ -5813,7 +5813,7 @@
        {
         "id": "PR-P010",
         "word": "My name is ___. I'm ___.",
-        "aud": "AUD038",
+        "aud": "AUD040",
         "note": "Use your own name. Keep the voice down at the end for telling. Private playback."
        }
       ],
@@ -5822,7 +5822,7 @@
       "assets": [
        "A1-C01-AUD044",
        "A1-C01-AUD046",
-       "A1-C01-AUD038",
+       "A1-C01-AUD040",
        "A1-C01-ILL018–021"
       ]
      },
@@ -9150,7 +9150,7 @@
         "id": "V010",
         "w": "phone",
         "ipa": "/foʊn/",
-        "aud": "AUD046",
+        "aud": "AUD051",
         "fn": "the thing you call with",
         "ill": {
          "id": "A1-C02-ILL018",
@@ -9161,7 +9161,7 @@
         "id": "V011",
         "w": "phone number",
         "ipa": "/ˈfoʊn ˌnʌmbər/",
-        "aud": "AUD047",
+        "aud": "AUD052",
         "fn": "detail chunk — the digits row",
         "ill": {
          "id": "A1-C02-ILL018",
@@ -9172,7 +9172,7 @@
         "id": "V012",
         "w": "email",
         "ipa": "/ˈiːmeɪl/",
-        "aud": "AUD048",
+        "aud": "AUD053",
         "fn": "the message you send",
         "ill": {
          "id": "A1-C02-ILL019",
@@ -9183,7 +9183,7 @@
         "id": "V013",
         "w": "email address",
         "ipa": "/ˈiːmeɪl ˌædrɛs/",
-        "aud": "AUD049",
+        "aud": "AUD054",
         "fn": "detail chunk — the message row",
         "ill": {
          "id": "A1-C02-ILL019",
@@ -9194,7 +9194,7 @@
         "id": "V014",
         "w": "address",
         "ipa": "/ˈædrɛs/",
-        "aud": "AUD050",
+        "aud": "AUD055",
         "fn": "where something is sent",
         "ill": {
          "id": "A1-C02-ILL020",
@@ -9205,7 +9205,7 @@
         "id": "V015",
         "w": "at",
         "ipa": "/æt/",
-        "aud": "AUD051",
+        "aud": "AUD056",
         "fn": "email symbol word (@)",
         "symbol": "@",
         "ill": {
@@ -9217,7 +9217,7 @@
         "id": "V016",
         "w": "dot",
         "ipa": "/dɑːt/",
-        "aud": "AUD052",
+        "aud": "AUD057",
         "fn": "email symbol word (.)",
         "symbol": ".",
         "ill": {
@@ -9229,7 +9229,7 @@
         "id": "V017",
         "w": "What's your phone number?",
         "ipa": "/wʌts jʊr ˈfoʊn ˌnʌmbər/",
-        "aud": "AUD053",
+        "aud": "AUD058",
         "fn": "detail question chunk",
         "chunk": true,
         "ill": {
@@ -9241,7 +9241,7 @@
         "id": "V018",
         "w": "What's your email address?",
         "ipa": "/wʌts jʊr ˈiːmeɪl ˌædrɛs/",
-        "aud": "AUD054",
+        "aud": "AUD059",
         "fn": "detail question chunk",
         "chunk": true,
         "ill": {
@@ -9256,7 +9256,7 @@
       },
       "tip": "Nine cards, one continuous register-filling story. The email cards show the spoken form in app-layer text with the written form appearing beside it on the final tap — the app, not the art, owns every symbol. Chunk cards keep the \"say it as one thing\" link icon from L01.",
       "assets": [
-       "A1-C02-AUD046–054",
+       "A1-C02-AUD051–059",
        "A1-C02-ILL016–024"
       ]
      },
@@ -10086,8 +10086,8 @@
         "instr": "Look. Choose.",
         "icon": "choose",
         "ill": {
-         "id": "A1-C02-ILL002",
-         "alt": "Maya's finished badge on the desk"
+       "id": "A1-C02-ILL010",
+       "alt": "Maya holds her completed badge while Nina points toward it"
         },
         "prompt": "The badge says M-A-Y-A. Nina reads it: ___ Maya!",
         "opts": [
@@ -11131,7 +11131,7 @@
         "id": "V010",
         "w": "phone",
         "ipa": "/foʊn/",
-        "aud": "AUD046",
+        "aud": "AUD051",
         "fn": "the thing you call with",
         "ill": {
          "id": "A1-C02-ILL018",
@@ -11142,7 +11142,7 @@
         "id": "V011",
         "w": "phone number",
         "ipa": "/ˈfoʊn ˌnʌmbər/",
-        "aud": "AUD047",
+        "aud": "AUD052",
         "fn": "detail chunk — the digits row",
         "ill": {
          "id": "A1-C02-ILL018",
@@ -11153,7 +11153,7 @@
         "id": "V012",
         "w": "email",
         "ipa": "/ˈiːmeɪl/",
-        "aud": "AUD048",
+        "aud": "AUD053",
         "fn": "the message you send",
         "ill": {
          "id": "A1-C02-ILL019",
@@ -11164,7 +11164,7 @@
         "id": "V013",
         "w": "email address",
         "ipa": "/ˈiːmeɪl ˌædrɛs/",
-        "aud": "AUD049",
+        "aud": "AUD054",
         "fn": "detail chunk — the message row",
         "ill": {
          "id": "A1-C02-ILL019",
@@ -11175,7 +11175,7 @@
         "id": "V014",
         "w": "address",
         "ipa": "/ˈædrɛs/",
-        "aud": "AUD050",
+        "aud": "AUD055",
         "fn": "where something is sent",
         "ill": {
          "id": "A1-C02-ILL020",
@@ -11186,7 +11186,7 @@
         "id": "V015",
         "w": "at",
         "ipa": "/æt/",
-        "aud": "AUD051",
+        "aud": "AUD056",
         "fn": "email symbol word (@)",
         "symbol": "@",
         "ill": {
@@ -11198,7 +11198,7 @@
         "id": "V016",
         "w": "dot",
         "ipa": "/dɑːt/",
-        "aud": "AUD052",
+        "aud": "AUD057",
         "fn": "email symbol word (.)",
         "symbol": ".",
         "ill": {
@@ -11210,7 +11210,7 @@
         "id": "V017",
         "w": "What's your phone number?",
         "ipa": "/wʌts jʊr ˈfoʊn ˌnʌmbər/",
-        "aud": "AUD053",
+        "aud": "AUD058",
         "fn": "detail question chunk",
         "chunk": true,
         "ill": {
@@ -11222,7 +11222,7 @@
         "id": "V018",
         "w": "What's your email address?",
         "ipa": "/wʌts jʊr ˈiːmeɪl ˌædrɛs/",
-        "aud": "AUD054",
+        "aud": "AUD059",
         "fn": "detail question chunk",
         "chunk": true,
         "ill": {
@@ -13117,7 +13117,7 @@
        {
         "id": "PR-P008",
         "word": "H-A-D-D-A-D",
-        "aud": "AUD070",
+        "aud": "AUD069",
         "note": "Spell Maya's family name with her — six letters, two at a time: H-A … D-D … A-D."
        },
        {
@@ -13137,6 +13137,7 @@
       "tip": "Model waveform + learner waveform stacked, replay for each, skip equal to record. Ungraded throughout; accent, speed and tone are coached, never scored.",
       "assets": [
        "A1-C02-AUD061",
+       "A1-C02-AUD069",
        "A1-C02-AUD070",
        "A1-C02-AUD076"
       ]

@@ -104,6 +104,40 @@ final class PlayerModelTests: XCTestCase {
         XCTAssertTrue(m.itemCanGo, "the correct ordering enables Go-on in a quiz too")
     }
 
+    func testSpeakItemGatesGoOnUntilTheLearnerListens() throws {
+        let m = try model(atScreen: "S05")
+        let idx = try XCTUnwrap(
+            m.items.firstIndex { $0.kind == "speak" }, "S05 must carry a speak item")
+        m.i = idx
+        XCTAssertEqual(m.item?.word, "hello")
+        XCTAssertFalse(m.itemCanGo, "fresh speak item must gate Go-on")
+
+        m.listenToSpeakModel()
+        XCTAssertEqual(m.plays, 1)
+        XCTAssertTrue(m.itemCanGo, "hearing the model must enable Go-on and skip")
+    }
+
+    func testEverySpeakItemUnlocksAfterListening() {
+        let store = CourseDecodingTests.store
+        var count = 0
+        for (pos, f) in store.flat.enumerated() {
+            let m = PlayerModel(course: store, start: pos)
+            for (idx, it) in m.items.enumerated() where it.kind == "speak" {
+                m.i = idx
+                m.plays = 0
+                XCTAssertFalse(
+                    m.itemCanGo,
+                    "\(f.screen.id) · \(it.id) must gate Go-on until the model is heard")
+                m.listenToSpeakModel()
+                XCTAssertTrue(
+                    m.itemCanGo,
+                    "\(f.screen.id) · \(it.id) must unlock after listening")
+                count += 1
+            }
+        }
+        XCTAssertGreaterThan(count, 0, "the course must include speak items")
+    }
+
     /// Every order item inside a practice screen must have a correct ordering
     /// that enables Go-on — the property that makes every lesson completable.
     func testEveryPracticeOrderItemIsCompletable() throws {
@@ -338,6 +372,46 @@ final class PlayerModelTests: XCTestCase {
         XCTAssertEqual(artworkByWord["yes"], Set(["A1-C01-ILL035"]))
         XCTAssertEqual(artworkByWord["no"], Set(["A1-C01-ILL036"]))
         XCTAssertTrue(artworkByWord["yes"]?.isDisjoint(with: artworkByWord["no"] ?? []) == true)
+    }
+
+    func testNextCardStaysGatedUntilTheLearnerListens() throws {
+        // S04 is Lesson 1 Set A (hello … see you).
+        let m = try model(atScreen: "S04")
+        XCTAssertEqual(m.cur?.screen.kind, .cards)
+        XCTAssertFalse(m.hasHeardCurrentCard)
+        XCTAssertFalse(m.heardCardIndexes.contains(0))
+
+        m.listenToCurrentCard()
+        XCTAssertTrue(m.hasHeardCurrentCard)
+        XCTAssertEqual(m.speakText(for: m.card), "hello")
+
+        m.moveToCard(1)
+        XCTAssertEqual(m.card.main, "hi")
+        XCTAssertFalse(m.hasHeardCurrentCard)
+
+        m.listenToCurrentCard()
+        m.moveToCard(0)
+        XCTAssertTrue(m.hasHeardCurrentCard, "a card already heard must stay unlocked")
+    }
+
+    func testLetterAndNumberCardsSpeakTheVisibleSymbol() throws {
+        let store = CourseDecodingTests.store
+        let letters = try XCTUnwrap(
+            store.flat.firstIndex { $0.screen.kind == .letterCards })
+        let letterModel = PlayerModel(course: store, start: letters)
+        XCTAssertEqual(letterModel.speakText(for: letterModel.card), "A")
+        XCTAssertEqual(letterModel.card.aud, "AUD011")
+
+        letterModel.c = try XCTUnwrap(letterModel.cardList.firstIndex { $0.main.hasPrefix("B ") })
+        XCTAssertEqual(letterModel.speakText(for: letterModel.card), "B")
+        XCTAssertEqual(letterModel.card.aud, "A1-C02-AUD015")
+
+        let numbers = try XCTUnwrap(
+            store.flat.firstIndex { $0.screen.kind == .numbers })
+        let numberModel = PlayerModel(course: store, start: numbers)
+        XCTAssertEqual(numberModel.speakText(for: numberModel.card), "zero")
+        numberModel.c = try XCTUnwrap(numberModel.cardList.firstIndex { $0.digit == "1" })
+        XCTAssertEqual(numberModel.speakText(for: numberModel.card), "one")
     }
 
     private func assertStartsMixed(_ m: PlayerModel, context: String) {

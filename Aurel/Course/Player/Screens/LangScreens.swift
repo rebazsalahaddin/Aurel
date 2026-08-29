@@ -674,7 +674,7 @@ struct PronPerceiveScreenView: View {
                                         WaveForm(heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent)
                                             .frame(height: 26)
                                         Button {
-                                            m.speak(Self.perceiveFallbackText(for: it))
+                                            m.listenToPerceiveModel(it)
                                         } label: {
                                             AUIcon(kind: .play, size: 17, color: .auAccent)
                                         }
@@ -729,32 +729,6 @@ struct PronPerceiveScreenView: View {
             }
         }
     }
-
-    /// The TTS fallback for a perceive item — the keyed option when the item
-    /// carries a key ("the thing you hear"), else the prompt line. `speak`
-    /// needs non-empty text even when the catalog asset exists.
-    private static func perceiveFallbackText(for it: PronPerceiveItem) -> String {
-        if let word = it.word, !word.isEmpty {
-            return word
-        }
-        let opts = it.opts ?? []
-        if let key = it.key?.single,
-            let option = opts.first(where: { PlayerModel.matchesKey($0, key: key, opts: opts) }),
-            let text = option.text, !text.isEmpty
-        {
-            return text
-        }
-        if let prompt = it.prompt {
-            if prompt.localizedCaseInsensitiveContains("tap the strong word:") {
-                let parts = prompt.components(separatedBy: ":")
-                if parts.count > 1 {
-                    return parts.dropFirst().joined(separator: ":").trimmingCharacters(in: .whitespacesAndNewlines)
-                }
-            }
-            return prompt
-        }
-        return " "
-    }
 }
 
 // MARK: Pronunciation — produce
@@ -808,7 +782,7 @@ private struct PronProduceItemCard: View {
             VStack(alignment: .leading, spacing: 0) {
                 KaraokeText(
                     text: it.word,
-                    isSpoken: m.isSpeakingText(Self.spokenModelText(for: it), audio: it.aud),
+                    isSpoken: m.isSpeakingText(m.speakText(forProduce: it), audio: it.aud),
                     spokenRange: m.playback?.spokenRange
                 )
                 .font(.caprasimo(size: 22))
@@ -849,7 +823,7 @@ private struct PronProduceItemCard: View {
             WaveForm(heights: [10, 20, 26, 14, 22, 12, 18, 24], color: .auAccent)
                 .frame(height: 26)
             Button {
-                m.speak(Self.spokenModelText(for: it), audio: it.aud)
+                m.listenToProduceModel(it)
             } label: {
                 AUIcon(kind: .play, size: 17, color: .auAccent)
             }
@@ -879,7 +853,7 @@ private struct PronProduceItemCard: View {
                 )
                 .frame(height: 26)
             }
-            if rec.takes > 0 && m.say.lastTakeData != nil {
+            if rec.takes > 0 && m.say.canPlayLearnerTake {
                 Button {
                     Task { await m.say.playLearnerTake() }
                 } label: {
@@ -891,6 +865,7 @@ private struct PronProduceItemCard: View {
                 }
                 .buttonStyle(.auTap)
                 .accessibilityLabel("Play your recorded voice")
+                .accessibilityIdentifier("au.player.produce.learner")
             } else {
                 AUIcon(kind: .play, size: 17, color: .auText.opacity(0.35))
             }
@@ -997,17 +972,6 @@ private struct PronProduceItemCard: View {
             )
             .foregroundStyle(Color.auTintText)
             .padding(.top, 12)
-    }
-
-    static func spokenModelText(for it: PronProduceItem) -> String {
-        var text = it.word.replacingOccurrences(of: "·", with: "")
-        if text.contains("___") {
-            text = text.replacingOccurrences(of: "___", with: "Alex")
-        }
-        if it.word == "H-A-D-D-A-D" {
-            return "H. A. D. D. A. D."
-        }
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 

@@ -43,6 +43,26 @@ final class RendererCoverageSuite: XCTestCase {
         app.descendants(matching: .any).matching(identifier: identifier).firstMatch
     }
 
+    /// Cards gate Next until Listen; artwork tests still walk the pager.
+    private func listenThenAdvanceCard(after word: String) {
+        let listen = app.buttons["Listen"]
+        XCTAssertTrue(listen.waitForExistence(timeout: 4), "card \(word) has no Listen button")
+        if !listen.isHittable {
+            for _ in 0..<4 { app.swipeUp() }
+        }
+        XCTAssertTrue(listen.isHittable, "card \(word) Listen is not hittable")
+        listen.tap()
+
+        let next = app.buttons["Next card"]
+        XCTAssertTrue(next.waitForExistence(timeout: 4), "card \(word) has no next action")
+        if !next.isHittable {
+            for _ in 0..<4 { app.swipeUp() }
+        }
+        XCTAssertTrue(next.isEnabled, "card \(word) Next must unlock after Listen")
+        XCTAssertTrue(next.isHittable, "card \(word) next action is not hittable")
+        next.tap()
+    }
+
     func testAll29AuthoredKindsRenderAndExit() {
         XCTAssertEqual(Self.authoredKinds.count, 29, "the authored renderer inventory changed")
         var leakedAuthoringTokens: [String] = []
@@ -114,10 +134,7 @@ final class RendererCoverageSuite: XCTestCase {
             add(screenshot)
 
             guard index + 1 < expectedWords.count else { continue }
-            let next = app.buttons["Next card"]
-            XCTAssertTrue(next.waitForExistence(timeout: 4), "card \(word) has no next action")
-            XCTAssertTrue(next.isHittable, "card \(word) next action is not hittable")
-            next.tap()
+            listenThenAdvanceCard(after: word)
         }
 
         XCTAssertTrue(app.buttons["Go on"].waitForExistence(timeout: 4))
@@ -153,10 +170,7 @@ final class RendererCoverageSuite: XCTestCase {
             add(screenshot)
 
             guard index + 1 < expectedWords.count else { continue }
-            let next = app.buttons["Next card"]
-            XCTAssertTrue(next.waitForExistence(timeout: 4), "card \(word) has no next action")
-            XCTAssertTrue(next.isHittable, "card \(word) next action is not hittable")
-            next.tap()
+            listenThenAdvanceCard(after: word)
         }
 
         XCTAssertTrue(app.buttons["Go on"].waitForExistence(timeout: 4))
@@ -203,11 +217,7 @@ final class RendererCoverageSuite: XCTestCase {
             add(screenshot)
 
             guard index + 1 < expectedWords.count else { continue }
-            let next = app.buttons["Next card"]
-            XCTAssertTrue(next.waitForExistence(timeout: 4), "card \(word) has no next action")
-            for _ in 0..<4 where !next.isHittable { app.swipeUp() }
-            XCTAssertTrue(next.isHittable, "card \(word) next action is not hittable")
-            next.tap()
+            listenThenAdvanceCard(after: word)
         }
 
         XCTAssertTrue(app.buttons["Go on"].waitForExistence(timeout: 4))
@@ -258,11 +268,7 @@ final class RendererCoverageSuite: XCTestCase {
             add(screenshot)
 
             guard index + 1 < expectedWords.count else { continue }
-            let next = app.buttons["Next card"]
-            XCTAssertTrue(next.waitForExistence(timeout: 4), "card \(word) has no next action")
-            for _ in 0..<4 where !next.isHittable { app.swipeUp() }
-            XCTAssertTrue(next.isHittable, "card \(word) next action is not hittable")
-            next.tap()
+            listenThenAdvanceCard(after: word)
         }
 
         XCTAssertTrue(app.buttons["Go on"].waitForExistence(timeout: 4))
@@ -310,11 +316,7 @@ final class RendererCoverageSuite: XCTestCase {
             add(screenshot)
 
             guard index + 1 < expectedWords.count else { continue }
-            let next = app.buttons["Next card"]
-            XCTAssertTrue(next.waitForExistence(timeout: 4), "card \(word) has no next action")
-            for _ in 0..<4 where !next.isHittable { app.swipeUp() }
-            XCTAssertTrue(next.isHittable, "card \(word) next action is not hittable")
-            next.tap()
+            listenThenAdvanceCard(after: word)
         }
 
         XCTAssertTrue(app.buttons["Go on"].waitForExistence(timeout: 4))
@@ -412,6 +414,7 @@ final class RendererCoverageSuite: XCTestCase {
             screenshot.lifetime = .keepAlways
             add(screenshot)
             app.terminate()
+            Thread.sleep(forTimeInterval: 0.6)
         }
     }
 
@@ -482,6 +485,174 @@ final class RendererCoverageSuite: XCTestCase {
             if !goOn.isHittable { app.swipeUp() }
             XCTAssertTrue(goOn.isHittable, "\(itemID) Go on action is not tappable")
             goOn.tap()
+        }
+    }
+
+    /// Chapter 2 credential typography is app-owned so generated art never
+    /// guesses at names or numbers. Exercise the four prominent badge scenes
+    /// directly and preserve their settled layouts as production evidence.
+    func testChapterTwoProminentBadgeCredentialsRenderAccurately() {
+        let screens = [
+            (
+                lesson: "L01", screen: "S09", kind: "cards",
+                item: nil as String?,
+                credential: "Badge: Maya Haddad.",
+                filename: "chapter-2-badge-maya-haddad.png"
+            ),
+            (
+                lesson: "L03", screen: "S24", kind: "testlet",
+                item: nil as String?,
+                credential: "Badge: Sam Rivera.",
+                filename: "chapter-2-badge-sam-rivera.png"
+            ),
+            (
+                lesson: "L03", screen: "S25", kind: "testlet",
+                item: "PR-LS011 · transfer" as String?,
+                credential: "Badge: Alex Kim.",
+                filename: "chapter-2-badge-alex-kim.png"
+            ),
+            (
+                lesson: "L04", screen: "S32", kind: "missionBrief",
+                item: nil as String?,
+                credential: "Badge: Maya Haddad.",
+                filename: "chapter-2-mission-badge-maya-haddad.png"
+            ),
+        ]
+
+        for screen in screens {
+            app.launchArguments = [
+                "-AUREL_TEST_RESET", "-AUREL_COURSE_SCREEN",
+                "A1-C02", screen.lesson, screen.screen,
+            ]
+            if let item = screen.item {
+                app.launchArguments += ["-AUREL_COURSE_ITEM", item]
+            }
+            app.launch()
+
+            let root = anyElement("au.player.kind.\(screen.kind)")
+            XCTAssertTrue(root.waitForExistence(timeout: 12), "\(screen.screen) did not render")
+            let credential = app.descendants(matching: .any)
+                .matching(NSPredicate(format: "label CONTAINS[c] %@", screen.credential))
+                .firstMatch
+            XCTAssertTrue(
+                credential.waitForExistence(timeout: 5),
+                "\(screen.screen) is missing \(screen.credential)"
+            )
+            Thread.sleep(forTimeInterval: 0.8)
+
+            let screenshot = XCTAttachment(screenshot: app.screenshot())
+            screenshot.name = screen.filename
+            screenshot.lifetime = .keepAlways
+            add(screenshot)
+            app.terminate()
+            Thread.sleep(forTimeInterval: 0.6)
+        }
+    }
+
+    /// Walk the authored conversation practice to both credential-bearing
+    /// late items: Leo's exact desk badge and the learner-safe field schema.
+    func testChapterTwoConversationBadgeCredentialsRenderAccurately() {
+        let items = [
+            (
+                id: "PR-CV013",
+                credential: "Badges: Maya Haddad and Leo Novak.",
+                filename: "chapter-2-badges-maya-haddad-leo-novak.png"
+            ),
+            (
+                id: "PR-CV015",
+                credential: "Badge fields: first name and last name.",
+                filename: "chapter-2-badge-first-name-last-name.png"
+            ),
+        ]
+
+        for item in items {
+            app.launchArguments = [
+                "-AUREL_TEST_RESET", "-AUREL_COURSE_SCREEN", "A1-C02", "L03", "S27",
+                "-AUREL_COURSE_ITEM", item.id,
+            ]
+            app.launch()
+
+            let root = anyElement("au.player.kind.practice")
+            XCTAssertTrue(
+                root.waitForExistence(timeout: 12),
+                "Chapter 2 conversation practice did not render"
+            )
+            XCTAssertTrue(
+                anyElement("au.player.fixture.item.\(item.id)").waitForExistence(timeout: 6),
+                "missing conversation item \(item.id)"
+            )
+            let credential = app.descendants(matching: .any)
+                .matching(NSPredicate(format: "label CONTAINS[c] %@", item.credential))
+                .firstMatch
+            XCTAssertTrue(
+                credential.waitForExistence(timeout: 5),
+                "\(item.id) is missing \(item.credential)"
+            )
+            Thread.sleep(forTimeInterval: 0.8)
+
+            let screenshot = XCTAttachment(screenshot: app.screenshot())
+            screenshot.name = item.filename
+            screenshot.lifetime = .keepAlways
+            add(screenshot)
+            app.terminate()
+            Thread.sleep(forTimeInterval: 0.6)
+        }
+    }
+
+    /// The closeout verifies the exact count image, the reusable badge schema,
+    /// and the final Sam/Nina register surface without OCR or bitmap text.
+    func testChapterTwoCloseoutArtworkAndCredentialsRenderAccurately() {
+        let items = [
+            (
+                id: "QZ-N005",
+                credential: "Exactly nine cups stand in a neat three-by-three grid",
+                filename: "chapter-2-exactly-nine-cups.png"
+            ),
+            (
+                id: "QZ-G001",
+                credential: "Badge fields: first name and last name.",
+                filename: "chapter-2-closeout-badge-fields.png"
+            ),
+            (
+                id: "QZ-RD001",
+                credential: "Register: Sam Rivera, phone 4-0-1, 7-3-2. Badge: Nina Petrova.",
+                filename: "chapter-2-register-sam-rivera-nina-petrova.png"
+            ),
+            (
+                id: "QZ-RD002 · cumulative C1",
+                credential: "Register: Sam Rivera, phone 4-0-1, 7-3-2. Badge: Nina Petrova.",
+                filename: "chapter-2-badge-nina-petrova.png"
+            ),
+        ]
+
+        for item in items {
+            app.launchArguments = [
+                "-AUREL_TEST_RESET", "-AUREL_COURSE_SCREEN", "A1-C02", "L04", "S35",
+                "-AUREL_COURSE_ITEM", item.id,
+            ]
+            app.launch()
+
+            let root = anyElement("au.player.kind.quiz")
+            XCTAssertTrue(root.waitForExistence(timeout: 12), "the Chapter 2 quiz did not render")
+            XCTAssertTrue(
+                anyElement("au.player.fixture.item.\(item.id)").waitForExistence(timeout: 6),
+                "missing closeout item \(item.id)"
+            )
+            let credential = app.descendants(matching: .any)
+                .matching(NSPredicate(format: "label CONTAINS[c] %@", item.credential))
+                .firstMatch
+            XCTAssertTrue(
+                credential.waitForExistence(timeout: 5),
+                "\(item.id) is missing \(item.credential)"
+            )
+            Thread.sleep(forTimeInterval: 0.8)
+
+            let screenshot = XCTAttachment(screenshot: app.screenshot())
+            screenshot.name = item.filename
+            screenshot.lifetime = .keepAlways
+            add(screenshot)
+            app.terminate()
+            Thread.sleep(forTimeInterval: 0.6)
         }
     }
 

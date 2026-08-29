@@ -519,7 +519,7 @@ struct CardsScreenView: View {
 
                     KaraokeText(
                         text: card.main,
-                        isSpoken: m.isSpeakingText(card.main, audio: card.aud),
+                        isSpoken: m.isSpeakingText(m.speakText(for: card), audio: card.aud),
                         spokenRange: m.playback?.spokenRange
                     )
                     .font(.caprasimo(size: 34))
@@ -554,8 +554,7 @@ struct CardsScreenView: View {
             // Listen + Say it
             HStack(spacing: 12) {
                 Button {
-                    m.plays += 1
-                    m.speak(card.main, audio: card.aud, slow: m.plays > 1)
+                    m.listenToCurrentCard()
                 } label: {
                     HStack(spacing: 9) {
                         AUIcon(kind: .ear, size: 24, color: .auPrimaryButtonText)
@@ -571,6 +570,7 @@ struct CardsScreenView: View {
                     .foregroundStyle(Color.auPrimaryButtonText)
                 }
                 .buttonStyle(.auTap)
+                .accessibilityIdentifier("au.player.listen")
 
                 Button {
                     Task { await m.say.toggle(target: card.main) }
@@ -674,8 +674,7 @@ struct CardsScreenView: View {
 
             HStack(spacing: 12) {
                 Button {
-                    m.c = max(0, m.c - 1)
-                    m.rec = 0
+                    m.moveToCard(max(0, m.c - 1))
                 } label: {
                     Text("Back")
                         .font(.figtree(.semibold, size: 16.5))
@@ -689,11 +688,11 @@ struct CardsScreenView: View {
                 .opacity(m.c == 0 ? 0.45 : 1)
 
                 APillButton(
-                    title: m.c + 1 < cards.count ? "Next card" : "Go on", icon: .arrow, player: true
+                    title: m.c + 1 < cards.count ? "Next card" : "Go on", icon: .arrow, player: true,
+                    disabled: !m.hasHeardCurrentCard
                 ) {
                     if m.c + 1 < cards.count {
-                        m.c += 1
-                        m.rec = 0
+                        m.moveToCard(m.c + 1)
                     } else {
                         m.goto(m.p + 1)
                     }

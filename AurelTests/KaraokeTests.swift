@@ -126,6 +126,69 @@ final class KaraokeTests: XCTestCase {
         XCTAssertFalse(playback.isSpoken(text: "Hello"))
     }
 
+    /// Word-model cards must play the bundled take, not system TTS. The old
+    /// matcher treated “Hello. … Hello.” as too long for “hello” and spoke
+    /// the system voice instead.
+    @MainActor
+    func testWordModelCardUsesRecordedTakeNotTTS() throws {
+        let playback = VoicePlayback(catalog: AudioCatalog(bundle: .main))
+        defer { playback.stop() }
+
+        playback.speak(audioID: "A1-C01-AUD002", text: "hello", slow: false)
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD002")
+        XCTAssertNotNil(playback.spokenLineText)
+        XCTAssertNotEqual(playback.spokenLineText, "hello")
+
+        playback.speak(audioID: "A1-C01-AUD003", text: "hi", slow: false)
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD003")
+    }
+
+    /// Image-match Listen cues come from picture alt (“morning”), not the
+    /// word-model script (“Good morning. … Good morning.”). That fragment
+    /// must still play the bundled take, never system TTS.
+    @MainActor
+    func testGreetingImageMatchCueUsesRecordedTakeNotTTS() throws {
+        let playback = VoicePlayback(catalog: AudioCatalog(bundle: .main))
+        defer { playback.stop() }
+
+        playback.speak(audioID: "A1-C01-AUD004", text: "morning", slow: false)
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD004")
+        XCTAssertNotNil(playback.spokenLineText)
+
+        playback.speak(audioID: "A1-C01-AUD006", text: "evening", slow: false)
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD006")
+
+        playback.speak(audioID: "A1-C01-AUD005", text: "afternoon", slow: false)
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD005")
+    }
+
+    /// A Listen item whose cue is the answer, not the stimulus script, still
+    /// plays the authored file instead of speaking the answer in a robot voice.
+    @MainActor
+    func testUnmatchedListenCueStillPlaysBundledTake() throws {
+        let playback = VoicePlayback(catalog: AudioCatalog(bundle: .main))
+        defer { playback.stop() }
+
+        playback.speak(
+            audioID: "A1-C01-AUD032", text: "I'm good, thank you!", slow: false)
+        XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD032")
+        XCTAssertNotNil(playback.spokenLineText)
+    }
+
+    /// Perceive intonation cards share a folded spelling; the question mark
+    /// must still pick the asking clip, not the telling clip.
+    @MainActor
+    func testIntonationPairKeepsStatementAndQuestionClipsDistinct() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let asset = try XCTUnwrap(catalog.asset("A1-C01-AUD041"))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: asset.lines, requestedText: "You're Maya."),
+            .line(index: 0, clip: .ellipsisSegment(index: 0, count: 6)))
+        XCTAssertEqual(
+            VoicePlayback.selectTake(lines: asset.lines, requestedText: "You're Maya?"),
+            .line(index: 0, clip: .ellipsisSegment(index: 1, count: 6)))
+    }
+
     // MARK: KaraokeTimeline — the dialogue timeline resolver
 
     private func line(_ speaker: String, _ text: String) -> AudioCatalog.Line {

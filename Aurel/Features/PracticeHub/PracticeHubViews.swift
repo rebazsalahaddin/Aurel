@@ -415,7 +415,7 @@ struct SpeakView: View {
                                 if env.speaker.isSpeaking {
                                     env.speaker.stop()
                                 } else {
-                                    r.say.reset()
+                                    r.say.interruptForModelPlayback()
                                     env.speaker.speak(
                                         audioID: item.audioAsset.isEmpty ? nil : item.audioAsset,
                                         text: item.line, slow: false, lineIndex: nil)
@@ -458,23 +458,36 @@ struct SpeakView: View {
                 ACard(radius: 24, padded: false) {
                     VStack(alignment: .leading, spacing: 0) {
                         HStack(spacing: 14) {
-                            // Craft overhaul P1: was a play icon in a filled
-                            // circle that looked tappable but wasn't a Button.
-                            // Now a neutral mic status glyph — a mic reads as
-                            // "recording lives here", not "tap to play".
-                            AUIcon(
-                                kind: .mic, size: 18,
-                                color: r.speakTake == 0
-                                    ? .auText.opacity(0.32)
-                                    : AUSceneArt.onAccent2
-                            )
-                            .frame(width: 44, height: 44)
-                            .background(
-                                Circle().fill(
-                                    r.speakTake == 0
-                                        ? Color.auText.opacity(0.08) : Color.auAccent2Ramp(600))
-                            )
-                            .accessibilityHidden(true)
+                            if r.say.canPlayLearnerTake {
+                                Button {
+                                    Task { await r.say.playLearnerTake() }
+                                } label: {
+                                    AUIcon(
+                                        kind: r.say.isPlayingLearnerTake ? .loop : .play,
+                                        size: 18,
+                                        color: AUSceneArt.onAccent2
+                                    )
+                                    .frame(width: 44, height: 44)
+                                    .background(Circle().fill(Color.auAccent2Ramp(600)))
+                                }
+                                .buttonStyle(.auTap)
+                                .accessibilityLabel("Play your recorded voice")
+                                .accessibilityIdentifier("au.speak.learner")
+                            } else {
+                                AUIcon(
+                                    kind: .mic, size: 18,
+                                    color: r.speakTake == 0
+                                        ? .auText.opacity(0.32)
+                                        : AUSceneArt.onAccent2
+                                )
+                                .frame(width: 44, height: 44)
+                                .background(
+                                    Circle().fill(
+                                        r.speakTake == 0
+                                            ? Color.auText.opacity(0.08) : Color.auAccent2Ramp(600))
+                                )
+                                .accessibilityHidden(true)
+                            }
                             LiveWaveform(
                                 samples: takeSamples,
                                 tint: Color.auAccent2.opacity(

@@ -294,6 +294,46 @@ final class MilestoneSuite: XCTestCase {
                 }
             }
 
+            // Vocabulary / letter / number cards: Listen unlocks Next card.
+            if app.buttons["Say it"].exists || app.buttons["Recorded"].exists {
+                let listen = app.buttons["Listen"]
+                let next = app.buttons["Next card"]
+                let go = app.buttons["Go on"]
+                let canAdvance =
+                    (next.exists && next.isEnabled) || (go.exists && go.isEnabled)
+                if !canAdvance, listen.exists {
+                    if !listen.isHittable { app.swipeUp() }
+                    if listen.isHittable {
+                        listen.tap()
+                        advances += 1
+                        continue
+                    }
+                }
+            }
+
+            // Speak items: hearing the model unlocks the dock Go on / Skip.
+            if app.buttons["au.player.speak.mic"].exists {
+                let go = app.buttons["au.player.go-on"]
+                if !(go.exists && go.isEnabled) {
+                    let model = app.buttons["au.player.speak.model"]
+                    if !model.isHittable { app.swipeUp() }
+                    if model.exists, model.isHittable {
+                        model.tap()
+                        advances += 1
+                        continue
+                    }
+                    let listen = app.buttons["Listen"]
+                    if listen.exists {
+                        if !listen.isHittable { app.swipeUp() }
+                        if listen.isHittable {
+                            listen.tap()
+                            advances += 1
+                            continue
+                        }
+                    }
+                }
+            }
+
             // Roleplay: choose one visible reply per guided step. Speaking is
             // optional pronunciation practice and must never auto-answer.
             let roleplayExit = app.buttons["au.player.roleplay.safe-stop"]

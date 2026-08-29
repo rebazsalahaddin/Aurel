@@ -22,6 +22,8 @@ final class PlayerModel {
     var wrong = 0
     var done = false
     var plays = 0
+    /// Card indexes on the current screen whose Listen button has been tapped.
+    var heardCardIndexes: Set<Int> = []
     var caps = false
     var demo = 0
     var tried = false
@@ -148,9 +150,9 @@ final class PlayerModel {
         lineIndex: Int? = nil
     ) {
         guard let text, !text.isEmpty else { return }
-        // Switching back to the model line cancels a learner take and deletes
-        // its temporary file before the playback audio session starts.
-        say.reset()
+        // Stop a live learner take so it never talks over the model; keep
+        // the finished recording so the YOU play control still works.
+        say.interruptForModelPlayback()
         speaker?.speak(
             audioID: resolvedAudioID(audio), text: text, slow: slow,
             lineIndex: lineIndex)
@@ -185,6 +187,107 @@ final class PlayerModel {
         }
         return item.word ?? item.prompt ?? nil
     }
+
+    /// The phrase Listen should send to the player for the visible card.
+    func speakText(for card: PlayerCard) -> String {
+        if card.letter {
+            let letter = card.main.split(separator: " ").first.map(String.init) ?? card.main
+            return letter
+        }
+        if card.number {
+            return card.main.split(separator: " ").last.map(String.init) ?? card.main
+        }
+        guard let assetID = resolvedAudioID(card.aud),
+            let asset = audioCatalog.asset(assetID),
+            !asset.lines.isEmpty
+        else {
+            return VoicePlayback.cleanCardWord(card.main)
+        }
+        if card.main.contains("/") {
+            let unique = Set(
+                VoicePlayback.ellipsisSegments(asset.lines[0].text).map(VoicePlayback.heardWords)
+                    .filter { !$0.isEmpty })
+            if unique.count > 1 {
+                return asset.lines[0].text
+            }
+        }
+        return VoicePlayback.cleanCardWord(card.main)
+    }
+
+    func listenToCurrentCard() {
+        let card = self.card
+        plays += 1
+        heardCardIndexes.insert(c)
+        speak(speakText(for: card), audio: card.aud, slow: plays > 1)
+    }
+
+    /// Cue text for a pronunciation-perceive MODEL control: the phrase the
+    /// take should voice, so `selectTake` can clip a chain to this trial.
+    func speakText(forPerceive item: PronPerceiveItem) -> String {
+        if let word = item.word, !word.isEmpty {
+            return word
+        }
+        let opts = item.opts ?? []
+        if let key = item.key?.single, !key.isEmpty,
+            let option = opts.first(where: { Self.matchesKey($0, key: key, opts: opts) }),
+            let text = option.text, !text.isEmpty
+        {
+            return text
+        }
+        if let prompt = item.prompt {
+            if prompt.localizedCaseInsensitiveContains("tap the strong word:") {
+                let parts = prompt.components(separatedBy: ":")
+                if parts.count > 1 {
+                    let phrase = parts.dropFirst().joined(separator: ":")
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !phrase.isEmpty { return phrase }
+                }
+            }
+            return prompt
+        }
+        return " "
+    }
+
+    /// Cue text for a pronunciation-produce MODEL control.
+    func speakText(forProduce item: PronProduceItem) -> String {
+        var text = item.word.replacingOccurrences(of: "·", with: "")
+        if text.contains("___") {
+            text = text.replacingOccurrences(of: "___", with: "Alex")
+        }
+        if item.word == "H-A-D-D-A-D" {
+            return "H. A. D. D. A. D."
+        }
+        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Play the authored perceive-model take for this card, never a silent cue.
+    func listenToPerceiveModel(_ item: PronPerceiveItem) {
+        speak(speakText(forPerceive: item), audio: item.aud)
+    }
+
+    /// Play the authored produce-model take for this card.
+    func listenToProduceModel(_ item: PronProduceItem) {
+        speak(speakText(forProduce: item), audio: item.aud)
+    }
+
+    var hasHeardCurrentCard: Bool {
+        heardCardIndexes.contains(c)
+    }
+
+    func moveToCard(_ index: Int) {
+        let list = cardList
+        guard list.indices.contains(index), index != c else { return }
+        speaker?.stop()
+        c = index
+        rec = 0
+        plays = 0
+    }
+
+    private var audioCatalog: AudioCatalog {
+        playback?.catalog ?? Self.bundledCatalog
+    }
+
+    private static let bundledCatalog = AudioCatalog(bundle: .main)
 
     init(
         course: CourseStore, start: Int, bound: Bool = true,
@@ -265,6 +368,7 @@ final class PlayerModel {
         wrong = 0
         done = false
         plays = 0
+        heardCardIndexes = []
         caps = false
         demo = 0
         tried = false
@@ -690,16 +794,28 @@ final class PlayerModel {
     /// override at line 1590: `if (itemOrder) { v.canGo = v.tileCorrect }`.
     /// The port originally dropped that override, so order-kind practice items
     /// gated on `done` (which only `pick()` sets) and lessons stalled forever.
+    /// Speak items are ungraded listen-and-say: Go-on (and skip) unlock after
+    /// the learner hears the model (`plays > 0`).
     var itemCanGo: Bool {
         guard let it = item else { return false }
         if it.kind == "order" {
             if isQuiet { return tileComplete }
             return tileCorrect
         }
+        if it.kind == "speak" {
+            return plays > 0
+        }
         if isQuiet {
             return sel != nil
         }
         return done
+    }
+
+    /// Play the speak-item model. Marks the item heard so the dock CTAs unlock.
+    func listenToSpeakModel() {
+        guard let it = item, it.kind == "speak" else { return }
+        plays += 1
+        speak(it.word ?? it.prompt ?? "", audio: it.aud)
     }
 
     func selectMatchCue(_ id: Int) {
@@ -825,7 +941,8 @@ final class PlayerModel {
                             main: l + "  " + l.lowercased(),
                             ipa: s.letterNames?[l] ?? "",
                             sub: "Family \(f.n)",
-                            aud: f.aud,
+                            aud: Self.letterAudioReference(
+                                l, familyAud: f.aud, chapterID: cur.chapter.id),
                             letter: true
                         ))
                 }
@@ -854,8 +971,24 @@ final class PlayerModel {
         return list.indices.contains(c) ? list[c] : PlayerCard()
     }
 
+    /// Isolated letter models exist only for the confusable pairs; every other
+    /// letter still points at its family recitation, which Listen clips to that
+    /// letter's own phrase.
+    private static func letterAudioReference(
+        _ letter: String, familyAud: String?, chapterID: String
+    ) -> String? {
+        let isolated: [String: Int] = [
+            "B": 15, "D": 16, "E": 17, "H": 18, "M": 19, "N": 20, "R": 21, "S": 22,
+        ]
+        if chapterID == "A1-C02", let asset = isolated[letter] {
+            return String(format: "A1-C02-AUD%03d", asset)
+        }
+        return familyAud
+    }
+
     /// Chapter 2's number bank authored individual models for every number
-    /// except one/four, which intentionally live in the 0–5 count-along take.
+    /// except one/four, which live in the 0–5 count-along take and are clipped
+    /// to the matching word on Listen.
     private static func numberAudioReference(_ digit: String, chapterID: String) -> String? {
         guard chapterID == "A1-C02", let value = Int(digit), (0...20).contains(value) else {
             return nil

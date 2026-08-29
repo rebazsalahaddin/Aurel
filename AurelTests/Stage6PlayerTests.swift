@@ -55,6 +55,26 @@ final class Stage6PlayerTests: XCTestCase {
         XCTAssertFalse(say.recording)
     }
 
+    func testSpeakLeavesLearnerTakePlayable() async throws {
+        let store = CourseDecodingTests.store
+        let model = PlayerModel(course: store, start: 0, bound: false)
+        let fake = FakeTakeRecorder()
+        model.say.recorder = fake
+        model.say.recognitionProbe = { true }
+        model.say.micPermissionProbe = { .granted }
+        model.say.transcriber = { _ in .text("hello") }
+
+        await model.say.toggle(target: "hello")
+        model.say.finish()
+        try await Task.sleep(for: .milliseconds(80))
+        XCTAssertTrue(model.say.canPlayLearnerTake)
+
+        model.speak("hello")
+        XCTAssertTrue(
+            model.say.canPlayLearnerTake,
+            "playing the model line must not disable the YOU play control")
+    }
+
     func testScreenColumnAuthoringHeight() {
         let col = ScreenColumn(topPad: 24, bottomPad: 28) {
             Text("Test")
