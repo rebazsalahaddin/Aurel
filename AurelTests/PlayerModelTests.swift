@@ -414,6 +414,91 @@ final class PlayerModelTests: XCTestCase {
         XCTAssertEqual(numberModel.speakText(for: numberModel.card), "one")
     }
 
+    func testConversationPlayRevealsTurnsWithTheSpokenLine() throws {
+        let m = try conversationModel(chapter: "A1-C01", screen: "S20")
+        guard case .conversation(let conversation) = m.cur?.screen.payload else {
+            return XCTFail("C1 S20 must be a conversation")
+        }
+        let turnCount = try XCTUnwrap(conversation.turns?.count)
+        XCTAssertGreaterThan(turnCount, 2)
+        XCTAssertEqual(m.turn, 1)
+        XCTAssertEqual(m.conversationRevealed, 1)
+
+        m.startConversationPlayback(texts: (conversation.turns ?? []).map(\.t), audio: nil)
+        XCTAssertEqual(m.turn, 1, "play must not jump to the last turn")
+        XCTAssertEqual(m.conversationRevealed, 1)
+
+        m.revealConversationTurn(spokenLine: 2, progress: 0, turnCount: turnCount)
+        XCTAssertEqual(m.turn, 3)
+        XCTAssertEqual(m.conversationRevealed, 3)
+
+        m.revealConversationTurn(spokenLine: 0, progress: 0, turnCount: turnCount)
+        XCTAssertEqual(m.turn, 1, "focus follows the spoken line")
+        XCTAssertEqual(m.conversationRevealed, 3, "already-heard turns stay visible")
+
+        m.resetConversationPlayback()
+        XCTAssertEqual(m.turn, 1)
+        XCTAssertEqual(m.conversationRevealed, 1)
+    }
+
+    func testConversationStoryboardFollowsEachAuthoredDialogue() {
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 1, panelCount: 5, turnCount: 8), 0)
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 2, panelCount: 5, turnCount: 8), 1)
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 4, panelCount: 5, turnCount: 8), 2)
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 8, panelCount: 5, turnCount: 8), 4)
+
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 1, panelCount: 5, turnCount: 10), 0)
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 3, panelCount: 5, turnCount: 10), 1)
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 10, panelCount: 5, turnCount: 10), 4)
+
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 1, panelCount: 2, turnCount: 10), 0)
+        XCTAssertEqual(
+            ConversationPlayback.activePanelIndex(turn: 6, panelCount: 2, turnCount: 10), 1)
+    }
+
+    func testConversationTogglePausesAndResumesRecordedTake() throws {
+        let m = try conversationModel(chapter: "A1-C01", screen: "S20")
+        guard case .conversation(let conversation) = m.cur?.screen.payload else {
+            return XCTFail("C1 S20 must be a conversation")
+        }
+        let playback = VoicePlayback(catalog: AudioCatalog(bundle: .main))
+        defer { playback.stop() }
+        m.speaker = playback
+        let texts = (conversation.turns ?? []).map(\.t)
+
+        m.toggleConversationPlayback(texts: texts, audio: conversation.aud)
+        XCTAssertTrue(m.isConversationPlaying)
+        XCTAssertFalse(m.isConversationPaused)
+        XCTAssertEqual(m.conversationRevealed, 1)
+        XCTAssertEqual(m.turn, 1)
+
+        m.toggleConversationPlayback(texts: texts, audio: conversation.aud)
+        XCTAssertTrue(m.isConversationPaused)
+        XCTAssertFalse(m.isConversationPlaying)
+        XCTAssertEqual(playback.spokenLine, 0)
+
+        m.toggleConversationPlayback(texts: texts, audio: conversation.aud)
+        XCTAssertTrue(m.isConversationPlaying)
+        XCTAssertFalse(m.isConversationPaused)
+        XCTAssertEqual(playback.spokenLine, 0)
+    }
+
+    private func conversationModel(chapter: String, screen: String) throws -> PlayerModel {
+        let store = CourseDecodingTests.store
+        let pos = try XCTUnwrap(
+            store.flat.firstIndex { $0.chapter.id == chapter && $0.screen.id == screen },
+            "\(chapter) \(screen) not found")
+        return PlayerModel(course: store, start: pos)
+    }
+
     private func assertStartsMixed(_ m: PlayerModel, context: String) {
         let task = m.tileTask
         guard task.tiles.count > 1, task.tiles.count == task.key.count else { return }

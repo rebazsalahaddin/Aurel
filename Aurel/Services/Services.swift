@@ -80,7 +80,10 @@ protocol AudioPlaying {
     /// bundled takes; everyone else falls back to the text.
     func speak(audioID: String?, text: String, slow: Bool, lineIndex: Int?)
     func stop()
+    func pause()
+    func resume()
     var isSpeaking: Bool { get }
+    var isPaused: Bool { get }
 }
 
 extension AudioPlaying {
@@ -88,6 +91,10 @@ extension AudioPlaying {
     func speak(audioID: String?, text: String, slow: Bool, lineIndex: Int? = nil) {
         speak(text, slow: slow)
     }
+
+    func pause() {}
+    func resume() {}
+    var isPaused: Bool { false }
 }
 
 @MainActor
@@ -158,6 +165,18 @@ final class Speaker: NSObject, AudioPlaying, AVSpeechSynthesizerDelegate {
         spokenRange = nil
         AUSound.shared.isDucked = false
     }
+
+    func pause() {
+        guard speaking, !synthesizer.isPaused else { return }
+        synthesizer.pauseSpeaking(at: .immediate)
+    }
+
+    func resume() {
+        guard speaking, synthesizer.isPaused else { return }
+        synthesizer.continueSpeaking()
+    }
+
+    var isPaused: Bool { synthesizer.isPaused }
 
     nonisolated func speechSynthesizer(
         _ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance

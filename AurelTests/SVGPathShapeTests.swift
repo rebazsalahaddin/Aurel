@@ -21,7 +21,7 @@ final class SVGPathShapeTests: XCTestCase {
         let kinds: [AUIcon.Kind] = [
             .ear, .eye, .tap, .choose, .match, .mouth, .loop,
             .check, .arrow, .close, .back,
-            .play, .mic, .link, .lock,
+            .play, .pause, .mic, .link, .lock,
             .gear, .offline, .sparkle, .flame, .trophy,
             .pencil, .star, .chevron, .chevronDown,
             .speech, .reviewLoop, .camera, .alert, .clock, .warning,

@@ -1006,26 +1006,39 @@ struct ConversationScreenView: View {
                         .padding(.bottom, 14)
                 }
 
+                let turns = c.turns ?? []
+                let spokenLine = m.playback?.spokenLine ?? -1
+                let playing = m.isConversationPlaying
+                let paused = m.isConversationPaused
                 HStack(spacing: 11) {
                     Button {
-                        m.plays += 1
-                        let turns = c.turns ?? []
-                        if !turns.isEmpty {
-                            m.turn = turns.count
-                            m.speak(
-                                turns.map(\.t).joined(separator: " "),
-                                audio: c.aud ?? c.lineAud)
-                        }
+                        m.toggleConversationPlayback(
+                            texts: turns.map(\.t),
+                            audio: c.aud ?? c.lineAud)
                     } label: {
-                        AUIcon(kind: .play, size: 24, color: .auPrimaryButtonText)
-                            .frame(width: 56, height: 56)
-                            .background(Circle().fill(Color.auAccentRamp(600)))
+                        AUIcon(
+                            kind: playing ? .pause : .play,
+                            size: 24,
+                            color: .auPrimaryButtonText
+                        )
+                        .frame(width: 56, height: 56)
+                        .background(Circle().fill(Color.auAccentRamp(600)))
                     }
                     .buttonStyle(.auTap)
+                    .accessibilityLabel(
+                        playing
+                            ? "Pause the conversation"
+                            : (paused ? "Resume the conversation" : "Play the conversation")
+                    )
+                    .accessibilityIdentifier("au.player.conversation.play")
 
                     VStack(alignment: .leading, spacing: 0) {
-                        Text("Play the conversation")
-                            .font(.figtree(.semibold, size: 13.5))
+                        Text(
+                            playing
+                                ? "Pause the conversation"
+                                : (paused ? "Resume the conversation" : "Play the conversation")
+                        )
+                        .font(.figtree(.semibold, size: 13.5))
                         Text("Replay any single turn when you want another listen.")
                             .font(.figtree(.regular, size: 11.5))
                             .foregroundStyle(Color.auTextTertiary)
@@ -1033,62 +1046,88 @@ struct ConversationScreenView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     Button {
-                        m.turn = 1
+                        m.resetConversationPlayback()
                     } label: {
                         AUIcon(kind: .loop, size: 17)
                             .frame(width: 40, height: 40)
                             .background(Circle().strokeBorder(Color.auDivider, lineWidth: 1))
                     }
                     .buttonStyle(.auTap)
-                    .accessibilityLabel("Replay")
+                    .accessibilityLabel("Restart the conversation")
+                    .accessibilityIdentifier("au.player.conversation.restart")
                 }
                 .padding(.bottom, 14)
 
-                let karaokeRows = (c.turns ?? []).map {
+                let karaokeRows = turns.map {
                     KaraokeTimeline.Row(speaker: $0.sp, text: $0.t)
                 }
                 VStack(spacing: 8) {
-                    ForEach(Array((c.turns ?? []).enumerated()), id: \.offset) { k, t in
-                        let on = k < m.turn
-                        HStack(alignment: .top, spacing: 9) {
-                            Text(t.n)
-                                .font(.figtree(.bold, size: 8.5))
-                                .tracking(0.63)
-                                .frame(width: 22, alignment: .leading)
-                                .padding(.top, 4)
-                                .foregroundStyle(Color.auText.opacity(0.34))
-                            Text(t.sp)
-                                .font(.figtree(.bold, size: 9.5))
-                                .tracking(0.72)
-                                .frame(width: 42, alignment: .leading)
-                                .padding(.top, 3)
-                                .foregroundStyle(Color.auAccentText)
-                            KaraokeText(
-                                text: t.t,
-                                isSpoken: m.isSpeakingRow(
-                                    k, in: karaokeRows, audio: c.aud ?? c.lineAud),
-                                spokenRange: m.playback?.spokenRange
+                    ForEach(Array(turns.prefix(m.conversationRevealed).enumerated()), id: \.offset) {
+                        k, t in
+                        let current = k == m.turn - 1
+                        Button {
+                            m.replayConversationTurn(
+                                index: k, text: t.t, audio: c.aud ?? c.lineAud)
+                        } label: {
+                            HStack(alignment: .top, spacing: 9) {
+                                Text(t.n)
+                                    .font(.figtree(.bold, size: 8.5))
+                                    .tracking(0.63)
+                                    .frame(width: 22, alignment: .leading)
+                                    .padding(.top, 4)
+                                    .foregroundStyle(Color.auText.opacity(0.34))
+                                Text(t.sp)
+                                    .font(.figtree(.bold, size: 9.5))
+                                    .tracking(0.72)
+                                    .frame(width: 42, alignment: .leading)
+                                    .padding(.top, 3)
+                                    .foregroundStyle(Color.auAccentText)
+                                KaraokeText(
+                                    text: t.t,
+                                    isSpoken: m.isSpeakingRow(
+                                        k, in: karaokeRows, audio: c.aud ?? c.lineAud),
+                                    spokenRange: m.playback?.spokenRange
+                                )
+                                .font(.figtree(.regular, size: 15))
+                                .auLine(15, 1.4)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .padding(.horizontal, 13)
+                            .padding(.vertical, 11)
+                            .background(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .fill(current ? Color.auFill : Color.auFill.opacity(0.45))
                             )
-                            .font(.figtree(.regular, size: 15))
-                            .auLine(15, 1.4)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                    .strokeBorder(Color.auEdge, lineWidth: 1)
+                            )
                         }
-                        .padding(.horizontal, 13)
-                        .padding(.vertical, 11)
-                        .background(
-                            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                .fill(on ? Color.auFill : .clear)
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 15, style: .continuous)
-                                .strokeBorder(Color.auEdge, lineWidth: 1)
-                        )
-                        .opacity(on ? 1 : 0.32)
-                        .animation(
-                            AUMotion.animation(
-                                .easeInOut(duration: 0.35), reduceMotion: reduceMotion),
-                            value: m.turn)
+                        .buttonStyle(.auTap)
+                        .accessibilityLabel("Replay \(t.sp): \(t.t)")
+                        .transition(.opacity)
                     }
+                }
+                .animation(
+                    AUMotion.animation(
+                        .easeInOut(duration: 0.35), reduceMotion: reduceMotion),
+                    value: m.conversationRevealed)
+                .animation(
+                    AUMotion.animation(
+                        .easeInOut(duration: 0.35), reduceMotion: reduceMotion),
+                    value: m.turn)
+                .onChange(of: spokenLine) { _, line in
+                    m.revealConversationTurn(
+                        spokenLine: line,
+                        progress: m.playback?.progress ?? 0,
+                        turnCount: turns.count)
+                }
+                .onChange(of: m.playback?.progress ?? 0) { _, progress in
+                    guard spokenLine < 0, playing || paused else { return }
+                    m.revealConversationTurn(
+                        spokenLine: spokenLine,
+                        progress: progress,
+                        turnCount: turns.count)
                 }
 
                 if c.branch != nil {
@@ -1131,7 +1170,7 @@ struct ConversationScreenView: View {
     private func conversationStoryboard(
         panels: [String], turns: [ConversationScreen.ConversationTurn]
     ) -> some View {
-        let active = activePanelIndex(
+        let active = ConversationPlayback.activePanelIndex(
             turn: m.turn, panelCount: panels.count, turnCount: turns.count)
 
         return VStack(spacing: 9) {
@@ -1151,7 +1190,8 @@ struct ConversationScreenView: View {
                 ForEach(Array(panels.enumerated()), id: \.offset) { index, panel in
                     Button {
                         AUFeedback.press()
-                        m.turn = firstTurn(forPanel: index, panelCount: panels.count, turns: turns)
+                        m.turn = ConversationPlayback.firstTurn(
+                            forPanel: index, panelCount: panels.count, turnCount: turns.count)
                     } label: {
                         IllustrationPlaceholder(
                             ill: IllustrationRef(
@@ -1194,30 +1234,4 @@ struct ConversationScreenView: View {
         return "\(chapterID)-\(panel)"
     }
 
-    private func activePanelIndex(turn: Int, panelCount: Int, turnCount: Int) -> Int {
-        guard panelCount > 1 else { return 0 }
-        if panelCount == 5, turnCount == 8 {
-            switch turn {
-            case ...1: return 0
-            case 2: return 1
-            case 3...4: return 2
-            case 5...7: return 3
-            default: return 4
-            }
-        }
-
-        let progress = Double(max(0, turn - 1)) / Double(max(1, turnCount - 1))
-        return min(panelCount - 1, Int((progress * Double(panelCount - 1)).rounded(.down)))
-    }
-
-    private func firstTurn(
-        forPanel panel: Int, panelCount: Int, turns: [ConversationScreen.ConversationTurn]
-    ) -> Int {
-        if panelCount == 5, turns.count == 8 {
-            return [1, 2, 3, 5, 8][panel]
-        }
-        guard panelCount > 1 else { return 1 }
-        let progress = Double(panel) / Double(panelCount - 1)
-        return min(turns.count, max(1, Int((progress * Double(max(1, turns.count - 1))).rounded()) + 1))
-    }
 }

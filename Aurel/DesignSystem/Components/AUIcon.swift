@@ -258,7 +258,7 @@ struct AUIcon: View {
     enum Kind {
         case ear, eye, tap, choose, match, mouth, loop
         case check, arrow, close, back, person
-        case play, mic, link, lock
+        case play, pause, mic, link, lock
         case gear, offline, sparkle, flame, trophy
         case pencil, star, chevron, chevronDown
         case speech, reviewLoop, camera, alert, clock, warning
@@ -383,6 +383,11 @@ struct AUIcon: View {
         case .play:
             return [
                 Sub(d: "M8 5.4v13.2l10.5-6.6Z", fill: true, strokeWidth: 0)
+            ]
+        case .pause:
+            return [
+                Sub(d: rrect(x: 6.6, y: 5.4, w: 3.4, h: 13.2, r: 0.9), fill: true, strokeWidth: 0),
+                Sub(d: rrect(x: 14, y: 5.4, w: 3.4, h: 13.2, r: 0.9), fill: true, strokeWidth: 0),
             ]
         case .mic:
             return [

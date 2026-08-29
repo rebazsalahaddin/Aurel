@@ -115,6 +115,28 @@ final class KaraokeTests: XCTestCase {
     }
 
     @MainActor
+    func testPauseKeepsSpokenLineAndResumeContinues() throws {
+        let playback = VoicePlayback(catalog: AudioCatalog(bundle: .main))
+        defer { playback.stop() }
+
+        let asset = try XCTUnwrap(playback.catalog.asset("A1-C01-AUD043"))
+        playback.speak(audioID: asset.id, text: asset.lines[0].text, slow: false, lineIndex: 0)
+        XCTAssertTrue(playback.speaking)
+        XCTAssertFalse(playback.paused)
+
+        playback.pause()
+        XCTAssertTrue(playback.paused)
+        XCTAssertTrue(playback.speaking)
+        XCTAssertEqual(playback.spokenLine, 0)
+        XCTAssertEqual(playback.spokenAssetID, asset.id)
+
+        playback.resume()
+        XCTAssertFalse(playback.paused)
+        XCTAssertTrue(playback.speaking)
+        XCTAssertEqual(playback.spokenLine, 0)
+    }
+
+    @MainActor
     func testStopClearsKaraokeState() {
         let playback = VoicePlayback(catalog: AudioCatalog(bundle: .main))
         playback.speak(audioID: nil, text: "Hello", slow: false)

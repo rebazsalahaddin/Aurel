@@ -57,6 +57,9 @@ final class VoicePlayback: NSObject, AudioPlaying {
     /// equality is never consulted, so equal texts on other rows (or other
     /// screens) can never light up.
     private(set) var spokenAssetID: String?
+    /// True while a take is held mid-queue (play/pause). Karaoke identity
+    /// stays on the current line so the highlight does not snap off.
+    private(set) var paused = false
 
     let catalog: AudioCatalog
     private let tts: Speaker
@@ -303,6 +306,7 @@ final class VoicePlayback: NSObject, AudioPlaying {
         playerID = nil
         tts.stop()
         speaking = false
+        paused = false
         progress = 0
         lineProgress = 0
         spokenLine = -1
@@ -314,6 +318,34 @@ final class VoicePlayback: NSObject, AudioPlaying {
         clipEnd = nil
         AUSound.shared.isDucked = false
     }
+
+    func pause() {
+        guard speaking, !paused else { return }
+        ticker?.cancel()
+        ticker = nil
+        if let player {
+            player.pause()
+        } else {
+            tts.pause()
+        }
+        paused = true
+    }
+
+    func resume() {
+        guard paused else { return }
+        paused = false
+        if let player {
+            player.play()
+            speaking = true
+            startTicker()
+            return
+        }
+        tts.resume()
+        speaking = tts.isSpeaking
+        startFallbackTicker()
+    }
+
+    var isPaused: Bool { paused }
 
     /// Fallback-path matching (no catalog asset was resolved for the take):
     /// text equality, with the speaker narrowing same-text rows. The
@@ -396,6 +428,10 @@ final class VoicePlayback: NSObject, AudioPlaying {
         spokenPrefix = 0
         tts.speak(text, slow: slow)
         speaking = tts.isSpeaking
+        startFallbackTicker()
+    }
+
+    private func startFallbackTicker() {
         ticker?.cancel()
         ticker = Task { [weak self] in
             while !Task.isCancelled, let self, self.tts.isSpeaking {
@@ -405,6 +441,7 @@ final class VoicePlayback: NSObject, AudioPlaying {
             }
             guard !Task.isCancelled, let self else { return }
             self.speaking = false
+            self.paused = false
             self.progress = self.tts.progress
             if let text = self.spokenLineText, !text.isEmpty {
                 self.spokenRange = NSRange(location: 0, length: (text as NSString).length)
@@ -530,6 +567,7 @@ final class VoicePlayback: NSObject, AudioPlaying {
 
     private func finish() {
         speaking = false
+        paused = false
         setProgress(1)
         setLineProgress(1)
         if let text = spokenLineText {

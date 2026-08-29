@@ -51,7 +51,10 @@ final class PlayerModel {
     }
 
     var flip: [String: Bool] = [:]
-    var turn = 1  // conversation playback turn
+    var turn = 1  // conversation playback focus (1-based)
+    /// How many conversation turns are visible. Grows with the spoken line
+    /// and never shrinks until the learner restarts the listen.
+    var conversationRevealed = 1
     var matchSelection: Int? = nil
     var matched: Set<Int> = []
 
@@ -156,6 +159,72 @@ final class PlayerModel {
         speaker?.speak(
             audioID: resolvedAudioID(audio), text: text, slow: slow,
             lineIndex: lineIndex)
+    }
+
+    // MARK: Conversation play
+
+    var isConversationPlaying: Bool {
+        guard let playback else {
+            return speaker?.isSpeaking == true && speaker?.isPaused != true
+        }
+        return playback.speaking && !playback.paused
+    }
+
+    var isConversationPaused: Bool {
+        playback?.paused ?? speaker?.isPaused ?? false
+    }
+
+    func toggleConversationPlayback(texts: [String], audio: String?) {
+        if isConversationPaused {
+            speaker?.resume()
+            return
+        }
+        if isConversationPlaying {
+            speaker?.pause()
+            return
+        }
+        startConversationPlayback(texts: texts, audio: audio)
+    }
+
+    func startConversationPlayback(texts: [String], audio: String?) {
+        guard !texts.isEmpty else { return }
+        plays += 1
+        turn = 1
+        conversationRevealed = 1
+        speak(texts.joined(separator: " "), audio: audio)
+        revealConversationTurn(
+            spokenLine: playback?.spokenLine ?? 0,
+            progress: playback?.progress ?? 0,
+            turnCount: texts.count)
+    }
+
+    func replayConversationTurn(index: Int, text: String, audio: String?) {
+        guard index >= 0, !text.isEmpty else { return }
+        turn = index + 1
+        conversationRevealed = max(conversationRevealed, turn)
+        speak(text, audio: audio, lineIndex: index)
+    }
+
+    func resetConversationPlayback() {
+        speaker?.stop()
+        turn = 1
+        conversationRevealed = 1
+    }
+
+    /// Advances the storyboard and transcript with the spoken line. Revealed
+    /// turns only grow; focus (`turn`) follows the line so panels stay in
+    /// step with the voice.
+    func revealConversationTurn(spokenLine: Int, progress: Double, turnCount: Int) {
+        guard turnCount > 0 else { return }
+        let current: Int
+        if spokenLine >= 0 {
+            current = min(turnCount, spokenLine + 1)
+        } else {
+            guard isConversationPlaying || isConversationPaused else { return }
+            current = min(turnCount, max(1, Int((progress * Double(turnCount)).rounded(.up))))
+        }
+        turn = current
+        conversationRevealed = max(conversationRevealed, current)
     }
 
     func resolvedAudioID(_ reference: String?) -> String? {
@@ -384,6 +453,7 @@ final class PlayerModel {
         showScore = false
         flip = [:]
         turn = 1
+        conversationRevealed = 1
         matchSelection = nil
         matched = []
         roleplayLines = []
@@ -1268,6 +1338,36 @@ final class PlayerModel {
         } else if tileTask.key.indices.contains(order.count) {
             order.append(k)
         }
+    }
+}
+
+/// Storyboard mapping for conversation-play screens: which panel belongs
+/// to the current turn, and which turn a thumbnail should jump to.
+enum ConversationPlayback {
+    static func activePanelIndex(turn: Int, panelCount: Int, turnCount: Int) -> Int {
+        guard panelCount > 1 else { return 0 }
+        let clamped = max(1, turn)
+        if panelCount == 5, turnCount == 8 {
+            switch clamped {
+            case ...1: return 0
+            case 2: return 1
+            case 3...4: return 2
+            case 5...7: return 3
+            default: return 4
+            }
+        }
+        return min(panelCount - 1, (clamped - 1) * panelCount / max(1, turnCount))
+    }
+
+    static func firstTurn(
+        forPanel panel: Int, panelCount: Int, turnCount: Int
+    ) -> Int {
+        if panelCount == 5, turnCount == 8 {
+            let starts = [1, 2, 3, 5, 8]
+            return starts[min(max(0, panel), starts.count - 1)]
+        }
+        guard panelCount > 1, turnCount > 0 else { return 1 }
+        return min(turnCount, max(1, panel * turnCount / panelCount + 1))
     }
 }
 
