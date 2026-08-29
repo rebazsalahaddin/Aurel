@@ -260,6 +260,21 @@ final class ContentConformanceTests: XCTestCase {
         Drift(
             key: "A1-C01 PR-CV008.hints",
             shipped: "The question asks how you are.␟A name answers What's your name?"),
+        // Lesson 3 dialogue-order tasks rewritten as complete-the-conversation.
+        Drift(key: "A1-C01 PR-CV003.no", shipped: "They asked for a NAME."),
+        Drift(
+            key: "A1-C01 PR-CV003.hints",
+            shipped: "The first line asks for a name.␟Give your name, not a later question."),
+        Drift(key: "A1-C01 PR-CV004.ok", shipped: "The whole opening!"),
+        Drift(key: "A1-C01 PR-CV004.no", shipped: "A greeting wants a greeting back."),
+        Drift(
+            key: "A1-C01 PR-CV004.hints",
+            shipped: "Nina says good morning first.␟Welcome her with a morning greeting."),
+        Drift(key: "A1-C01 PR-CV015.ok", shipped: "The café meeting!"),
+        Drift(key: "A1-C01 PR-CV015.no", shipped: "After a greeting, give your name."),
+        Drift(
+            key: "A1-C01 PR-CV015.hints",
+            shipped: "Maya says good afternoon first.␟Give your name, not how you feel."),
     ]
 
     /// The registry slice a given test owns, by record-field suffix.

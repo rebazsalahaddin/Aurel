@@ -160,6 +160,64 @@ final class PlayerModelTests: XCTestCase {
         }
     }
 
+    func testLesson3OrderItemsBecameConversationCompletions() throws {
+        let m = try conversationModel(chapter: "A1-C01", screen: "S24")
+        XCTAssertEqual(m.cur?.screen.kind, .practice)
+        XCTAssertEqual(m.items.map(\.id), ["PR-CV003", "PR-CV004", "PR-CV015"])
+
+        for item in m.items {
+            let prompt = try XCTUnwrap(item.prompt, "\(item.id) needs a conversation prompt")
+            let parsed = try XCTUnwrap(
+                PracticeConversationPrompt(prompt: prompt, itemID: item.id),
+                "\(item.id) must render as complete-the-conversation")
+            XCTAssertEqual(parsed.turns.count, 2, "\(item.id) shows one spoken line and one blank")
+            XCTAssertTrue(parsed.turns[1].isTarget, "\(item.id) highlights the learner line")
+            XCTAssertFalse(item.follow.isEmpty, "\(item.id) must write the rest of the meeting")
+            XCTAssertEqual(item.opts.count, 2, "\(item.id) offers two completions")
+            XCTAssertNotNil(item.opts.first { item.isKey($0) }?.text)
+        }
+
+        let first = try XCTUnwrap(m.item)
+        let key = try XCTUnwrap(first.opts.first { first.isKey($0) })
+        XCTAssertFalse(m.itemCanGo)
+        m.pick(key, item: first)
+        XCTAssertTrue(m.done)
+        XCTAssertTrue(m.itemCanGo)
+
+        let parsed = try XCTUnwrap(
+            PracticeConversationPrompt(prompt: first.prompt ?? "", itemID: first.id))
+        let continued = parsed.displayTurns(filledLine: key.text, follow: first.follow)
+        XCTAssertEqual(continued[1].line, key.text)
+        XCTAssertFalse(continued.contains(where: \.isTarget))
+        XCTAssertEqual(continued.count, 2 + first.follow.count)
+    }
+
+    func testConversationFollowUpIsWrittenAfterTheChosenLine() throws {
+        let parsed = try XCTUnwrap(
+            PracticeConversationPrompt(
+                prompt: "NINA: “Hi! What's your name?” YOU: ____",
+                itemID: "PR-CV003"
+            )
+        )
+        let turns = parsed.displayTurns(
+            filledLine: "My name is Maya.",
+            follow: [
+                ChatLine(sp: "NINA", t: "Nice to meet you, Maya!"),
+                ChatLine(sp: "NINA", t: "How are you?"),
+            ])
+
+        XCTAssertEqual(
+            turns.map(\.line),
+            [
+                "Hi! What's your name?",
+                "My name is Maya.",
+                "Nice to meet you, Maya!",
+                "How are you?",
+            ])
+        XCTAssertEqual(turns.map(\.displaySpeaker), ["Nina", "You", "Nina", "Nina"])
+        XCTAssertFalse(turns.contains(where: \.isTarget))
+    }
+
     func testConversationCompletionPromptBecomesReadableTurns() throws {
         let parsed = try XCTUnwrap(
             PracticeConversationPrompt(

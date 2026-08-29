@@ -634,7 +634,7 @@ struct PracticeScreenView: View {
         }
 
         if let conversation {
-            conversationPrompt(conversation)
+            conversationPrompt(conversation, item: item)
         } else if let prompt = item.prompt {
             Text(prompt)
                 .font(.figtree(.regular, size: 16))
@@ -728,8 +728,13 @@ struct PracticeScreenView: View {
         }
     }
 
-    private func conversationPrompt(_ conversation: PracticeConversationPrompt) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+    private func conversationPrompt(
+        _ conversation: PracticeConversationPrompt, item: PlayerModel.PlayerItem
+    ) -> some View {
+        let filledLine = conversationCompletionText(for: item)
+        let turns = conversation.displayTurns(filledLine: filledLine, follow: item.follow)
+
+        return VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 AUIcon(kind: .speech, size: 14, color: .auAccentText)
                 Text("CONVERSATION")
@@ -738,13 +743,17 @@ struct PracticeScreenView: View {
                     .foregroundStyle(Color.auAccentText)
             }
 
-            Text("Choose the option that completes the highlighted line.")
-                .font(.figtree(.regular, size: 13))
-                .auLine(13, 1.45)
-                .foregroundStyle(Color.auTextSecondary)
+            Text(
+                filledLine == nil
+                    ? "Choose the option that completes the highlighted line."
+                    : "The meeting continues."
+            )
+            .font(.figtree(.regular, size: 13))
+            .auLine(13, 1.45)
+            .foregroundStyle(Color.auTextSecondary)
 
             VStack(spacing: 10) {
-                ForEach(conversation.turns) { turn in
+                ForEach(turns) { turn in
                     HStack(alignment: .top, spacing: 10) {
                         Text(turn.displaySpeaker)
                             .font(.figtree(.bold, size: 10))
@@ -788,8 +797,18 @@ struct PracticeScreenView: View {
                 .strokeBorder(Color.auEdge, lineWidth: 1)
         )
         .padding(.bottom, 15)
+        .animation(
+            AUMotion.animation(AUMotion.quick, reduceMotion: reduceMotion),
+            value: turns.count
+        )
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(conversation.accessibilityLabel)
+        .accessibilityLabel(conversation.accessibilityLabel(for: turns))
+    }
+
+    private func conversationCompletionText(for item: PlayerModel.PlayerItem) -> String? {
+        guard m.done else { return nil }
+        guard m.isCorrect(item) || m.revealed else { return nil }
+        return item.opts.first { item.isKey($0) }?.text
     }
 
     private func conversationLine(_ turn: PracticeConversationPrompt.Turn) -> Text {
@@ -1799,7 +1818,9 @@ struct PracticeConversationPrompt {
 
     static let blankExpression = try! NSRegularExpression(pattern: #"_+"#)
 
-    var accessibilityLabel: String {
+    var accessibilityLabel: String { accessibilityLabel(for: turns) }
+
+    func accessibilityLabel(for turns: [Turn]) -> String {
         let transcript = turns.map { turn in
             let spokenLine: String
             if turn.line.isEmpty {
@@ -1818,6 +1839,51 @@ struct PracticeConversationPrompt {
             localized:
                 "Conversation. Choose the option that completes the highlighted line. \(transcript)"
         )
+    }
+
+    func displayTurns(filledLine: String?, follow: [ChatLine]) -> [Turn] {
+        guard let filledLine else { return turns }
+        var result = turns.map { turn -> Turn in
+            guard turn.isTarget else { return turn }
+            return Turn(
+                id: turn.id,
+                speaker: turn.speaker,
+                line: Self.filledLine(
+                    turn.line, with: filledLine, targetBlankIndex: turn.targetBlankIndex),
+                targetBlankIndex: nil
+            )
+        }
+        for line in follow {
+            result.append(
+                Turn(
+                    id: result.count,
+                    speaker: line.sp,
+                    line: line.t,
+                    targetBlankIndex: nil
+                ))
+        }
+        return result
+    }
+
+    private static func filledLine(
+        _ line: String, with fill: String, targetBlankIndex: Int?
+    ) -> String {
+        if line.isEmpty { return fill }
+        let source = line as NSString
+        let matches = blankExpression.matches(
+            in: line,
+            range: NSRange(location: 0, length: source.length)
+        )
+        guard !matches.isEmpty else { return fill }
+        var rendered = line
+        for (index, match) in matches.enumerated().reversed() {
+            guard let range = Range(match.range, in: rendered) else { continue }
+            rendered.replaceSubrange(
+                range,
+                with: index == (targetBlankIndex ?? 0) ? fill : "…"
+            )
+        }
+        return rendered
     }
 
     init?(prompt: String, itemID: String) {

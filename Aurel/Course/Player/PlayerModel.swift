@@ -695,6 +695,7 @@ final class PlayerModel {
         var prompt: String? = nil
         var tiles: [String] = []
         var matches: [Match] = []
+        var follow: [ChatLine] = []
 
         func isKey(_ o: PracticeOption) -> Bool {
             PlayerModel.matchesKey(o, key: key?.single, opts: opts)
@@ -763,7 +764,8 @@ final class PlayerModel {
                 secs: it.secs,
                 prompt: learnerPrompt(it),
                 tiles: it.tiles ?? [],
-                matches: learnerMatches(it)
+                matches: learnerMatches(it),
+                follow: learnerFollow(it)
             )
         }
     }
@@ -826,6 +828,13 @@ final class PlayerModel {
             ("park", "the park"),
         ]
         return cues.first(where: { lower.contains($0.needle) })?.cue ?? alt
+    }
+
+    private func learnerFollow(_ item: PracticeItem) -> [ChatLine] {
+        (item.follow ?? []).compactMap { line in
+            guard let text = CourseTextContract.learnerText(line.t) else { return nil }
+            return ChatLine(sp: line.sp, t: text)
+        }
     }
 
     private func learnerPrompt(_ item: PracticeItem) -> String? {

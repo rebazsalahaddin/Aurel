@@ -5076,95 +5076,149 @@
      },
      {
       "id": "S24",
-      "type": "order",
-      "displayTitle": "Dialogue order",
-      "label": "Dialogue order",
+      "type": "practice",
+      "displayTitle": "Complete the conversation",
+      "label": "Complete the conversation",
       "step": "STEP 11b",
-      "demoWords": [
-       "put in order",
-       "first",
-       "next",
-       "last"
-      ],
       "ids": "PR-CV003, CV004, CV015",
-      "tasks": [
+      "items": [
        {
         "id": "PR-CV003",
-        "instr": "Put in order. First. Next. Last.",
-        "target": "A short first meeting (panel ILL025).",
-        "tiles": [
-         "Hi! What's your name?",
-         "My name is Maya.",
-         "Nice to meet you, Maya!",
-         "How are you?"
+        "instr": "Look. Choose.",
+        "icon": "choose",
+        "ill": {
+         "id": "A1-C01-ILL025",
+         "alt": "Two speakers face each other across the welcome table"
+        },
+        "prompt": "NINA: “Hi! What's your name?” YOU: ____",
+        "opts": [
+         {
+          "id": "A",
+          "t": "My name is Maya."
+         },
+         {
+          "id": "B",
+          "t": "How are you?"
+         }
         ],
-        "key": [
-         "Hi! What's your name?",
-         "My name is Maya.",
-         "Nice to meet you, Maya!",
-         "How are you?"
+        "key": "A",
+        "follow": [
+         {
+          "sp": "NINA",
+          "t": "Nice to meet you, Maya!"
+         },
+         {
+          "sp": "NINA",
+          "t": "How are you?"
+         }
         ],
         "ok": "A perfect mini meeting!",
-        "no": "Start with the question for a name.",
+        "no": "They asked for a NAME.",
         "hints": [
-         "Which line asks first?",
-         "The state question comes last."
+         "The first line asks for a name.",
+         "Give your name, not a later question."
+        ],
+        "secs": 40,
+        "a11y": [
+         "alt_text_construct_equivalent"
         ]
        },
        {
         "id": "PR-CV004",
-        "instr": "Put in order. First. Next. Last.",
-        "target": "The model dialogue, first six turns (panel ILL023).",
-        "tiles": [
-         "Hi! Good morning!",
-         "Good morning! Welcome!",
-         "Thank you! What's your name?",
-         "My name is Maya. I'm Maya.",
-         "Nice to meet you, Maya! I'm Nina.",
-         "How are you?"
+        "instr": "Look. Choose.",
+        "icon": "choose",
+        "ill": {
+         "id": "A1-C01-ILL023",
+         "alt": "Nina walks toward the welcome table where Maya waits, waving, in morning light"
+        },
+        "prompt": "NINA: “Hi! Good morning!” YOU: ____",
+        "opts": [
+         {
+          "id": "A",
+          "t": "Good morning! Welcome!"
+         },
+         {
+          "id": "B",
+          "t": "My name is Maya. I'm Maya."
+         }
         ],
-        "key": [
-         "Hi! Good morning!",
-         "Good morning! Welcome!",
-         "Thank you! What's your name?",
-         "My name is Maya. I'm Maya.",
-         "Nice to meet you, Maya! I'm Nina.",
-         "How are you?"
+        "key": "A",
+        "follow": [
+         {
+          "sp": "NINA",
+          "t": "Thank you! What's your name?"
+         },
+         {
+          "sp": "YOU",
+          "t": "My name is Maya. I'm Maya."
+         },
+         {
+          "sp": "NINA",
+          "t": "Nice to meet you, Maya! I'm Nina."
+         },
+         {
+          "sp": "YOU",
+          "t": "How are you?"
+         }
         ],
-        "ok": "The whole opening — in order!",
-        "no": "Two greetings open the talk.",
+        "ok": "The whole opening!",
+        "no": "A greeting wants a greeting back.",
         "hints": [
-         "Play the model once more.",
-         "The name question follows the welcome."
+         "Nina says good morning first.",
+         "Welcome her with a morning greeting."
+        ],
+        "secs": 60,
+        "a11y": [
+         "alt_text_construct_equivalent"
         ]
        },
        {
         "id": "PR-CV015",
-        "instr": "Put in order. First. Next. Last.",
-        "target": "The challenge take — the café meeting (ILL028).",
-        "tiles": [
-         "Hello! Good afternoon!",
-         "My name is Leo. I'm Leo.",
-         "Nice to meet you, Leo! I'm Maya.",
-         "How are you?",
-         "I'm great, thank you! And you?"
+        "instr": "Look. Choose.",
+        "icon": "choose",
+        "ill": {
+         "id": "A1-C01-ILL028",
+         "alt": "A café terrace in bright afternoon light"
+        },
+        "prompt": "MAYA: “Hello! Good afternoon!” YOU: ____",
+        "opts": [
+         {
+          "id": "A",
+          "t": "My name is Leo. I'm Leo."
+         },
+         {
+          "id": "B",
+          "t": "I'm great, thank you! And you?"
+         }
         ],
-        "key": [
-         "Hello! Good afternoon!",
-         "My name is Leo. I'm Leo.",
-         "Nice to meet you, Leo! I'm Maya.",
-         "How are you?",
-         "I'm great, thank you! And you?"
+        "key": "A",
+        "follow": [
+         {
+          "sp": "MAYA",
+          "t": "Nice to meet you, Leo! I'm Maya."
+         },
+         {
+          "sp": "MAYA",
+          "t": "How are you?"
+         },
+         {
+          "sp": "YOU",
+          "t": "I'm great, thank you! And you?"
+         }
         ],
-        "ok": "The café meeting — in order!",
-        "no": "Two lines open: the greeting and the name question group.",
+        "ok": "The café meeting!",
+        "no": "After a greeting, give your name.",
         "hints": [
-         "Play the challenge take once more.",
-         "The ask-back comes last."
+         "Maya says good afternoon first.",
+         "Give your name, not how you feel."
+        ],
+        "secs": 50,
+        "a11y": [
+         "alt_text_construct_equivalent"
         ]
        }
       ],
-      "tip": "Tiles listed vertically, tapped in sequence, numbered badges appear as chosen, undo by re-tap — no dragging. All conversation items play their line via AUD044 before options appear (listen-first, then read).",
+      "tip": "One spoken line is shown; the learner chooses the next line; the rest of the meeting is then written in order. Options are two reply bubbles. Scene items keep their illustration.",
       "assets": [
        "A1-C01-AUD044",
        "A1-C01-ILL023",
@@ -5179,7 +5233,7 @@
       "label": "Best next line",
       "step": "STEP 11c",
       "ids": "PR-CV001, CV002, CV005–CV014",
-      "bank": "the conversation bank minus the three order tasks (S24) and the echo task (S26b)",
+      "bank": "the conversation bank minus the three complete-the-conversation tasks (S24) and the echo task (S26b)",
       "items": [
        {
         "id": "PR-CV001",

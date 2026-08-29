@@ -148,6 +148,8 @@ enum AnswerKey: Decodable, Hashable {
 /// One scored practice item (vocabulary/grammar/conversation/listening/reading
 /// banks and the quiz share this shape). Variants: `kind` "image" (image
 /// options), "speak" (say-aloud, `word`), "order" (`tiles` + sequence key).
+/// Conversation completions may also carry `follow` turns written after a
+/// correct line.
 struct PracticeItem: Decodable, Hashable, Identifiable {
     let id: String
     let instr: String
@@ -172,6 +174,8 @@ struct PracticeItem: Decodable, Hashable, Identifiable {
     let note: String?
     let bubbles: Bool?
     let said: SaidLine?
+    /// Remaining dialogue written after the learner completes the highlighted line.
+    let follow: [ChatLine]?
 }
 
 /// One spoken stimulus line on a listen-then-reply item (`sp` speaker, `t` text).
