@@ -380,6 +380,44 @@ struct PronPerceiveScreenView: View {
                                         .padding(.bottom, 12)
                                 }
 
+                                if it.aud != nil || it.said != nil {
+                                    Button {
+                                        let keyText = it.key?.single.flatMap { key in
+                                            (it.opts ?? []).first {
+                                                $0.id == key || $0.text == key
+                                            }?.text
+                                        }
+                                        let cue = ListenCue.spoken(
+                                            said: it.said,
+                                            prompt: it.prompt,
+                                            playLines: it.playLines,
+                                            aud: it.aud,
+                                            chapterID: m.cur?.chapter.id ?? "",
+                                            stimulus: m.course.listenStimulus,
+                                            keyText: keyText,
+                                            word: nil)
+                                            ?? it.prompt
+                                        m.speak(cue)
+                                    } label: {
+                                        HStack(spacing: 10) {
+                                            AUIcon(
+                                                kind: .ear, size: 18, color: .auPrimaryButtonText)
+                                            Text("Listen")
+                                                .font(.figtree(.semibold, size: 14.5))
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 12)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                                .fill(Color.auAccentRamp(600))
+                                        )
+                                        .foregroundStyle(Color.auPrimaryButtonText)
+                                    }
+                                    .buttonStyle(.auTap)
+                                    .padding(.bottom, 12)
+                                }
+
                                 HStack(spacing: 9) {
                                     ForEach(it.opts ?? [], id: \.id) { o in
                                         Text(o.text ?? "")

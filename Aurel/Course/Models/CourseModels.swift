@@ -73,6 +73,12 @@ struct PracticeOption: Decodable, Hashable, Identifiable {
     }
 }
 
+/// A spoken stimulus line on a listen-then-answer item — `{sp: "LEO", t: "My name is Leo."}`.
+struct SaidLine: Decodable, Hashable {
+    let sp: String
+    let t: String
+}
+
 /// Answer keys are option ids ("A") for choices and ordered tile texts for
 /// assembly tasks.
 enum AnswerKey: Decodable, Hashable {
@@ -102,6 +108,7 @@ struct PracticeItem: Decodable, Hashable, Identifiable {
     let kind: String?  // image | speak | order (omitted = plain choice)
     let aud: String?
     let ill: IllustrationRef?
+    let scene: String?
     let prompt: String?
     let word: String?
     let opts: [PracticeOption]?
@@ -114,6 +121,11 @@ struct PracticeItem: Decodable, Hashable, Identifiable {
     let a11y: [String]?
     let big: Bool?  // quiz Form A large-print items
     let note: String?
+    let bubbles: Bool?
+    let said: SaidLine?
+    /// 1-based catalog / dialogue line numbers (`_L1` is `1`). When set, Listen
+    /// plays only these turns instead of the keyed answer or the full talk.
+    let playLines: [Int]?
 }
 
 /// pronunciation produce item — `{id, word, aud, note}`.
@@ -133,6 +145,8 @@ struct PronPerceiveItem: Decodable, Hashable, Identifiable {
     let opts: [PracticeOption]?
     let key: AnswerKey?
     let note: String?
+    let said: SaidLine?
+    let playLines: [Int]?
 }
 
 /// Warm-up retrieval frame — options are word texts, `key` is the target text.

@@ -468,7 +468,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "good morning"
+        },
+        "bubbles": false
        },
        {
         "id": "PR-V007",
@@ -3221,7 +3226,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "not bad"
+        },
+        "bubbles": false
        },
        {
         "id": "PR-V023",
@@ -4143,6 +4153,10 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
+        ],
+        "playLines": [
+         1,
+         2
         ]
        },
        {
@@ -4175,6 +4189,11 @@
         "secs": 20,
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         3,
+         4,
+         5
         ]
        },
        {
@@ -4218,6 +4237,9 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
+        ],
+        "playLines": [
+         1
         ]
        }
       ],
@@ -4274,6 +4296,9 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
+        ],
+        "playLines": [
+         2
         ]
        },
        {
@@ -4310,6 +4335,9 @@
         "secs": 20,
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         2
         ]
        },
        {
@@ -4342,6 +4370,9 @@
         "secs": 15,
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         3
         ]
        },
        {
@@ -4374,6 +4405,9 @@
         "secs": 15,
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         4
         ]
        }
       ],
@@ -4382,6 +4416,28 @@
       "assets": [
        "A1-C01-AUD046",
        "A1-C01-ILL018"
+      ],
+      "scripts": [
+       {
+        "id": "L1",
+        "sp": "ALEX",
+        "t": "Hello! What's your name?"
+       },
+       {
+        "id": "L2",
+        "sp": "NINA",
+        "t": "My name is Nina Petrova."
+       },
+       {
+        "id": "L3",
+        "sp": "ALEX",
+        "t": "Nice to meet you, Nina!"
+       },
+       {
+        "id": "L4",
+        "sp": "NINA",
+        "t": "Thank you!"
+       }
       ]
      },
      {
@@ -4467,6 +4523,9 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
+        ],
+        "playLines": [
+         1
         ]
        },
        {
@@ -4499,6 +4558,9 @@
         "secs": 20,
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         7
         ]
        },
        {
@@ -4531,6 +4593,9 @@
         "secs": 20,
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         7
         ]
        },
        {
@@ -4562,7 +4627,12 @@
         "secs": 15,
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "What's your name?"
+        },
+        "bubbles": true
        },
        {
         "id": "PR-LS012 · transfer",
@@ -4593,7 +4663,12 @@
         "secs": 15,
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "How are you?"
+        },
+        "bubbles": true
        },
        {
         "id": "PR-LS013 · transfer",
@@ -4631,8 +4706,8 @@
         "id": "PR-LS014 · transfer",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
-        "prompt": "Line model: “I'm Leo.”",
+        "aud": "AUD045",
+        "prompt": "You hear: “I'm Leo.”",
         "opts": [
          {
           "id": "A",
@@ -4663,7 +4738,7 @@
         "id": "PR-LS015 · transfer",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD043",
         "kind": "image",
         "prompt": "T8: “I'm fine! Excuse me, Nina — see you!” What happens next?",
         "opts": [
@@ -4700,6 +4775,9 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
+        ],
+        "playLines": [
+         8
         ]
        },
        {
@@ -4769,13 +4847,17 @@
           "t": "name"
          }
         ],
-        "note": "The last word carries the stress — NAME. “Small words stay small.”"
+        "note": "The last word carries the stress — NAME. “Small words stay small.”",
+        "said": {
+         "sp": "GUIDE",
+         "t": "What's your name?"
+        }
        },
        {
         "id": "PR-P006",
         "instr": "Listen. Choose.",
         "prompt": "Telling ↘ or asking ↗? Four lines.",
-        "aud": "AUD044",
+        "aud": "AUD041",
         "opts": [
          {
           "id": "A",
@@ -4786,7 +4868,11 @@
           "t": "asking ↗"
          }
         ],
-        "note": "Trials: “My name is Maya.” ↘ · “How are you?” ↗ · “I'm good.” ↘ · “And you?” ↗"
+        "note": "Trials: “My name is Maya.” ↘ · “How are you?” ↗ · “I'm good.” ↘ · “And you?” ↗",
+        "said": {
+         "sp": "MAYA",
+         "t": "My name is Maya."
+        }
        },
        {
         "id": "PR-P009",
@@ -4807,7 +4893,11 @@
           "t": "you"
          }
         ],
-        "note": "Stress lands on meet — the BIG word is in the middle."
+        "note": "Stress lands on meet — the BIG word is in the middle.",
+        "said": {
+         "sp": "GUIDE",
+         "t": "Nice to meet you."
+        }
        }
       ],
       "bank": "PR-P005 · P006 · P009 — perception, ungraded, no accent scoring",
@@ -4985,7 +5075,12 @@
         "secs": 15,
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "MAYA",
+         "t": "What's your name?"
+        },
+        "bubbles": true
        },
        {
         "id": "PR-CV005",
@@ -5131,7 +5226,7 @@
         "id": "PR-CV007",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD045",
         "bubbles": true,
         "said": {
          "sp": "LEO",
@@ -5167,11 +5262,11 @@
         "id": "PR-CV008",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD032",
         "bubbles": true,
         "said": {
          "sp": "MAYA",
-         "t": "I'm fine! And you?"
+         "t": "How are you?"
         },
         "opts": [
          {
@@ -5343,7 +5438,7 @@
         "id": "PR-CV013",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD043",
         "kind": "image",
         "prompt": "Who says Welcome!?",
         "opts": [
@@ -5380,6 +5475,9 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
+        ],
+        "playLines": [
+         2
         ]
        },
        {
@@ -6253,7 +6351,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "good evening"
+        },
+        "bubbles": false
        },
        {
         "id": "QZ-V004",
@@ -6330,7 +6433,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "okay"
+        },
+        "bubbles": false
        },
        {
         "id": "QZ-V006",
@@ -6581,7 +6689,12 @@
         "secs": 20,
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "SAM",
+         "t": "My name is Sam."
+        },
+        "bubbles": true
        },
        {
         "id": "QZ-LS002",
@@ -6613,7 +6726,12 @@
         "secs": 20,
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "SAM",
+         "t": "I'm okay."
+        },
+        "bubbles": true
        },
        {
         "id": "QZ-LS003",
@@ -6645,6 +6763,9 @@
         "secs": 20,
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         8
         ]
        },
        {
@@ -6688,6 +6809,9 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
+        ],
+        "playLines": [
+         1
         ]
        },
        {
@@ -10202,7 +10326,7 @@
         "id": "PR-V023",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD043",
+        "aud": "AUD042",
         "big": true,
         "confusable": "six vs sixteen — the first part returns",
         "opts": [
@@ -10231,7 +10355,12 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "digit_strip_reference"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "sixteen"
+        },
+        "bubbles": true
        },
        {
         "id": "PR-V024",
@@ -10646,7 +10775,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "Leo says his phone number ONE time, fast."
+        },
+        "bubbles": true
        },
        {
         "id": "PR-V036",
@@ -10961,6 +11095,10 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "testlet_1_dependence_documented"
+        ],
+        "playLines": [
+         1,
+         5
         ]
        },
        {
@@ -10995,6 +11133,9 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "testlet_1_dependence_documented"
+        ],
+        "playLines": [
+         1
         ]
        },
        {
@@ -11029,6 +11170,9 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "testlet_1_dependence_documented"
+        ],
+        "playLines": [
+         10
         ]
        }
       ],
@@ -11096,6 +11240,9 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "testlet_2_dependence_documented"
+        ],
+        "playLines": [
+         1
         ]
        },
        {
@@ -11131,6 +11278,9 @@
          "replay_allowed_once",
          "testlet_2_dependence_documented",
          "visual_digit_strip_route"
+        ],
+        "playLines": [
+         4
         ]
        },
        {
@@ -11166,6 +11316,9 @@
          "replay_allowed_once",
          "testlet_2_dependence_documented",
          "visual_digit_strip_route"
+        ],
+        "playLines": [
+         4
         ]
        },
        {
@@ -11201,6 +11354,9 @@
          "replay_allowed_once",
          "testlet_2_dependence_documented",
          "visual_digit_strip_route"
+        ],
+        "playLines": [
+         4
         ]
        }
       ],
@@ -11208,6 +11364,33 @@
       "assets": [
        "A1-C02-AUD072",
        "A1-C02-ILL027"
+      ],
+      "scripts": [
+       {
+        "id": "L1",
+        "sp": "NINA",
+        "t": "Hello! Are you Sam Rivera?"
+       },
+       {
+        "id": "L2",
+        "sp": "SAM",
+        "t": "Yes, I am!"
+       },
+       {
+        "id": "L3",
+        "sp": "NINA",
+        "t": "What's your phone number?"
+       },
+       {
+        "id": "L4",
+        "sp": "SAM",
+        "t": "It's 4-0-1, 7-3-2."
+       },
+       {
+        "id": "L5",
+        "sp": "NINA",
+        "t": "Thank you, Sam!"
+       }
       ]
      },
      {
@@ -11299,6 +11482,10 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "testlet_3_dependence_documented"
+        ],
+        "playLines": [
+         4,
+         5
         ]
        },
        {
@@ -11333,7 +11520,12 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "testlet_3_dependence_documented"
-        ]
+        ],
+        "said": {
+         "sp": "LEO",
+         "t": "It's leo dot novak at aroa dot com!"
+        },
+        "bubbles": true
        },
        {
         "id": "PR-LS010",
@@ -11367,7 +11559,12 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "testlet_3_dependence_documented"
-        ]
+        ],
+        "said": {
+         "sp": "LEO",
+         "t": "It's leo dot novak at aroa dot com!"
+        },
+        "bubbles": true
        },
        {
         "id": "PR-LS011 · transfer",
@@ -11404,7 +11601,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
-        ]
+        ],
+        "said": {
+         "sp": "NINA",
+         "t": "Are you Alex Kim?"
+        },
+        "bubbles": false
        },
        {
         "id": "PR-LS012 · transfer",
@@ -11437,7 +11639,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
-        ]
+        ],
+        "said": {
+         "sp": "NINA",
+         "t": "What's your email address?"
+        },
+        "bubbles": true
        },
        {
         "id": "PR-LS013 · transfer",
@@ -11471,7 +11678,12 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "visual_letter_chart_route"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "N-I-N-A."
+        },
+        "bubbles": false
        },
        {
         "id": "PR-LS014 · transfer",
@@ -11505,7 +11717,12 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "visual_letter_chart_route"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "A-L-E-X."
+        },
+        "bubbles": false
        },
        {
         "id": "PR-LS015 · transfer",
@@ -11538,7 +11755,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "You're Maya. Are you Maya?"
+        },
+        "bubbles": false
        },
        {
         "id": "PR-LS016 · transfer",
@@ -11571,7 +11793,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
-        ]
+        ],
+        "said": {
+         "sp": "MAYA",
+         "t": "Can you repeat that, please?"
+        },
+        "bubbles": true
        }
       ],
       "tip": "Plays once by default with one diagnostic replay; no imagery until after the response. The six transfer items (LS011–016) follow the ladder on the same screen, drawing on the challenge take, the spelled-name strings and the intonation pair.",
@@ -13072,7 +13299,7 @@
         "id": "QZ-N001",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD042",
         "big": true,
         "opts": [
          {
@@ -13100,7 +13327,12 @@
          "audio_required_transcript_after_response",
          "replay_allowed_once",
          "digit_strip_reference"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "seventeen"
+        },
+        "bubbles": true
        },
        {
         "id": "QZ-N002",
@@ -14358,7 +14590,12 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "country"
+        },
+        "bubbles": false
        },
        {
         "id": "PR-V002",
@@ -14384,7 +14621,13 @@
         "no": "The word says your place: I'm ____ Canada. Try again.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "I'm from Canada. … from! … from"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-V003",
@@ -14476,7 +14719,13 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "alt_text_parallel_options"
-        ]
+        ],
+        "said": {
+         "sp": "NINA",
+         "t": "Hi! I'm Nina. I'm from Peru."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-V006",
@@ -14671,7 +14920,13 @@
         "no": "Listen for the country word: I'm from …",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "MAYA",
+         "t": "Hi! I'm Maya. I'm from Egypt."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-V009",
@@ -14785,7 +15040,13 @@
         "no": "Sam speaks Spanish and English — but where is he from? Listen again.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "SAM",
+         "t": "Hi! I'm Sam. I'm from Mexico."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        }
       ],
       "pauseCard": {
@@ -14955,7 +15216,12 @@
         "no": "One part, strong: SPAIN. Find it on the map.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "Spain"
+        },
+        "bubbles": false
        },
        {
         "id": "PR-V015",
@@ -15291,7 +15557,13 @@
         "no": "Listen to the end: I'm a …",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "MAYA",
+         "t": "Hi! I'm Maya. I'm a nurse."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-V021",
@@ -15327,7 +15599,13 @@
         "no": "Nina teaches — find the person at the front of the class.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "NINA",
+         "t": "Good morning! I'm Nina. I'm a teacher."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-V022",
@@ -15410,7 +15688,13 @@
         "no": "Leo works in the café kitchen. Listen for the job word.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "LEO",
+         "t": "Ah! I'm Leo. I'm a cook."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-V025",
@@ -15446,7 +15730,13 @@
         "no": "Alex draws and plans — look for the sketchbook.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "ALEX",
+         "t": "Okay! I'm Alex. I'm a designer."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-V026",
@@ -15508,7 +15798,12 @@
         "no": "Listen for the /-er/ ending and find the person at work.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "driver"
+        },
+        "bubbles": false
        },
        {
         "id": "PR-P002",
@@ -15913,7 +16208,13 @@
         "no": "Where is Alex from? Listen for the country word.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "ALEX",
+         "t": "Okay! I'm Alex. I'm from Canada."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-V035",
@@ -15992,7 +16293,13 @@
         "no": "Listen for the BIGGEST beat — the new word, the country.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "GUIDE",
+         "t": "I'm from CANADA. (country word stressed)"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-P004",
@@ -17374,7 +17681,13 @@
         "no": "WHERE asks a place. Use from.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "SAM",
+         "t": "Where are you from?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV002",
@@ -17400,7 +17713,13 @@
         "no": "This question asks WORK. I'm a/an + job.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "ALEX",
+         "t": "What do you do?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV003",
@@ -17426,7 +17745,13 @@
         "no": "Someone new is in front of you — give the meeting reply.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "SAM",
+         "t": "This is my friend Maya."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV004",
@@ -17453,7 +17778,13 @@
         "no": "What comes after 'Is she a…'? A job word.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "ALEX",
+         "t": "Is she a nurse?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV005",
@@ -17480,7 +17811,13 @@
         "no": "WHERE = place. It wants your country.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "SAM",
+         "t": "And you? Where are you from?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV006",
@@ -17507,7 +17844,13 @@
         "no": "Ten = the count of countries.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "ALEX",
+         "t": "Your friends! They're from ten countries."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV007",
@@ -17578,7 +17921,13 @@
         "no": "Check WHO is asked and WHERE you are from.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "SAM",
+         "t": "Are you from Mexico?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV010",
@@ -17605,7 +17954,13 @@
         "no": "Two checks: the pronoun (he) and the fact (cook).",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "ALEX",
+         "t": "Is Leo a cook?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV011",
@@ -17632,7 +17987,13 @@
         "no": "Read your card — and use the job frame.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "ALEX",
+         "t": "What do you do?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "PR-CV012",
@@ -17659,7 +18020,13 @@
         "no": "First meeting → the meeting reply.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "MAYA",
+         "t": "This is my friend Sam."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        }
       ],
       "tip": "Branch items show a context card plus the photo; one default replay. The branch prompt bank is AUD056.",
@@ -17753,6 +18120,10 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
+        ],
+        "playLines": [
+         1,
+         2
         ]
        },
        {
@@ -17791,6 +18162,10 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
+        ],
+        "playLines": [
+         3,
+         4
         ]
        },
        {
@@ -17818,6 +18193,10 @@
         "no": "'What do you do?' — then listen for the job word.",
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         5,
+         6
         ]
        },
        {
@@ -17845,6 +18224,11 @@
         "no": "'Is she a nurse?' — what was the answer?",
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         7,
+         8,
+         9
         ]
        },
        {
@@ -17873,6 +18257,10 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
+        ],
+        "playLines": [
+         7,
+         9
         ]
        },
        {
@@ -17901,7 +18289,10 @@
         "a11y": [
          "audio_required_transcript_after_response"
         ],
-        "note": "Rewritten in-session to the who-SAYS-it form: the original \"who speaks two languages?\" had three correct answers."
+        "note": "Rewritten in-session to the who-SAYS-it form: the original \"who speaks two languages?\" had three correct answers.",
+        "playLines": [
+         5
+        ]
        },
        {
         "id": "PR-LS007",
@@ -17928,6 +18319,10 @@
         "no": "The short answer copies the question's person word.",
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         2,
+         3
         ]
        },
        {
@@ -17965,6 +18360,10 @@
         "no": "Listen after 'isn't from Egypt' — the correction says the country.",
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         4,
+         5
         ]
        },
        {
@@ -17992,6 +18391,9 @@
         "no": "Listen for 'our class' — we is bigger than two.",
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         6
         ]
        },
        {
@@ -18019,7 +18421,13 @@
         "no": "Whose job is asked? LEO's — not the speaker's.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "aud": "AUD052",
+        "said": {
+         "sp": "NINA",
+         "t": "Leo is my friend. He's a cook."
+        },
+        "bubbles": true
        }
       ],
       "tip": "Testlet headers carry the shared-stimulus note; transcripts stay hidden until answered; replays are logged and never penalized.",
@@ -18069,7 +18477,13 @@
          }
         ],
         "key": "A",
-        "note": "Count the people you heard: two → aren't."
+        "note": "Count the people you heard: two → aren't.",
+        "aud": "LINE",
+        "said": {
+         "sp": "GUIDE",
+         "t": "Maya and Leo aren't from Spain."
+        },
+        "bubbles": true
        },
        {
         "id": "PR-P007",
@@ -18104,7 +18518,13 @@
         "prompt": "Record: No, he isn't. — with the DOWN voice. Model: GUIDE: Is Leo from Peru? … No, he isn't.",
         "opts": [],
         "key": "",
-        "note": "Stage-4 instruction words (record / play / check) activate here for the first time. Replayable, never scored."
+        "note": "Stage-4 instruction words (record / play / check) activate here for the first time. Replayable, never scored.",
+        "aud": "LINE",
+        "said": {
+         "sp": "GUIDE",
+         "t": "No, he isn't."
+        },
+        "bubbles": true
        },
        {
         "id": "PR-P010",
@@ -18785,6 +19205,9 @@
         "a11y": [
          "audio_required_transcript_after_response",
          "replay_allowed_once"
+        ],
+        "playLines": [
+         1
         ]
        },
        {
@@ -18812,6 +19235,9 @@
         "no": "Listen for the two language words.",
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         1
         ]
        },
        {
@@ -18849,6 +19275,9 @@
         "no": "The roll moves fast — catch the name first, then the country.",
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         1
         ]
        },
        {
@@ -18876,6 +19305,9 @@
         "no": "Name first, country second — listen again.",
         "a11y": [
          "audio_required_transcript_after_response"
+        ],
+        "playLines": [
+         1
         ]
        },
        {
@@ -18904,7 +19336,13 @@
         "a11y": [
          "audio_required_transcript_after_response"
         ],
-        "note": "'great' is a taught C1 word used as a warm closer; no new content words."
+        "note": "'great' is a taught C1 word used as a warm closer; no new content words.",
+        "said": {
+         "sp": "KENJI",
+         "t": "Nina is my teacher. She's from Peru. Her class is great!"
+        },
+        "bubbles": false,
+        "aud": "LINE"
        },
        {
         "id": "PR-LS016",
@@ -18941,7 +19379,13 @@
         "no": "Listen AFTER 'isn't' — corrections give the answer.",
         "a11y": [
          "audio_required_transcript_after_response"
-        ]
+        ],
+        "said": {
+         "sp": "SAM",
+         "t": "Kenji is my friend. He isn't from Mexico. He's from Japan!"
+        },
+        "bubbles": false,
+        "aud": "LINE"
        }
       ],
       "tip": "Transcripts release only after the scored response; one replay by default, logged and never penalized.",
@@ -20328,7 +20772,13 @@
         ],
         "key": "B",
         "ok": "Good afternoon! The sun is high.",
-        "no": "The sun is high — afternoon."
+        "no": "The sun is high — afternoon.",
+        "said": {
+         "sp": "NINA",
+         "t": "Good afternoon!"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT002",
@@ -20352,7 +20802,13 @@
         ],
         "key": "A",
         "ok": "Maya is the first name.",
-        "no": "Maya = first name. Haddad = last name."
+        "no": "Maya = first name. Haddad = last name.",
+        "said": {
+         "sp": "MAYA",
+         "t": "My name is Maya Haddad."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT003",
@@ -20376,7 +20832,13 @@
         ],
         "key": "C",
         "ok": "And Alex says: \"I’m great.\"",
-        "no": "'How are you?' — you say: 'I'm good, thank you. And you?'"
+        "no": "'How are you?' — you say: 'I'm good, thank you. And you?'",
+        "said": {
+         "sp": "ALEX",
+         "t": "Hi! How are you?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT004",
@@ -20400,7 +20862,13 @@
         ],
         "key": "A",
         "ok": "M-A-Y-A. Maya!",
-        "no": "Listen: M… A… Y… A."
+        "no": "Listen: M… A… Y… A.",
+        "said": {
+         "sp": "NINA",
+         "t": "Maya. M-A-Y-A."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT005",
@@ -20424,7 +20892,13 @@
         ],
         "key": "B",
         "ok": "Yes — 6-2-0, 1-5-4. Leo's number.",
-        "no": "Listen for the last group: one… five… four."
+        "no": "Listen for the last group: one… five… four.",
+        "said": {
+         "sp": "LEO",
+         "t": "My phone number is 6-2-0… 1-5-4."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT006",
@@ -20448,7 +20922,13 @@
         ],
         "key": "A",
         "ok": "Alex says it again — slowly.",
-        "no": "Too fast? Say: 'Can you repeat that, please?'"
+        "no": "Too fast? Say: 'Can you repeat that, please?'",
+        "said": {
+         "sp": "ALEX",
+         "t": "What's your email address?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT007",
@@ -20472,7 +20952,13 @@
         ],
         "key": "C",
         "ok": "Yes — Maya's card: 5-5-5, 2-0-1.",
-        "no": "Listen: 'Five-five-five… two-zero-one.'"
+        "no": "Listen: 'Five-five-five… two-zero-one.'",
+        "said": {
+         "sp": "NINA",
+         "t": "Maya — your phone number, please? MAYA: 5-5-5… 2-0-1."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        }
       ],
       "tip": "RT008 (a supported recording of the badge line: \"Good morning! My name is ___. I’m a ___.\") is a tap-built, skippable, on-device recording — represented in the prototype by the Say-It-Aloud component, not redrawn here.",
@@ -20512,7 +20998,13 @@
         ],
         "key": "B",
         "ok": "She = Nina.",
-        "no": "The voice says 'She's Nina.'"
+        "no": "The voice says 'She's Nina.'",
+        "said": {
+         "sp": "MAYA",
+         "t": "She's Nina."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "CL1-003",
@@ -20619,7 +21111,13 @@
          "Australia"
         ],
         "ok": "'I'm from Australia.' Leo's line!",
-        "no": "First: I'm. Next: from. Last: Australia."
+        "no": "First: I'm. Next: from. Last: Australia.",
+        "said": {
+         "sp": "LEO",
+         "t": "I'm from Australia."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        }
       ],
       "assets": [
@@ -20699,7 +21197,13 @@
         ],
         "key": "A",
         "ok": "Mexico. Sam's country.",
-        "no": "Listen: 'Mexico.'"
+        "no": "Listen: 'Mexico.'",
+        "said": {
+         "sp": "SAM",
+         "t": "Hi! I'm Sam. I'm from Mexico."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT010",
@@ -20723,7 +21227,13 @@
         ],
         "key": "C",
         "ok": "English and French.",
-        "no": "Alex: English… and French."
+        "no": "Alex: English… and French.",
+        "said": {
+         "sp": "NINA",
+         "t": "Alex is from Canada. They speak English… and French."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT011",
@@ -20837,7 +21347,13 @@
         ],
         "key": "C",
         "ok": "'What do you do?' — the job! 'I'm a teacher.'",
-        "no": "'What do you do?' asks the job."
+        "no": "'What do you do?' asks the job.",
+        "said": {
+         "sp": "ALEX",
+         "t": "And you — what do you do?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "RT016",
@@ -20861,7 +21377,13 @@
         ],
         "key": "A",
         "ok": "A new face! Nice to meet you!",
-        "no": "The taught next line is the meeting formula."
+        "no": "The taught next line is the meeting formula.",
+        "said": {
+         "sp": "MAYA",
+         "t": "Alex! This is my friend Sam."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        }
       ],
       "tip": "RT014 is a deliberate diagnostic probe for clinic 2 — a miss routes into the clinic; it is never double-scored.",
@@ -20901,7 +21423,13 @@
         ],
         "key": "A",
         "ok": "From + a country.",
-        "no": "'From' + a country. Japan!"
+        "no": "'From' + a country. Japan!",
+        "said": {
+         "sp": "KENJI",
+         "t": "I'm from Japan."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "CL2-003",
@@ -20986,7 +21514,13 @@
          "engineer"
         ],
         "ok": "'I'm an engineer.' Kenji's line!",
-        "no": "First: I'm. Next: an. Last: engineer."
+        "no": "First: I'm. Next: an. Last: engineer.",
+        "said": {
+         "sp": "KENJI",
+         "t": "I'm an engineer."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "CL2-007",
@@ -21010,7 +21544,13 @@
         ],
         "key": "B",
         "ok": "'I'm from Kenya.'",
-        "no": "A country! 'I'm from Kenya.'"
+        "no": "A country! 'I'm from Kenya.'",
+        "said": {
+         "sp": "NINA",
+         "t": "Where are you from?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "CL2-008",
@@ -21034,7 +21574,13 @@
         ],
         "key": "C",
         "ok": "'I'm a driver.'",
-        "no": "A job, with a."
+        "no": "A job, with a.",
+        "said": {
+         "sp": "NINA",
+         "t": "And you — what do you do?"
+        },
+        "bubbles": true,
+        "aud": "LINE"
        }
       ],
       "assets": [
@@ -21072,7 +21618,12 @@
         ],
         "key": "A",
         "ok": "Amara checks in.",
-        "no": "The new name at the desk: Amara."
+        "no": "The new name at the desk: Amara.",
+        "aud": "A1-C04-AUD036",
+        "icon": "ear",
+        "playLines": [
+         2
+        ]
        },
        {
         "id": "LS002",
@@ -21094,7 +21645,12 @@
         ],
         "key": "B",
         "ok": "The check-in desk.",
-        "no": "A desk, a register, badges."
+        "no": "A desk, a register, badges.",
+        "aud": "A1-C04-AUD036",
+        "icon": "ear",
+        "playLines": [
+         1
+        ]
        },
        {
         "id": "LS003",
@@ -21116,7 +21672,12 @@
         ],
         "key": "C",
         "ok": "5-5-5, 3-1-9.",
-        "no": "Listen for the last group: three… one… nine."
+        "no": "Listen for the last group: three… one… nine.",
+        "aud": "A1-C04-AUD036",
+        "icon": "ear",
+        "playLines": [
+         6
+        ]
        },
        {
         "id": "LS004",
@@ -21138,7 +21699,12 @@
         ],
         "key": "A",
         "ok": "A-M-A-R-A. Amara!",
-        "no": "Listen: A… M… A… R… A."
+        "no": "Listen: A… M… A… R… A.",
+        "aud": "A1-C04-AUD036",
+        "icon": "ear",
+        "playLines": [
+         4
+        ]
        },
        {
         "id": "LS005",
@@ -21160,7 +21726,12 @@
         ],
         "key": "B",
         "ok": "Maya — it is her friend Sam.",
-        "no": "The warm voice in the middle: Maya."
+        "no": "The warm voice in the middle: Maya.",
+        "aud": "A1-C04-AUD036",
+        "icon": "ear",
+        "playLines": [
+         7
+        ]
        },
        {
         "id": "LS006",
@@ -21182,13 +21753,60 @@
         ],
         "key": "C",
         "ok": "Nice to meet you too!",
-        "no": "Sam says it first — Amara answers with too."
+        "no": "Sam says it first — Amara answers with too.",
+        "aud": "A1-C04-AUD036",
+        "icon": "ear",
+        "playLines": [
+         8
+        ]
        }
       ],
       "tip": "One testlet on D01 (practice, not quiz), declared. Checkpoint 1 listens to three fresh recordings — none of them D01. Challenge take (AUD037) used for LS003/LS004.",
       "assets": [
        "A1-C04-AUD036–037",
        "A1-C04-ILL006–007"
+      ],
+      "scripts": [
+       {
+        "id": "L1",
+        "sp": "NINA",
+        "t": "Good morning! Welcome to the check-in desk."
+       },
+       {
+        "id": "L2",
+        "sp": "AMARA",
+        "t": "Hello! My name is Amara."
+       },
+       {
+        "id": "L3",
+        "sp": "NINA",
+        "t": "How do you spell that?"
+       },
+       {
+        "id": "L4",
+        "sp": "AMARA",
+        "t": "A-M-A-R-A."
+       },
+       {
+        "id": "L5",
+        "sp": "NINA",
+        "t": "What's your phone number?"
+       },
+       {
+        "id": "L6",
+        "sp": "AMARA",
+        "t": "It's 5-5-5, 3-1-9."
+       },
+       {
+        "id": "L7",
+        "sp": "MAYA",
+        "t": "This is my friend Sam."
+       },
+       {
+        "id": "L8",
+        "sp": "AMARA",
+        "t": "Nice to meet you too."
+       }
       ]
      },
      {
@@ -21963,7 +22581,13 @@
         ],
         "key": "B",
         "ok": "Two people.",
-        "no": "Two voices: Sam and Nina."
+        "no": "Two voices: Sam and Nina.",
+        "said": {
+         "sp": "SAM",
+         "t": "Good morning, Nina! Good morning, Sam!"
+        },
+        "bubbles": false,
+        "aud": "LINE"
        },
        {
         "id": "A1-CP1-LS004",
@@ -21985,7 +22609,13 @@
         ],
         "key": "C",
         "ok": "Morning.",
-        "no": "Listen to the greeting: 'Good morning!'"
+        "no": "Listen to the greeting: 'Good morning!'",
+        "aud": "LINE",
+        "said": {
+         "sp": "NINA",
+         "t": "Good morning!"
+        },
+        "bubbles": false
        },
        {
         "id": "A1-CP1-LS005",
@@ -22008,7 +22638,13 @@
         ],
         "key": "B",
         "ok": "Rivera.",
-        "no": "Listen: R-I-V-E-R-A."
+        "no": "Listen: R-I-V-E-R-A.",
+        "said": {
+         "sp": "SAM",
+         "t": "Sam Rivera. S-A-M. R-I-V-E-R-A."
+        },
+        "bubbles": false,
+        "aud": "LINE"
        },
        {
         "id": "A1-CP1-LS008",
@@ -22031,7 +22667,13 @@
         ],
         "key": "A",
         "ok": "'I'm from Japan.'",
-        "no": "Listen: 'I'm from Japan.'"
+        "no": "Listen: 'I'm from Japan.'",
+        "said": {
+         "sp": "KENJI",
+         "t": "Hi. I'm Kenji. I'm from Japan."
+        },
+        "bubbles": false,
+        "aud": "LINE"
        },
        {
         "id": "A1-CP1-LS009",
@@ -22053,7 +22695,13 @@
         ],
         "key": "B",
         "ok": "'I'm an engineer.'",
-        "no": "Listen: 'I'm an engineer.'"
+        "no": "Listen: 'I'm an engineer.'",
+        "aud": "LINE",
+        "said": {
+         "sp": "KENJI",
+         "t": "I'm an engineer."
+        },
+        "bubbles": true
        },
        {
         "id": "A1-CP1-LS010",
@@ -22075,7 +22723,13 @@
         ],
         "key": "C",
         "ok": "Japanese and English.",
-        "no": "Listen: 'I speak Japanese and English.'"
+        "no": "Listen: 'I speak Japanese and English.'",
+        "aud": "LINE",
+        "said": {
+         "sp": "KENJI",
+         "t": "I speak Japanese and English."
+        },
+        "bubbles": true
        },
        {
         "id": "A1-CP1-RD001",
@@ -22188,7 +22842,13 @@
         ],
         "key": "A",
         "ok": "Nice to meet you!",
-        "no": "A new face!"
+        "no": "A new face!",
+        "said": {
+         "sp": "MAYA",
+         "t": "Alex! This is my friend Sam."
+        },
+        "bubbles": true,
+        "aud": "LINE"
        },
        {
         "id": "A1-CP1-CN002",
