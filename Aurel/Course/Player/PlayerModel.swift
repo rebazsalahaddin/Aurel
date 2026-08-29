@@ -248,15 +248,21 @@ final class PlayerModel {
     }
 
     /// The authored text an audio-cued item should speak — the heard line for
-    /// reply items, the quoted “You hear:” span, then the key option (identify).
+    /// reply items, the quoted “You hear:” / “Who says” span, then the key
+    /// option (identify). Speaker-ID questions must play the quoted words,
+    /// never the person-name answer.
     var speakTextForItem: String? {
         guard let item else { return nil }
         if let said = item.said?.t, !said.isEmpty { return said }
-        if let prompt = item.prompt,
-            prompt.localizedCaseInsensitiveContains("you hear"),
-            let quoted = Self.quotedListenCue(from: prompt)
-        {
-            return quoted
+        if let prompt = item.prompt {
+            if prompt.localizedCaseInsensitiveContains("you hear"),
+                let quoted = Self.quotedListenCue(from: prompt)
+            {
+                return quoted
+            }
+            if let whoSays = Self.whoSaysListenCue(from: prompt) {
+                return whoSays
+            }
         }
         if let answer = item.opts.first(where: { item.isKey($0) })?.text {
             return answer
@@ -280,6 +286,49 @@ final class PlayerModel {
             if !quoted.isEmpty { return quoted }
         }
         return nil
+    }
+
+    /// The heard phrase in `Who says ‘Excuse me’?` / `Who says Welcome!?`.
+    static func whoSaysListenCue(from prompt: String) -> String? {
+        let trimmed = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let marker = trimmed.range(of: "who says", options: .caseInsensitive)
+        else { return nil }
+        if let quoted = quotedListenCue(from: prompt) { return quoted }
+
+        var rest = String(trimmed[marker.upperBound...])
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if rest.hasPrefix(":") {
+            rest.removeFirst()
+            rest = rest.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        while rest.hasSuffix("?") {
+            rest.removeLast()
+            rest = rest.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        for suffix in ["in the talk", "in this talk"] where rest.count > suffix.count {
+            if rest.suffix(suffix.count).lowercased() == suffix {
+                rest = String(rest.dropLast(suffix.count))
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                break
+            }
+        }
+        rest = unwrapListenQuotes(rest)
+        return rest.isEmpty ? nil : rest
+    }
+
+    private static func unwrapListenQuotes(_ text: String) -> String {
+        var rest = text
+        let wrappers: Set<Character> = [
+            "\"", "\u{201C}", "\u{201D}", "'", "\u{2018}", "\u{2019}",
+        ]
+        while rest.count >= 2, let first = rest.first, let last = rest.last,
+            wrappers.contains(first), wrappers.contains(last)
+        {
+            rest.removeFirst()
+            rest.removeLast()
+            rest = rest.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return rest
     }
 
     /// The phrase Listen should send to the player for the visible card.

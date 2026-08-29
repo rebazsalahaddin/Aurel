@@ -574,6 +574,31 @@ final class PlayerModelTests: XCTestCase {
         XCTAssertNil(PlayerModel.quotedListenCue(from: "What do you say?"))
     }
 
+    func testWhoSaysPromptBecomesTheListenCue() {
+        XCTAssertEqual(
+            PlayerModel.whoSaysListenCue(from: "Who says ‘Excuse me’?"),
+            "Excuse me")
+        XCTAssertEqual(
+            PlayerModel.whoSaysListenCue(from: "Who says Welcome!?"),
+            "Welcome!")
+        XCTAssertEqual(
+            PlayerModel.whoSaysListenCue(from: "Who says 'two languages' in the talk?"),
+            "two languages")
+        XCTAssertEqual(
+            PlayerModel.whoSaysListenCue(from: "Who says: \"This is my friend Sam.\"?"),
+            "This is my friend Sam.")
+        XCTAssertNil(PlayerModel.whoSaysListenCue(from: "How is Sam?"))
+        XCTAssertNil(PlayerModel.whoSaysListenCue(from: "What do you say?"))
+    }
+
+    func testWhoSaysExcuseMeSpeaksThePhraseNotTheSpeaker() throws {
+        let m = try conversationModel(chapter: "A1-C01", screen: "S33")
+        m.i = try XCTUnwrap(m.items.firstIndex { $0.id == "QZ-LS003" })
+        XCTAssertEqual(m.speakTextForItem, "Excuse me")
+        XCTAssertNotEqual(m.speakTextForItem, "Maya")
+        XCTAssertEqual(m.item?.opts.first { m.item?.isKey($0) == true }?.text, "Maya")
+    }
+
     private func conversationModel(chapter: String, screen: String) throws -> PlayerModel {
         let store = CourseDecodingTests.store
         let pos = try XCTUnwrap(

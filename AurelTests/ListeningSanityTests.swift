@@ -720,6 +720,45 @@ final class ListeningSanityTests: XCTestCase {
         XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD031")
     }
 
+    /// “Who says …?” must voice the quoted words, not the speaker-name answer.
+    func testWhoSaysItemsPlayTheQuotedLineNotTheSpeakerName() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+        let cases: [(chapter: String, screen: String, id: String, cue: String, aud: String, line: Int)] =
+            [
+                ("A1-C01", "S33", "QZ-LS003", "Excuse me", "A1-C01-AUD043", 7),
+                ("A1-C03", "S20", "PR-LS006", "two languages", "A1-C03-AUD051", 4),
+                ("A1-C04", "S13", "LS005", "This is my friend Sam.", "A1-C04-AUD036", 11),
+            ]
+        for test in cases {
+            let pos = try XCTUnwrap(
+                store.flat.firstIndex {
+                    $0.chapter.id == test.chapter && $0.screen.id == test.screen
+                },
+                "\(test.chapter) \(test.screen)")
+            let model = PlayerModel(course: store, start: pos)
+            model.i = try XCTUnwrap(
+                model.items.firstIndex { $0.id == test.id }, test.id)
+            XCTAssertEqual(model.speakTextForItem, test.cue, test.id)
+            XCTAssertNotEqual(
+                model.speakTextForItem,
+                model.item?.opts.first { model.item?.isKey($0) == true }?.text,
+                test.id)
+            XCTAssertEqual(model.resolvedAudioID(model.item?.aud), test.aud, test.id)
+            let asset = try XCTUnwrap(catalog.asset(test.aud), test.aud)
+            let take = VoicePlayback.selectTake(
+                lines: asset.lines, requestedText: test.cue)
+            guard case .line(let index, _) = take else {
+                return XCTFail("\(test.id) should clip to the quoted line")
+            }
+            XCTAssertEqual(index, test.line, test.id)
+            XCTAssertTrue(
+                VoicePlayback.heardWords(asset.lines[index].text)
+                    .contains(VoicePlayback.heardWords(test.cue)),
+                "\(test.id) line \(index) should say “\(test.cue)”")
+        }
+    }
+
     /// C1-L3 S25 reply items play the short question take, not a full meeting.
     func testLesson3BestNextLineItemsPlayTheHeardQuestion() throws {
         let catalog = AudioCatalog(bundle: .main)
