@@ -22,9 +22,14 @@ enum AudioSessionGate {
             queue.async {
                 do {
                     let session = AVAudioSession.sharedInstance()
+                    // Drop the standing playback I/O unit first so the
+                    // record category actually replaces it (a live session
+                    // can swallow `setCategory` and leave the route stale).
+                    try? session.setActive(false)
                     try session.setCategory(
                         .playAndRecord, mode: .default, options: [.defaultToSpeaker])
                     try session.setActive(true)
+                    try? session.overrideOutputAudioPort(.speaker)
                     cont.resume()
                 } catch {
                     cont.resume(throwing: error)
@@ -38,9 +43,7 @@ enum AudioSessionGate {
     static func activateForPlayback() async {
         await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
             queue.async {
-                let session = AVAudioSession.sharedInstance()
-                try? session.setCategory(.playback, mode: .spokenAudio)
-                try? session.setActive(true)
+                applyPlaybackCategory()
                 cont.resume()
             }
         }
@@ -50,19 +53,32 @@ enum AudioSessionGate {
     /// never awaited (first model speech / TTS — the engine spins up while the
     /// session activates beside it).
     static func enqueuePlaybackActivation() {
-        queue.async {
-            let session = AVAudioSession.sharedInstance()
-            try? session.setCategory(.playback, mode: .spokenAudio)
-            try? session.setActive(true)
-        }
+        queue.async { applyPlaybackCategory() }
     }
 
     /// Restore the standing playback category after a take. Fire-and-forget
     /// on purpose: enqueued at `stop()` time it stays ordered around the
     /// take's own mutations, without making stop asynchronous.
     static func enqueuePlaybackRestore() {
-        queue.async {
-            try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+        queue.async { applyPlaybackCategory() }
+    }
+
+    /// Tear down the record I/O unit, then stand playback up. Leaving Voice
+    /// Processing (echo cancellation) live after a take is what makes the
+    /// learner's own voice play as silence — the canceller treats the take
+    /// as speaker echo. A `setCategory` that fails falls back to a
+    /// measurement-mode record session, which has no echo canceller.
+    private static func applyPlaybackCategory() {
+        let session = AVAudioSession.sharedInstance()
+        try? session.setActive(false)
+        do {
+            try session.setCategory(.playback, mode: .spokenAudio)
+            try session.setActive(true)
+        } catch {
+            try? session.setCategory(
+                .playAndRecord, mode: .measurement, options: [.defaultToSpeaker])
+            try? session.setActive(true)
+            try? session.overrideOutputAudioPort(.speaker)
         }
     }
 }
@@ -533,11 +549,11 @@ final class MicRecorder {
 
     private var recorder: AVAudioRecorder?
     private var meterTask: Task<Void, Never>?
-    /// Held for the recorder's weak `delegate` until the m4a is closed.
+    /// Held for the recorder's weak `delegate` until the take file is closed.
     private var finishWatcher: RecorderFinishWatcher?
     private var finalizedTakeData: Data?
     private var fileURL: URL {
-        URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("aurel-take.m4a")
+        URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("aurel-take.caf")
     }
 
     /// The current mic permission (no prompt).
@@ -567,11 +583,16 @@ final class MicRecorder {
         try await AudioSessionGate.activateForRecording()
         try? FileManager.default.removeItem(at: fileURL)
         finalizedTakeData = nil
+        // Linear PCM, not AAC: `AVAudioPlayer` is reliable for CAF/WAV and
+        // silent for many in-memory m4a takes even when `play()` succeeds.
         let settings: [String: Any] = [
-            AVFormatIDKey: kAudioFormatMPEG4AAC,
+            AVFormatIDKey: kAudioFormatLinearPCM,
             AVSampleRateKey: 44100,
             AVNumberOfChannelsKey: 1,
-            AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue,
+            AVLinearPCMBitDepthKey: 16,
+            AVLinearPCMIsFloatKey: false,
+            AVLinearPCMIsBigEndianKey: false,
+            AVLinearPCMIsNonInterleaved: false,
         ]
         let rec = try AVAudioRecorder(url: fileURL, settings: settings)
         rec.isMeteringEnabled = true
@@ -606,8 +627,8 @@ final class MicRecorder {
 
     /// End the take. Returns the take's file URL (nil when the recorder
     /// never captured). The recorder is kept alive until its finish
-    /// callback closes the m4a — releasing it here left an unreadable file
-    /// and a dead YOU play control.
+    /// callback closes the file — releasing it here left an unreadable
+    /// take and a dead YOU play control.
     @discardableResult
     func stop() -> URL? {
         meterTask?.cancel()
@@ -990,6 +1011,7 @@ final class SayCoach {
         let timeout = assessmentTimeout
         Task { @MainActor in
             self.lastTakeData = await Self.loadTakeData(url: url, recorder: self.recorder)
+            Self.stageLearnerTakePlayback(data: self.lastTakeData)
             AudioSessionGate.enqueuePlaybackRestore()
             // Belt-and-braces: a wedged transcriber must not leave the
             // "Checking…" state up forever.
@@ -1037,17 +1059,19 @@ final class SayCoach {
         stopLearnerTake()
         onCaptureWillBegin()
         // Session mode first, off the main thread (S0-003), then the player.
+        // Must deactivate the record unit first — see `applyPlaybackCategory`.
         await AudioSessionGate.activateForPlayback()
         do {
-            let player: AVAudioPlayer
-            if let hinted = try? AVAudioPlayer(
-                data: data, fileTypeHint: AVFileType.m4a.rawValue)
-            {
-                player = hinted
-            } else {
-                player = try AVAudioPlayer(data: data)
+            // File URL, not `AVAudioPlayer(data:)`: in-memory AAC/m4a takes
+            // report a duration and return true from `play()` with no sound.
+            // Course audio already plays from URLs for the same reason.
+            let url = Self.learnerTakePlaybackURL
+            if !FileManager.default.fileExists(atPath: url.path) {
+                try data.write(to: url, options: .atomic)
             }
+            let player = try AVAudioPlayer(contentsOf: url)
             player.volume = 1
+            player.currentTime = 0
             let playback = LearnerTakePlayback()
             playback.player = player
             playback.onEnd = { [weak self, weak playback] in
@@ -1059,7 +1083,7 @@ final class SayCoach {
             learnerPlayback = playback
             isPlayingLearnerTake = true
             player.prepareToPlay()
-            guard player.play() else {
+            guard player.duration > 0.05, player.play() else {
                 isPlayingLearnerTake = false
                 learnerPlayback = nil
                 return
@@ -1100,6 +1124,7 @@ final class SayCoach {
         recognitionPreparationGeneration += 1
         stopLearnerTake()
         lastTakeData = nil
+        Self.stageLearnerTakePlayback(data: nil)
         if recording {
             let url = recorder.stop()
             recorder.discardTake(url)
@@ -1108,6 +1133,18 @@ final class SayCoach {
         assessing = false
         preparingRecognition = false
         AudioSessionGate.enqueuePlaybackRestore()
+    }
+
+    private static let learnerTakePlaybackURL = URL(fileURLWithPath: NSTemporaryDirectory())
+        .appendingPathComponent("aurel-take-play.caf")
+
+    private static func stageLearnerTakePlayback(data: Data?) {
+        let url = learnerTakePlaybackURL
+        if let data, !data.isEmpty {
+            try? data.write(to: url, options: .atomic)
+        } else {
+            try? FileManager.default.removeItem(at: url)
+        }
     }
 
     private static func loadTakeData(url: URL, recorder: any TakeRecording) async -> Data? {
