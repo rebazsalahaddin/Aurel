@@ -186,6 +186,17 @@ struct ResultsScreenView: View {
                     ? "Score: \(m.quizCorrect) / \(m.quizTotal) (\(m.quizScorePercentage)%)"
                     : (r.score ?? "Pass: 86% overall")
 
+                if let ill = r.ill {
+                    IllustrationPlaceholder(
+                        ill: ill,
+                        height: 150,
+                        aspectRatio: 16.0 / 9.0,
+                        cornerRadius: 20,
+                        captionSize: 11.5
+                    )
+                    .padding(.bottom, 18)
+                }
+
                 // rings (first 4 lit)
                 HStack(alignment: .top, spacing: 10) {
                     ForEach(Array((r.rings ?? []).enumerated()), id: \.offset) { k, t in
@@ -517,6 +528,17 @@ struct ChapterMapScreenView: View {
 
             ScreenColumn(topPad: 26, bottomPad: 26) {
                 if case .chapterMap(let c) = m.cur?.screen.payload {
+                    if let ill = c.ill {
+                        IllustrationPlaceholder(
+                            ill: ill,
+                            height: 150,
+                            aspectRatio: 16.0 / 9.0,
+                            cornerRadius: 20,
+                            captionSize: 11.5
+                        )
+                        .padding(.bottom, 20)
+                    }
+
                     AUIcon(kind: .check, size: 34, color: .auOkText)
                         .frame(width: 76, height: 76)
                         .background(Circle().fill(Color.auOkBg))

@@ -14346,6 +14346,10 @@
       "displayTitle": "Results",
       "label": "Results",
       "step": "STEP 15",
+      "ill": {
+       "id": "A1-C02-ILL036",
+       "alt": "A blank name badge with a small warm star beside it on the desk, a closed register at the edge"
+      },
       "rings": [
        "letters",
        "numbers",
@@ -14359,7 +14363,9 @@
       "score": "Pass is ≥21 / 26",
       "gate": "Pass: 80% overall (21/26) AND ≥70% per core section (letters · numbers · vocab+repair · grammar · listening · reading). Near-pass (a single section 60–69% with overall ≥80%) → that clinic + alternate items. Below → personalised review. Unlimited parallel retries; no permanent lock; no loss framing.",
       "tip": "Identical layout family to C1-S34 (ritual consistency). Retry and continue buttons equal weight and size.",
-      "assets": []
+      "assets": [
+       "A1-C02-ILL036"
+      ]
      },
      {
       "id": "S37",
@@ -14490,6 +14496,10 @@
       "displayTitle": "Chapter map / next",
       "label": "Chapter map / next",
       "step": "Wrap-up",
+      "ill": {
+       "id": "A1-C02-ILL036",
+       "alt": "A blank name badge with a small warm star beside it on the desk, a closed register at the edge"
+      },
       "head": "Chapter 2 complete!",
       "body": "You can spell your name, give a phone number or an email, and ask for a repeat when speech is too fast.",
       "next": "Chapter 3 — Where Are You From?",
@@ -14517,7 +14527,9 @@
        }
       ],
       "tip": "S39's chapter map shows Ch1–2 filled, Ch3 next — one glance, no clutter.",
-      "assets": []
+      "assets": [
+       "A1-C02-ILL036"
+      ]
      }
     ]
    }

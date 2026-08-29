@@ -542,6 +542,7 @@ struct QuizScreen: Decodable, Hashable {
 }
 
 struct ResultsScreen: Decodable, Hashable {
+    let ill: IllustrationRef?
     let rings: [String]?
     let strong: String?
     let developing: String?
@@ -579,6 +580,7 @@ struct ReviewScreen: Decodable, Hashable {
 }
 
 struct ChapterMapScreen: Decodable, Hashable {
+    let ill: IllustrationRef?
     let head: String?
     let body: String?
     let next: String?
