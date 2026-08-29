@@ -242,6 +242,24 @@ final class ContentConformanceTests: XCTestCase {
         Drift(
             key: "A1-C01 V024.cardAlt",
             shipped: "Alex Kim gestures toward their own name badge while Maya Haddad wears hers"),
+        // Lesson 3 “Best next line”: hear the question, pick the matching reply.
+        Drift(
+            key: "A1-C01 PR-CV007.options",
+            shipped: "A:My name is Sam.|B:I'm good, thank you!|C:See you!"),
+        Drift(key: "A1-C01 PR-CV007.key", shipped: "A → My name is Sam."),
+        Drift(key: "A1-C01 PR-CV007.ok", shipped: "Yes — a name for a name question!"),
+        Drift(key: "A1-C01 PR-CV007.no", shipped: "They asked for a NAME."),
+        Drift(
+            key: "A1-C01 PR-CV007.hints",
+            shipped: "The question asks for a name.␟A feeling word answers How are you?"),
+        Drift(
+            key: "A1-C01 PR-CV008.options",
+            shipped: "A:My name is Maya.|B:I'm okay, thank you!|C:Nice to meet you!"),
+        Drift(key: "A1-C01 PR-CV008.ok", shipped: "Yes — your feeling!"),
+        Drift(key: "A1-C01 PR-CV008.no", shipped: "They asked HOW you are."),
+        Drift(
+            key: "A1-C01 PR-CV008.hints",
+            shipped: "The question asks how you are.␟A name answers What's your name?"),
     ]
 
     /// The registry slice a given test owns, by record-field suffix.

@@ -720,6 +720,39 @@ final class ListeningSanityTests: XCTestCase {
         XCTAssertEqual(playback.spokenAssetID, "A1-C01-AUD031")
     }
 
+    /// C1-L3 S25 reply items play the short question take, not a full meeting.
+    func testLesson3BestNextLineItemsPlayTheHeardQuestion() throws {
+        let catalog = AudioCatalog(bundle: .main)
+        let store = CourseDecodingTests.store
+        let pos = try XCTUnwrap(
+            store.flat.firstIndex {
+                $0.chapter.id == "A1-C01" && $0.screen.id == "S25"
+            })
+        let model = PlayerModel(course: store, start: pos)
+        let playback = VoicePlayback(catalog: catalog)
+        defer { playback.stop() }
+        model.speaker = playback
+
+        let cases: [(id: String, cue: String, aud: String, answer: String)] = [
+            ("PR-CV007", "What's your name?", "A1-C01-AUD030", "My name is Sam."),
+            ("PR-CV008", "How are you?", "A1-C01-AUD032", "I'm okay, thank you!"),
+        ]
+        for test in cases {
+            let index = try XCTUnwrap(model.items.firstIndex { $0.id == test.id })
+            model.i = index
+            XCTAssertEqual(model.speakTextForItem, test.cue, test.id)
+            XCTAssertNotEqual(model.speakTextForItem, test.answer, test.id)
+            XCTAssertEqual(model.resolvedAudioID(model.item?.aud), test.aud, test.id)
+            let asset = try XCTUnwrap(catalog.asset(test.aud))
+            XCTAssertEqual(
+                VoicePlayback.selectTake(lines: asset.lines, requestedText: test.cue),
+                .line(index: 0, clip: .ellipsisSegment(index: 0, count: 2)),
+                test.id)
+            model.speak(model.speakTextForItem, audio: model.item?.aud)
+            XCTAssertEqual(playback.spokenAssetID, test.aud, test.id)
+        }
+    }
+
     /// Intonation pairs that share a folded spelling (“You're Maya.” / “?”)
     /// must clip to different phrases of AUD041.
     func testIntonationPairsClipStatementVersusQuestion() throws {

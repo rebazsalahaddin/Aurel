@@ -170,6 +170,14 @@ struct PracticeItem: Decodable, Hashable, Identifiable {
     let a11y: [String]?
     let big: Bool?  // quiz Form A large-print items
     let note: String?
+    let bubbles: Bool?
+    let said: SaidLine?
+}
+
+/// One spoken stimulus line on a listen-then-reply item (`sp` speaker, `t` text).
+struct SaidLine: Decodable, Hashable {
+    let sp: String
+    let t: String
 }
 
 struct PracticeBasket: Decodable, Hashable {

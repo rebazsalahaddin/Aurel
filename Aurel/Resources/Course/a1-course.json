@@ -5389,32 +5389,33 @@
         "id": "PR-CV007",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD030",
         "bubbles": true,
         "said": {
-         "sp": "LEO",
-         "t": "My name is Leo."
+         "sp": "MAYA",
+         "t": "What's your name?"
         },
+        "prompt": "What do you say?",
         "opts": [
          {
           "id": "A",
-          "t": "Nice to meet you, Leo!"
+          "t": "My name is Sam."
          },
          {
           "id": "B",
-          "t": "And you?"
+          "t": "I'm good, thank you!"
          },
          {
           "id": "C",
-          "t": "You're welcome!"
+          "t": "See you!"
          }
         ],
         "key": "A",
-        "ok": "Yes — meet him warmly!",
-        "no": "A first meeting just happened.",
+        "ok": "Yes — a name for a name question!",
+        "no": "They asked for a NAME.",
         "hints": [
-         "Was a question asked?",
-         "One option answers a thanks."
+         "The question asks for a name.",
+         "A feeling word answers How are you?"
         ],
         "secs": 15,
         "a11y": [
@@ -5425,16 +5426,17 @@
         "id": "PR-CV008",
         "instr": "Listen. Choose.",
         "icon": "ear",
-        "aud": "AUD044",
+        "aud": "AUD032",
         "bubbles": true,
         "said": {
          "sp": "MAYA",
-         "t": "I'm fine! And you?"
+         "t": "How are you?"
         },
+        "prompt": "What do you say?",
         "opts": [
          {
           "id": "A",
-          "t": "What's your name?"
+          "t": "My name is Maya."
          },
          {
           "id": "B",
@@ -5442,15 +5444,15 @@
          },
          {
           "id": "C",
-          "t": "Goodbye!"
+          "t": "Nice to meet you!"
          }
         ],
         "key": "B",
-        "ok": "Yes — your feeling, then done!",
-        "no": "The question asked YOU.",
+        "ok": "Yes — your feeling!",
+        "no": "They asked HOW you are.",
         "hints": [
-         "Which question is open?",
-         "Remove the new question."
+         "The question asks how you are.",
+         "A name answers What's your name?"
         ],
         "secs": 15,
         "a11y": [
@@ -5716,6 +5718,7 @@
        "A1-C01-AUD044",
        "A1-C01-AUD002",
        "A1-C01-AUD030",
+       "A1-C01-AUD032",
        "A1-C01-AUD033",
        "A1-C01-ILL004",
        "A1-C01-ILL007",

@@ -491,6 +491,31 @@ final class PlayerModelTests: XCTestCase {
         XCTAssertEqual(playback.spokenLine, 0)
     }
 
+    func testLesson3BestNextLineSpeaksTheQuestionNotTheAnswer() throws {
+        let m = try conversationModel(chapter: "A1-C01", screen: "S25")
+        let nameIdx = try XCTUnwrap(m.items.firstIndex { $0.id == "PR-CV007" })
+        m.i = nameIdx
+        XCTAssertEqual(m.item?.said?.t, "What's your name?")
+        XCTAssertEqual(m.speakTextForItem, "What's your name?")
+        XCTAssertEqual(m.item?.prompt, "What do you say?")
+        XCTAssertEqual(
+            m.item?.opts.first { m.item?.isKey($0) == true }?.text, "My name is Sam.")
+
+        let feelingIdx = try XCTUnwrap(m.items.firstIndex { $0.id == "PR-CV008" })
+        m.i = feelingIdx
+        XCTAssertEqual(m.item?.said?.t, "How are you?")
+        XCTAssertEqual(m.speakTextForItem, "How are you?")
+        XCTAssertEqual(
+            m.item?.opts.first { m.item?.isKey($0) == true }?.text, "I'm okay, thank you!")
+    }
+
+    func testQuotedYouHearPromptBecomesTheListenCue() {
+        XCTAssertEqual(
+            PlayerModel.quotedListenCue(from: "You hear: “Hello!”"),
+            "Hello!")
+        XCTAssertNil(PlayerModel.quotedListenCue(from: "What do you say?"))
+    }
+
     private func conversationModel(chapter: String, screen: String) throws -> PlayerModel {
         let store = CourseDecodingTests.store
         let pos = try XCTUnwrap(

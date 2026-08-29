@@ -247,14 +247,39 @@ final class PlayerModel {
         return option.text == key
     }
 
-    /// The authored text an audio-cued item should speak — the key option for
-    /// listening items (the thing you hear), the headword for cards.
+    /// The authored text an audio-cued item should speak — the heard line for
+    /// reply items, the quoted “You hear:” span, then the key option (identify).
     var speakTextForItem: String? {
         guard let item else { return nil }
+        if let said = item.said?.t, !said.isEmpty { return said }
+        if let prompt = item.prompt,
+            prompt.localizedCaseInsensitiveContains("you hear"),
+            let quoted = Self.quotedListenCue(from: prompt)
+        {
+            return quoted
+        }
         if let answer = item.opts.first(where: { item.isKey($0) })?.text {
             return answer
         }
         return item.word ?? item.prompt ?? nil
+    }
+
+    /// The quoted span in prompts like `You hear: “Hello!”`.
+    static func quotedListenCue(from prompt: String) -> String? {
+        let pairs: [(Character, Character)] = [
+            ("\u{201C}", "\u{201D}"), ("\"", "\""), ("\u{2018}", "\u{2019}"),
+        ]
+        for (open, close) in pairs {
+            guard let start = prompt.firstIndex(of: open) else { continue }
+            let after = prompt.index(after: start)
+            guard after < prompt.endIndex,
+                let end = prompt[after...].firstIndex(of: close)
+            else { continue }
+            let quoted = String(prompt[after..<end])
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if !quoted.isEmpty { return quoted }
+        }
+        return nil
     }
 
     /// The phrase Listen should send to the player for the visible card.
@@ -730,6 +755,8 @@ final class PlayerModel {
                 ok: it.ok.learnerFacing,
                 no: it.no.learnerFacing,
                 hints: it.hints?.compactMap(CourseTextContract.learnerText),
+                bubbles: it.bubbles ?? false,
+                said: it.said.map { ($0.sp, $0.t) },
                 word: learnerAudioCue(for: it),
                 kind: it.kind,
                 big: it.big ?? false,
